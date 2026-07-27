@@ -23,7 +23,6 @@
     "@angular/platform-browser-dynamic": "^22.0.0",
     "@angular/router": "^22.0.0",
     "@awesome.me/kit-34bdbed268": "^1.0.19",
-    "@aws-amplify/backend": "^1.18.0",
     "@aws-sdk/client-lambda": "^3.975.0",
     "@capacitor/android": "^8.0.2",
     "@capacitor/app": "^8.0.0",
