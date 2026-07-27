@@ -3,8 +3,8 @@ frontend:
   phases:
     preBuild:
       commands:
-        - nvm install 26
-        - nvm use 26
+        - nvm install 24
+        - nvm use 24
         - npm ci
         - echo "Checking for amplify_outputs.json..."
         - if [ -f amplify_outputs.json ]; then echo "Found amplify_outputs.json"; else echo "amplify_outputs.json not found, creating placeholder..."; echo '{}' > amplify_outputs.json; fi
