@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, NgZone, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -59,7 +59,9 @@ export class LoginPage {
     private amplifyService: AmplifyService,
     private authStateService: AuthStateService,
     private router: Router,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private ngZone: NgZone,
+    private cdr: ChangeDetectorRef
   ) {}
 
   async onSubmit() {
@@ -78,21 +80,23 @@ export class LoginPage {
       }
     } catch (error: any) {
       this.showToast(error.message || 'Authentication failed', 'danger');
-    } finally {
-      this.isLoading = false;
+      this.password = '';
     }
+
+    this.isLoading = false;
+    this.cdr.detectChanges();
   }
 
   private async signUp() {
     const result = await this.amplifyService.signUp(this.email, this.password, this.email);
     
-    if (result.nextStep?.signUpStep === 'CONFIRM_SIGN_UP') {
+    if (result.isSignUpComplete) {
+      this.showToast('Sign up successful! You can now sign in.', 'success');
+      this.isSignUp = false;
+    } else {
       this.needsConfirmation = true;
       this.pendingUsername = this.email;
       this.showToast('Please check your email for verification code', 'success');
-    } else {
-      this.showToast('Sign up successful!', 'success');
-      this.isSignUp = false;
     }
   }
 
@@ -124,9 +128,10 @@ export class LoginPage {
       this.confirmationCode = '';
     } catch (error: any) {
       this.showToast(error.message || 'Confirmation failed', 'danger');
-    } finally {
-      this.isLoading = false;
     }
+
+    this.isLoading = false;
+    this.cdr.detectChanges();
   }
 
   toggleMode() {
