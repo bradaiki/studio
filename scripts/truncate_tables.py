@@ -3,7 +3,7 @@
 import boto3
 import sys
 
-SUFFIX = "3346n5xiuvfyrl6nxinfzmmh5a-NONE"
+SUFFIX = "odpvz6rcdjfc3jvyy3kt6l2ize-NONE"
 
 client = boto3.client("dynamodb")
 tables = [t for t in client.list_tables()["TableNames"] if SUFFIX in t]

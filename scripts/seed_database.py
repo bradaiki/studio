@@ -7,7 +7,7 @@ import uuid
 from datetime import datetime, timezone
 from urllib.parse import quote
 
-SUFFIX = "3346n5xiuvfyrl6nxinfzmmh5a-NONE"
+SUFFIX = "odpvz6rcdjfc3jvyy3kt6l2ize-NONE"
 client = boto3.client("dynamodb")
 
 def s(val):

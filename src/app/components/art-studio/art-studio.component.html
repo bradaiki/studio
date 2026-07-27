@@ -1,11 +1,11 @@
 <ion-card
   class="studio-card"
-  [class.featured]="studio.featured"
-  [class.compact]="compact"
+  [class.featured]="studio().featured"
+  [class.compact]="compact()"
   (click)="onStudioClick()"
 >
   <!-- Featured Badge -->
-  @if (studio.featured) {
+  @if (studio().featured) {
     <div class="featured-badge">
       <ion-badge color="warning">
         <ion-icon name="star"></ion-icon>
@@ -15,18 +15,18 @@
   }
 
   <!-- Studio Image -->
-  <div class="studio-image" [class.compact]="compact">
-    <img [src]="studio.image" [alt]="studio.name" />
+  <div class="studio-image" [class.compact]="compact()">
+    <img [src]="studio().image" [alt]="studio().name" />
     <div class="image-overlay">
       <div class="studio-type">
-        <ion-chip [color]="getStudioTypeColor()" class="type-chip">
-          <ion-icon [name]="getStudioTypeIcon()"></ion-icon>
-          <ion-label>{{ studio.type | titlecase }}</ion-label>
+        <ion-chip [color]="studioTypeColor()" class="type-chip">
+          <ion-icon [name]="studioTypeIcon()"></ion-icon>
+          <ion-label>{{ studio().type | titlecase }}</ion-label>
         </ion-chip>
       </div>
       <div class="price-range">
         <ion-chip color="dark" outline="true">
-          {{ studio.priceRange }}
+          {{ studio().priceRange }}
         </ion-chip>
       </div>
     </div>
@@ -35,88 +35,88 @@
   <ion-card-content>
     <!-- Studio Header -->
     <div class="studio-header">
-      <h2 class="studio-name" [class.compact]="compact">{{ studio.name }}</h2>
+      <h2 class="studio-name" [class.compact]="compact()">{{ studio().name }}</h2>
       <div class="studio-location">
         <ion-icon name="location" color="primary"></ion-icon>
-        <span>{{ studio.location }}</span>
+        <span>{{ studio().location }}</span>
       </div>
     </div>
 
     <!-- Rating and Reviews -->
-    @if (!compact) {
+    @if (!compact()) {
       <div class="rating-section">
         <div class="stars">
-          @for (filled of generateStarArray(); track filled) {
+          @for (filled of starArray(); track $index) {
             <ion-icon
               [name]="filled ? 'star' : 'star-outline'"
               [color]="filled ? 'warning' : 'medium'"
             >
             </ion-icon>
           }
-          <span class="rating-text">{{ studio.rating }}</span>
+          <span class="rating-text">{{ studio().rating }}</span>
         </div>
         <div class="review-count">
           <ion-text color="medium">
-            ({{ studio.reviewCount }} reviews)
+            ({{ studio().reviewCount }} reviews)
           </ion-text>
         </div>
       </div>
     }
 
     <!-- Compact Rating -->
-    @if (compact) {
+    @if (compact()) {
       <div class="rating-section compact">
         <div class="stars">
           <ion-icon name="star" color="warning"></ion-icon>
-          <span class="rating-text">{{ studio.rating }}</span>
-          <span class="review-count-compact">({{ studio.reviewCount }})</span>
+          <span class="rating-text">{{ studio().rating }}</span>
+          <span class="review-count-compact">({{ studio().reviewCount }})</span>
         </div>
       </div>
     }
 
     <!-- Description -->
-    @if (!compact) {
-      <p class="studio-description">{{ getDisplayDescription() }}</p>
+    @if (!compact()) {
+      <p class="studio-description">{{ displayDescription() }}</p>
     }
 
     <!-- Instructor Info -->
-    <div class="instructor-info" [class.compact]="compact">
+    <div class="instructor-info" [class.compact]="compact()">
       <div class="instructor-name">
         <ion-icon name="person-outline" color="primary"></ion-icon>
-        <strong>{{ studio.instructor }}</strong>
+        <strong>{{ studio().instructor }}</strong>
       </div>
-      @if (!compact) {
+      @if (!compact()) {
         <div class="instructor-experience">
-          <ion-text color="medium">{{ studio.experience }} experience</ion-text>
+          <ion-text color="medium">{{ studio().experience }} experience</ion-text>
         </div>
       }
     </div>
 
     <!-- Specialties -->
-    @if (studio.specialties.length > 0) {
+    @if (studio().specialties.length > 0) {
       <div class="specialties-section">
-        @if (!compact) {
+        @if (!compact()) {
           <h4>Specialties</h4>
         }
         <div class="specialties-chips">
-          @for (specialty of getDisplaySpecialties(); track specialty) {
+          @for (specialty of displaySpecialties(); track specialty) {
             <ion-chip
               color="light"
               outline="true"
               class="specialty-chip"
-              [class.small]="compact"
+              [class.small]="compact()"
             >
               {{ specialty }}
             </ion-chip>
           }
-          @if (getExtraSpecialtiesCount() > 0) {
+          @if (extraSpecialtiesCount() > 0) {
             <ion-chip
               color="medium"
               outline="true"
               class="more-chip"
-              [class.small]="compact"
+              [class.small]="compact()"
             >
-              +{{ getExtraSpecialtiesCount() }} more
+              +{{ extraSpecialtiesCount() }} more
             </ion-chip>
           }
         </div>
@@ -124,23 +124,23 @@
     }
 
     <!-- Class Types -->
-    @if (!compact && studio.classTypes.length > 0) {
+    @if (!compact() && studio().classTypes.length > 0) {
       <div class="class-types-section">
         <h4>Classes Offered</h4>
         <div class="class-types">
           <ion-text color="medium">
-            {{ getDisplayClassTypes() }}
+            {{ displayClassTypes() }}
           </ion-text>
         </div>
       </div>
     }
 
     <!-- Hours -->
-    @if (!compact) {
+    @if (!compact()) {
       <div class="hours-section">
         <div class="hours-info">
           <ion-icon name="time" color="primary"></ion-icon>
-          <ion-text color="medium">{{ studio.openHours }}</ion-text>
+          <ion-text color="medium">{{ studio().openHours }}</ion-text>
         </div>
       </div>
     }
@@ -149,26 +149,26 @@
     <div class="price-info">
       <div class="price-text">
         <ion-icon name="cash-outline" color="success"></ion-icon>
-        <span>{{ getPriceRangeText() }}</span>
+        <span>{{ priceRangeText() }}</span>
       </div>
     </div>
 
     <!-- Action Buttons -->
-    <div class="action-buttons" [class.compact]="compact">
+    <div class="action-buttons" [class.compact]="compact()">
       <ion-button
         expand="block"
         color="primary"
         class="main-action"
-        [size]="compact ? 'small' : 'default'"
+        [size]="compact() ? 'small' : 'default'"
         (click)="onStudioClick(); $event.stopPropagation()"
       >
         <ion-icon name="information-circle-outline" slot="start"></ion-icon>
-        {{ compact ? "Details" : "View Details" }}
+        {{ compact() ? "Details" : "View Details" }}
       </ion-button>
 
-      @if (!compact) {
+      @if (!compact()) {
         <div class="secondary-actions">
-          @if (studio.phone) {
+          @if (studio().phone) {
             <ion-button
               fill="outline"
               color="primary"
@@ -178,7 +178,7 @@
               <ion-icon name="call-outline" slot="icon-only"></ion-icon>
             </ion-button>
           }
-          @if (studio.website) {
+          @if (studio().website) {
             <ion-button
               fill="outline"
               color="primary"
@@ -188,7 +188,7 @@
               <ion-icon name="globe-outline" slot="icon-only"></ion-icon>
             </ion-button>
           }
-          @if (studio.email) {
+          @if (studio().email) {
             <ion-button
               fill="outline"
               color="primary"
@@ -210,9 +210,9 @@
       }
 
       <!-- Compact Actions -->
-      @if (compact) {
+      @if (compact()) {
         <div class="compact-actions">
-          @if (studio.phone) {
+          @if (studio().phone) {
             <ion-button
               fill="outline"
               color="primary"
