@@ -106,9 +106,13 @@ export class LoginPage {
       this.showToast('Sign in successful!', 'success');
       const user = await this.amplifyService.getCurrentUser();
       this.authStateService.setAuthState(true, user);
-      console.log('[Login] Signed in as:', user?.userId);
-      // Full reload so all services reinitialize with auth tokens
       window.location.href = '/dash';
+    } else if (result.nextStep?.signInStep === 'CONFIRM_SIGN_UP') {
+      this.needsConfirmation = true;
+      this.pendingUsername = this.email;
+      this.showToast('Please confirm your email first', 'warning');
+    } else {
+      throw new Error('Sign in failed. Please check your credentials.');
     }
   }
 

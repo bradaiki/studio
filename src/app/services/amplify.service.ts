@@ -10,18 +10,23 @@ export class AmplifyService {
 
   // Authentication methods
   async signUp(username: string, password: string, email: string) {
-    // Fire the signUp call but don't await it — the Amplify v6 SDK hangs
-    // after creating the user because it internally attempts auto-sign-in.
-    // The user IS created in Cognito, so we immediately return and show
-    // the confirmation code screen.
-    signUp({
-      username,
-      password,
-      options: {
-        userAttributes: { email },
-        autoSignIn: false
-      }
-    }).catch(err => console.log('[AmplifyService] signUp background error (expected):', err?.name));
+    // Wait for the Cognito call to complete (or timeout after 5s if the SDK
+    // hangs on its internal auto-sign-in attempt).
+    try {
+      await Promise.race([
+        signUp({
+          username,
+          password,
+          options: {
+            userAttributes: { email },
+            autoSignIn: false
+          }
+        }),
+        new Promise(resolve => setTimeout(resolve, 5000))
+      ]);
+    } catch (err) {
+      console.log('[AmplifyService] signUp caught:', (err as any)?.name);
+    }
 
     return { isSignUpComplete: false, nextStep: { signUpStep: 'CONFIRM_SIGN_UP' } } as any;
   }
