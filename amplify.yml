@@ -1,0 +1,36 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - npm ci
+        - echo "Checking for amplify_outputs.json..."
+        - if [ -f amplify_outputs.json ]; then echo "Found amplify_outputs.json"; else echo "amplify_outputs.json not found, creating placeholder..."; echo '{}' > amplify_outputs.json; fi
+    build:
+      commands:
+        - npm run build
+  artifacts:
+    baseDirectory: www
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*
+  customHeaders:
+    - pattern: '**/*'
+      headers:
+        - key: 'Strict-Transport-Security'
+          value: 'max-age=31536000; includeSubDomains'
+        - key: 'X-Frame-Options'
+          value: 'SAMEORIGIN'
+        - key: 'X-Content-Type-Options'
+          value: 'nosniff'
+        - key: 'X-XSS-Protection'
+          value: '1; mode=block'
+        - key: 'Referrer-Policy'
+          value: 'strict-origin-when-cross-origin'
+  # SPA redirect rules for Angular routing
+  redirects:
+    - source: '</^[^.]+$|\.(?!(css|gif|ico|jpg|js|png|txt|svg|woff|ttf|map|json)$)([^.]+$)/>'
+      target: '/index.html'
+      status: '200'

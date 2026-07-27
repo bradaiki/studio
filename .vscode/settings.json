@@ -1,0 +1,8 @@
+{
+  "typescript.preferences.autoImportFileExcludePatterns": [
+    "@ionic/angular/common",
+    "@ionic/angular"
+  ],
+  "kiroAgent.configureMCP": "Disabled",
+  "html.autoClosingTags": false
+}

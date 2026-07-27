@@ -1,0 +1,58 @@
+ion-content {
+  --background: var(--ion-color-light);
+}
+
+// Style the segment in the header
+ion-header {
+  ion-toolbar {
+    .feed-segment {
+      padding: 0 16px 8px 16px;
+    }
+  }
+}
+
+.feed-container {
+  padding: 0 16px 8px 16px;
+  padding-top: calc(var(--ion-safe-area-top) + 120px); // Account for header + segment bar
+  max-width: 600px;
+  margin: 0 auto;
+  min-height: 400px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 80px 20px;
+  color: var(--ion-color-medium);
+  
+  ion-icon {
+    font-size: 4rem;
+    margin-bottom: 16px;
+  }
+  
+  h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+    color: var(--ion-color-dark);
+  }
+  
+  p {
+    font-size: 1rem;
+    margin: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  ion-header {
+    ion-toolbar {
+      .feed-segment {
+        padding: 0 8px 8px 8px;
+      }
+    }
+  }
+  
+  .feed-container {
+    padding: 0 8px 4px 8px;
+    padding-top: calc(var(--ion-safe-area-top) + 120px); // Account for header + segment bar on mobile
+  }
+}

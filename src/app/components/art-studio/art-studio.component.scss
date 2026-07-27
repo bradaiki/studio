@@ -1,0 +1,482 @@
+/* Studio Card */
+.studio-card {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  margin: 0;
+  cursor: pointer;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: white;
+}
+
+.studio-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+}
+
+.studio-card.featured {
+  border: 2px solid var(--ion-color-warning);
+}
+
+.studio-card.compact {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.studio-card.compact:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Featured Badge */
+.featured-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 10;
+}
+
+.featured-badge ion-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 20px;
+}
+
+.featured-badge ion-icon {
+  font-size: 0.8rem;
+}
+
+/* Studio Image */
+.studio-image {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+}
+
+.studio-image.compact {
+  height: 150px;
+}
+
+.studio-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.studio-card:hover .studio-image img {
+  transform: scale(1.05);
+}
+
+.image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.1) 0%,
+    rgba(0, 0, 0, 0) 30%,
+    rgba(0, 0, 0, 0) 70%,
+    rgba(0, 0, 0, 0.3) 100%
+  );
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 12px;
+}
+
+.studio-type {
+  flex: 1;
+}
+
+.type-chip {
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.type-chip ion-icon {
+  font-size: 0.9rem;
+}
+
+.price-range {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* Card Content */
+ion-card-content {
+  padding: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.studio-card.compact ion-card-content {
+  padding: 16px;
+}
+
+/* Studio Header */
+.studio-header {
+  margin-bottom: 12px;
+}
+
+.studio-card.compact .studio-header {
+  margin-bottom: 8px;
+}
+
+.studio-name {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--ion-color-dark);
+  margin: 0 0 6px 0;
+  line-height: 1.3;
+}
+
+.studio-name.compact {
+  font-size: 1.1rem;
+  margin: 0 0 4px 0;
+}
+
+.studio-location {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  color: var(--ion-color-medium);
+}
+
+.studio-location ion-icon {
+  font-size: 1rem;
+}
+
+/* Rating Section */
+.rating-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.rating-section.compact {
+  justify-content: flex-start;
+  margin-bottom: 8px;
+}
+
+.stars {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.stars ion-icon {
+  font-size: 0.9rem;
+}
+
+.rating-text {
+  margin-left: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ion-color-dark);
+}
+
+.review-count {
+  font-size: 0.8rem;
+}
+
+.review-count-compact {
+  font-size: 0.75rem;
+  color: var(--ion-color-medium);
+  margin-left: 4px;
+}
+
+/* Description */
+.studio-description {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--ion-color-medium-shade);
+  margin: 0 0 16px 0;
+  flex: 1;
+}
+
+/* Instructor Info */
+.instructor-info {
+  margin-bottom: 16px;
+}
+
+.instructor-info.compact {
+  margin-bottom: 12px;
+}
+
+.instructor-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  color: var(--ion-color-dark);
+  margin-bottom: 4px;
+}
+
+.instructor-name ion-icon {
+  font-size: 1rem;
+}
+
+.instructor-experience {
+  font-size: 0.8rem;
+  margin-left: 22px;
+}
+
+/* Specialties Section */
+.specialties-section {
+  margin-bottom: 16px;
+}
+
+.studio-card.compact .specialties-section {
+  margin-bottom: 12px;
+}
+
+.specialties-section h4 {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ion-color-dark);
+  margin: 0 0 8px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.specialties-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.specialty-chip {
+  font-size: 0.7rem;
+  --background: var(--ion-color-light-shade);
+  --color: var(--ion-color-medium-shade);
+}
+
+.specialty-chip.small {
+  font-size: 0.65rem;
+  height: 20px;
+}
+
+.more-chip {
+  font-size: 0.7rem;
+}
+
+.more-chip.small {
+  font-size: 0.65rem;
+  height: 20px;
+}
+
+/* Class Types Section */
+.class-types-section {
+  margin-bottom: 16px;
+}
+
+.class-types-section h4 {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ion-color-dark);
+  margin: 0 0 6px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.class-types {
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+/* Hours Section */
+.hours-section {
+  margin-bottom: 16px;
+}
+
+.hours-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 0.8rem;
+}
+
+.hours-info ion-icon {
+  font-size: 1rem;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+/* Price Info */
+.price-info {
+  margin-bottom: 20px;
+}
+
+.studio-card.compact .price-info {
+  margin-bottom: 16px;
+}
+
+.price-text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ion-color-success);
+}
+
+.price-text ion-icon {
+  font-size: 1rem;
+}
+
+/* Action Buttons */
+.action-buttons {
+  margin-top: auto;
+}
+
+.action-buttons.compact {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.main-action {
+  margin-bottom: 12px;
+  --border-radius: 8px;
+  font-weight: 600;
+}
+
+.action-buttons.compact .main-action {
+  margin-bottom: 0;
+  flex: 1;
+}
+
+.secondary-actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.secondary-actions ion-button {
+  --border-radius: 50%;
+  width: 40px;
+  height: 40px;
+}
+
+.compact-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.compact-actions ion-button {
+  --border-radius: 50%;
+  width: 32px;
+  height: 32px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .studio-name {
+    font-size: 1.2rem;
+  }
+
+  .studio-name.compact {
+    font-size: 1rem;
+  }
+
+  .secondary-actions {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 576px) {
+  .rating-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .rating-section.compact {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .specialties-chips {
+    justify-content: center;
+  }
+
+  .action-buttons.compact {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .action-buttons.compact .main-action {
+    margin-bottom: 0;
+  }
+}
+
+/* Animation */
+.studio-card {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hover Effects */
+.studio-card:hover .type-chip {
+  transform: scale(1.05);
+}
+
+.studio-card:hover .studio-name {
+  color: var(--ion-color-primary);
+}
+
+/* Loading State */
+.studio-card.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.studio-card.loading .studio-image img {
+  filter: grayscale(100%);
+}
+
+/* Focus States */
+.studio-card:focus {
+  outline: 2px solid var(--ion-color-primary);
+  outline-offset: 2px;
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  .studio-card {
+    background: var(--ion-color-dark-tint);
+    border: 1px solid var(--ion-color-medium-tint);
+  }
+
+  .studio-name {
+    color: var(--ion-color-light);
+  }
+
+  .studio-description {
+    color: var(--ion-color-light-shade);
+  }
+}

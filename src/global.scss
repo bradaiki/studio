@@ -1,0 +1,143 @@
+/*
+ * App Global CSS
+ * ----------------------------------------------------------------------------
+ * Put style rules here that you want to apply globally. These styles are for
+ * the entire app and not just one component. Additionally, this file can be
+ * used as an entry point to import other CSS/Sass files to be included in the
+ * output CSS.
+ * For more information on global stylesheets, visit the documentation:
+ * https://ionicframework.com/docs/layout/global-stylesheets
+ */
+
+/* Font Awesome CSS */
+@import "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css";
+
+/* Core CSS required for Ionic components to work properly */
+@import "@ionic/angular/css/core.css";
+
+/* Basic CSS for apps built with Ionic */
+@import "@ionic/angular/css/normalize.css";
+@import "@ionic/angular/css/structure.css";
+@import "@ionic/angular/css/typography.css";
+@import "@ionic/angular/css/display.css";
+
+/* Optional CSS utils that can be commented out */
+@import "@ionic/angular/css/padding.css";
+@import "@ionic/angular/css/float-elements.css";
+@import "@ionic/angular/css/text-alignment.css";
+@import "@ionic/angular/css/text-transformation.css";
+@import "@ionic/angular/css/flex-utils.css";
+
+/**
+ * Ionic Dark Mode
+ * -----------------------------------------------------
+ * For more info, please see:
+ * https://ionicframework.com/docs/theming/dark-mode
+ */
+
+/* @import "@ionic/angular/css/palettes/dark.always.css"; */
+/* @import "@ionic/angular/css/palettes/dark.class.css"; */
+@import '@ionic/angular/css/palettes/dark.system.css';
+
+/**
+ * Global App Styles
+ * -----------------------------------------------------
+ * Custom styles for consistent layout across all pages
+ */
+
+/* Ensure all page content appears below the main header */
+ion-tabs {
+  ion-tab-bar {
+    --background: white;
+    --border: 1px solid var(--ion-color-light);
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* Global content spacing to account for fixed headers */
+ion-content {
+  --padding-top: 0;
+  
+  /* Ensure content doesn't overlap with headers */
+  &[fullscreen="true"] {
+    --offset-top: 0;
+  }
+}
+
+/* Page headers should not overlap with main app header */
+ion-header {
+  &:not(.header-collapse-condense) {
+    position: relative;
+    z-index: 10;
+  }
+  
+  /* Ensure page headers work well with main header */
+  ion-toolbar {
+    --min-height: 56px;
+    
+    ion-title {
+      font-weight: 600;
+    }
+    
+    ion-back-button {
+      --color: var(--ion-color-primary);
+    }
+  }
+}
+
+/* Ensure proper spacing for pages with two-column layouts */
+.studio-detail-layout,
+.person-detail-layout,
+.event-detail-layout {
+  padding-top: 16px; /* Add top padding to separate from header */
+}
+
+/* Chat sidebar positioning adjustment */
+.chat-sidebar {
+  app-chat-messages {
+    .chat-messages-card {
+      margin-top: 0; /* Remove top margin to align with content */
+      max-height: calc(100vh - 200px); /* Account for header and tab bar */
+    }
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .studio-detail-layout,
+  .person-detail-layout,
+  .event-detail-layout {
+    padding-top: 8px;
+  }
+  
+  /* On mobile, chat stacks below content, so we need more space for tab bar */
+  .chat-sidebar {
+    app-chat-messages {
+      .chat-messages-card {
+        max-height: calc(100vh - 250px); /* More space for mobile tab bar */
+        margin-bottom: 80px; /* Extra bottom margin to clear tab bar */
+      }
+    }
+  }
+}
+
+/* Custom styles for chat notification toast */
+.chat-notification-toast {
+  --border-radius: 12px;
+  --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --min-height: 80px;
+  
+  .toast-header {
+    font-weight: 600;
+    font-size: 16px;
+  }
+  
+  .toast-message {
+    font-size: 14px;
+    opacity: 0.9;
+  }
+  
+  .toast-button {
+    font-weight: 500;
+  }
+}

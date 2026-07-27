@@ -1,0 +1,38 @@
+Fix GraphQL 404 errors: Add guest authentication for API calls
+
+## Problem
+GraphQL API calls were failing with 404 errors despite the API being
+properly deployed and accessible.
+
+## Root Cause
+The app was not obtaining guest credentials before making GraphQL
+requests. The schema uses `allow.guest()` authorization which requires
+IAM-signed requests with credentials from Cognito Identity Pool.
+
+## Solution
+Added `fetchAuthSession()` call in studios.service.ts before making
+GraphQL API requests. This ensures the app obtains guest credentials
+and can properly sign requests with IAM.
+
+## Changes
+- src/app/services/studios.service.ts:
+  - Import fetchAuthSession from aws-amplify/auth
+  - Call fetchAuthSession() before API requests in loadStudiosFromAPI()
+  
+- AWS_404_FIX.md:
+  - Updated documentation with root cause analysis
+  - Added testing instructions
+  - Documented the fix
+
+- scripts/test-api.sh:
+  - Added API connectivity test script
+
+## Verification
+- Direct API test confirmed GraphQL endpoint works correctly
+- Issue was client-side authentication flow
+- Services still fall back to local data if API unavailable
+
+## Testing
+Run: ionic serve
+Check console for: "[Studios Service] Auth session obtained: Yes"
+Check Network tab for successful GraphQL requests (200, not 404)

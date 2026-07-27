@@ -1,0 +1,90 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dash/feed"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Studios</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="studios-container">
+    <!-- Search Bar -->
+    <ion-searchbar 
+      placeholder="Search studios..." 
+      (ionInput)="onSearch($event)"
+      [(ngModel)]="searchTerm">
+    </ion-searchbar>
+
+    <!-- Segment Control -->
+    <ion-segment 
+      [(ngModel)]="selectedSegment" 
+      (ionChange)="onSegmentChange($event)"
+      class="segment-control">
+      <ion-segment-button value="my-studios">
+        <ion-label>My Studios</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="favorites">
+        <ion-label>Favorites</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="nearby">
+        <ion-label>Nearby</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+
+    <!-- Studios List -->
+    <div class="studios-grid">
+      <ion-card *ngFor="let studio of displayedStudios" (click)="viewStudio(studio.id)">
+        <img [src]="studio.heroImage" [alt]="studio.name" />
+        
+        <ion-card-header>
+          <div class="card-header-content">
+            <ion-card-title>{{ studio.name }}</ion-card-title>
+            <ion-icon *ngIf="studio.verified" name="star" color="warning"></ion-icon>
+          </div>
+          <ion-card-subtitle>
+            <ion-icon name="location"></ion-icon>
+            {{ studio.location }}
+          </ion-card-subtitle>
+        </ion-card-header>
+
+        <ion-card-content>
+          <p>{{ studio.description }}</p>
+          
+          <div class="studio-meta">
+            <ion-chip>
+              <ion-icon name="people"></ion-icon>
+              <ion-label>{{ studio.memberCount }} members</ion-label>
+            </ion-chip>
+          </div>
+
+          <div class="contact-info">
+            <div class="contact-item">
+              <ion-icon name="call"></ion-icon>
+              <span>{{ studio.phone }}</span>
+            </div>
+          </div>
+
+          <ion-button expand="block" fill="outline">
+            View Details
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <!-- Infinite Scroll -->
+    <ion-infinite-scroll (ionInfinite)="loadMore($event)">
+      <ion-infinite-scroll-content
+        loadingSpinner="bubbles"
+        loadingText="Loading more studios...">
+      </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+  </div>
+
+  <!-- Floating Action Button -->
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button (click)="createStudio()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

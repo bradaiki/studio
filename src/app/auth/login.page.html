@@ -1,0 +1,103 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      {{ needsConfirmation ? 'Confirm Email' : (isSignUp ? 'Sign Up' : 'Sign In') }}
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="auth-container">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title class="ion-text-center">
+          {{ needsConfirmation ? 'Enter Confirmation Code' : (isSignUp ? 'Create Account' : 'Welcome Back') }}
+        </ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <!-- Confirmation Code Form -->
+        <form *ngIf="needsConfirmation" (ngSubmit)="confirmSignUp()" #confirmForm="ngForm">
+          <ion-item>
+            <ion-label position="stacked">Confirmation Code</ion-label>
+            <ion-input 
+              type="text" 
+              [(ngModel)]="confirmationCode" 
+              name="confirmationCode"
+              required
+              [disabled]="isLoading"
+              placeholder="Enter 6-digit code">
+            </ion-input>
+          </ion-item>
+
+          <div class="ion-margin-top">
+            <ion-button 
+              expand="block" 
+              type="submit" 
+              [disabled]="!confirmForm.form.valid || isLoading">
+              <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+              <span *ngIf="!isLoading">Confirm Email</span>
+            </ion-button>
+          </div>
+        </form>
+
+        <!-- Login/Signup Form -->
+        <form *ngIf="!needsConfirmation" (ngSubmit)="onSubmit()" #authForm="ngForm">
+          <ion-item>
+            <ion-label position="stacked">Email</ion-label>
+            <ion-input 
+              type="email" 
+              [(ngModel)]="email" 
+              name="email"
+              required
+              [disabled]="isLoading">
+            </ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="stacked">Password</ion-label>
+            <ion-input 
+              type="password" 
+              [(ngModel)]="password" 
+              name="password"
+              required
+              [disabled]="isLoading">
+            </ion-input>
+          </ion-item>
+
+          <div class="ion-margin-top">
+            <ion-button 
+              expand="block" 
+              type="submit" 
+              [disabled]="!authForm.form.valid || isLoading">
+              <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+              <span *ngIf="!isLoading">{{ isSignUp ? 'Sign Up' : 'Sign In' }}</span>
+            </ion-button>
+          </div>
+        </form>
+
+        <div *ngIf="!needsConfirmation" class="ion-text-center ion-margin-top">
+          <ion-text color="medium">
+            {{ isSignUp ? 'Already have an account?' : "Don't have an account?" }}
+          </ion-text>
+          <ion-button 
+            fill="clear" 
+            (click)="toggleMode()"
+            [disabled]="isLoading">
+            {{ isSignUp ? 'Sign In' : 'Sign Up' }}
+          </ion-button>
+        </div>
+
+        <div *ngIf="!needsConfirmation" class="ion-text-center ion-margin-top">
+          <ion-button 
+            fill="outline" 
+            expand="block"
+            (click)="continueAsGuest()"
+            [disabled]="isLoading">
+            Continue as Guest
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

@@ -1,0 +1,7 @@
+{
+  "name": "Kai",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}

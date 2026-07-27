@@ -1,0 +1,178 @@
+<ion-modal [isOpen]="true" [backdropDismiss]="canDismiss">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>{{ isEditMode ? 'Edit Your Profile' : 'Complete Your Profile' }}</ion-title>
+        <ion-button *ngIf="canDismiss" slot="end" fill="clear" (click)="onClose()">
+          <ion-icon name="close-outline"></ion-icon>
+        </ion-button>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="ion-padding">
+      <div class="profile-setup-container">
+        <div class="welcome-message" *ngIf="!isEditMode">
+          <h2>Welcome to the Martial Arts Community!</h2>
+          <p>Let's set up your profile so others can connect with you.</p>
+        </div>
+
+        <div class="welcome-message" *ngIf="isEditMode">
+          <h2>Update Your Profile</h2>
+          <p>Keep your information current so the community can stay connected.</p>
+        </div>
+
+        <form (ngSubmit)="onSubmit()">
+          <!-- Name -->
+          <ion-item>
+            <ion-label position="stacked">Full Name *</ion-label>
+            <ion-input
+              [(ngModel)]="name"
+              name="name"
+              type="text"
+              placeholder="Enter your full name"
+              required
+              [disabled]="isSubmitting"
+            >
+              <ion-icon name="person-outline" slot="start"></ion-icon>
+            </ion-input>
+          </ion-item>
+
+          <!-- Handle -->
+          <ion-item>
+            <ion-label position="stacked">Handle *</ion-label>
+            <ion-input
+              [(ngModel)]="handle"
+              name="handle"
+              type="text"
+              placeholder="@yourhandle"
+              required
+              [disabled]="isSubmitting"
+              (ionInput)="onHandleInput($event)"
+            >
+              <ion-icon name="at-outline" slot="start"></ion-icon>
+            </ion-input>
+            <ion-text color="medium" slot="helper">
+              <small>This will be displayed in the title bar (e.g., @john_aikido)</small>
+            </ion-text>
+          </ion-item>
+
+          <!-- Username -->
+          <ion-item>
+            <ion-label position="stacked">Username *</ion-label>
+            <ion-input
+              [(ngModel)]="username"
+              name="username"
+              type="text"
+              placeholder="Choose a unique username"
+              required
+              [disabled]="isSubmitting"
+            >
+              <ion-icon name="person-outline" slot="start"></ion-icon>
+            </ion-input>
+          </ion-item>
+
+          <!-- Email (read-only, only shown in create mode) -->
+          <ion-item *ngIf="!isEditMode && email">
+            <ion-label position="stacked">Email</ion-label>
+            <ion-input
+              [(ngModel)]="email"
+              name="email"
+              type="email"
+              [readonly]="true"
+              [disabled]="true"
+            >
+              <ion-icon name="mail-outline" slot="start"></ion-icon>
+            </ion-input>
+          </ion-item>
+
+          <!-- Location -->
+          <ion-item>
+            <ion-label position="stacked">Location *</ion-label>
+            <ion-input
+              [(ngModel)]="location"
+              name="location"
+              type="text"
+              placeholder="City, State/Country"
+              required
+              [disabled]="isSubmitting"
+            >
+              <ion-icon name="location-outline" slot="start"></ion-icon>
+            </ion-input>
+          </ion-item>
+
+          <!-- Rank (Optional) -->
+          <ion-item>
+            <ion-label position="stacked">Rank (Optional)</ion-label>
+            <ion-input
+              [(ngModel)]="rank"
+              name="rank"
+              type="text"
+              placeholder="e.g., 2nd Kyu, Black Belt"
+              [disabled]="isSubmitting"
+            >
+            </ion-input>
+          </ion-item>
+
+          <!-- Experience (Optional) -->
+          <ion-item>
+            <ion-label position="stacked">Experience (Optional)</ion-label>
+            <ion-input
+              [(ngModel)]="experience"
+              name="experience"
+              type="text"
+              placeholder="e.g., 3 years, Beginner"
+              [disabled]="isSubmitting"
+            >
+            </ion-input>
+          </ion-item>
+
+          <!-- Bio -->
+          <ion-item>
+            <ion-label position="stacked">Bio (Optional)</ion-label>
+            <ion-textarea
+              [(ngModel)]="bio"
+              name="bio"
+              rows="4"
+              placeholder="Tell us about yourself and your martial arts journey..."
+              [disabled]="isSubmitting"
+            ></ion-textarea>
+          </ion-item>
+
+          <!-- Error Message -->
+          <ion-text color="danger" *ngIf="errorMessage">
+            <p class="error-message">{{ errorMessage }}</p>
+          </ion-text>
+
+          <!-- Submit Button -->
+          <div class="button-container">
+            <ion-button
+              expand="block"
+              type="submit"
+              [disabled]="isSubmitting || !name || !username || !handle || !location"
+            >
+              <ion-spinner *ngIf="isSubmitting" name="crescent"></ion-spinner>
+              <span *ngIf="!isSubmitting">{{ isEditMode ? 'Save Changes' : 'Create Profile' }}</span>
+            </ion-button>
+
+            <ion-button
+              *ngIf="canDismiss"
+              expand="block"
+              fill="outline"
+              (click)="onSkip()"
+              [disabled]="isSubmitting"
+            >
+              {{ isEditMode ? 'Cancel' : 'Skip for Now' }}
+            </ion-button>
+          </div>
+
+          <div class="info-text">
+            <ion-text color="medium">
+              <p>* Required fields</p>
+              <p *ngIf="!isEditMode">You can update your profile anytime from the Profile page.</p>
+            </ion-text>
+          </div>
+        </form>
+      </div>
+    </ion-content>
+  </ng-template>
+</ion-modal>

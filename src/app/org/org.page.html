@@ -1,0 +1,78 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dash/orgs" (click)="onBack()"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ organization?.name || ('org_detail.title' | translate) }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">{{ organization?.name || ('org_detail.title' | translate) }}</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div *ngIf="organizationInfo" class="organization-container">
+    
+    <!-- Content with Chat Layout -->
+    <div class="content-with-chat">
+      
+      <!-- Main Content Column -->
+      <div class="main-content">
+        <app-organization
+          [organization]="organizationInfo"
+          [showHero]="true"
+          [showMission]="true"
+          [showStatistics]="true"
+          [showPrograms]="true"
+          [showMemberDojos]="true"
+          [showEvents]="true"
+          [showLineage]="true"
+          [showPhilosophy]="true"
+          [showContact]="true"
+          [compact]="false"
+          (dojoClick)="onDojoClick($event)"
+          (eventClick)="onEventClick($event)"
+          (contactClick)="onContactClick($event)"
+          (websiteClick)="onWebsiteClick($event)"
+          (emailClick)="onEmailClick($event)"
+          (socialClick)="onSocialClick($event)"
+          (findDojoClick)="onFindDojoClick()">
+        </app-organization>
+      </div>
+
+      <!-- Chat Column -->
+      <div class="chat-sidebar">
+        <app-chat-messages
+          [studioId]="organizationInfo.id"
+          [studioName]="organizationInfo.name + ' Community'"
+          [maxHeight]="'calc(100vh - 200px)'"
+          [showHeader]="true"
+          [compact]="false"
+          [canLeave]="true"
+          [canMute]="true"
+          (messageClick)="onChatMessageClick($event)"
+          (sendMessage)="onSendChatMessage($event)"
+          (leaveChat)="onLeaveChat($event)"
+          (muteChat)="onMuteChat($event)"
+          (chatInfo)="onChatInfo($event)">
+        </app-chat-messages>
+      </div>
+      
+    </div>
+    
+  </div>
+
+  <div *ngIf="!organizationInfo" class="error-state">
+    <ion-icon name="business" color="medium"></ion-icon>
+    <h3>{{ 'org_detail.not_found' | translate }}</h3>
+    <p>{{ 'org_detail.not_found_message' | translate }}</p>
+    <ion-button fill="outline" color="primary" (click)="onBack()">
+      <ion-icon name="arrow-back" slot="start"></ion-icon>
+      {{ 'org_detail.back_button' | translate }}
+    </ion-button>
+  </div>
+
+</ion-content>

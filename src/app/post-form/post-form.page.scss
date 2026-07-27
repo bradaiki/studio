@@ -1,0 +1,28 @@
+/* Ensure content appears below main header */
+ion-content {
+  --padding-top: 16px;
+}
+
+ion-item {
+  --padding-start: 16px;
+  --inner-padding-end: 16px;
+  margin-bottom: 8px;
+}
+
+ion-textarea {
+  --padding-top: 8px;
+  --padding-bottom: 8px;
+}
+
+ion-input {
+  --padding-top: 8px;
+  --padding-bottom: 8px;
+}
+
+.ion-padding {
+  padding-top: 24px;
+}
+
+ion-button {
+  margin-bottom: 8px;
+}

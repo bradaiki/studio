@@ -1,0 +1,58 @@
+Fix: Resolve circular dependency and add IAM permissions for GraphQL access
+
+## Problems Fixed
+1. Circular dependency between auth and data stacks
+2. 401 Unauthorized errors for guest users accessing GraphQL API
+3. Missing IAM permissions for unauthenticated role
+
+## Root Causes
+- Original code referenced data stack ARN from auth stack (circular dependency)
+- Unauthenticated IAM role had no policies attached
+- App wasn't obtaining guest credentials before API calls
+
+## Solutions Applied
+
+### 1. Circular Dependency (amplify/backend.ts)
+Changed from specific resource ARN to wildcard:
+- Before: `resources: ['${backend.data.resources.graphqlApi.arn}/types/Query/*']`
+- After: `resources: ['*']`
+
+This breaks the circular dependency while maintaining security through
+schema-level authorization.
+
+### 2. IAM Permissions (amplify/backend.ts)
+Added policies for both authenticated and unauthenticated roles:
+```typescript
+backend.auth.resources.unauthenticatedUserIamRole.addToPrincipalPolicy(
+  new PolicyStatement({
+    effect: Effect.ALLOW,
+    actions: ['appsync:GraphQL'],
+    resources: ['*'],
+  })
+);
+```
+
+### 3. Client Authentication (src/app/services/studios.service.ts)
+Added fetchAuthSession() before API calls to obtain guest credentials.
+
+## Security
+- IAM policy is permissive (allows AppSync access)
+- Schema authorization is restrictive (controls operations)
+- Guests can only READ, authenticated users can CRUD
+- Security enforced at GraphQL schema level
+
+## Testing
+✅ Sandbox deploys without circular dependency errors
+✅ Backend synthesized successfully
+✅ Type checks passed
+✅ Ready for testing with: ionic serve
+
+## Files Changed
+- amplify/backend.ts
+- src/app/services/studios.service.ts
+- Documentation files (AWS_404_FIX.md, DEPLOY_AUTH_FIX.md, etc.)
+
+## Verification
+Run: ionic serve
+Check console for: "[Studios Service] Auth session obtained: Yes"
+Check Network tab for: 200 responses (not 401)

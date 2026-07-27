@@ -1,0 +1,250 @@
+.chat-invitation-notification {
+  width: 100%;
+  
+  .invitation-card {
+    margin: 0;
+    --border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: 1px solid var(--ion-color-light-shade);
+    
+    .invitation-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      
+      .invitation-icon {
+        font-size: 2rem;
+        color: var(--ion-color-primary);
+        margin-top: 0.25rem;
+        flex-shrink: 0;
+      }
+      
+      .header-content {
+        flex: 1;
+        
+        ion-card-title {
+          font-size: 1.2rem;
+          font-weight: 600;
+          margin-bottom: 0.25rem;
+          color: var(--ion-color-dark);
+        }
+        
+        ion-card-subtitle {
+          font-size: 0.9rem;
+          color: var(--ion-color-medium);
+          margin: 0;
+        }
+      }
+      
+      .status-chip {
+        font-size: 0.75rem;
+        font-weight: 500;
+        --border-radius: 12px;
+        flex-shrink: 0;
+        
+        ion-icon {
+          font-size: 0.8rem;
+        }
+      }
+    }
+    
+    ion-card-content {
+      padding-top: 0;
+      
+      .invitation-message {
+        margin-bottom: 1.5rem;
+        
+        .main-message {
+          font-size: 1rem;
+          line-height: 1.5;
+          color: var(--ion-color-dark);
+          margin: 0 0 1rem 0;
+        }
+        
+        .custom-message {
+          background: var(--ion-color-light);
+          padding: 1rem;
+          border-radius: 8px;
+          display: flex;
+          gap: 0.75rem;
+          align-items: flex-start;
+          
+          ion-icon {
+            color: var(--ion-color-medium);
+            font-size: 1.1rem;
+            margin-top: 0.1rem;
+            flex-shrink: 0;
+          }
+          
+          p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--ion-color-dark);
+            line-height: 1.4;
+            font-style: italic;
+          }
+        }
+      }
+      
+      .invitation-details {
+        margin-bottom: 1.5rem;
+        
+        .detail-item {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          margin-bottom: 0.5rem;
+          font-size: 0.85rem;
+          color: var(--ion-color-medium);
+          
+          &:last-child {
+            margin-bottom: 0;
+          }
+          
+          ion-icon {
+            font-size: 0.9rem;
+            flex-shrink: 0;
+          }
+        }
+      }
+      
+      .expired-notice,
+      .processed-notice {
+        background: var(--ion-color-light);
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        display: flex;
+        gap: 0.75rem;
+        align-items: flex-start;
+        
+        ion-icon {
+          font-size: 1.2rem;
+          margin-top: 0.1rem;
+          flex-shrink: 0;
+        }
+        
+        p {
+          margin: 0;
+          font-size: 0.9rem;
+          line-height: 1.4;
+        }
+      }
+      
+      .expired-notice {
+        border-left: 4px solid var(--ion-color-warning);
+        
+        ion-icon {
+          color: var(--ion-color-warning);
+        }
+        
+        p {
+          color: var(--ion-color-warning-shade);
+        }
+      }
+      
+      .processed-notice {
+        border-left: 4px solid var(--ion-color-medium);
+        
+        ion-icon {
+          color: var(--ion-color-medium);
+        }
+        
+        p {
+          color: var(--ion-color-medium-shade);
+        }
+      }
+      
+      .action-buttons {
+        display: flex;
+        gap: 0.75rem;
+        justify-content: flex-end;
+        margin-top: 1.5rem;
+        
+        ion-button {
+          --border-radius: 8px;
+          font-weight: 500;
+          
+          &[fill="clear"] {
+            --color: var(--ion-color-medium);
+            
+            &:hover {
+              --color: var(--ion-color-medium-shade);
+            }
+          }
+          
+          &[fill="solid"] {
+            --box-shadow: 0 2px 8px rgba(var(--ion-color-primary-rgb), 0.3);
+          }
+        }
+      }
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .chat-invitation-notification {
+    .invitation-card {
+      .invitation-header {
+        flex-direction: column;
+        gap: 0.75rem;
+        
+        .status-chip {
+          align-self: flex-start;
+        }
+      }
+      
+      ion-card-content {
+        .action-buttons {
+          flex-direction: column;
+          
+          ion-button {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Dark mode support
+@media (prefers-color-scheme: dark) {
+  .chat-invitation-notification {
+    .invitation-card {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      border-color: var(--ion-color-dark-shade);
+      
+      ion-card-content {
+        .invitation-message {
+          .custom-message {
+            background: var(--ion-color-dark);
+          }
+        }
+        
+        .expired-notice,
+        .processed-notice {
+          background: var(--ion-color-dark);
+        }
+      }
+    }
+  }
+}
+
+// Animation for card appearance
+.chat-invitation-notification {
+  .invitation-card {
+    animation: slideInUp 0.3s ease-out;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

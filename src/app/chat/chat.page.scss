@@ -1,0 +1,111 @@
+.center-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 30%;
+  color: var(--ion-color-medium);
+  &.small { padding-top: 15%; }
+  .empty-icon { font-size: 48px; margin-bottom: 12px; }
+  .hint { font-size: 13px; opacity: 0.7; }
+}
+
+// New chat bar
+.new-chat-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--ion-color-light);
+  ion-input { flex: 1; }
+}
+
+// Group headers
+.group-header {
+  --background: var(--ion-color-light-tint);
+  --color: var(--ion-color-primary);
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  ion-icon { font-size: 18px; margin-right: 8px; }
+}
+
+// Chat list items
+.chat-list-item {
+  --padding-start: 12px;
+  transition: background 0.4s;
+  &.highlight {
+    --background: var(--ion-color-primary-tint);
+    animation: flash 1.5s ease-out;
+  }
+  .chat-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--ion-color-light);
+    border-radius: 50%;
+    width: 40px; height: 40px;
+    ion-icon { font-size: 20px; color: var(--ion-color-medium); }
+  }
+  h2 { font-weight: 600; font-size: 15px; margin: 0; }
+  .chat-desc {
+    font-size: 13px;
+    color: var(--ion-color-medium);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .chat-time {
+    font-size: 12px;
+    color: var(--ion-color-medium);
+    text-align: right;
+    min-width: auto;
+  }
+}
+
+@keyframes flash {
+  0% { --background: var(--ion-color-primary-tint); }
+  100% { --background: transparent; }
+}
+
+// Messages
+.messages-container {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 8px;
+}
+
+.message-row {
+  display: flex;
+  margin-bottom: 8px;
+  &.own { justify-content: flex-end; }
+  &.other { justify-content: flex-start; }
+}
+
+.message-bubble {
+  max-width: 75%;
+  padding: 10px 14px;
+  border-radius: 16px;
+  .own & {
+    background: var(--ion-color-primary);
+    color: #fff;
+    border-bottom-right-radius: 4px;
+  }
+  .other & {
+    background: var(--ion-color-light);
+    color: var(--ion-text-color);
+    border-bottom-left-radius: 4px;
+  }
+}
+
+.sender-name { font-size: 11px; font-weight: 600; margin-bottom: 2px; opacity: 0.7; }
+.message-text { font-size: 15px; line-height: 1.4; word-break: break-word; }
+.message-time { font-size: 10px; opacity: 0.6; margin-top: 4px; text-align: right; }
+
+// Input bar
+.message-input-row {
+  display: flex;
+  align-items: center;
+  padding: 4px 8px;
+  .message-input { flex: 1; }
+}

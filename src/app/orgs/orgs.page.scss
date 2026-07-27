@@ -1,0 +1,130 @@
+/* Ensure content appears below main header */
+ion-content {
+  --background: var(--ion-color-light);
+  --padding-top: 16px;
+}
+
+/* Orgs page specific styles */
+.organizations-container {
+  padding: 0 16px 16px 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Filter Indicator */
+.filter-indicator {
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: center;
+
+  ion-chip {
+    --background: var(--ion-color-primary);
+    --color: white;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 20px;
+
+    ion-icon {
+      font-size: 1rem;
+      margin-right: 4px;
+    }
+
+    ion-icon:last-child {
+      margin-left: 8px;
+      margin-right: 0;
+      cursor: pointer;
+      opacity: 0.8;
+      transition: opacity 0.2s ease;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+}
+
+/* Search Section */
+.search-section {
+  margin-bottom: 16px;
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  &.filtered {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+}
+
+/* Results Info */
+.results-info {
+  margin: 8px 0 16px 0;
+  text-align: center;
+}
+
+.results-info p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+/* Organizations List */
+.organizations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.organization-item {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  border-radius: 16px;
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--ion-color-medium);
+}
+
+.empty-state ion-icon {
+  font-size: 4rem;
+  margin-bottom: 16px;
+}
+
+.empty-state h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+.empty-state p {
+  font-size: 1rem;
+  margin: 0 0 24px 0;
+}
+
+/* Searchbar Styling */
+ion-searchbar {
+  --background: var(--ion-color-light-tint);
+  --border-radius: 12px;
+  --box-shadow: none;
+  --icon-color: var(--ion-color-primary);
+  --placeholder-color: var(--ion-color-medium);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .organizations-container {
+    padding: 0 8px 16px 8px;
+  }
+
+  .search-section {
+    padding: 12px;
+  }
+}

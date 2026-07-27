@@ -1,0 +1,122 @@
+<!-- Hidden Post Placeholder -->
+<ion-card *ngIf="post.isHidden" class="hidden-post">
+  <ion-card-content>
+    <div class="hidden-content">
+      <ion-icon name="eye-off" color="medium"></ion-icon>
+      <ion-text color="medium">
+        <p>{{ 'post_component.hidden' | translate }}</p>
+      </ion-text>
+    </div>
+  </ion-card-content>
+</ion-card>
+
+<!-- Normal Post (when not hidden) -->
+<ion-card *ngIf="!post.isHidden" [class.reported-post]="post.isReported">
+  <!-- Moderation Warning (if reported) -->
+  <div *ngIf="post.isReported" class="moderation-warning">
+    <ion-icon name="flag" color="warning"></ion-icon>
+    <ion-text color="warning">
+      <small>{{ 'post_component.reported' | translate }}</small>
+    </ion-text>
+  </div>
+
+  <!-- Post Header -->
+  <ion-card-header>
+    <ion-item lines="none" class="post-header">
+      <ion-avatar slot="start" (click)="onProfileClick($event)" class="clickable-avatar">
+        <img [src]="post.author.avatar" [alt]="post.author.name" />
+      </ion-avatar>
+      <ion-label>
+        <div class="author-info">
+          <h3 (click)="onProfileClick($event)" class="clickable-name">
+            {{ post.author.name }}
+            <ion-icon 
+              *ngIf="post.author.verified" 
+              name="checkmark-circle" 
+              color="primary" 
+              class="verified-badge">
+            </ion-icon>
+          </h3>
+          <div class="author-meta">
+            <ion-badge [color]="getEntityColor()" class="entity-badge">
+              <ion-icon [name]="getEntityIcon()"></ion-icon>
+              {{ getEntityLabel() }}
+            </ion-badge>
+            <ion-badge 
+              *ngIf="isStudioMate()" 
+              color="tertiary" 
+              class="studio-mate-badge clickable-badge"
+              (click)="onStudioMateClick($event)">
+              <ion-icon name="people"></ion-icon>
+              {{ 'post_component.studio_mate' | translate }}
+            </ion-badge>
+            <span class="username">@{{ post.author.username }}</span>
+            <span class="timestamp">{{ getTimeAgo(post.timestamp) }}</span>
+          </div>
+          <p *ngIf="post.author.location" class="location">{{ post.author.location }}</p>
+        </div>
+      </ion-label>
+      <ion-button slot="end" fill="clear" size="small" (click)="onMore()">
+        <ion-icon name="ellipsis-horizontal" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-card-header>
+
+  <!-- Post Content -->
+  <ion-card-content>
+    <ion-text>
+      <p class="post-content">{{ post.content }}</p>
+    </ion-text>
+
+    <!-- Post Image (if exists) -->
+    <div *ngIf="post.image" class="post-image">
+      <img [src]="post.image" [alt]="'Post by ' + post.author.name" />
+    </div>
+
+    <!-- Post Type Badge -->
+    <div *ngIf="post.postType" class="post-type">
+      <ion-chip [color]="getPostTypeColor()" outline="true" class="post-type-chip">
+        {{ post.postType | titlecase }}
+      </ion-chip>
+    </div>
+
+    <!-- Related Entity -->
+    <div *ngIf="post.relatedEntity" class="related-entity">
+      <ion-text color="medium">
+        <small>Related to: {{ post.relatedEntity.name }}</small>
+      </ion-text>
+    </div>
+
+    <!-- Tags -->
+    <div *ngIf="post.tags && post.tags.length > 0" class="post-tags">
+      <ion-chip *ngFor="let tag of post.tags" color="primary" outline="true">
+        #{{ tag }}
+      </ion-chip>
+    </div>
+
+    <!-- Post Actions -->
+    <div class="post-actions">
+      <ion-button 
+        fill="clear" 
+        size="small" 
+        [color]="post.isLiked ? 'danger' : 'medium'"
+        (click)="onLike()">
+        <ion-icon 
+          [name]="post.isLiked ? 'heart' : 'heart-outline'" 
+          slot="start">
+        </ion-icon>
+        {{ post.likes }}
+      </ion-button>
+
+      <ion-button fill="clear" size="small" color="medium" (click)="onComment()">
+        <ion-icon name="chatbubble-outline" slot="start"></ion-icon>
+        {{ post.comments }}
+      </ion-button>
+
+      <ion-button fill="clear" size="small" color="medium" (click)="onShare()">
+        <ion-icon name="share-outline" slot="start"></ion-icon>
+        {{ 'post_component.share' | translate }}
+      </ion-button>
+    </div>
+  </ion-card-content>
+</ion-card>

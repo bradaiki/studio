@@ -1,0 +1,553 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dash/studios"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ isEditMode ? 'Edit Studio' : 'Create Studio' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="onSubmit()" [disabled]="isSubmitting">
+        <ion-icon name="save"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <form [formGroup]="studioForm" (ngSubmit)="onSubmit()">
+    
+    <!-- Basic Information -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Basic Information</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item>
+          <ion-label position="stacked">Studio Name *</ion-label>
+          <ion-input 
+            formControlName="name" 
+            placeholder="Enter studio name"
+            [class.ion-invalid]="studioForm.get('name')?.invalid && studioForm.get('name')?.touched">
+          </ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Location *</ion-label>
+          <ion-input 
+            formControlName="location" 
+            placeholder="City, State"
+            [class.ion-invalid]="studioForm.get('location')?.invalid && studioForm.get('location')?.touched">
+          </ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Address *</ion-label>
+          <ion-textarea 
+            formControlName="address" 
+            placeholder="Full address"
+            [class.ion-invalid]="studioForm.get('address')?.invalid && studioForm.get('address')?.touched">
+          </ion-textarea>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Phone</ion-label>
+          <ion-input formControlName="phone" placeholder="(555) 123-4567"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Email</ion-label>
+          <ion-input 
+            formControlName="email" 
+            type="email" 
+            placeholder="info@studio.com"
+            [class.ion-invalid]="studioForm.get('email')?.invalid && studioForm.get('email')?.touched">
+          </ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Website</ion-label>
+          <ion-input formControlName="website" placeholder="studio.com"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Tagline</ion-label>
+          <ion-input formControlName="tagline" placeholder="Brief studio motto"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Description *</ion-label>
+          <ion-textarea 
+            formControlName="description" 
+            placeholder="Detailed studio description"
+            rows="4"
+            [class.ion-invalid]="studioForm.get('description')?.invalid && studioForm.get('description')?.touched">
+          </ion-textarea>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Hero Image URL</ion-label>
+          <ion-input formControlName="heroImage" placeholder="https://..."></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Established Year</ion-label>
+          <ion-input formControlName="established" placeholder="2010"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Member Count</ion-label>
+          <ion-input 
+            formControlName="memberCount" 
+            type="number" 
+            placeholder="0"
+            [class.ion-invalid]="studioForm.get('memberCount')?.invalid && studioForm.get('memberCount')?.touched">
+          </ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-checkbox formControlName="verified"></ion-checkbox>
+          <ion-label>Verified Studio</ion-label>
+        </ion-item>
+
+        <ion-item>
+          <ion-checkbox formControlName="isMember"></ion-checkbox>
+          <ion-label>I am a member</ion-label>
+        </ion-item>
+
+        <ion-item>
+          <ion-checkbox formControlName="isInstructor"></ion-checkbox>
+          <ion-label>I am an instructor</ion-label>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Leadership Selection -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Studio Leadership</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item>
+          <ion-label position="stacked">Head Instructor</ion-label>
+          <ion-select formControlName="headInstructorId" placeholder="Select Head Instructor">
+            <ion-select-option value="">None Selected</ion-select-option>
+            <ion-select-option *ngFor="let instructor of instructors.controls; let i = index" [value]="instructor.get('id')?.value">
+              {{ instructor.get('name')?.value }} ({{ instructor.get('rank')?.value }})
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Studio Chief</ion-label>
+          <ion-select formControlName="studioChiefId" placeholder="Select Studio Chief">
+            <ion-select-option value="">None Selected</ion-select-option>
+            <ion-select-option *ngFor="let instructor of instructors.controls; let i = index" [value]="instructor.get('id')?.value">
+              {{ instructor.get('name')?.value }} ({{ instructor.get('rank')?.value }})
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Instructors -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>
+          Instructors
+          <ion-button fill="clear" size="small" (click)="addInstructor()">
+            <ion-icon name="add"></ion-icon>
+          </ion-button>
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div formArrayName="instructors">
+          <div *ngFor="let instructor of instructors.controls; let i = index" [formGroupName]="i">
+            <ion-card>
+              <ion-card-header>
+                <ion-card-title>
+                  Instructor {{ i + 1 }}
+                  <ion-button fill="clear" size="small" color="danger" (click)="removeInstructor(i)">
+                    <ion-icon name="remove"></ion-icon>
+                  </ion-button>
+                </ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <ion-item>
+                  <ion-label position="stacked">Name *</ion-label>
+                  <ion-input formControlName="name" placeholder="Instructor name"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label position="stacked">Username *</ion-label>
+                  <ion-input formControlName="username" placeholder="username"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label position="stacked">Title</ion-label>
+                  <ion-input formControlName="title" placeholder="Chief Instructor"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label position="stacked">Rank</ion-label>
+                  <ion-input formControlName="rank" placeholder="6th Dan"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label position="stacked">Bio</ion-label>
+                  <ion-textarea formControlName="bio" placeholder="Instructor biography"></ion-textarea>
+                </ion-item>
+                <ion-item>
+                  <ion-label position="stacked">Image URL</ion-label>
+                  <ion-input formControlName="image" placeholder="https://..."></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label position="stacked">Experience</ion-label>
+                  <ion-input formControlName="experience" placeholder="20+ years"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label position="stacked">Email</ion-label>
+                  <ion-input formControlName="email" type="email" placeholder="instructor@studio.com"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label position="stacked">Phone</ion-label>
+                  <ion-input formControlName="phone" placeholder="(555) 123-4567"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-checkbox formControlName="isActive"></ion-checkbox>
+                  <ion-label>Active Instructor</ion-label>
+                </ion-item>
+                
+                <!-- Specialties -->
+                <div formArrayName="specialties">
+                  <ion-label>Specialties:</ion-label>
+                  <div *ngFor="let specialty of getInstructorSpecialties(i).controls; let j = index">
+                    <ion-item>
+                      <ion-input [formControlName]="j" placeholder="Specialty (e.g., Youth Programs)"></ion-input>
+                      <ion-button fill="clear" size="small" color="danger" (click)="removeInstructorSpecialty(i, j)">
+                        <ion-icon name="remove"></ion-icon>
+                      </ion-button>
+                    </ion-item>
+                  </div>
+                  <ion-button fill="clear" size="small" (click)="addInstructorSpecialty(i)">
+                    <ion-icon name="add"></ion-icon>
+                    Add Specialty
+                  </ion-button>
+                </div>
+
+                <!-- Certifications -->
+                <div formArrayName="certifications">
+                  <ion-label>Certifications:</ion-label>
+                  <div *ngFor="let certification of getInstructorCertifications(i).controls; let j = index">
+                    <ion-item>
+                      <ion-input [formControlName]="j" placeholder="Certification (e.g., Aikikai Foundation)"></ion-input>
+                      <ion-button fill="clear" size="small" color="danger" (click)="removeInstructorCertification(i, j)">
+                        <ion-icon name="remove"></ion-icon>
+                      </ion-button>
+                    </ion-item>
+                  </div>
+                  <ion-button fill="clear" size="small" (click)="addInstructorCertification(i)">
+                    <ion-icon name="add"></ion-icon>
+                    Add Certification
+                  </ion-button>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Schedule -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>
+          Class Schedule
+          <ion-button fill="clear" size="small" (click)="addScheduleItem()">
+            <ion-icon name="add"></ion-icon>
+          </ion-button>
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <!-- Calendar View -->
+        <div class="calendar-container">
+          <ion-datetime
+            #calendar
+            presentation="date"
+            [multiple]="true"
+            [highlightedDates]="getHighlightedDates()"
+            (ionChange)="onCalendarDateChange($event)">
+          </ion-datetime>
+        </div>
+
+        <!-- Schedule Items -->
+        <div formArrayName="schedule">
+          <div *ngFor="let scheduleItem of schedule.controls; let i = index" [formGroupName]="i">
+            <ion-card>
+              <ion-card-header>
+                <ion-card-title>
+                  {{ scheduleItem.get('title')?.value || 'Class ' + (i + 1) }}
+                  <ion-button fill="clear" size="small" color="danger" (click)="removeScheduleItem(i)">
+                    <ion-icon name="remove"></ion-icon>
+                  </ion-button>
+                </ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <ion-item>
+                  <ion-label position="stacked">Class Title *</ion-label>
+                  <ion-input formControlName="title" placeholder="Adult Aikido"></ion-input>
+                </ion-item>
+
+                <ion-item>
+                  <ion-label position="stacked">Start Date *</ion-label>
+                  <ion-datetime 
+                    formControlName="startDate" 
+                    presentation="date"
+                    placeholder="Select start date">
+                  </ion-datetime>
+                </ion-item>
+
+                <ion-item>
+                  <ion-label position="stacked">End Date</ion-label>
+                  <ion-datetime 
+                    formControlName="endDate" 
+                    presentation="date"
+                    placeholder="Select end date (optional)">
+                  </ion-datetime>
+                </ion-item>
+
+                <ion-item>
+                  <ion-label position="stacked">Start Time *</ion-label>
+                  <ion-datetime 
+                    formControlName="startTime" 
+                    presentation="time"
+                    placeholder="Select start time">
+                  </ion-datetime>
+                </ion-item>
+
+                <ion-item>
+                  <ion-label position="stacked">End Time *</ion-label>
+                  <ion-datetime 
+                    formControlName="endTime" 
+                    presentation="time"
+                    placeholder="Select end time">
+                  </ion-datetime>
+                </ion-item>
+
+                <ion-item>
+                  <ion-label position="stacked">Instructor *</ion-label>
+                  <ion-select formControlName="instructor" placeholder="Select instructor">
+                    <ion-select-option *ngFor="let instructor of instructors.controls; let j = index" 
+                                       [value]="instructor.get('name')?.value">
+                      {{ instructor.get('name')?.value }} ({{ instructor.get('rank')?.value }})
+                    </ion-select-option>
+                    <ion-select-option value="Various">Various</ion-select-option>
+                  </ion-select>
+                </ion-item>
+
+                <ion-item>
+                  <ion-label position="stacked">Level *</ion-label>
+                  <ion-select formControlName="level" placeholder="Select level">
+                    <ion-select-option value="Beginner">Beginner</ion-select-option>
+                    <ion-select-option value="Intermediate">Intermediate</ion-select-option>
+                    <ion-select-option value="Advanced">Advanced</ion-select-option>
+                    <ion-select-option value="All Levels">All Levels</ion-select-option>
+                    <ion-select-option value="1st Kyu & Above">1st Kyu & Above</ion-select-option>
+                    <ion-select-option value="2nd Kyu & Above">2nd Kyu & Above</ion-select-option>
+                    <ion-select-option value="3rd Kyu & Above">3rd Kyu & Above</ion-select-option>
+                  </ion-select>
+                </ion-item>
+
+                <ion-item>
+                  <ion-label position="stacked">Description</ion-label>
+                  <ion-textarea formControlName="description" placeholder="Class description"></ion-textarea>
+                </ion-item>
+
+                <ion-item>
+                  <ion-label position="stacked">Location</ion-label>
+                  <ion-input formControlName="location" placeholder="Main Dojo, Room 2, etc."></ion-input>
+                </ion-item>
+
+                <ion-item>
+                  <ion-checkbox formControlName="isRecurring"></ion-checkbox>
+                  <ion-label>Recurring Class</ion-label>
+                </ion-item>
+
+                <div *ngIf="scheduleItem.get('isRecurring')?.value">
+                  <ion-item>
+                    <ion-label position="stacked">Recurrence Pattern</ion-label>
+                    <ion-select formControlName="recurrencePattern" placeholder="Select pattern">
+                      <ion-select-option value="weekly">Weekly</ion-select-option>
+                      <ion-select-option value="daily">Daily</ion-select-option>
+                      <ion-select-option value="monthly">Monthly</ion-select-option>
+                    </ion-select>
+                  </ion-item>
+
+                  <ion-item>
+                    <ion-label position="stacked">Recurrence End Date</ion-label>
+                    <ion-datetime 
+                      formControlName="recurrenceEnd" 
+                      presentation="date"
+                      placeholder="Select end date for recurrence">
+                    </ion-datetime>
+                  </ion-item>
+                </div>
+
+                <ion-item>
+                  <ion-label position="stacked">Calendar Color</ion-label>
+                  <ion-select formControlName="color" placeholder="Select color">
+                    <ion-select-option value="#3880ff">Blue</ion-select-option>
+                    <ion-select-option value="#10dc60">Green</ion-select-option>
+                    <ion-select-option value="#f04141">Red</ion-select-option>
+                    <ion-select-option value="#ffce00">Yellow</ion-select-option>
+                    <ion-select-option value="#7044ff">Purple</ion-select-option>
+                    <ion-select-option value="#f25454">Orange</ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-card-content>
+            </ion-card>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Pricing -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>
+          Pricing Options
+          <ion-button fill="clear" size="small" (click)="addPricingOption()">
+            <ion-icon name="add"></ion-icon>
+          </ion-button>
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div formArrayName="pricing">
+          <div *ngFor="let pricingOption of pricing.controls; let i = index" [formGroupName]="i">
+            <ion-card>
+              <ion-card-header>
+                <ion-card-title>
+                  Pricing Option {{ i + 1 }}
+                  <ion-button fill="clear" size="small" color="danger" (click)="removePricingOption(i)">
+                    <ion-icon name="remove"></ion-icon>
+                  </ion-button>
+                </ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <ion-item>
+                  <ion-label position="stacked">Name *</ion-label>
+                  <ion-input formControlName="name" placeholder="Monthly"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label position="stacked">Price *</ion-label>
+                  <ion-input formControlName="price" placeholder="$120"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label position="stacked">Description</ion-label>
+                  <ion-input formControlName="description" placeholder="Unlimited classes"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-checkbox formControlName="featured"></ion-checkbox>
+                  <ion-label>Featured Option</ion-label>
+                </ion-item>
+                
+                <!-- Features -->
+                <div formArrayName="features">
+                  <ion-label>Features:</ion-label>
+                  <div *ngFor="let feature of getPricingFeatures(i).controls; let j = index">
+                    <ion-item>
+                      <ion-input [formControlName]="j" placeholder="Feature description"></ion-input>
+                      <ion-button fill="clear" size="small" color="danger" (click)="removePricingFeature(i, j)">
+                        <ion-icon name="remove"></ion-icon>
+                      </ion-button>
+                    </ion-item>
+                  </div>
+                  <ion-button fill="clear" size="small" (click)="addPricingFeature(i)">
+                    <ion-icon name="add"></ion-icon>
+                    Add Feature
+                  </ion-button>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Benefits -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>
+          Studio Benefits
+          <ion-button fill="clear" size="small" (click)="addBenefit()">
+            <ion-icon name="add"></ion-icon>
+          </ion-button>
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div formArrayName="benefits">
+          <div *ngFor="let benefit of benefits.controls; let i = index" [formGroupName]="i">
+            <ion-card>
+              <ion-card-header>
+                <ion-card-title>
+                  Benefit {{ i + 1 }}
+                  <ion-button fill="clear" size="small" color="danger" (click)="removeBenefit(i)">
+                    <ion-icon name="remove"></ion-icon>
+                  </ion-button>
+                </ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <ion-item>
+                  <ion-label position="stacked">Icon *</ion-label>
+                  <ion-input formControlName="icon" placeholder="fitness"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label position="stacked">Title *</ion-label>
+                  <ion-input formControlName="title" placeholder="Physical Fitness"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label position="stacked">Description *</ion-label>
+                  <ion-textarea formControlName="description" placeholder="Benefit description"></ion-textarea>
+                </ion-item>
+              </ion-card-content>
+            </ion-card>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Action Buttons -->
+    <ion-card>
+      <ion-card-content>
+        <ion-button expand="block" type="submit" [disabled]="isSubmitting">
+          {{ isSubmitting ? 'Saving...' : (isEditMode ? 'Update Studio' : 'Create Studio') }}
+        </ion-button>
+        
+        <ion-button expand="block" fill="outline" (click)="onCancel()">
+          Cancel
+        </ion-button>
+        
+        <ion-button 
+          *ngIf="isEditMode" 
+          expand="block" 
+          color="danger" 
+          fill="outline" 
+          (click)="confirmDelete()">
+          Delete Studio
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+  </form>
+
+  <!-- Delete Confirmation Alert -->
+  <ion-alert
+    [isOpen]="showDeleteAlert"
+    header="Confirm Delete"
+    message="Are you sure you want to delete this studio? This action cannot be undone."
+    [buttons]="deleteAlertButtons">
+  </ion-alert>
+
+  <!-- Toast Messages -->
+  <ion-toast
+    [isOpen]="showToast"
+    [message]="toastMessage"
+    duration="3000"
+    (didDismiss)="onToastDismiss()">
+  </ion-toast>
+
+</ion-content>

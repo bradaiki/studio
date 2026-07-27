@@ -1,0 +1,95 @@
+<div class="chat-invitation-notification">
+  <ion-card class="invitation-card">
+    
+    <!-- Header -->
+    <ion-card-header>
+      <div class="invitation-header">
+        <ion-icon name="mail-outline" class="invitation-icon"></ion-icon>
+        <div class="header-content">
+          <ion-card-title>Chat Invitation</ion-card-title>
+          <ion-card-subtitle>
+            From {{ getInviterDisplayName() }}
+          </ion-card-subtitle>
+        </div>
+        <ion-chip [color]="getStatusColor()" class="status-chip">
+          <ion-icon [name]="getStatusIcon()"></ion-icon>
+          <ion-label>{{ getStatusText() }}</ion-label>
+        </ion-chip>
+      </div>
+    </ion-card-header>
+
+    <!-- Content -->
+    <ion-card-content>
+      
+      <!-- Invitation Message -->
+      <div class="invitation-message">
+        <p class="main-message">
+          <strong>{{ getInviterDisplayName() }}</strong> has invited you to join 
+          <strong>{{ getChatDisplayName() }}</strong>
+        </p>
+        
+        <!-- Custom Message -->
+        <div *ngIf="invitation.message" class="custom-message">
+          <ion-icon name="chatbubble-outline"></ion-icon>
+          <p>{{ invitation.message }}</p>
+        </div>
+      </div>
+
+      <!-- Invitation Details -->
+      <div class="invitation-details">
+        <div class="detail-item">
+          <ion-icon name="calendar-outline"></ion-icon>
+          <span>Invited: {{ getFormattedInvitationDate() }}</span>
+        </div>
+        
+        <div *ngIf="invitation.expiresAt" class="detail-item">
+          <ion-icon name="time-outline"></ion-icon>
+          <span>Expires: {{ getFormattedExpirationDate() }}</span>
+        </div>
+      </div>
+
+      <!-- Expired Notice -->
+      <div *ngIf="isExpired" class="expired-notice">
+        <ion-icon name="warning-outline"></ion-icon>
+        <p>This invitation has expired and can no longer be accepted.</p>
+      </div>
+
+      <!-- Already Processed Notice -->
+      <div *ngIf="invitation.status !== 'pending' && !isExpired" class="processed-notice">
+        <ion-icon [name]="getStatusIcon()"></ion-icon>
+        <p *ngIf="invitation.status === 'accepted'">
+          You have already accepted this invitation.
+        </p>
+        <p *ngIf="invitation.status === 'declined'">
+          You have declined this invitation.
+        </p>
+        <p *ngIf="invitation.status === 'revoked'">
+          This invitation has been revoked.
+        </p>
+      </div>
+
+      <!-- Action Buttons -->
+      <div *ngIf="canActOnInvitation()" class="action-buttons">
+        <ion-button 
+          fill="clear" 
+          color="medium"
+          (click)="declineInvitation()"
+          [disabled]="isProcessing">
+          <ion-icon name="close-outline" slot="start"></ion-icon>
+          Decline
+        </ion-button>
+
+        <ion-button 
+          fill="solid" 
+          color="primary"
+          (click)="acceptInvitation()"
+          [disabled]="isProcessing">
+          <ion-spinner *ngIf="isProcessing" name="crescent" slot="start"></ion-spinner>
+          <ion-icon *ngIf="!isProcessing" name="checkmark-outline" slot="start"></ion-icon>
+          {{ isProcessing ? 'Joining...' : 'Accept' }}
+        </ion-button>
+      </div>
+
+    </ion-card-content>
+  </ion-card>
+</div>

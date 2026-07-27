@@ -1,0 +1,327 @@
+<div class="org-container" [class.compact]="compact">
+  
+  <!-- Hero Section -->
+  <ion-card *ngIf="showHero" class="hero-card" [class.compact]="compact">
+    <div class="hero-image" [class.compact]="compact">
+      <img [src]="organization.heroImage" [alt]="organization.name" />
+      <div class="hero-overlay">
+        <div class="hero-header">
+          <h1 [class.compact]="compact">{{ organization.name }}</h1>
+          
+          <!-- Edit Button for admins -->
+          <ion-button 
+            *ngIf="!compact" 
+            fill="clear" 
+            color="light" 
+            class="edit-button"
+            (click)="onEditClick($event)">
+            <ion-icon name="create" slot="icon-only"></ion-icon>
+          </ion-button>
+        </div>
+        <p [class.compact]="compact">{{ organization.tagline }}</p>
+        <ion-button 
+          *ngIf="!compact"
+          expand="block" 
+          color="primary" 
+          class="cta-button"
+          (click)="onFindDojoClick()">
+          {{ 'org_component.find_dojo' | translate }}
+        </ion-button>
+      </div>
+    </div>
+  </ion-card>
+
+  <!-- Mission Section -->
+  <ion-card *ngIf="showMission">
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="flag-outline" color="primary"></ion-icon>
+        {{ 'org_component.our_mission' | translate }}
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p>{{ organization.mission }}</p>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Statistics Section -->
+  <ion-card *ngIf="showStatistics && organization.statistics.length > 0">
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="trophy" color="primary"></ion-icon>
+        {{ compact ? ('org_component.stats' | translate) : ('org_component.our_community' | translate) }}
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-grid>
+        <ion-row>
+          <ion-col 
+            size="6" 
+            [sizeMd]="compact ? '6' : '3'" 
+            *ngFor="let stat of getDisplayStatistics()">
+            <div class="stat-item" [class.compact]="compact">
+              <div class="stat-number">{{ stat.number }}</div>
+              <div class="stat-label">{{ stat.label }}</div>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+      
+      <!-- Show more stats hint in compact mode -->
+      <div *ngIf="compact && organization.statistics.length > 2" class="more-stats">
+        <ion-text color="medium">
+          <p>+{{ organization.statistics.length - 2 }} more statistic{{ organization.statistics.length > 3 ? 's' : '' }}</p>
+        </ion-text>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Programs Section -->
+  <ion-card *ngIf="showPrograms && organization.programs.length > 0">
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="school" color="primary"></ion-icon>
+        {{ 'org_component.training_programs' | translate }}
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div *ngFor="let program of getDisplayPrograms()" class="program-card" [class.compact]="compact">
+        <div class="program-header">
+          <h3>{{ program.name }}</h3>
+          <ion-chip color="primary" outline="true">
+            {{ program.level }}
+          </ion-chip>
+        </div>
+        <p class="program-description" *ngIf="!compact">{{ program.description }}</p>
+        <div class="program-details" *ngIf="!compact">
+          <div class="detail-item">
+            <ion-icon name="calendar" color="medium"></ion-icon>
+            <span>{{ program.duration }}</span>
+          </div>
+          <div class="detail-item">
+            <ion-icon name="ribbon" color="medium"></ion-icon>
+            <span>{{ program.certification }}</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Show more programs hint in compact mode -->
+      <div *ngIf="compact && organization.programs.length > 2" class="more-programs">
+        <ion-text color="medium">
+          <p>+{{ organization.programs.length - 2 }} more program{{ organization.programs.length > 3 ? 's' : '' }}</p>
+        </ion-text>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Member Dojos Section -->
+  <ion-card *ngIf="showMemberDojos && organization.memberDojos.length > 0">
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="people" color="primary"></ion-icon>
+        {{ 'org_component.member_dojos' | translate }}
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-grid>
+        <ion-row>
+          <ion-col 
+            size="12" 
+            [sizeMd]="compact ? '12' : '6'" 
+            *ngFor="let dojo of getDisplayDojos()">
+            <div class="dojo-card" [class.compact]="compact" (click)="onDojoClick(dojo)">
+              <div class="dojo-image" [class.compact]="compact">
+                <img [src]="dojo.image" [alt]="dojo.name" />
+                <div class="dojo-badge">
+                  <ion-badge color="success">{{ dojo.students }} {{ 'org_component.students' | translate }}</ion-badge>
+                </div>
+              </div>
+              <div class="dojo-content">
+                <h3>{{ dojo.name }}</h3>
+                <div class="dojo-details" *ngIf="!compact">
+                  <div class="detail-row">
+                    <ion-icon name="location" color="primary"></ion-icon>
+                    <span>{{ dojo.location }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <ion-icon name="people" color="primary"></ion-icon>
+                    <span>{{ dojo.instructor }} ({{ dojo.rank }})</span>
+                  </div>
+                  <div class="detail-row">
+                    <ion-icon name="calendar" color="primary"></ion-icon>
+                    <span>Est. {{ dojo.established }}</span>
+                  </div>
+                </div>
+                <div class="dojo-summary" *ngIf="compact">
+                  <p>{{ dojo.location }} • {{ dojo.instructor }}</p>
+                </div>
+                <ion-button fill="clear" size="small" class="view-dojo-btn">
+                  {{ 'org_component.view_dojo' | translate }}
+                  <ion-icon name="chevron-forward" slot="end"></ion-icon>
+                </ion-button>
+              </div>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+      
+      <!-- Show more dojos hint in compact mode -->
+      <div *ngIf="compact && organization.memberDojos.length > 2" class="more-dojos">
+        <ion-text color="medium">
+          <p>{{ 'org_component.more_dojos' | translate: {count: organization.memberDojos.length - 2} }}</p>
+        </ion-text>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Events Section -->
+  <ion-card *ngIf="showEvents && organization.upcomingEvents.length > 0">
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="calendar" color="primary"></ion-icon>
+        {{ 'org_component.upcoming_events' | translate }}
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item 
+          *ngFor="let event of getDisplayEvents()" 
+          lines="inset" 
+          button 
+          (click)="onEventClick(event)">
+          <div slot="start" class="event-date">
+            <div class="date-day">{{ formatEventDate(event.date).split(' ')[2] }}</div>
+            <div class="date-month">{{ formatEventDate(event.date).split(' ')[1] }}</div>
+          </div>
+          <ion-label>
+            <h2>{{ event.title }}</h2>
+            <h3 *ngIf="!compact">{{ event.instructor }}</h3>
+            <p>
+              <ion-icon name="location" color="medium"></ion-icon>
+              {{ event.location }}
+            </p>
+          </ion-label>
+          <div slot="end" class="event-info">
+            <ion-chip [color]="getEventTypeColor(event.type)" outline="true">
+              {{ event.type | titlecase }}
+            </ion-chip>
+            <div class="event-cost" *ngIf="!compact">{{ event.cost }}</div>
+          </div>
+        </ion-item>
+      </ion-list>
+      
+      <!-- Show more events hint in compact mode -->
+      <div *ngIf="compact && organization.upcomingEvents.length > 2" class="more-events">
+        <ion-text color="medium">
+          <p>+{{ organization.upcomingEvents.length - 2 }} more event{{ organization.upcomingEvents.length > 3 ? 's' : '' }}</p>
+        </ion-text>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Lineage Section -->
+  <ion-card *ngIf="showLineage && organization.lineageFeatures.length > 0">
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="shield-checkmark-outline" color="primary"></ion-icon>
+        {{ compact ? 'Lineage' : 'Authentic Lineage' }}
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p *ngIf="!compact">
+        ASU maintains direct lineage to the founder through our chief instructor Yamada Sensei, 
+        who trained directly under Morihei Ueshiba O-Sensei at the Aikikai Hombu Dojo in Tokyo.
+      </p>
+      <div class="lineage-features">
+        <div 
+          *ngFor="let feature of getDisplayLineageFeatures()" 
+          class="feature-item" 
+          [class.compact]="compact">
+          <ion-icon [name]="feature.icon" color="primary"></ion-icon>
+          <div>
+            <h4>{{ feature.title }}</h4>
+            <p *ngIf="!compact">{{ feature.description }}</p>
+          </div>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Philosophy Section -->
+  <ion-card *ngIf="showPhilosophy && organization.philosophy && !compact" class="philosophy-card">
+    <ion-card-content>
+      <div class="philosophy-content">
+        <div class="philosophy-text">
+          <h2>"{{ organization.philosophy.quote }}"</h2>
+          <p class="philosophy-attribution">{{ organization.philosophy.attribution }}</p>
+          <p class="philosophy-description">{{ organization.philosophy.description }}</p>
+        </div>
+        <div class="philosophy-image" *ngIf="organization.philosophy.image">
+          <img [src]="organization.philosophy.image" alt="Philosophy" />
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Contact Section -->
+  <ion-card *ngIf="showContact">
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="globe" color="primary"></ion-icon>
+        {{ compact ? ('org_component.contact' | translate) : ('org_component.connect_with' | translate: {name: organization.name}) }}
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item button (click)="onEmailClick()">
+          <ion-icon name="mail" slot="start" color="primary"></ion-icon>
+          <ion-label>
+            <h3>{{ 'studio_component.email' | translate }}</h3>
+            <p>{{ organization.contact.email }}</p>
+          </ion-label>
+        </ion-item>
+        
+        <ion-item button (click)="onContactClick()">
+          <ion-icon name="call" slot="start" color="primary"></ion-icon>
+          <ion-label>
+            <h3>{{ 'studio_component.phone' | translate }}</h3>
+            <p>{{ organization.contact.phone }}</p>
+          </ion-label>
+        </ion-item>
+        
+        <ion-item button (click)="onWebsiteClick()">
+          <ion-icon name="globe" slot="start" color="primary"></ion-icon>
+          <ion-label>
+            <h3>{{ 'studio_component.website' | translate }}</h3>
+            <p>{{ organization.contact.website }}</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+
+      <!-- Social Media -->
+      <div class="social-section" *ngIf="!compact && organization.socialMedia.length > 0">
+        <h4>{{ 'org_component.follow_us' | translate }}</h4>
+        <div class="social-buttons">
+          <ion-button 
+            *ngFor="let social of organization.socialMedia"
+            fill="outline" 
+            color="primary"
+            (click)="onSocialClick(social)">
+            <ion-icon [name]="getSocialIcon(social.platform)" slot="icon-only"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+
+      <!-- CTA Section -->
+      <div class="cta-section" *ngIf="!compact">
+        <h3>{{ 'org_component.begin_journey' | translate }}</h3>
+        <p>{{ 'org_component.find_certified' | translate: {name: organization.name} }}</p>
+        <ion-button expand="block" color="primary" size="large" (click)="onFindDojoClick()">
+          <ion-icon name="location" slot="start"></ion-icon>
+          {{ 'org_component.find_dojo' | translate }}
+        </ion-button>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+</div>

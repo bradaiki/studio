@@ -1,0 +1,90 @@
+/* Ensure content appears below main header */
+ion-content {
+  --padding-top: 16px;
+}
+
+.organization-container {
+  padding: 0;
+  max-width: 1400px; /* Increased to accommodate chat */
+  margin: 0 auto;
+}
+
+/* Content with Chat Layout */
+.content-with-chat {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  padding: 0 16px;
+}
+
+.main-content {
+  flex: 1;
+  min-width: 0; /* Prevents flex item from overflowing */
+}
+
+.chat-sidebar {
+  width: 350px;
+  position: sticky;
+  top: 20px;
+  height: fit-content;
+  max-height: calc(100vh - 40px);
+  overflow: hidden;
+  
+  // CRITICAL: Prevent browser from scrolling to this element
+  scroll-margin-top: 0;
+  scroll-snap-stop: normal;
+  contain: layout style;
+  
+  app-chat-messages {
+    display: block;
+    contain: layout style paint;
+    height: 100%;
+    max-height: inherit;
+    overflow: hidden;
+  }
+}
+
+/* Mobile Layout */
+@media (max-width: 1024px) {
+  .content-with-chat {
+    flex-direction: column;
+    gap: 16px;
+    padding: 0 8px;
+  }
+  
+  .chat-sidebar {
+    width: 100%;
+    position: static;
+    margin-top: 24px;
+    
+    app-chat-messages {
+      display: block;
+    }
+  }
+}
+
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  min-height: 50vh;
+
+  ion-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+  }
+
+  h3 {
+    margin: 0.5rem 0;
+    color: var(--ion-color-dark);
+  }
+
+  p {
+    margin: 0.5rem 0 1.5rem 0;
+    color: var(--ion-color-medium);
+    max-width: 300px;
+  }
+}

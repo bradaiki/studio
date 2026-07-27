@@ -1,0 +1,339 @@
+/* Ensure content appears below main header */
+ion-content {
+  --padding-top: 16px;
+}
+
+/* Art Page Styles */
+.art-container {
+  padding: 0 16px 16px 16px;
+  max-width: 1400px; /* Increased to accommodate chat */
+  margin: 0 auto;
+}
+
+/* Content with Chat Layout */
+.content-with-chat {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.main-content {
+  flex: 1;
+  min-width: 0; /* Prevents flex item from overflowing */
+}
+
+.chat-sidebar {
+  width: 350px;
+  position: sticky;
+  top: 20px;
+  height: fit-content;
+  max-height: calc(100vh - 40px);
+  overflow: hidden;
+  
+  // CRITICAL: Prevent browser from scrolling to this element
+  scroll-margin-top: 0;
+  scroll-snap-stop: normal;
+  contain: layout style;
+  
+  app-chat-messages {
+    display: block;
+    contain: layout style paint;
+    height: 100%;
+    max-height: inherit;
+    overflow: hidden;
+  }
+}
+
+/* Mobile Layout */
+@media (max-width: 1024px) {
+  .content-with-chat {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .chat-sidebar {
+    width: 100%;
+    position: static;
+    margin-top: 24px;
+    
+    app-chat-messages {
+      display: block;
+    }
+  }
+}
+
+/* Loading and Error States */
+.loading-state,
+.not-found-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 32px;
+  text-align: center;
+  
+  h2 {
+    margin: 16px 0 8px 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+  
+  p {
+    margin: 0 0 24px 0;
+    font-size: 1rem;
+  }
+}
+
+/* Hero Section */
+.hero-card {
+  margin: 0 0 16px 0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.hero-image {
+  position: relative;
+  height: 300px;
+  overflow: hidden;
+}
+
+.hero-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.4));
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: white;
+  padding: 20px;
+}
+
+.hero-overlay h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.hero-overlay p {
+  font-size: 1.2rem;
+  margin: 0 0 16px 0;
+  opacity: 0.9;
+}
+
+.hero-meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.category-chip {
+  --background: rgba(255, 255, 255, 0.2);
+  --color: white;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  font-weight: 600;
+}
+
+.meta-chip {
+  --background: rgba(255, 255, 255, 0.1);
+  --color: white;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  font-weight: 500;
+}
+
+.action-buttons {
+  margin-top: 16px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.toggle-button,
+.edit-button {
+  --border-radius: 25px;
+  font-weight: 600;
+  backdrop-filter: blur(10px);
+  flex: 1;
+  min-width: 140px;
+  
+  &[fill="outline"] {
+    --background: rgba(255, 255, 255, 0.1);
+    --color: white;
+    --border-color: rgba(255, 255, 255, 0.5);
+  }
+  
+  &[fill="solid"] {
+    --background: rgba(40, 167, 69, 0.9);
+    --color: white;
+  }
+}
+
+.edit-button[color="warning"] {
+  &[fill="outline"] {
+    --background: rgba(255, 193, 7, 0.1);
+    --color: white;
+    --border-color: rgba(255, 193, 7, 0.5);
+  }
+}
+
+/* Card Styling */
+ion-card {
+  margin: 16px 0;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+ion-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+/* Origin and Philosophy */
+.origin-info,
+.philosophy-info {
+  margin-top: 16px;
+  padding: 12px;
+  background: var(--ion-color-light);
+  border-radius: 8px;
+  
+  strong {
+    color: var(--ion-color-primary);
+  }
+}
+
+/* Benefits */
+.benefit-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
+  
+  ion-icon {
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+  
+  span {
+    flex: 1;
+    line-height: 1.4;
+  }
+}
+
+/* Techniques and Mental Aspects */
+.techniques-grid,
+.mental-aspects-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  
+  ion-chip {
+    margin: 0;
+  }
+}
+
+/* Segment Control */
+.segment-control {
+  margin-bottom: 16px;
+  --background: var(--ion-color-light);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  
+  ion-segment-button {
+    --color: var(--ion-color-medium);
+    --color-checked: var(--ion-color-primary);
+    --indicator-color: var(--ion-color-primary);
+    --indicator-box-shadow: none;
+    --border-radius: 8px;
+    margin: 4px;
+    font-weight: 500;
+    
+    ion-icon {
+      margin-bottom: 4px;
+    }
+    
+    ion-label {
+      font-size: 0.9rem;
+    }
+  }
+}
+
+/* Empty Segment State */
+.empty-segment {
+  text-align: center;
+  padding: 32px 16px;
+  
+  p {
+    margin: 0;
+    font-style: italic;
+  }
+}
+
+/* List Items */
+ion-item {
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --inner-padding-end: 8px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  
+  ion-label h3 {
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  
+  ion-label p {
+    color: var(--ion-color-medium);
+    margin-bottom: 4px;
+  }
+  
+  ion-badge {
+    margin-left: 8px;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .art-container {
+    padding: 0 8px 16px 8px;
+  }
+  
+  .hero-image {
+    height: 250px;
+  }
+  
+  .hero-overlay h1 {
+    font-size: 2rem;
+  }
+  
+  .hero-overlay p {
+    font-size: 1rem;
+  }
+  
+  .hero-meta {
+    gap: 4px;
+  }
+  
+  .segment-control ion-segment-button {
+    ion-label {
+      font-size: 0.8rem;
+    }
+  }
+}

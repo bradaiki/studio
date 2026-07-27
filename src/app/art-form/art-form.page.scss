@@ -1,0 +1,128 @@
+/* Ensure content appears below main header */
+ion-content {
+  --padding-top: 16px;
+}
+
+/* Art Form Page Styles */
+.art-form-container {
+  padding: 0 16px 100px 16px; // Extra bottom padding for FAB
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Card Styling */
+ion-card {
+  margin: 16px 0;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+ion-card-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+/* Form Items */
+ion-item {
+  --padding-start: 0;
+  --padding-end: 0;
+  --inner-padding-end: 0;
+  margin-bottom: 16px;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+ion-label[position="stacked"] {
+  font-weight: 600;
+  color: var(--ion-color-primary);
+  margin-bottom: 8px;
+}
+
+/* Input Validation */
+ion-input.ion-invalid,
+ion-textarea.ion-invalid {
+  --border-color: var(--ion-color-danger);
+  --color: var(--ion-color-danger);
+}
+
+/* Array Items */
+.ion-reorder-group {
+  ion-item {
+    margin-bottom: 8px;
+    border: 1px solid var(--ion-color-light-shade);
+    border-radius: 8px;
+    
+    ion-input {
+      --padding-start: 12px;
+    }
+  }
+}
+
+/* Buttons */
+ion-button[fill="clear"] {
+  --padding-start: 8px;
+  --padding-end: 8px;
+}
+
+/* Checkbox Item */
+ion-item:has(ion-checkbox) {
+  --padding-start: 16px;
+  align-items: center;
+}
+
+/* FAB Styling */
+ion-fab-button {
+  --box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  
+  &[disabled] {
+    opacity: 0.6;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .art-form-container {
+    padding: 0 8px 100px 8px;
+  }
+  
+  ion-card {
+    margin: 12px 0;
+  }
+  
+  ion-card-title {
+    font-size: 1.1rem;
+  }
+}
+
+/* Loading State */
+.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Validation Messages */
+.validation-message {
+  color: var(--ion-color-danger);
+  font-size: 0.8rem;
+  margin-top: 4px;
+  padding-left: 16px;
+}
+
+/* Success State */
+.form-valid {
+  ion-fab-button {
+    --background: var(--ion-color-success);
+  }
+}
+
+/* Error State */
+.form-invalid {
+  ion-fab-button {
+    --background: var(--ion-color-medium);
+  }
+}

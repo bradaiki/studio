@@ -1,0 +1,986 @@
+/* Ensure content appears below main header */
+ion-content {
+  --padding-top: 16px;
+}
+
+.studio-container {
+  padding: 0;
+}
+
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  min-height: 50vh;
+
+  ion-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+  }
+
+  h3 {
+    margin: 0.5rem 0;
+    color: var(--ion-color-dark);
+  }
+
+  p {
+    margin: 0.5rem 0 1.5rem 0;
+    color: var(--ion-color-medium);
+    max-width: 300px;
+  }
+}
+
+/* Chat-related styling */
+.chats-view {
+  padding: 16px;
+}
+
+.auth-required-card,
+.error-card,
+.no-chats-card {
+  margin: 16px 0;
+  
+  ion-card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    ion-icon {
+      font-size: 1.2rem;
+    }
+  }
+}
+
+.chat-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  
+  ion-spinner {
+    margin-bottom: 1rem;
+  }
+  
+  p {
+    color: var(--ion-color-medium);
+    margin: 0;
+  }
+}
+
+.organized-chats-container {
+  padding-bottom: 16px;
+}
+
+.chat-summary-card {
+  margin: 0 0 16px 0;
+  
+  .chat-summary {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    gap: 16px;
+    
+    .summary-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      flex: 1;
+      
+      ion-icon {
+        font-size: 1.5rem;
+        margin-bottom: 8px;
+      }
+      
+      .summary-text {
+        h3 {
+          margin: 0;
+          font-size: 1.5rem;
+          font-weight: bold;
+          color: var(--ion-color-dark);
+        }
+        
+        p {
+          margin: 4px 0 0 0;
+          font-size: 0.9rem;
+          color: var(--ion-color-medium);
+        }
+      }
+    }
+  }
+}
+
+.chat-info {
+  margin: 16px 0;
+  
+  .info-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 8px 0;
+    
+    ion-icon {
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    
+    span {
+      font-size: 0.9rem;
+      color: var(--ion-color-medium);
+    }
+  }
+}
+
+/* Segment styling */
+ion-segment {
+  ion-segment-button {
+    ion-badge {
+      margin-left: 4px;
+      font-size: 0.7rem;
+      min-width: 18px;
+      height: 18px;
+    }
+  }
+}
+
+/* Review Requests Button Styling */
+.request-count-badge {
+  margin-left: 4px;
+  font-size: 0.7rem;
+  min-width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Instructor review button styling */
+ion-buttons[slot="end"] {
+  ion-button {
+    --padding-start: 8px;
+    --padding-end: 8px;
+    
+    ion-label {
+      margin-left: 4px;
+      margin-right: 4px;
+    }
+    
+    ion-badge {
+      margin-left: 4px;
+    }
+  }
+}
+
+/* Modal styling class for join request modal */
+:global(.join-request-modal) {
+  --width: 90%;
+  --max-width: 600px;
+  --height: 80%;
+  --max-height: 700px;
+  --border-radius: 12px;
+}
+
+// Two-column layout for studio detail with chat
+.studio-detail-layout {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 16px;
+
+  // Full width when user is not logged in (no chat sidebar)
+  &.full-width {
+    grid-template-columns: 1fr;
+    max-width: 1200px;
+    
+    .main-content {
+      max-width: 100%;
+    }
+  }
+
+  .main-content {
+    min-width: 0;
+  }
+
+  .chat-sidebar {
+    position: sticky;
+    top: 20px;
+    height: fit-content;
+    max-height: calc(100vh - 40px); // Prevent overflow
+    overflow: hidden; // Contain any overflow
+    
+    // CRITICAL: Prevent browser from scrolling to this element when it appears
+    scroll-margin-top: 0;
+    scroll-snap-stop: normal;
+    
+    // Prevent focus/scroll behavior
+    contain: layout style;
+    
+    app-chat-messages {
+      display: block;
+      // Prevent focus/scroll when component loads
+      contain: layout style paint;
+      height: 100%; // Fill parent
+      max-height: inherit; // Respect parent max-height
+      overflow: hidden; // Prevent any overflow from escaping
+    }
+  }
+}
+
+.hero-image {
+  width: 100%;
+  height: 300px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  z-index: 1;
+  margin-top: 0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.hero-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0,0,0,0.8));
+  padding: 32px 16px 16px;
+  color: white;
+
+  h1 {
+    margin: 0 0 8px 0;
+    font-size: 32px;
+  }
+
+  p {
+    margin: 0 0 16px 0;
+    font-size: 18px;
+    opacity: 0.9;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+
+    .join-studio-btn {
+      --background: var(--ion-color-primary);
+      --color: white;
+      --border-radius: 8px;
+      --padding-start: 16px;
+      --padding-end: 16px;
+      --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      font-weight: 600;
+
+      &:hover {
+        --background: var(--ion-color-primary-shade);
+        transform: translateY(-1px);
+      }
+    }
+  }
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 12px 0;
+
+  ion-icon {
+    font-size: 20px;
+    color: var(--ion-color-primary);
+  }
+}
+
+.benefit-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin: 16px 0;
+
+  ion-icon {
+    font-size: 24px;
+    color: var(--ion-color-primary);
+    margin-top: 4px;
+  }
+
+  div {
+    flex: 1;
+
+    h3 {
+      margin: 0 0 8px 0;
+      font-size: 16px;
+    }
+
+    p {
+      margin: 0;
+      color: var(--ion-color-medium);
+      font-size: 14px;
+    }
+  }
+}
+
+.studio-info-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 12px 0;
+
+  ion-icon {
+    font-size: 20px;
+    color: var(--ion-color-primary);
+  }
+}
+
+.pricing-item {
+  padding: 16px;
+  border: 1px solid var(--ion-color-light);
+  border-radius: 8px;
+  margin-bottom: 12px;
+
+  &.featured {
+    border-color: var(--ion-color-warning);
+    background-color: var(--ion-color-warning-tint);
+  }
+
+  .pricing-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+
+    h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .pricing-price {
+      font-size: 24px;
+      font-weight: bold;
+      color: var(--ion-color-primary);
+    }
+  }
+
+  .pricing-features {
+    list-style: none;
+    padding: 0;
+    margin: 12px 0 0 0;
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 8px 0;
+      font-size: 14px;
+
+      ion-icon {
+        font-size: 16px;
+      }
+    }
+  }
+}
+
+// Enhanced Schedule Styles
+.schedule-header-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+
+  span {
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  ion-segment {
+    width: auto;
+    min-width: 140px;
+  }
+}
+
+// List View Styles
+.schedule-list-view .schedule-item {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--ion-color-light);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 8px;
+  margin: 0 -8px;
+  padding: 16px 8px;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background-color: var(--ion-color-light);
+    transform: translateY(-1px);
+  }
+
+  .schedule-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+
+    h3 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 600;
+      flex: 1;
+    }
+
+    .schedule-badges {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+  }
+
+  .schedule-details {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+
+    > div {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: var(--ion-color-medium);
+
+      ion-icon {
+        font-size: 16px;
+        color: var(--ion-color-medium);
+      }
+    }
+  }
+
+  .schedule-description {
+    margin: 8px 0;
+    font-size: 14px;
+    color: var(--ion-color-medium);
+    font-style: italic;
+    line-height: 1.4;
+  }
+
+  .schedule-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+  }
+}
+
+// Calendar View Styles
+.schedule-calendar-view {
+  .calendar-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding: 0 8px;
+
+    .calendar-title {
+      flex: 1;
+      text-align: center;
+
+      h3 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+      }
+    }
+
+    ion-button {
+      --padding-start: 8px;
+      --padding-end: 8px;
+      --color: var(--ion-color-medium);
+
+      &:hover {
+        --color: var(--ion-color-primary);
+      }
+    }
+  }
+
+  .today-button {
+    display: block;
+    margin: 0 auto 16px auto;
+    --color: var(--ion-color-primary);
+  }
+
+  // Hourly Time Grid Calendar
+  .time-grid-calendar {
+    border: 1px solid var(--ion-color-light);
+    border-radius: 8px;
+    overflow: hidden;
+    background: white;
+
+    .time-grid-header {
+      display: grid;
+      grid-template-columns: 80px repeat(7, 1fr);
+      background-color: var(--ion-color-light-tint);
+      border-bottom: 2px solid var(--ion-color-light);
+
+      .time-column-header {
+        padding: 12px 8px;
+        border-right: 1px solid var(--ion-color-light);
+        background-color: var(--ion-color-light-shade);
+      }
+
+      .day-header {
+        padding: 12px 8px;
+        text-align: center;
+        border-right: 1px solid var(--ion-color-light);
+
+        &:last-child {
+          border-right: none;
+        }
+      }
+
+      .day-name {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--ion-color-medium);
+        margin-bottom: 4px;
+      }
+
+      .day-number {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--ion-color-dark);
+      }
+
+      .day-number.today {
+        background-color: var(--ion-color-primary);
+        color: white;
+        border-radius: 50%;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+      }
+    }
+
+    .time-grid-body {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      min-height: 600px;
+
+      .time-labels {
+        background-color: var(--ion-color-light-shade);
+        border-right: 2px solid var(--ion-color-light);
+      }
+
+      .time-slot {
+        height: 60px;
+        padding: 8px;
+        border-bottom: 1px solid var(--ion-color-light);
+        display: flex;
+        align-items: flex-start;
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--ion-color-medium);
+
+        &:last-child {
+          border-bottom: none;
+        }
+      }
+
+      .day-columns {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+      }
+
+      .day-column {
+        border-right: 1px solid var(--ion-color-light);
+        position: relative;
+        min-height: 600px;
+
+        &:last-child {
+          border-right: none;
+        }
+      }
+
+      .time-slots {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+      }
+
+      .time-slot-row {
+        height: 60px;
+        border-bottom: 1px solid var(--ion-color-light-shade);
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        &:hover {
+          background-color: var(--ion-color-light-tint);
+        }
+      }
+
+      .activities-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        pointer-events: none;
+      }
+
+      .activity-block {
+        pointer-events: auto;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        border-left: 3px solid rgba(255, 255, 255, 0.3);
+
+        &:hover {
+          transform: translateX(-2px);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+          z-index: 10 !important;
+        }
+
+        .activity-title {
+          font-weight: 600;
+          font-size: 11px;
+          line-height: 1.2;
+          margin-bottom: 2px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .activity-time {
+          font-size: 9px;
+          opacity: 0.9;
+          line-height: 1.1;
+        }
+
+        .activity-instructor {
+          font-size: 9px;
+          opacity: 0.8;
+          margin-top: 1px;
+          line-height: 1.1;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      }
+    }
+  }
+}
+
+// Empty State
+.empty-schedule {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--ion-color-medium);
+
+  ion-icon {
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+
+  h3 {
+    margin: 0 0 8px 0;
+    font-size: 18px;
+  }
+
+  p {
+    margin: 0;
+    font-size: 14px;
+  }
+}
+
+// Location Map Styles
+.location-map {
+  iframe {
+    width: 100%;
+    height: 300px;
+    border: 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .map-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+    justify-content: center;
+
+    ion-button {
+      --color: var(--ion-color-primary);
+      font-size: 0.9rem;
+
+      ion-icon {
+        font-size: 1.1rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      flex-direction: column;
+      gap: 8px;
+
+      ion-button {
+        width: 100%;
+        margin: 0;
+      }
+    }
+  }
+}
+
+// Scrollable Sections
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  span {
+    font-weight: 600;
+  }
+
+  ion-chip {
+    font-size: 0.75rem;
+  }
+}
+
+.instructors-grid,
+.students-grid {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 8px 0 16px 0;
+}
+
+.instructor-card {
+  min-width: 280px;
+  background: var(--ion-color-light);
+  border-radius: 12px;
+  padding: 16px;
+  cursor: pointer;
+
+  .instructor-header {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .instructor-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  h3 {
+    margin: 0 0 4px 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  .instructor-title {
+    margin: 0 0 8px 0;
+    font-size: 0.9rem;
+    color: var(--ion-color-medium);
+  }
+
+  .instructor-bio {
+    font-size: 0.85rem;
+    color: var(--ion-color-medium);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .instructor-specialties {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+
+    ion-chip {
+      font-size: 0.7rem;
+    }
+
+    .more-specialties {
+      font-size: 0.7rem;
+      color: var(--ion-color-medium);
+    }
+  }
+}
+
+.student-card {
+  min-width: 200px;
+  margin: 0;
+
+  .student-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  .student-avatar {
+    width: 50px;
+    height: 50px;
+  }
+
+  .student-name {
+    margin: 0 0 4px 0;
+    font-weight: 600;
+  }
+
+  .student-rank {
+    margin: 0 0 4px 0;
+    font-size: 0.85rem;
+    color: var(--ion-color-primary);
+  }
+
+  .student-experience {
+    margin: 0 0 8px 0;
+    font-size: 0.8rem;
+    color: var(--ion-color-medium);
+  }
+
+  .student-specialties {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+
+    ion-chip {
+      font-size: 0.7rem;
+    }
+
+    .more-specialties {
+      font-size: 0.7rem;
+      color: var(--ion-color-medium);
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  // Stack layout on mobile
+  .studio-detail-layout {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 0 8px 80px 8px;
+
+    .chat-sidebar {
+      position: static;
+      order: 2;
+    }
+
+    .main-content {
+      order: 1;
+    }
+  }
+
+  .schedule-header-controls {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+
+    ion-segment {
+      width: 100%;
+    }
+  }
+
+  .calendar-controls {
+    .calendar-title h3 {
+      font-size: 14px;
+    }
+  }
+
+  .time-grid-calendar {
+    .time-grid-header {
+      grid-template-columns: 60px repeat(7, 1fr);
+    }
+
+    .day-header {
+      padding: 8px 4px;
+    }
+
+    .day-name {
+      font-size: 10px;
+    }
+
+    .day-number {
+      font-size: 14px;
+
+      &.today {
+        width: 24px;
+        height: 24px;
+      }
+    }
+
+    .time-grid-body {
+      grid-template-columns: 60px 1fr;
+      min-height: 400px;
+    }
+
+    .time-labels .time-slot {
+      height: 40px;
+      padding: 4px;
+      font-size: 10px;
+    }
+
+    .day-columns .day-column {
+      min-height: 400px;
+    }
+
+    .time-slots .time-slot-row {
+      height: 40px;
+    }
+
+    .activities-container .activity-block {
+      .activity-title {
+        font-size: 10px;
+      }
+
+      .activity-time,
+      .activity-instructor {
+        font-size: 8px;
+      }
+    }
+  }
+
+  .schedule-item {
+    .schedule-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+
+      .schedule-badges {
+        width: 100%;
+      }
+    }
+  }
+
+  .instructor-card {
+    min-width: 260px;
+  }
+
+  .student-card {
+    min-width: 180px;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

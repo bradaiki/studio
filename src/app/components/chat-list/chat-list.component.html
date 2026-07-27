@@ -1,0 +1,86 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Chats</ion-title>
+    <ion-button slot="end" fill="clear" (click)="createNewChat()">
+      <ion-icon name="add" slot="icon-only"></ion-icon>
+    </ion-button>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="chat-list-container">
+    <!-- Empty state -->
+    <ion-card *ngIf="chatList.length === 0" class="empty-state">
+      <ion-card-header>
+        <ion-card-title>No Chats Yet</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p>Start a conversation by creating a new chat or joining a studio.</p>
+        <ion-button expand="block" (click)="createNewChat()">
+          <ion-icon name="add" slot="start"></ion-icon>
+          Create New Chat
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Chat list -->
+    <ion-list *ngIf="chatList.length > 0">
+      <ion-item 
+        *ngFor="let chatItem of chatList" 
+        button 
+        (click)="onChatClick(chatItem)"
+        class="chat-item">
+        
+        <ion-avatar slot="start">
+          <ion-icon 
+            [name]="getChatTypeIcon(chatItem.chat.type)" 
+            [color]="getChatTypeColor(chatItem.chat.type)"
+            class="chat-type-icon">
+          </ion-icon>
+        </ion-avatar>
+
+        <ion-label>
+          <div class="chat-header">
+            <h2 class="chat-name">{{ chatItem.chat.name }}</h2>
+            <div class="chat-meta">
+              <ion-chip 
+                [color]="getChatTypeColor(chatItem.chat.type)" 
+                size="small" 
+                outline="true">
+                {{ chatItem.chat.type }}
+              </ion-chip>
+              <span class="last-message-time" *ngIf="chatItem.lastMessage">
+                {{ formatTime(chatItem.lastMessage.timestamp) }}
+              </span>
+            </div>
+          </div>
+          
+          <div class="chat-details">
+            <p class="last-message" *ngIf="chatItem.lastMessage">
+              <strong>{{ chatItem.lastMessage.senderName }}:</strong>
+              {{ chatItem.lastMessage.message }}
+            </p>
+            <p class="no-messages" *ngIf="!chatItem.lastMessage">
+              No messages yet
+            </p>
+            
+            <div class="chat-info">
+              <span class="participant-count">
+                <ion-icon name="people"></ion-icon>
+                {{ chatItem.participants.length }} participants
+              </span>
+            </div>
+          </div>
+        </ion-label>
+
+        <div slot="end" class="chat-badges">
+          <ion-badge 
+            *ngIf="chatItem.unreadCount > 0" 
+            color="primary">
+            {{ chatItem.unreadCount }}
+          </ion-badge>
+        </div>
+      </ion-item>
+    </ion-list>
+  </div>
+</ion-content>

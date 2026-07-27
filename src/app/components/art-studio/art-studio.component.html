@@ -1,0 +1,200 @@
+<ion-card class="studio-card" [class.featured]="studio.featured" [class.compact]="compact" (click)="onStudioClick()">
+  
+  <!-- Featured Badge -->
+  <div *ngIf="studio.featured" class="featured-badge">
+    <ion-badge color="warning">
+      <ion-icon name="star"></ion-icon>
+      Featured
+    </ion-badge>
+  </div>
+
+  <!-- Studio Image -->
+  <div class="studio-image" [class.compact]="compact">
+    <img [src]="studio.image" [alt]="studio.name" />
+    <div class="image-overlay">
+      <div class="studio-type">
+        <ion-chip [color]="getStudioTypeColor()" class="type-chip">
+          <ion-icon [name]="getStudioTypeIcon()"></ion-icon>
+          <ion-label>{{ studio.type | titlecase }}</ion-label>
+        </ion-chip>
+      </div>
+      <div class="price-range">
+        <ion-chip color="dark" outline="true">
+          {{ studio.priceRange }}
+        </ion-chip>
+      </div>
+    </div>
+  </div>
+
+  <ion-card-content>
+    
+    <!-- Studio Header -->
+    <div class="studio-header">
+      <h2 class="studio-name" [class.compact]="compact">{{ studio.name }}</h2>
+      <div class="studio-location">
+        <ion-icon name="location" color="primary"></ion-icon>
+        <span>{{ studio.location }}</span>
+      </div>
+    </div>
+
+    <!-- Rating and Reviews -->
+    <div class="rating-section" *ngIf="!compact">
+      <div class="stars">
+        <ion-icon 
+          *ngFor="let filled of generateStarArray()" 
+          [name]="filled ? 'star' : 'star-outline'"
+          [color]="filled ? 'warning' : 'medium'">
+        </ion-icon>
+        <span class="rating-text">{{ studio.rating }}</span>
+      </div>
+      <div class="review-count">
+        <ion-text color="medium">
+          ({{ studio.reviewCount }} reviews)
+        </ion-text>
+      </div>
+    </div>
+
+    <!-- Compact Rating -->
+    <div class="rating-section compact" *ngIf="compact">
+      <div class="stars">
+        <ion-icon name="star" color="warning"></ion-icon>
+        <span class="rating-text">{{ studio.rating }}</span>
+        <span class="review-count-compact">({{ studio.reviewCount }})</span>
+      </div>
+    </div>
+
+    <!-- Description -->
+    <p class="studio-description" *ngIf="!compact">{{ getDisplayDescription() }}</p>
+
+    <!-- Instructor Info -->
+    <div class="instructor-info" [class.compact]="compact">
+      <div class="instructor-name">
+        <ion-icon name="person-outline" color="primary"></ion-icon>
+        <strong>{{ studio.instructor }}</strong>
+      </div>
+      <div class="instructor-experience" *ngIf="!compact">
+        <ion-text color="medium">{{ studio.experience }} experience</ion-text>
+      </div>
+    </div>
+
+    <!-- Specialties -->
+    <div class="specialties-section" *ngIf="studio.specialties.length > 0">
+      <h4 *ngIf="!compact">Specialties</h4>
+      <div class="specialties-chips">
+        <ion-chip 
+          *ngFor="let specialty of getDisplaySpecialties()" 
+          color="light" 
+          outline="true"
+          class="specialty-chip"
+          [class.small]="compact">
+          {{ specialty }}
+        </ion-chip>
+        <ion-chip 
+          *ngIf="getExtraSpecialtiesCount() > 0"
+          color="medium" 
+          outline="true"
+          class="more-chip"
+          [class.small]="compact">
+          +{{ getExtraSpecialtiesCount() }} more
+        </ion-chip>
+      </div>
+    </div>
+
+    <!-- Class Types -->
+    <div class="class-types-section" *ngIf="!compact && studio.classTypes.length > 0">
+      <h4>Classes Offered</h4>
+      <div class="class-types">
+        <ion-text color="medium">
+          {{ getDisplayClassTypes() }}
+        </ion-text>
+      </div>
+    </div>
+
+    <!-- Hours -->
+    <div class="hours-section" *ngIf="!compact">
+      <div class="hours-info">
+        <ion-icon name="time" color="primary"></ion-icon>
+        <ion-text color="medium">{{ studio.openHours }}</ion-text>
+      </div>
+    </div>
+
+    <!-- Price Range Info -->
+    <div class="price-info">
+      <div class="price-text">
+        <ion-icon name="cash-outline" color="success"></ion-icon>
+        <span>{{ getPriceRangeText() }}</span>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons" [class.compact]="compact">
+      <ion-button 
+        expand="block" 
+        color="primary" 
+        class="main-action"
+        [size]="compact ? 'small' : 'default'"
+        (click)="onStudioClick(); $event.stopPropagation()">
+        <ion-icon name="information-circle-outline" slot="start"></ion-icon>
+        {{ compact ? 'Details' : 'View Details' }}
+      </ion-button>
+      
+      <div class="secondary-actions" *ngIf="!compact">
+        <ion-button 
+          fill="outline" 
+          color="primary" 
+          size="small"
+          *ngIf="studio.phone"
+          (click)="onContactClick($event)">
+          <ion-icon name="call-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+        
+        <ion-button 
+          fill="outline" 
+          color="primary" 
+          size="small"
+          *ngIf="studio.website"
+          (click)="onWebsiteClick($event)">
+          <ion-icon name="globe-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+        
+        <ion-button 
+          fill="outline" 
+          color="primary" 
+          size="small"
+          *ngIf="studio.email"
+          (click)="onEmailClick($event)">
+          <ion-icon name="mail-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+        
+        <ion-button 
+          fill="clear" 
+          color="medium" 
+          size="small"
+          (click)="onShareClick($event)">
+          <ion-icon name="share-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+      </div>
+
+      <!-- Compact Actions -->
+      <div class="compact-actions" *ngIf="compact">
+        <ion-button 
+          fill="outline" 
+          color="primary" 
+          size="small"
+          *ngIf="studio.phone"
+          (click)="onContactClick($event)">
+          <ion-icon name="call-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+        
+        <ion-button 
+          fill="clear" 
+          color="medium" 
+          size="small"
+          (click)="onShareClick($event)">
+          <ion-icon name="share-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+
+  </ion-card-content>
+</ion-card>

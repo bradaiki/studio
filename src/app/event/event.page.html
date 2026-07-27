@@ -1,0 +1,238 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dash/events" (click)="onBack()"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ event?.title || ('event_detail.title' | translate) }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">{{ event?.title || ('event_detail.title' | translate) }}</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div *ngIf="event" class="event-detail-layout">
+    <!-- Main Content Column -->
+    <div class="main-content">
+      <div class="event-container">
+    <ion-card class="event-card" [class.featured]="event.featured">
+      
+      <!-- Featured Badge -->
+      <div *ngIf="event.featured" class="featured-badge">
+        <ion-badge color="warning">
+          <ion-icon name="star"></ion-icon>
+          {{ 'events.featured' | translate }}
+        </ion-badge>
+      </div>
+
+      <!-- Event Image -->
+      <div class="event-image">
+        <img [src]="event.image" [alt]="event.title" />
+        <div class="event-type-overlay">
+          <ion-chip [color]="getEventTypeColor(event.type)" class="type-chip">
+            {{ event.type | titlecase }}
+          </ion-chip>
+        </div>
+      </div>
+
+      <ion-card-content>
+        <!-- Event Header -->
+        <div class="event-header">
+          <h1 class="event-title">{{ event.title }}</h1>
+          <div class="event-meta">
+            <div class="meta-item">
+              <ion-icon name="calendar" color="primary"></ion-icon>
+              <span>{{ formatEventDate(event.date) }}</span>
+            </div>
+            <div class="meta-item" *ngIf="event.endDate && event.endDate !== event.date">
+              <ion-icon name="time" color="primary"></ion-icon>
+              <span>{{ 'events.multi_day' | translate }}</span>
+            </div>
+            <div class="meta-item">
+              <ion-icon name="time" color="primary"></ion-icon>
+              <span>{{ formatEventTime(event.time) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Event Description -->
+        <div class="event-description">
+          <h3>{{ 'event_detail.about_event' | translate }}</h3>
+          <p>{{ event.description }}</p>
+        </div>
+
+        <!-- Event Details Grid -->
+        <ion-grid class="event-details">
+          <ion-row>
+            <ion-col size="12" size-md="6">
+              <div class="detail-section">
+                <h4>
+                  <ion-icon name="location" color="primary"></ion-icon>
+                  {{ 'events.location' | translate }}
+                </h4>
+                <p class="location-name">{{ event.location }}</p>
+                <p class="location-address">{{ event.address }}</p>
+              </div>
+            </ion-col>
+            
+            <ion-col size="12" size-md="6">
+              <div class="detail-section">
+                <h4>
+                  <ion-icon name="person-outline" color="primary"></ion-icon>
+                  {{ 'events.instructor' | translate }}
+                </h4>
+                <p class="instructor-name">{{ event.instructor }}</p>
+                <p class="instructor-rank">{{ event.instructorRank }}</p>
+              </div>
+            </ion-col>
+          </ion-row>
+
+          <ion-row>
+            <ion-col size="6" size-md="3">
+              <div class="detail-section">
+                <h4>
+                  <ion-icon name="cash-outline" color="primary"></ion-icon>
+                  {{ 'events.cost' | translate }}
+                </h4>
+                <p class="event-cost" [class.free]="event.cost === 'Free'">{{ event.cost }}</p>
+              </div>
+            </ion-col>
+            
+            <ion-col size="6" size-md="3">
+              <div class="detail-section">
+                <h4>
+                  <ion-icon name="ribbon" color="primary"></ion-icon>
+                  {{ 'events.level' | translate }}
+                </h4>
+                <ion-chip [color]="getDifficultyColor(event.difficulty)" outline="true" class="difficulty-chip">
+                  {{ event.difficulty | titlecase }}
+                </ion-chip>
+              </div>
+            </ion-col>
+
+            <ion-col size="12" size-md="6" *ngIf="event.maxParticipants">
+              <div class="detail-section">
+                <h4>
+                  <ion-icon name="people" color="primary"></ion-icon>
+                  {{ 'events.availability' | translate }}
+                </h4>
+                <p class="availability" [class.sold-out]="isEventSoldOut()">
+                  {{ getAvailabilityText() }}
+                </p>
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+
+        <!-- Tags -->
+        <div class="event-tags" *ngIf="event.tags.length > 0">
+          <h4>{{ 'event_detail.tags' | translate }}</h4>
+          <ion-chip *ngFor="let tag of event.tags" color="light" outline="true" class="tag-chip">
+            {{ tag }}
+          </ion-chip>
+        </div>
+
+        <!-- Requirements -->
+        <div class="requirements-section" *ngIf="event.requirements && event.requirements.length > 0">
+          <h4>
+            <ion-icon name="information-circle-outline" color="medium"></ion-icon>
+            {{ 'events.requirements' | translate }}
+          </h4>
+          <ul class="requirements-list">
+            <li *ngFor="let requirement of event.requirements">{{ requirement }}</li>
+          </ul>
+        </div>
+
+        <!-- What to Bring -->
+        <div class="bring-section" *ngIf="event.whatToBring && event.whatToBring.length > 0">
+          <h4>
+            <ion-icon name="book-outline" color="medium"></ion-icon>
+            {{ 'events.what_to_bring' | translate }}
+          </h4>
+          <ul class="bring-list">
+            <li *ngFor="let item of event.whatToBring">{{ item }}</li>
+          </ul>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <ion-button 
+            expand="block" 
+            color="primary" 
+            [disabled]="isEventSoldOut()"
+            (click)="registerForEvent()">
+            <ion-icon name="person-outline" slot="start"></ion-icon>
+            {{ isEventSoldOut() ? ('events.sold_out' | translate) : ('events.register_now' | translate) }}
+          </ion-button>
+          
+          <div class="secondary-actions">
+            <ion-button fill="outline" color="medium" (click)="getDirections()">
+              <ion-icon name="map-outline" slot="start"></ion-icon>
+              {{ 'events.directions' | translate }}
+            </ion-button>
+            
+            <ion-button fill="outline" color="medium" (click)="contactOrganizer()">
+              <ion-icon name="call-outline" slot="start"></ion-icon>
+              {{ 'events.contact' | translate }}
+            </ion-button>
+            
+            <ion-button fill="clear" color="medium" (click)="shareEvent()">
+              <ion-icon name="share-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </div>
+        </div>
+
+        <!-- Organizer Info -->
+        <div class="organizer-info">
+          <h4>{{ 'event_detail.organizer' | translate }}</h4>
+          <p class="organizer-text">
+            <strong>{{ event.organizer }}</strong>
+          </p>
+          <p class="contact-info">
+            <ion-icon name="call-outline" color="medium"></ion-icon>
+            <a href="mailto:{{ event.contactEmail }}">{{ event.contactEmail }}</a>
+          </p>
+          <p class="contact-info" *ngIf="event.contactPhone">
+            <ion-icon name="call-outline" color="medium"></ion-icon>
+            <a href="tel:{{ event.contactPhone }}">{{ event.contactPhone }}</a>
+          </p>
+        </div>
+
+      </ion-card-content>
+    </ion-card>
+      </div>
+    </div>
+
+    <!-- Chat Column -->
+    <div class="chat-sidebar">
+      <app-chat-messages
+        [studioId]="event.id"
+        [studioName]="event.title + ' Discussion'"
+        [maxHeight]="'calc(100vh - 200px)'"
+        [showHeader]="true"
+        [compact]="false"
+        [canLeave]="true"
+        [canMute]="true"
+        (messageClick)="onChatMessageClick($event)"
+        (sendMessage)="onSendChatMessage($event)"
+        (leaveChat)="onLeaveChat($event)"
+        (muteChat)="onMuteChat($event)"
+        (chatInfo)="onChatInfo($event)">
+      </app-chat-messages>
+    </div>
+  </div>
+
+  <div *ngIf="!event" class="error-state">
+    <ion-icon name="calendar" color="medium"></ion-icon>
+    <h3>{{ 'event_detail.not_found' | translate }}</h3>
+    <p>{{ 'event_detail.not_found_message' | translate }}</p>
+    <ion-button fill="outline" color="primary" (click)="onBack()">
+      <ion-icon name="arrow-back" slot="start"></ion-icon>
+      {{ 'event_detail.back_button' | translate }}
+    </ion-button>
+  </div>
+
+</ion-content>

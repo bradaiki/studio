@@ -1,0 +1,56 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dash/feed"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Create Post</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="onSubmit()" [disabled]="isSubmitting || postForm.invalid">
+        <ion-icon slot="icon-only" name="save"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <form [formGroup]="postForm" (ngSubmit)="onSubmit()">
+    <ion-item>
+      <ion-label position="stacked">Content *</ion-label>
+      <ion-textarea
+        formControlName="content"
+        placeholder="What's on your mind?"
+        rows="6"
+        [counter]="true"
+        maxlength="500">
+      </ion-textarea>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Image URL</ion-label>
+      <ion-input
+        formControlName="image"
+        type="url"
+        placeholder="https://example.com/image.jpg">
+        <ion-icon slot="start" name="image"></ion-icon>
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Tags</ion-label>
+      <ion-input
+        formControlName="tags"
+        placeholder="aikido, training, practice (comma separated)">
+        <ion-icon slot="start" name="pricetag"></ion-icon>
+      </ion-input>
+    </ion-item>
+
+    <div class="ion-padding">
+      <ion-button expand="block" type="submit" [disabled]="isSubmitting || postForm.invalid">
+        {{ isSubmitting ? 'Creating...' : 'Create Post' }}
+      </ion-button>
+      <ion-button expand="block" fill="outline" (click)="onCancel()" [disabled]="isSubmitting">
+        Cancel
+      </ion-button>
+    </div>
+  </form>
+</ion-content>

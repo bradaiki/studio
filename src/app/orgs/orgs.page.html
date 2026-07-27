@@ -1,0 +1,127 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dash/feed"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ isFiltered ? filteredEntityName : 'Organizations' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">{{ isFiltered ? filteredEntityName : 'Organizations' }}</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div class="organizations-container">
+    
+    <!-- Filter Indicator -->
+    <div *ngIf="isFiltered" class="filter-indicator">
+      <ion-chip color="primary">
+        <ion-icon name="home"></ion-icon>
+        <ion-label>{{ filteredEntityName }}</ion-label>
+        <ion-icon name="close" (click)="clearFilter()"></ion-icon>
+      </ion-chip>
+    </div>
+
+    <!-- Search Section -->
+    <div class="search-section" [class.filtered]="isFiltered" *ngIf="!isFiltered">
+      <ion-searchbar 
+        [(ngModel)]="searchTerm"
+        (ionInput)="onSearchChange($event)"
+        placeholder="Search organizations..."
+        show-clear-button="focus"
+        debounce="300">
+      </ion-searchbar>
+    </div>
+
+    <!-- Results Count -->
+    <div class="results-info" *ngIf="!isFiltered">
+      <ion-text color="medium">
+        <p>{{ filteredOrganizations.length }} organization{{ filteredOrganizations.length !== 1 ? 's' : '' }} found</p>
+      </ion-text>
+    </div>
+
+    <!-- Organizations List -->
+    <div class="organizations-list" *ngIf="displayedOrganizations.length > 0">
+      <div *ngFor="let org of displayedOrganizations; trackBy: trackByOrganizationId" 
+           class="organization-item" 
+           (click)="onOrganizationClick(org)">
+        <app-organization
+          [organization]="convertToOrganizationInfo(org)"
+          [showHero]="true"
+          [showMission]="true"
+          [showStatistics]="true"
+          [showPrograms]="true"
+          [showMemberDojos]="true"
+          [showEvents]="true"
+          [showLineage]="true"
+          [showPhilosophy]="true"
+          [showContact]="true"
+          [compact]="false"
+          (dojoClick)="onDojoClick($event)"
+          (eventClick)="onEventClick($event)"
+          (contactClick)="onContactClick($event)"
+          (websiteClick)="onWebsiteClick($event)"
+          (emailClick)="onEmailClick($event)"
+          (socialClick)="onSocialClick($event)"
+          (findDojoClick)="onFindDojoClick()"
+          (editClick)="onEditOrganization($event)">
+        </app-organization>
+      </div>
+    </div>
+
+    <!-- Legacy Single Organization View -->
+    <div *ngIf="showLegacyOrganization">
+      <app-organization
+        [organization]="organizationInfo"
+        [showHero]="true"
+        [showMission]="true"
+        [showStatistics]="true"
+        [showPrograms]="true"
+        [showMemberDojos]="true"
+        [showEvents]="true"
+        [showLineage]="true"
+        [showPhilosophy]="true"
+        [showContact]="true"
+        [compact]="false"
+        (dojoClick)="onDojoClick($event)"
+        (eventClick)="onEventClick($event)"
+        (contactClick)="onContactClick($event)"
+        (websiteClick)="onWebsiteClick($event)"
+        (emailClick)="onEmailClick($event)"
+        (socialClick)="onSocialClick($event)"
+        (findDojoClick)="onFindDojoClick()"
+        (editClick)="onEditOrganization($event)">
+      </app-organization>
+    </div>
+
+    <!-- Infinite Scroll -->
+    <ion-infinite-scroll threshold="100px" (ionInfinite)="loadMore($event)" *ngIf="!showLegacyOrganization">
+      <ion-infinite-scroll-content
+        loadingSpinner="bubbles"
+        loadingText="Loading more organizations...">
+      </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+
+    <!-- Empty State -->
+    <div *ngIf="filteredOrganizations.length === 0 && !showLegacyOrganization" class="empty-state">
+      <ion-icon name="business" color="medium"></ion-icon>
+      <h3>No organizations found</h3>
+      <p>Try adjusting your search criteria</p>
+      <ion-button fill="outline" color="primary" (click)="searchTerm = ''; onSearchClear()">
+        Clear Search
+      </ion-button>
+    </div>
+
+  </div>
+
+  <!-- Floating Action Button -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="onCreateOrganization()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+</ion-content>

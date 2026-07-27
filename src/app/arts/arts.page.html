@@ -1,0 +1,145 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dash/feed"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ 'arts.title' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">{{ 'arts.title' | translate }}</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div class="arts-container">
+    
+    <!-- Search and Filter Section -->
+    <div class="search-section">
+      <ion-searchbar 
+        [(ngModel)]="searchTerm"
+        (ionInput)="onSearchChange($event)"
+        [placeholder]="'arts.search_placeholder' | translate"
+        show-clear-button="focus"
+        debounce="300">
+      </ion-searchbar>
+      
+      <ion-segment 
+        [(ngModel)]="selectedCategory" 
+        (ionChange)="onCategoryChange($event)"
+        class="category-segment"
+        scrollable="true">
+        <ion-segment-button value="my-arts">
+          <ion-label>{{ 'arts.my_arts' | translate }}</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="martial-arts">
+          <ion-label>{{ 'arts.martial_arts' | translate }}</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="wellness">
+          <ion-label>{{ 'arts.wellness' | translate }}</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="crafts">
+          <ion-label>{{ 'arts.crafts' | translate }}</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+    </div>
+
+    <!-- Results Count -->
+    <div class="results-info">
+      <ion-text color="medium">
+        <p>{{ (filteredArts.length === 1 ? 'arts.results' : 'arts.results_plural') | translate: {count: filteredArts.length} }}</p>
+      </ion-text>
+    </div>
+
+    <!-- Arts Grid -->
+    <ion-grid class="arts-grid">
+      <ion-row>
+        <ion-col size="12" size-md="6" size-lg="4" *ngFor="let art of displayedArts; trackBy: trackByArtId">
+          <ion-card class="art-card" (click)="onArtClick(art)">
+            <div class="art-image">
+              <img [src]="art.image" [alt]="art.name" />
+              <div class="art-overlay">
+                <div class="overlay-top">
+                  <ion-chip [color]="getArtColor(art)" class="category-chip">
+                    <ion-icon [name]="getArtIcon(art)"></ion-icon>
+                    <ion-label>{{ art.category | titlecase }}</ion-label>
+                  </ion-chip>
+                </div>
+                <div class="overlay-bottom">
+                  <ion-chip *ngIf="art.isUserPracticing" color="success" class="practicing-chip">
+                    <ion-icon name="checkmark-circle"></ion-icon>
+                    <ion-label>{{ 'arts.practicing' | translate }}</ion-label>
+                  </ion-chip>
+                  <ion-chip *ngIf="art.isUserCreated" color="warning" class="created-chip">
+                    <ion-icon name="create"></ion-icon>
+                    <ion-label>{{ 'arts.my_creation' | translate }}</ion-label>
+                  </ion-chip>
+                </div>
+              </div>
+            </div>
+            
+            <ion-card-header>
+              <ion-card-title>{{ art.name }}</ion-card-title>
+            </ion-card-header>
+            
+            <ion-card-content>
+              <p class="art-description">{{ art.shortDescription }}</p>
+              
+              <div class="art-meta">
+                <ion-chip [color]="getDifficultyColor(art.difficulty)" outline="true" class="meta-chip">
+                  <ion-label>{{ art.difficulty | titlecase }}</ion-label>
+                </ion-chip>
+                <ion-chip [color]="getPhysicalDemandsColor(art.physicalDemands)" outline="true" class="meta-chip">
+                  <ion-label>{{ art.physicalDemands | titlecase }} Intensity</ion-label>
+                </ion-chip>
+              </div>
+              
+              <div class="art-benefits" *ngIf="art.benefits.length > 0">
+                <ion-text color="medium">
+                  <small>{{ 'arts.key_benefits' | translate }}:</small>
+                </ion-text>
+                <div class="benefits-list">
+                  <span *ngFor="let benefit of art.benefits.slice(0, 3); let last = last">
+                    {{ benefit }}<span *ngIf="!last">, </span>
+                  </span>
+                  <span *ngIf="art.benefits.length > 3">...</span>
+                </div>
+              </div>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <!-- Infinite Scroll -->
+    <ion-infinite-scroll threshold="100px" (ionInfinite)="loadMore($event)">
+      <ion-infinite-scroll-content
+        loadingSpinner="bubbles"
+        [loadingText]="'arts.loading_more' | translate">
+      </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+
+    <!-- Empty State -->
+    <div *ngIf="filteredArts.length === 0" class="empty-state">
+      <ion-icon name="search" color="medium"></ion-icon>
+      <h3>{{ (selectedCategory === 'my-arts' ? 'arts.no_my_arts' : 'arts.no_arts') | translate }}</h3>
+      <p *ngIf="selectedCategory === 'my-arts'">Start exploring arts to add them to your practice!</p>
+      <p *ngIf="selectedCategory !== 'my-arts'">Try adjusting your search or category filters</p>
+      <ion-button fill="outline" color="primary" (click)="searchTerm = ''; selectedCategory = 'all'; filterArts()">
+        {{ (selectedCategory === 'my-arts' ? 'arts.explore_all' : 'arts.clear_filters') | translate }}
+      </ion-button>
+    </div>
+
+  </div>
+
+  <!-- Floating Action Button -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <!-- Create New Art Button -->
+    <ion-fab-button (click)="onCreateNewArt()" color="primary">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+</ion-content>

@@ -1,0 +1,89 @@
+<div class="audit-log-container">
+  <!-- Header -->
+  <div class="audit-log-header">
+    <h3>Audit Trail</h3>
+    <ion-button 
+      fill="clear" 
+      size="small" 
+      (click)="refresh()"
+      [disabled]="isLoading">
+      <ion-icon name="refresh" slot="icon-only"></ion-icon>
+    </ion-button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Loading audit trail...</p>
+  </div>
+
+  <!-- Error State -->
+  <ion-card *ngIf="error && !isLoading" color="danger">
+    <ion-card-content>
+      <div class="error-content">
+        <ion-icon name="alert-circle" color="light"></ion-icon>
+        <span>{{ error }}</span>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Empty State -->
+  <ion-card *ngIf="!isLoading && !error && auditEntries.length === 0">
+    <ion-card-content>
+      <div class="empty-state">
+        <ion-icon name="document-text-outline" color="medium"></ion-icon>
+        <h4>No Audit Entries</h4>
+        <p>No audit trail entries found for this request.</p>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Audit Entries List -->
+  <div *ngIf="!isLoading && !error && auditEntries.length > 0" class="audit-entries">
+    <ion-card *ngFor="let entry of auditEntries; trackBy: trackByEntryId" class="audit-entry-card">
+      <ion-card-content>
+        <div class="audit-entry">
+          <!-- Action Icon and Title -->
+          <div class="entry-header">
+            <ion-icon 
+              [name]="getActionIcon(entry.action)" 
+              [color]="getActionColor(entry.action)"
+              class="action-icon">
+            </ion-icon>
+            <div class="entry-title">
+              <h4>{{ getActionDisplayText(entry.action) }}</h4>
+              <p class="entry-timestamp">{{ formatTimestamp(entry.performedAt) }}</p>
+            </div>
+          </div>
+
+          <!-- Entry Details -->
+          <div class="entry-details">
+            <!-- Request ID (if showing multiple requests) -->
+            <div *ngIf="showRequestColumn" class="detail-row">
+              <span class="detail-label">Request ID:</span>
+              <span class="detail-value">{{ entry.requestId }}</span>
+            </div>
+
+            <!-- Performed By -->
+            <div class="detail-row">
+              <span class="detail-label">Performed By:</span>
+              <span class="detail-value">{{ entry.performedByName }} ({{ entry.performedBy }})</span>
+            </div>
+
+            <!-- Status Transition -->
+            <div *ngIf="getStatusTransitionText(entry)" class="detail-row">
+              <span class="detail-label">Status Change:</span>
+              <span class="detail-value status-transition">{{ getStatusTransitionText(entry) }}</span>
+            </div>
+
+            <!-- Additional Details -->
+            <div *ngIf="hasDetails(entry)" class="detail-row">
+              <span class="detail-label">Details:</span>
+              <span class="detail-value details-text">{{ entry.details }}</span>
+            </div>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</div>

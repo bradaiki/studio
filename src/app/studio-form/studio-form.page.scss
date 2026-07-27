@@ -1,0 +1,166 @@
+/* Ensure content appears below main header */
+ion-content {
+  --padding-top: 16px;
+}
+
+ion-card {
+  margin: 16px;
+  
+  ion-card-header {
+    ion-card-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1.2em;
+      font-weight: 600;
+    }
+  }
+}
+
+ion-item {
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  
+  &.ion-invalid {
+    --border-color: var(--ion-color-danger);
+  }
+}
+
+ion-input, ion-textarea, ion-select {
+  --padding-start: 8px;
+  --padding-end: 8px;
+}
+
+.form-section {
+  margin-bottom: 24px;
+}
+
+.array-item {
+  border: 1px solid var(--ion-color-light);
+  border-radius: 8px;
+  margin-bottom: 16px;
+  padding: 16px;
+  
+  .array-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    
+    h3 {
+      margin: 0;
+      font-size: 1.1em;
+      font-weight: 600;
+    }
+  }
+}
+
+.add-button {
+  margin-top: 16px;
+}
+
+.action-buttons {
+  padding: 16px;
+  
+  ion-button {
+    margin-bottom: 8px;
+  }
+}
+
+.nested-array {
+  margin-left: 16px;
+  padding-left: 16px;
+  border-left: 2px solid var(--ion-color-light);
+  
+  .nested-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    
+    ion-input {
+      flex: 1;
+      margin-right: 8px;
+    }
+  }
+}
+
+.required-field::after {
+  content: ' *';
+  color: var(--ion-color-danger);
+}
+
+.form-validation-error {
+  color: var(--ion-color-danger);
+  font-size: 0.875em;
+  margin-top: 4px;
+}
+
+ion-fab {
+  --background: var(--ion-color-primary);
+  --color: white;
+}
+
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+}
+// Cale
+ndar specific styles
+.calendar-container {
+  margin-bottom: 20px;
+  
+  ion-datetime {
+    --background: var(--ion-color-light);
+    --border-radius: 8px;
+    width: 100%;
+  }
+}
+
+// Schedule item styles
+.schedule-item {
+  .time-inputs {
+    display: flex;
+    gap: 8px;
+    
+    ion-item {
+      flex: 1;
+    }
+  }
+  
+  .recurrence-section {
+    background: var(--ion-color-light);
+    border-radius: 8px;
+    padding: 12px;
+    margin-top: 12px;
+  }
+}
+
+// Color picker styles
+.color-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  
+  .color-preview {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--ion-color-medium);
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .calendar-container {
+    ion-datetime {
+      font-size: 0.9em;
+    }
+  }
+  
+  .time-inputs {
+    flex-direction: column;
+    gap: 0;
+  }
+}

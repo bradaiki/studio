@@ -1,0 +1,29 @@
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100%;
+  padding: 20px;
+}
+
+ion-card {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+ion-item {
+  --border-radius: 8px;
+  --border-width: 1px;
+  --border-color: var(--ion-color-light-shade);
+  margin-bottom: 16px;
+}
+
+ion-button {
+  --border-radius: 8px;
+  height: 48px;
+}
+
+ion-spinner {
+  margin-right: 8px;
+}

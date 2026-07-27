@@ -1,0 +1,353 @@
+{
+  "arts": [
+    {
+      "name": "Aikido",
+      "type": "aikido",
+      "description": "Aikido is a modern Japanese martial art that emphasizes harmony and the redirection of an attacker's energy. Founded by Morihei Ueshiba in the early 20th century, it combines joint locks, throws, and pins with spiritual and philosophical principles. Practitioners learn to blend with an opponent's movements rather than meeting force with force.",
+      "shortDescription": "A Japanese martial art focused on harmony and redirecting energy",
+      "image": "https://images.unsplash.com/photo-1555597673-b21d5c935865?w=800&h=400&fit=crop",
+      "category": "martial-arts",
+      "origin": "Japan, early 20th century",
+      "philosophy": "The way of harmonious spirit - emphasizing peace, non-resistance, and spiritual development",
+      "benefits": [
+        "Improved balance and coordination",
+        "Enhanced mental focus and discipline",
+        "Stress reduction through mindful practice",
+        "Self-defense skills without aggression",
+        "Increased flexibility and core strength"
+      ],
+      "techniques": [
+        "Ikkyo (first teaching)",
+        "Nikyo (second teaching)",
+        "Sankyo (third teaching)",
+        "Yonkyo (fourth teaching)",
+        "Irimi (entering)",
+        "Tenkan (turning)"
+      ],
+      "equipment": [
+        "Gi (training uniform)",
+        "Hakama (traditional pants)",
+        "Wooden bokken (sword)",
+        "Jo (wooden staff)",
+        "Tanto (wooden knife)"
+      ],
+      "difficulty": "intermediate",
+      "physicalDemands": "moderate",
+      "mentalAspects": [
+        "Mindfulness and presence",
+        "Non-violent conflict resolution",
+        "Spiritual awareness",
+        "Patience and humility"
+      ],
+      "relatedArts": [],
+      "organizations": [],
+      "studios": [],
+      "isPublic": true
+    },
+    {
+      "name": "Hatha Yoga",
+      "type": "yoga",
+      "description": "Hatha Yoga is a traditional form of yoga that focuses on physical postures (asanas), breathing techniques (pranayama), and meditation. It serves as the foundation for most modern yoga styles and emphasizes the balance between body and mind. The practice aims to prepare the body for deeper spiritual practices while promoting overall health and well-being.",
+      "shortDescription": "Traditional yoga focusing on postures, breathing, and meditation",
+      "image": "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&h=400&fit=crop",
+      "category": "wellness",
+      "origin": "India, ancient tradition",
+      "philosophy": "Union of body, mind, and spirit through physical and mental discipline",
+      "benefits": [
+        "Increased flexibility and strength",
+        "Better posture and body awareness",
+        "Reduced stress and anxiety",
+        "Improved breathing and lung capacity",
+        "Enhanced mental clarity and focus",
+        "Better sleep quality"
+      ],
+      "techniques": [
+        "Sun Salutation (Surya Namaskar)",
+        "Warrior poses (Virabhadrasana)",
+        "Tree pose (Vrksasana)",
+        "Downward dog (Adho Mukha Svanasana)",
+        "Child's pose (Balasana)",
+        "Corpse pose (Savasana)"
+      ],
+      "equipment": [
+        "Yoga mat",
+        "Yoga blocks",
+        "Yoga strap",
+        "Bolster",
+        "Blanket"
+      ],
+      "difficulty": "beginner",
+      "physicalDemands": "low",
+      "mentalAspects": [
+        "Mindfulness and meditation",
+        "Breath awareness",
+        "Inner peace and calm",
+        "Self-acceptance"
+      ],
+      "relatedArts": [],
+      "organizations": [],
+      "studios": [],
+      "isPublic": true
+    },
+    {
+      "name": "Pottery",
+      "type": "pottery",
+      "description": "Pottery is the ancient art of shaping clay into functional or decorative objects and firing them at high temperatures to create durable ceramics. This craft combines technical skill with artistic expression, allowing practitioners to create everything from simple bowls to intricate sculptures. The process involves centering clay on a wheel, shaping it with hands and tools, drying, glazing, and firing in a kiln.",
+      "shortDescription": "The art of creating ceramic objects from clay",
+      "image": "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=800&h=400&fit=crop",
+      "category": "crafts",
+      "origin": "Ancient civilizations worldwide, dating back 20,000+ years",
+      "philosophy": "Transforming earth into art through patience, skill, and fire",
+      "benefits": [
+        "Stress relief through tactile creativity",
+        "Improved hand-eye coordination",
+        "Enhanced focus and patience",
+        "Sense of accomplishment",
+        "Mindfulness through repetitive motions",
+        "Creation of functional art"
+      ],
+      "techniques": [
+        "Wheel throwing",
+        "Hand building (coil, slab, pinch)",
+        "Centering",
+        "Trimming and finishing",
+        "Glazing techniques",
+        "Firing (bisque and glaze)"
+      ],
+      "equipment": [
+        "Potter's wheel",
+        "Clay (earthenware, stoneware, porcelain)",
+        "Kiln",
+        "Pottery tools (ribs, needles, wire)",
+        "Glazes and underglazes",
+        "Sponges and buckets"
+      ],
+      "difficulty": "intermediate",
+      "physicalDemands": "moderate",
+      "mentalAspects": [
+        "Patience and persistence",
+        "Creative expression",
+        "Problem-solving",
+        "Attention to detail"
+      ],
+      "relatedArts": [],
+      "organizations": [],
+      "studios": [],
+      "isPublic": true
+    },
+    {
+      "name": "Brazilian Jiu-Jitsu",
+      "type": "jujitsu",
+      "description": "Brazilian Jiu-Jitsu (BJJ) is a martial art and combat sport that focuses on ground fighting and submission holds. Developed from Japanese Jujutsu and Judo, BJJ emphasizes technique and leverage over strength, allowing smaller practitioners to defend against larger opponents. The art teaches practitioners to take the fight to the ground and use various chokes, joint locks, and positional control to subdue opponents.",
+      "shortDescription": "Ground-fighting martial art emphasizing technique over strength",
+      "image": "https://images.unsplash.com/photo-1555597408-26bc8e548a46?w=800&h=400&fit=crop",
+      "category": "martial-arts",
+      "origin": "Brazil, early 20th century (derived from Japanese Jujutsu)",
+      "philosophy": "The gentle art - using technique and leverage to overcome size and strength",
+      "benefits": [
+        "Excellent full-body workout",
+        "Practical self-defense skills",
+        "Problem-solving under pressure",
+        "Increased confidence",
+        "Cardiovascular fitness",
+        "Mental toughness and resilience"
+      ],
+      "techniques": [
+        "Guard positions (closed, open, half)",
+        "Mount and side control",
+        "Back control",
+        "Submissions (chokes, armbars, leg locks)",
+        "Sweeps and reversals",
+        "Escapes and defenses"
+      ],
+      "equipment": [
+        "BJJ gi (kimono)",
+        "Belt (ranking system)",
+        "Rash guard (for no-gi)",
+        "Grappling shorts",
+        "Mouthguard"
+      ],
+      "difficulty": "intermediate",
+      "physicalDemands": "high",
+      "mentalAspects": [
+        "Strategic thinking",
+        "Staying calm under pressure",
+        "Humility and ego management",
+        "Continuous learning mindset"
+      ],
+      "relatedArts": [],
+      "organizations": [],
+      "studios": [],
+      "isPublic": true
+    },
+    {
+      "name": "Woodworking",
+      "type": "woodworking",
+      "description": "Woodworking is the craft of creating objects from wood using various tools and techniques. From furniture making to fine carpentry, woodworking combines technical skill with artistic vision. Practitioners learn to select appropriate woods, use hand and power tools safely, understand joinery techniques, and apply finishes. The craft ranges from simple projects to complex furniture and architectural elements.",
+      "shortDescription": "The craft of creating functional and artistic objects from wood",
+      "image": "https://images.unsplash.com/photo-1513828583688-c52646db42da?w=800&h=400&fit=crop",
+      "category": "crafts",
+      "origin": "Ancient craft practiced worldwide for millennia",
+      "philosophy": "Respecting the material and bringing out the natural beauty of wood",
+      "benefits": [
+        "Practical skills for home projects",
+        "Creative expression through design",
+        "Sense of accomplishment",
+        "Stress relief through focused work",
+        "Problem-solving abilities",
+        "Creation of lasting, functional items"
+      ],
+      "techniques": [
+        "Measuring and marking",
+        "Sawing (hand and power)",
+        "Joinery (dovetails, mortise and tenon)",
+        "Planing and smoothing",
+        "Sanding and finishing",
+        "Wood selection and grain matching"
+      ],
+      "equipment": [
+        "Hand saws and chisels",
+        "Power tools (table saw, router, drill)",
+        "Measuring tools (square, tape, calipers)",
+        "Clamps and vises",
+        "Sandpaper and finishing supplies",
+        "Safety equipment (goggles, dust mask)"
+      ],
+      "difficulty": "intermediate",
+      "physicalDemands": "moderate",
+      "mentalAspects": [
+        "Attention to detail",
+        "Spatial reasoning",
+        "Planning and visualization",
+        "Patience and precision"
+      ],
+      "relatedArts": [],
+      "organizations": [],
+      "studios": [],
+      "isPublic": true
+    }
+  ],
+  "organizations": [
+    {
+      "name": "International Aikido Federation",
+      "description": "The premier global organization dedicated to preserving and promoting traditional Aikido teachings worldwide",
+      "type": "martial-arts",
+      "foundedYear": 1976,
+      "headquarters": "Tokyo, Japan",
+      "memberCount": 50000,
+      "website": "https://aikido-international.org",
+      "contactEmail": "info@aikido-international.org",
+      "isVerified": true
+    },
+    {
+      "name": "Yoga Alliance",
+      "description": "The largest nonprofit association representing the yoga community, setting standards for yoga teacher training",
+      "type": "wellness",
+      "foundedYear": 1999,
+      "headquarters": "Arlington, Virginia, USA",
+      "memberCount": 100000,
+      "website": "https://yogaalliance.org",
+      "contactEmail": "info@yogaalliance.org",
+      "isVerified": true
+    },
+    {
+      "name": "American Craft Council",
+      "description": "National organization championing craft artists and fostering appreciation for contemporary craft",
+      "type": "crafts",
+      "foundedYear": 1943,
+      "headquarters": "Minneapolis, Minnesota, USA",
+      "memberCount": 25000,
+      "website": "https://craftcouncil.org",
+      "contactEmail": "council@craftcouncil.org",
+      "isVerified": true
+    },
+    {
+      "name": "International Brazilian Jiu-Jitsu Federation",
+      "description": "Governing body for BJJ competitions and ranking standards worldwide",
+      "type": "martial-arts",
+      "foundedYear": 1994,
+      "headquarters": "Rio de Janeiro, Brazil",
+      "memberCount": 75000,
+      "website": "https://ibjjf.com",
+      "contactEmail": "contact@ibjjf.com",
+      "isVerified": true
+    },
+    {
+      "name": "World Karate Federation",
+      "description": "The only karate organization recognized by the International Olympic Committee",
+      "type": "martial-arts",
+      "foundedYear": 1990,
+      "headquarters": "Madrid, Spain",
+      "memberCount": 200000,
+      "website": "https://wkf.net",
+      "contactEmail": "info@wkf.net",
+      "isVerified": true
+    },
+    {
+      "name": "National Pottery Association",
+      "description": "Supporting ceramic artists through education, exhibitions, and community building",
+      "type": "crafts",
+      "foundedYear": 1985,
+      "headquarters": "Portland, Oregon, USA",
+      "memberCount": 15000,
+      "website": "https://pottery-association.org",
+      "contactEmail": "hello@pottery-association.org",
+      "isVerified": true
+    },
+    {
+      "name": "International Yoga Federation",
+      "description": "Promoting yoga education and certification standards across continents",
+      "type": "wellness",
+      "foundedYear": 1987,
+      "headquarters": "New Delhi, India",
+      "memberCount": 80000,
+      "website": "https://iyf.org",
+      "contactEmail": "contact@iyf.org",
+      "isVerified": true
+    },
+    {
+      "name": "Woodworkers Guild of America",
+      "description": "Community of woodworkers sharing knowledge, techniques, and passion for the craft",
+      "type": "crafts",
+      "foundedYear": 2008,
+      "headquarters": "Denver, Colorado, USA",
+      "memberCount": 35000,
+      "website": "https://wwgoa.com",
+      "contactEmail": "support@wwgoa.com",
+      "isVerified": true
+    },
+    {
+      "name": "United States Judo Federation",
+      "description": "Developing judo athletes and promoting the sport throughout the United States",
+      "type": "martial-arts",
+      "foundedYear": 1952,
+      "headquarters": "Colorado Springs, Colorado, USA",
+      "memberCount": 45000,
+      "website": "https://usjf.com",
+      "contactEmail": "info@usjf.com",
+      "isVerified": true
+    },
+    {
+      "name": "International Pilates Association",
+      "description": "Setting standards for Pilates instruction and promoting the method worldwide",
+      "type": "wellness",
+      "foundedYear": 2005,
+      "headquarters": "London, United Kingdom",
+      "memberCount": 30000,
+      "website": "https://pilates-association.org",
+      "contactEmail": "info@pilates-association.org",
+      "isVerified": true
+    },
+    {
+      "name": "Global Martial Arts Federation",
+      "description": "Uniting martial artists across disciplines to promote respect, discipline, and excellence",
+      "type": "martial-arts",
+      "foundedYear": 2010,
+      "headquarters": "Singapore",
+      "memberCount": 120000,
+      "website": "https://gmaf.org",
+      "contactEmail": "contact@gmaf.org",
+      "isVerified": true
+    }
+  ]
+}

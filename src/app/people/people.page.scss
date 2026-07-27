@@ -1,0 +1,231 @@
+/* Ensure content appears below main header */
+ion-content {
+  --padding-top: 16px;
+}
+
+.filter-indicator {
+  padding: 8px 16px;
+  display: flex;
+  justify-content: center;
+  
+  ion-chip {
+    max-width: 100%;
+    
+    ion-label {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+}
+
+.search-bar {
+  margin: 0 16px 8px 16px;
+  --background: var(--ion-color-light);
+  --border-radius: 12px;
+  --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  
+  &[disabled] {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+}
+
+.segment-control {
+  margin: 8px 16px 16px 16px;
+  --background: var(--ion-color-light);
+}
+
+.people-container {
+  padding: 0 16px 16px 16px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 64px 32px;
+}
+
+.empty-state p {
+  margin: 0;
+  font-style: italic;
+  font-size: 1rem;
+}
+
+ion-content {
+  --background: var(--ion-color-light);
+}
+
+/* Clean Profile Avatar in Header */
+.profile-avatar {
+  width: 32px;
+  height: 32px;
+  margin: 0;
+  border: 2px solid var(--ion-color-primary);
+  border-radius: 50%;
+  overflow: hidden;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    transform: scale(1.05);
+    border-color: var(--ion-color-primary-shade);
+  }
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+/* Header Profile Button */
+ion-header ion-buttons[slot="end"] ion-button {
+  --border-radius: 50%;
+  --padding-start: 4px;
+  --padding-end: 4px;
+  margin-right: 8px;
+  
+  ion-icon {
+    font-size: 24px;
+    color: var(--ion-color-primary);
+  }
+}
+
+/* My Profile Section */
+.my-profile-section {
+  padding: 16px;
+  max-width: 600px;
+  margin: 0 auto;
+  
+  .section-header {
+    margin-bottom: 12px;
+    
+    h3 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--ion-color-dark);
+    }
+  }
+  
+  .my-profile-card {
+    background: white;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid var(--ion-color-light);
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+      border-color: var(--ion-color-primary);
+    }
+    
+    .profile-avatar-large {
+      width: 60px;
+      height: 60px;
+      flex-shrink: 0;
+      
+      img {
+        border: 2px solid var(--ion-color-primary);
+      }
+    }
+    
+    .profile-info {
+      flex: 1;
+      
+      h4 {
+        margin: 0 0 4px 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--ion-color-dark);
+      }
+      
+      p {
+        margin: 0 0 8px 0;
+        color: var(--ion-color-medium);
+        font-size: 0.9rem;
+        
+        &.location {
+          font-size: 0.8rem;
+        }
+      }
+      
+      ion-chip {
+        margin: 0;
+        --background: var(--ion-color-primary-tint);
+        --color: var(--ion-color-primary);
+        
+        ion-icon {
+          margin-right: 4px;
+        }
+      }
+    }
+    
+    .chevron {
+      color: var(--ion-color-medium);
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+  }
+}
+
+/* Simple Floating Profile Button */
+.profile-fab {
+  --background: var(--ion-color-primary);
+  --color: white;
+  --box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  
+  ion-icon {
+    font-size: 24px;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .people-container {
+    padding: 0 8px 16px 8px;
+  }
+  
+  .search-bar {
+    margin: 0 8px 8px 8px;
+  }
+  
+  .segment-control {
+    margin: 8px;
+  }
+  
+  .my-profile-section {
+    padding: 12px 8px;
+    
+    .my-profile-card {
+      padding: 12px;
+      gap: 12px;
+      
+      .profile-avatar-large {
+        width: 50px;
+        height: 50px;
+      }
+      
+      .profile-info {
+        h4 {
+          font-size: 1rem;
+        }
+        
+        p {
+          font-size: 0.85rem;
+          
+          &.location {
+            font-size: 0.75rem;
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,166 @@
+<ion-modal [isOpen]="isOpen" (didDismiss)="closeModal()" [backdropDismiss]="false">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar color="primary">
+        <ion-title>
+          <ion-icon name="notifications"></ion-icon>
+          Notifications
+          @if (totalPendingCount > 0) {
+            <ion-badge color="light">{{ totalPendingCount }}</ion-badge>
+          }
+        </ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="closeModal()">
+            <ion-icon name="close" slot="icon-only"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="ion-padding">
+      <!-- Chat Invitations Section -->
+      @if (pendingInvitations.length > 0) {
+        <div class="invitations-section">
+          <h2 class="section-title">
+            <ion-icon name="mail" color="primary"></ion-icon>
+            Chat Invitations ({{ pendingInvitations.length }})
+          </h2>
+
+          @for (invitation of pendingInvitations; track invitation.id) {
+            <ion-card class="invitation-card">
+              <ion-card-header>
+                <ion-card-title>
+                  <ion-icon name="chatbubble" color="primary"></ion-icon>
+                  Private Chat Invitation
+                </ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <div class="invitation-details">
+                  <p class="invitation-main">
+                    <strong>You've been invited to join a private chat</strong>
+                  </p>
+                  
+                  @if (invitation.message) {
+                    <p class="invitation-message">
+                      <ion-icon name="mail"></ion-icon>
+                      "{{ invitation.message }}"
+                    </p>
+                  }
+
+                  <div class="invitation-meta">
+                    <ion-chip size="small" color="medium" outline="true">
+                      <ion-icon name="person"></ion-icon>
+                      <ion-label>From: {{ invitation.invitedBy }}</ion-label>
+                    </ion-chip>
+
+                    <ion-chip size="small" color="primary" outline="true">
+                      <ion-icon name="time"></ion-icon>
+                      <ion-label>{{ formatTime(invitation.invitedAt) }}</ion-label>
+                    </ion-chip>
+
+                    @if (invitation.expiresAt) {
+                      <ion-chip 
+                        size="small" 
+                        [color]="isExpired(invitation) ? 'danger' : 'warning'" 
+                        outline="true">
+                        <ion-icon name="time"></ion-icon>
+                        <ion-label>
+                          {{ isExpired(invitation) ? 'Expired' : 'Expires' }}: {{ formatTime(invitation.expiresAt) }}
+                        </ion-label>
+                      </ion-chip>
+                    }
+                  </div>
+                </div>
+
+                <div class="invitation-actions">
+                  <ion-button 
+                    expand="block"
+                    color="success"
+                    (click)="acceptInvitation(invitation.id)"
+                    [disabled]="isExpired(invitation)">
+                    <ion-icon name="checkmark" slot="start"></ion-icon>
+                    Accept
+                  </ion-button>
+
+                  <div class="secondary-actions">
+                    <ion-button 
+                      fill="outline"
+                      color="danger"
+                      size="small"
+                      (click)="declineInvitation(invitation.id)">
+                      <ion-icon name="close-circle" slot="start"></ion-icon>
+                      Decline
+                    </ion-button>
+
+                    <ion-button 
+                      fill="clear"
+                      color="medium"
+                      size="small"
+                      (click)="ignoreInvitation(invitation.id)">
+                      Ignore for now
+                    </ion-button>
+                  </div>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          }
+        </div>
+      }
+
+      <!-- System Notifications Section -->
+      @if (systemNotifications.length > 0) {
+        <div class="notifications-section">
+          <h2 class="section-title">
+            <ion-icon name="notifications" color="primary"></ion-icon>
+            System Notifications ({{ systemNotifications.length }})
+          </h2>
+
+          <ion-list>
+            @for (notification of systemNotifications; track notification.id) {
+              <ion-item 
+                button
+                (click)="handleNotificationClick(notification)"
+                class="notification-item">
+                <ion-avatar slot="start">
+                  <div class="notification-icon">
+                    <ion-icon [name]="getNotificationIcon(notification)"></ion-icon>
+                  </div>
+                </ion-avatar>
+
+                <ion-label>
+                  <h3>{{ notification.title }}</h3>
+                  <p>{{ notification.message }}</p>
+                  <p class="notification-time">
+                    <ion-icon name="time"></ion-icon>
+                    {{ formatTime(notification.timestamp) }}
+                  </p>
+                </ion-label>
+
+                <ion-button 
+                  slot="end"
+                  fill="clear"
+                  color="medium"
+                  size="small"
+                  (click)="dismissNotification(notification.id, $event)">
+                  <ion-icon name="close-circle" slot="icon-only"></ion-icon>
+                </ion-button>
+              </ion-item>
+            }
+          </ion-list>
+        </div>
+      }
+
+      <!-- Empty State -->
+      @if (totalPendingCount === 0) {
+        <div class="empty-state">
+          <ion-icon name="checkmark-circle" color="success"></ion-icon>
+          <h3>All caught up!</h3>
+          <p>You have no pending notifications</p>
+          <ion-button fill="outline" (click)="closeModal()">
+            Close
+          </ion-button>
+        </div>
+      }
+    </ion-content>
+  </ng-template>
+</ion-modal>
