@@ -1,17 +1,37 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
-  IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonBackButton,
-  IonButton, IonIcon, IonInput, IonFooter, IonSpinner,
-  IonList, IonItem, IonLabel, IonAvatar, IonTextarea,
-  IonFab, IonFabButton, IonItemDivider
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonButtons,
+  IonBackButton,
+  IonButton,
+  IonIcon,
+  IonInput,
+  IonFooter,
+  IonSpinner,
+  IonList,
+  IonItem,
+  IonLabel,
+  IonAvatar,
+  IonTextarea,
+  IonFab,
+  IonFabButton,
+  IonItemDivider,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
-  chatbubblesOutline, send, add, chevronBack, peopleOutline,
-  personOutline, homeOutline
+  chatbubblesOutline,
+  send,
+  add,
+  chevronBack,
+  peopleOutline,
+  personOutline,
+  homeOutline,
 } from 'ionicons/icons';
 import { Location } from '@angular/common';
 import { ChatService } from '../services/chat.service';
@@ -19,20 +39,39 @@ import { PeopleService, Person } from '../services/people.service';
 import { Chat, ChatMessage, CreateChatRequest } from '../models/chat.models';
 import { Subscription } from 'rxjs';
 
-interface ChatGroup { label: string; icon: string; chats: Chat[]; }
+interface ChatGroup {
+  label: string;
+  icon: string;
+  chats: Chat[];
+}
 
 @Component({
   selector: 'app-chat',
   standalone: true,
   imports: [
-    CommonModule, FormsModule,
-    IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonBackButton,
-    IonButton, IonIcon, IonInput, IonFooter, IonSpinner,
-    IonList, IonItem, IonLabel, IonAvatar, IonTextarea,
-    IonFab, IonFabButton, IonItemDivider
+    FormsModule,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    IonButtons,
+    IonBackButton,
+    IonButton,
+    IonIcon,
+    IonInput,
+    IonFooter,
+    IonSpinner,
+    IonList,
+    IonItem,
+    IonLabel,
+    IonAvatar,
+    IonTextarea,
+    IonFab,
+    IonFabButton,
+    IonItemDivider,
   ],
   templateUrl: './chat.page.html',
-  styleUrls: ['./chat.page.scss']
+  styleUrls: ['./chat.page.scss'],
 })
 export class ChatPage implements OnInit, OnDestroy {
   @ViewChild(IonContent) content!: IonContent;
@@ -55,19 +94,26 @@ export class ChatPage implements OnInit, OnDestroy {
     private router: Router,
     private location: Location,
     private chatService: ChatService,
-    private peopleService: PeopleService
+    private peopleService: PeopleService,
   ) {
-    addIcons({ chatbubblesOutline, send, add, chevronBack, peopleOutline,
-      personOutline, homeOutline });
+    addIcons({
+      chatbubblesOutline,
+      send,
+      add,
+      chevronBack,
+      peopleOutline,
+      personOutline,
+      homeOutline,
+    });
   }
 
   async ngOnInit() {
-    this.chatsSub = this.chatService.chats$.subscribe(chats => {
+    this.chatsSub = this.chatService.chats$.subscribe((chats) => {
       this.allChats = chats;
       if (!this.activeChat) this.buildGroups();
     });
 
-    this.messagesSub = this.chatService.messages$.subscribe(allMsgs => {
+    this.messagesSub = this.chatService.messages$.subscribe((allMsgs) => {
       if (this.activeChat && allMsgs[this.activeChat.id]) {
         this.messages = allMsgs[this.activeChat.id];
         setTimeout(() => this.scrollToBottom(), 100);
@@ -81,7 +127,9 @@ export class ChatPage implements OnInit, OnDestroy {
       if (chatId) {
         await this.openChatById(chatId);
       } else if (this.targetUserId) {
-        this.targetPerson = (await this.peopleService.getPersonByIdAsync(this.targetUserId)) || null;
+        this.targetPerson =
+          (await this.peopleService.getPersonByIdAsync(this.targetUserId)) ||
+          null;
         this.scrollToRelevantChat();
       }
     } catch (e) {
@@ -97,13 +145,28 @@ export class ChatPage implements OnInit, OnDestroy {
 
   private buildGroups() {
     const sorted = this.sortByRecent(this.allChats);
-    const priv = sorted.filter(c => c.type === 'private');
-    const group = sorted.filter(c => c.type === 'group');
-    const studio = sorted.filter(c => c.type === 'studio');
+    const priv = sorted.filter((c) => c.type === 'private');
+    const group = sorted.filter((c) => c.type === 'group');
+    const studio = sorted.filter((c) => c.type === 'studio');
     const groups: ChatGroup[] = [];
-    if (priv.length) groups.push({ label: 'Direct Messages', icon: 'person-outline', chats: priv });
-    if (group.length) groups.push({ label: 'Group Chats', icon: 'people-outline', chats: group });
-    if (studio.length) groups.push({ label: 'Studio Chats', icon: 'home-outline', chats: studio });
+    if (priv.length)
+      groups.push({
+        label: 'Direct Messages',
+        icon: 'person-outline',
+        chats: priv,
+      });
+    if (group.length)
+      groups.push({
+        label: 'Group Chats',
+        icon: 'people-outline',
+        chats: group,
+      });
+    if (studio.length)
+      groups.push({
+        label: 'Studio Chats',
+        icon: 'home-outline',
+        chats: studio,
+      });
     this.chatGroups = groups;
   }
 
@@ -120,15 +183,18 @@ export class ChatPage implements OnInit, OnDestroy {
     const uid = this.targetUserId;
     const handle = this.targetPerson?.handle?.replace(/^@/, '') || '';
     const sorted = this.sortByRecent(this.allChats);
-    const match = sorted.find(c => {
+    const match = sorted.find((c) => {
       if (c.participantIds.includes(uid)) return true;
-      if (handle && c.name.toLowerCase().includes(handle.toLowerCase())) return true;
+      if (handle && c.name.toLowerCase().includes(handle.toLowerCase()))
+        return true;
       return false;
     });
     if (match) {
       this.highlightChatId = match.id;
       setTimeout(() => {
-        document.getElementById('chat-item-' + match.id)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        document
+          .getElementById('chat-item-' + match.id)
+          ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }, 200);
     }
   }
@@ -159,7 +225,7 @@ export class ChatPage implements OnInit, OnDestroy {
     this.buildGroups();
     this.router.navigate(['/dash/chat'], {
       replaceUrl: true,
-      queryParams: this.targetUserId ? { userId: this.targetUserId } : {}
+      queryParams: this.targetUserId ? { userId: this.targetUserId } : {},
     });
   }
 
@@ -168,7 +234,11 @@ export class ChatPage implements OnInit, OnDestroy {
     if (!text || !this.activeChat) return;
     this.newMessage = '';
     try {
-      await this.chatService.sendMessage({ chatId: this.activeChat.id, message: text, messageType: 'text' });
+      await this.chatService.sendMessage({
+        chatId: this.activeChat.id,
+        message: text,
+        messageType: 'text',
+      });
       setTimeout(() => this.scrollToBottom(), 100);
     } catch (e) {
       console.error('[ChatPage] send failed:', e);
@@ -177,7 +247,10 @@ export class ChatPage implements OnInit, OnDestroy {
   }
 
   onKeyDown(ev: KeyboardEvent) {
-    if (ev.key === 'Enter' && !ev.shiftKey) { ev.preventDefault(); this.sendMessage(); }
+    if (ev.key === 'Enter' && !ev.shiftKey) {
+      ev.preventDefault();
+      this.sendMessage();
+    }
   }
 
   openNewChat() {
@@ -187,7 +260,10 @@ export class ChatPage implements OnInit, OnDestroy {
       : '';
   }
 
-  cancelNewChat() { this.showNewChat = false; this.newChatName = ''; }
+  cancelNewChat() {
+    this.showNewChat = false;
+    this.newChatName = '';
+  }
 
   async createNewChat() {
     const name = this.newChatName.trim();
@@ -201,17 +277,28 @@ export class ChatPage implements OnInit, OnDestroy {
       chatType = 'private';
     }
     const chat = await this.chatService.createChat({
-      name, type: chatType, participantIds: participants,
+      name,
+      type: chatType,
+      participantIds: participants,
       accessLevel: chatType === 'private' ? 'private' : 'public',
-      settings: { allowLeaving: true, allowMuting: true, allowInviting: chatType !== 'private', isPublic: chatType !== 'private' }
+      settings: {
+        allowLeaving: true,
+        allowMuting: true,
+        allowInviting: chatType !== 'private',
+        isPublic: chatType !== 'private',
+      },
     });
     this.showNewChat = false;
     this.newChatName = '';
     await this.openChat(chat);
   }
 
-  onBack() { this.location.back(); }
-  private scrollToBottom() { this.content?.scrollToBottom(200); }
+  onBack() {
+    this.location.back();
+  }
+  private scrollToBottom() {
+    this.content?.scrollToBottom(200);
+  }
 
   formatTime(date: Date | undefined): string {
     if (!date) return '';
@@ -225,7 +312,13 @@ export class ChatPage implements OnInit, OnDestroy {
     return `${Math.floor(h / 24)}d`;
   }
 
-  trackByChat(_i: number, c: Chat) { return c.id; }
-  trackByMsg(_i: number, m: ChatMessage) { return m.id; }
-  trackByGroup(_i: number, g: ChatGroup) { return g.label; }
+  trackByChat(_i: number, c: Chat) {
+    return c.id;
+  }
+  trackByMsg(_i: number, m: ChatMessage) {
+    return m.id;
+  }
+  trackByGroup(_i: number, g: ChatGroup) {
+    return g.label;
+  }
 }

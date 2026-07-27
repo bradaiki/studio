@@ -1,101 +1,139 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-button *ngIf="activeChat" (click)="backToList()">
+      @if (activeChat) {
+      <ion-button (click)="backToList()">
         <ion-icon name="chevron-back" slot="icon-only"></ion-icon>
       </ion-button>
-      <ion-back-button *ngIf="!activeChat" defaultHref="/dash/feed"></ion-back-button>
+      } @if (!activeChat) {
+      <ion-back-button defaultHref="/dash/feed"></ion-back-button>
+      }
     </ion-buttons>
     <ion-title>{{ activeChat ? activeChat.name : 'Chats' }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-
   <!-- Loading -->
-  <div *ngIf="loading" class="center-state">
+  @if (loading) {
+  <div class="center-state">
     <ion-spinner name="crescent"></ion-spinner>
   </div>
+  }
 
   <!-- ========== CHAT LIST VIEW ========== -->
-  <ng-container *ngIf="!loading && !activeChat">
-
-    <!-- New chat inline form -->
-    <div *ngIf="showNewChat" class="new-chat-bar ion-padding">
-      <ion-input
-        [(ngModel)]="newChatName"
-        placeholder="Conversation name..."
-        (keyup.enter)="createNewChat()">
-      </ion-input>
-      <ion-button size="small" (click)="createNewChat()" [disabled]="!newChatName.trim()">Create</ion-button>
-      <ion-button size="small" fill="clear" (click)="cancelNewChat()">Cancel</ion-button>
-    </div>
-
-    <!-- Empty state -->
-    <div *ngIf="chatGroups.length === 0 && !showNewChat" class="center-state">
-      <ion-icon name="chatbubbles-outline" class="empty-icon" color="medium"></ion-icon>
-      <p>No conversations yet</p>
-      <p class="hint" *ngIf="targetPerson">Tap + to start chatting with {{ targetPerson.name || targetPerson.handle }}</p>
-    </div>
-
-    <!-- Grouped chat feed -->
-    <ion-list *ngIf="chatGroups.length > 0" lines="full">
-      <ng-container *ngFor="let group of chatGroups; trackBy: trackByGroup">
-        <ion-item-divider class="group-header">
-          <ion-icon [name]="group.icon" slot="start" color="primary"></ion-icon>
-          <ion-label>{{ group.label }}</ion-label>
-        </ion-item-divider>
-
-        <ion-item *ngFor="let chat of group.chats; trackBy: trackByChat"
-                  [id]="'chat-item-' + chat.id"
-                  [class.highlight]="chat.id === highlightChatId"
-                  button (click)="openChat(chat)" class="chat-list-item">
-          <ion-avatar slot="start" class="chat-avatar">
-            <ion-icon [name]="chat.type === 'private' ? 'person-outline' : chat.type === 'studio' ? 'home-outline' : 'people-outline'"></ion-icon>
-          </ion-avatar>
-          <ion-label>
-            <h2>{{ chat.name }}</h2>
-            <p *ngIf="chat.description" class="chat-desc">{{ chat.description }}</p>
-          </ion-label>
-          <ion-label slot="end" class="chat-time" *ngIf="chat.lastMessageAt">
-            {{ formatTime(chat.lastMessageAt) }}
-          </ion-label>
-        </ion-item>
-      </ng-container>
-    </ion-list>
-
-    <!-- FAB: new conversation -->
-    <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-      <ion-fab-button (click)="openNewChat()">
-        <ion-icon name="add"></ion-icon>
-      </ion-fab-button>
-    </ion-fab>
-  </ng-container>
+  @if (!loading && !activeChat) {
+  <!-- New chat inline form -->
+  @if (showNewChat) {
+  <div class="new-chat-bar ion-padding">
+    <ion-input
+      [(ngModel)]="newChatName"
+      placeholder="Conversation name..."
+      (keyup.enter)="createNewChat()"
+    >
+    </ion-input>
+    <ion-button
+      size="small"
+      (click)="createNewChat()"
+      [disabled]="!newChatName.trim()"
+      >Create</ion-button
+    >
+    <ion-button size="small" fill="clear" (click)="cancelNewChat()"
+      >Cancel</ion-button
+    >
+  </div>
+  }
+  <!-- Empty state -->
+  @if (chatGroups.length === 0 && !showNewChat) {
+  <div class="center-state">
+    <ion-icon
+      name="chatbubbles-outline"
+      class="empty-icon"
+      color="medium"
+    ></ion-icon>
+    <p>No conversations yet</p>
+    @if (targetPerson) {
+    <p class="hint">
+      Tap + to start chatting with {{ targetPerson.name || targetPerson.handle
+      }}
+    </p>
+    }
+  </div>
+  }
+  <!-- Grouped chat feed -->
+  @if (chatGroups.length > 0) {
+  <ion-list lines="full">
+    @for (group of chatGroups; track trackByGroup($index, group)) {
+    <ion-item-divider class="group-header">
+      <ion-icon [name]="group.icon" slot="start" color="primary"></ion-icon>
+      <ion-label>{{ group.label }}</ion-label>
+    </ion-item-divider>
+    @for (chat of group.chats; track trackByChat($index, chat)) {
+    <ion-item
+      [id]="'chat-item-' + chat.id"
+      [class.highlight]="chat.id === highlightChatId"
+      button
+      (click)="openChat(chat)"
+      class="chat-list-item"
+    >
+      <ion-avatar slot="start" class="chat-avatar">
+        <ion-icon
+          [name]="chat.type === 'private' ? 'person-outline' : chat.type === 'studio' ? 'home-outline' : 'people-outline'"
+        ></ion-icon>
+      </ion-avatar>
+      <ion-label>
+        <h2>{{ chat.name }}</h2>
+        @if (chat.description) {
+        <p class="chat-desc">{{ chat.description }}</p>
+        }
+      </ion-label>
+      @if (chat.lastMessageAt) {
+      <ion-label slot="end" class="chat-time">
+        {{ formatTime(chat.lastMessageAt) }}
+      </ion-label>
+      }
+    </ion-item>
+    } }
+  </ion-list>
+  }
+  <!-- FAB: new conversation -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="openNewChat()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+  }
 
   <!-- ========== ACTIVE CHAT VIEW ========== -->
-  <div *ngIf="!loading && activeChat" class="messages-container ion-padding">
-
-    <div *ngIf="messages.length === 0" class="center-state small">
-      <ion-icon name="chatbubbles-outline" class="empty-icon" color="medium"></ion-icon>
+  @if (!loading && activeChat) {
+  <div class="messages-container ion-padding">
+    @if (messages.length === 0) {
+    <div class="center-state small">
+      <ion-icon
+        name="chatbubbles-outline"
+        class="empty-icon"
+        color="medium"
+      ></ion-icon>
       <p>No messages yet. Say hello!</p>
     </div>
-
-    <div *ngFor="let msg of messages; trackBy: trackByMsg"
-         class="message-row"
-         [class.own]="msg.isOwn"
-         [class.other]="!msg.isOwn">
+    } @for (msg of messages; track trackByMsg($index, msg)) {
+    <div class="message-row" [class.own]="msg.isOwn" [class.other]="!msg.isOwn">
       <div class="message-bubble">
-        <div class="sender-name" *ngIf="!msg.isOwn">{{ msg.senderName }}</div>
+        @if (!msg.isOwn) {
+        <div class="sender-name">{{ msg.senderName }}</div>
+        }
         <div class="message-text">{{ msg.message }}</div>
         <div class="message-time">{{ formatTime(msg.timestamp) }}</div>
       </div>
     </div>
+    }
   </div>
-
+  }
 </ion-content>
 
 <!-- Message Input -->
-<ion-footer *ngIf="!loading && activeChat">
+@if (!loading && activeChat) {
+<ion-footer>
   <ion-toolbar>
     <div class="message-input-row">
       <ion-textarea
@@ -104,11 +142,17 @@
         rows="1"
         autoGrow="true"
         (keydown)="onKeyDown($event)"
-        class="message-input">
+        class="message-input"
+      >
       </ion-textarea>
-      <ion-button fill="clear" (click)="sendMessage()" [disabled]="!newMessage.trim()">
+      <ion-button
+        fill="clear"
+        (click)="sendMessage()"
+        [disabled]="!newMessage.trim()"
+      >
         <ion-icon name="send" slot="icon-only"></ion-icon>
       </ion-button>
     </div>
   </ion-toolbar>
 </ion-footer>
+}

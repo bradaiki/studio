@@ -1,15 +1,19 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button (click)="discardChanges()" defaultHref="/dash/arts"></ion-back-button>
+      <ion-back-button
+        (click)="discardChanges()"
+        defaultHref="/dash/arts"
+      ></ion-back-button>
     </ion-buttons>
     <ion-title>Manage {{ art?.name || 'Art' }}</ion-title>
     <ion-buttons slot="end">
-      <ion-button 
+      <ion-button
         (click)="saveChanges()"
         [disabled]="!hasUnsavedChanges"
         fill="solid"
-        color="primary">
+        color="primary"
+      >
         <ion-icon name="save" slot="start"></ion-icon>
         Save
       </ion-button>
@@ -18,10 +22,11 @@
 </ion-header>
 
 <ion-content>
-  <div class="management-container" *ngIf="art">
-    
+  @if (art) {
+  <div class="management-container">
     <!-- Unsaved Changes Banner -->
-    <ion-card *ngIf="hasUnsavedChanges" color="warning" class="unsaved-banner">
+    @if (hasUnsavedChanges) {
+    <ion-card color="warning" class="unsaved-banner">
       <ion-card-content>
         <div class="banner-content">
           <ion-icon name="information-circle"></ion-icon>
@@ -29,12 +34,13 @@
         </div>
       </ion-card-content>
     </ion-card>
-
+    }
     <!-- Segment Control -->
-    <ion-segment 
-      [(ngModel)]="selectedSegment" 
+    <ion-segment
+      [(ngModel)]="selectedSegment"
       (ionChange)="onSegmentChange($event)"
-      class="segment-control">
+      class="segment-control"
+    >
       <ion-segment-button value="basic">
         <ion-label>Basic Info</ion-label>
       </ion-segment-button>
@@ -48,9 +54,9 @@
         <ion-label>Settings</ion-label>
       </ion-segment-button>
     </ion-segment>
-
     <!-- Basic Info Section -->
-    <div *ngIf="selectedSegment === 'basic'">
+    @if (selectedSegment === 'basic') {
+    <div>
       <ion-card>
         <ion-card-header>
           <ion-card-title>Basic Information</ion-card-title>
@@ -59,72 +65,75 @@
           <ion-list>
             <ion-item>
               <ion-label position="stacked">Art Name *</ion-label>
-              <ion-input 
-                [(ngModel)]="editedArt.name" 
+              <ion-input
+                [(ngModel)]="editedArt.name"
                 (ionInput)="onFieldChange()"
                 placeholder="Enter art name"
-                maxlength="100">
+                maxlength="100"
+              >
               </ion-input>
             </ion-item>
-
             <ion-item>
               <ion-label position="stacked">Short Description *</ion-label>
-              <ion-textarea 
-                [(ngModel)]="editedArt.shortDescription" 
+              <ion-textarea
+                [(ngModel)]="editedArt.shortDescription"
                 (ionInput)="onFieldChange()"
                 placeholder="Brief description (1-2 sentences)"
                 rows="2"
-                maxlength="200">
+                maxlength="200"
+              >
               </ion-textarea>
             </ion-item>
-
             <ion-item>
               <ion-label position="stacked">Full Description *</ion-label>
-              <ion-textarea 
-                [(ngModel)]="editedArt.description" 
+              <ion-textarea
+                [(ngModel)]="editedArt.description"
                 (ionInput)="onFieldChange()"
                 placeholder="Detailed description of the art"
                 rows="6"
-                maxlength="2000">
+                maxlength="2000"
+              >
               </ion-textarea>
             </ion-item>
-
             <ion-item>
               <ion-label position="stacked">Category *</ion-label>
-              <ion-select 
-                [(ngModel)]="editedArt.category" 
+              <ion-select
+                [(ngModel)]="editedArt.category"
                 (ionChange)="onFieldChange()"
-                placeholder="Select category">
-                <ion-select-option 
-                  *ngFor="let cat of categories" 
-                  [value]="cat.value">
+                placeholder="Select category"
+              >
+                @for (cat of categories; track cat) {
+                <ion-select-option [value]="cat.value">
                   {{ cat.label }}
                 </ion-select-option>
+                }
               </ion-select>
             </ion-item>
-
             <ion-item>
               <ion-label position="stacked">Image URL</ion-label>
-              <ion-input 
-                [(ngModel)]="editedArt.image" 
+              <ion-input
+                [(ngModel)]="editedArt.image"
                 (ionInput)="onFieldChange()"
                 placeholder="https://example.com/image.jpg"
-                type="url">
+                type="url"
+              >
               </ion-input>
             </ion-item>
-
-            <ion-item *ngIf="editedArt.image">
+            @if (editedArt.image) {
+            <ion-item>
               <div class="image-preview">
                 <img [src]="editedArt.image" alt="Art preview" />
               </div>
             </ion-item>
+            }
           </ion-list>
         </ion-card-content>
       </ion-card>
     </div>
-
+    }
     <!-- Details Section -->
-    <div *ngIf="selectedSegment === 'details'">
+    @if (selectedSegment === 'details') {
+    <div>
       <ion-card>
         <ion-card-header>
           <ion-card-title>Art Details</ion-card-title>
@@ -133,59 +142,61 @@
           <ion-list>
             <ion-item>
               <ion-label position="stacked">Origin</ion-label>
-              <ion-input 
-                [(ngModel)]="editedArt.origin" 
+              <ion-input
+                [(ngModel)]="editedArt.origin"
                 (ionInput)="onFieldChange()"
                 placeholder="e.g., Japan (1920s)"
-                maxlength="100">
+                maxlength="100"
+              >
               </ion-input>
             </ion-item>
-
             <ion-item>
               <ion-label position="stacked">Philosophy</ion-label>
-              <ion-textarea 
-                [(ngModel)]="editedArt.philosophy" 
+              <ion-textarea
+                [(ngModel)]="editedArt.philosophy"
                 (ionInput)="onFieldChange()"
                 placeholder="Core philosophy and principles"
                 rows="4"
-                maxlength="500">
+                maxlength="500"
+              >
               </ion-textarea>
             </ion-item>
-
             <ion-item>
               <ion-label position="stacked">Difficulty Level *</ion-label>
-              <ion-select 
-                [(ngModel)]="editedArt.difficulty" 
+              <ion-select
+                [(ngModel)]="editedArt.difficulty"
                 (ionChange)="onFieldChange()"
-                placeholder="Select difficulty">
-                <ion-select-option 
-                  *ngFor="let diff of difficulties" 
-                  [value]="diff.value">
+                placeholder="Select difficulty"
+              >
+                @for (diff of difficulties; track diff) {
+                <ion-select-option [value]="diff.value">
                   {{ diff.label }}
                 </ion-select-option>
+                }
               </ion-select>
             </ion-item>
-
             <ion-item>
               <ion-label position="stacked">Physical Demands *</ion-label>
-              <ion-select 
-                [(ngModel)]="editedArt.physicalDemands" 
+              <ion-select
+                [(ngModel)]="editedArt.physicalDemands"
                 (ionChange)="onFieldChange()"
-                placeholder="Select physical demands">
-                <ion-select-option 
-                  *ngFor="let level of physicalDemandLevels" 
-                  [value]="level.value">
+                placeholder="Select physical demands"
+              >
+                @for (level of physicalDemandLevels; track level) {
+                <ion-select-option [value]="level.value">
                   {{ level.label }}
                 </ion-select-option>
+                }
               </ion-select>
             </ion-item>
           </ion-list>
         </ion-card-content>
       </ion-card>
     </div>
-
+    }
     <!-- Content Section -->
-    <div *ngIf="selectedSegment === 'content'">
+    @if (selectedSegment === 'content') {
+    <div>
       <!-- Benefits -->
       <ion-card>
         <ion-card-header>
@@ -193,30 +204,33 @@
         </ion-card-header>
         <ion-card-content>
           <div class="array-input-container">
-            <ion-input 
-              [(ngModel)]="newBenefit" 
+            <ion-input
+              [(ngModel)]="newBenefit"
               placeholder="Add a benefit"
-              (keyup.enter)="addBenefit()">
+              (keyup.enter)="addBenefit()"
+            >
             </ion-input>
-            <ion-button 
-              fill="clear" 
+            <ion-button
+              fill="clear"
               (click)="addBenefit()"
-              [disabled]="!newBenefit.trim()">
+              [disabled]="!newBenefit.trim()"
+            >
               <ion-icon name="add" slot="icon-only"></ion-icon>
             </ion-button>
           </div>
-          
-          <div class="chips-container" *ngIf="editedArt.benefits && editedArt.benefits.length > 0">
-            <ion-chip 
-              *ngFor="let benefit of editedArt.benefits; let i = index"
-              (click)="removeBenefit(i)">
+          @if (editedArt.benefits && editedArt.benefits.length > 0) {
+          <div class="chips-container">
+            @for (benefit of editedArt.benefits; track benefit; let i = $index)
+            {
+            <ion-chip (click)="removeBenefit(i)">
               <ion-label>{{ benefit }}</ion-label>
               <ion-icon name="close"></ion-icon>
             </ion-chip>
+            }
           </div>
+          }
         </ion-card-content>
       </ion-card>
-
       <!-- Techniques -->
       <ion-card>
         <ion-card-header>
@@ -224,30 +238,33 @@
         </ion-card-header>
         <ion-card-content>
           <div class="array-input-container">
-            <ion-input 
-              [(ngModel)]="newTechnique" 
+            <ion-input
+              [(ngModel)]="newTechnique"
               placeholder="Add a technique"
-              (keyup.enter)="addTechnique()">
+              (keyup.enter)="addTechnique()"
+            >
             </ion-input>
-            <ion-button 
-              fill="clear" 
+            <ion-button
+              fill="clear"
               (click)="addTechnique()"
-              [disabled]="!newTechnique.trim()">
+              [disabled]="!newTechnique.trim()"
+            >
               <ion-icon name="add" slot="icon-only"></ion-icon>
             </ion-button>
           </div>
-          
-          <div class="chips-container" *ngIf="editedArt.techniques && editedArt.techniques.length > 0">
-            <ion-chip 
-              *ngFor="let technique of editedArt.techniques; let i = index"
-              (click)="removeTechnique(i)">
+          @if (editedArt.techniques && editedArt.techniques.length > 0) {
+          <div class="chips-container">
+            @for (technique of editedArt.techniques; track technique; let i =
+            $index) {
+            <ion-chip (click)="removeTechnique(i)">
               <ion-label>{{ technique }}</ion-label>
               <ion-icon name="close"></ion-icon>
             </ion-chip>
+            }
           </div>
+          }
         </ion-card-content>
       </ion-card>
-
       <!-- Equipment -->
       <ion-card>
         <ion-card-header>
@@ -255,30 +272,32 @@
         </ion-card-header>
         <ion-card-content>
           <div class="array-input-container">
-            <ion-input 
-              [(ngModel)]="newEquipment" 
+            <ion-input
+              [(ngModel)]="newEquipment"
               placeholder="Add equipment"
-              (keyup.enter)="addEquipment()">
+              (keyup.enter)="addEquipment()"
+            >
             </ion-input>
-            <ion-button 
-              fill="clear" 
+            <ion-button
+              fill="clear"
               (click)="addEquipment()"
-              [disabled]="!newEquipment.trim()">
+              [disabled]="!newEquipment.trim()"
+            >
               <ion-icon name="add" slot="icon-only"></ion-icon>
             </ion-button>
           </div>
-          
-          <div class="chips-container" *ngIf="editedArt.equipment && editedArt.equipment.length > 0">
-            <ion-chip 
-              *ngFor="let item of editedArt.equipment; let i = index"
-              (click)="removeEquipment(i)">
+          @if (editedArt.equipment && editedArt.equipment.length > 0) {
+          <div class="chips-container">
+            @for (item of editedArt.equipment; track item; let i = $index) {
+            <ion-chip (click)="removeEquipment(i)">
               <ion-label>{{ item }}</ion-label>
               <ion-icon name="close"></ion-icon>
             </ion-chip>
+            }
           </div>
+          }
         </ion-card-content>
       </ion-card>
-
       <!-- Mental Aspects -->
       <ion-card>
         <ion-card-header>
@@ -286,33 +305,38 @@
         </ion-card-header>
         <ion-card-content>
           <div class="array-input-container">
-            <ion-input 
-              [(ngModel)]="newMentalAspect" 
+            <ion-input
+              [(ngModel)]="newMentalAspect"
               placeholder="Add mental aspect"
-              (keyup.enter)="addMentalAspect()">
+              (keyup.enter)="addMentalAspect()"
+            >
             </ion-input>
-            <ion-button 
-              fill="clear" 
+            <ion-button
+              fill="clear"
               (click)="addMentalAspect()"
-              [disabled]="!newMentalAspect.trim()">
+              [disabled]="!newMentalAspect.trim()"
+            >
               <ion-icon name="add" slot="icon-only"></ion-icon>
             </ion-button>
           </div>
-          
-          <div class="chips-container" *ngIf="editedArt.mentalAspects && editedArt.mentalAspects.length > 0">
-            <ion-chip 
-              *ngFor="let aspect of editedArt.mentalAspects; let i = index"
-              (click)="removeMentalAspect(i)">
+          @if (editedArt.mentalAspects && editedArt.mentalAspects.length > 0) {
+          <div class="chips-container">
+            @for (aspect of editedArt.mentalAspects; track aspect; let i =
+            $index) {
+            <ion-chip (click)="removeMentalAspect(i)">
               <ion-label>{{ aspect }}</ion-label>
               <ion-icon name="close"></ion-icon>
             </ion-chip>
+            }
           </div>
+          }
         </ion-card-content>
       </ion-card>
     </div>
-
+    }
     <!-- Settings Section -->
-    <div *ngIf="selectedSegment === 'settings'">
+    @if (selectedSegment === 'settings') {
+    <div>
       <ion-card>
         <ion-card-header>
           <ion-card-title>Visibility Settings</ion-card-title>
@@ -324,16 +348,16 @@
                 <h3>Public Visibility</h3>
                 <p>Make this art visible to all users</p>
               </ion-label>
-              <ion-checkbox 
+              <ion-checkbox
                 slot="end"
                 [(ngModel)]="editedArt.isPublic"
-                (ionChange)="onFieldChange()">
+                (ionChange)="onFieldChange()"
+              >
               </ion-checkbox>
             </ion-item>
           </ion-list>
         </ion-card-content>
       </ion-card>
-
       <ion-card>
         <ion-card-header>
           <ion-card-title>Metadata</ion-card-title>
@@ -342,12 +366,17 @@
           <ion-list lines="none">
             <ion-item>
               <ion-label>
-                <p><strong>Created:</strong> {{ art.createdAt | date:'medium' }}</p>
+                <p>
+                  <strong>Created:</strong> {{ art.createdAt | date:'medium' }}
+                </p>
               </ion-label>
             </ion-item>
             <ion-item>
               <ion-label>
-                <p><strong>Last Updated:</strong> {{ art.updatedAt | date:'medium' }}</p>
+                <p>
+                  <strong>Last Updated:</strong> {{ art.updatedAt |
+                  date:'medium' }}
+                </p>
               </ion-label>
             </ion-item>
             <ion-item>
@@ -359,18 +388,20 @@
         </ion-card-content>
       </ion-card>
     </div>
-
+    }
   </div>
+  }
 
   <!-- Floating Action Button for Save -->
-  <ion-button 
-    *ngIf="hasUnsavedChanges"
+  @if (hasUnsavedChanges) {
+  <ion-button
     class="floating-save-button"
     (click)="saveChanges()"
     color="primary"
-    size="large">
+    size="large"
+  >
     <ion-icon name="save" slot="start"></ion-icon>
     Save Changes
   </ion-button>
-
+  }
 </ion-content>

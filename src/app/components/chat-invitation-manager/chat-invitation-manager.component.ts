@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import {
   IonModal,
@@ -22,10 +22,20 @@ import {
   IonCardContent,
   IonSearchbar,
   IonAvatar,
-  ToastController
+  ToastController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { close, send, personAdd, mail, checkmark, closeCircle, time, search, atOutline } from 'ionicons/icons';
+import {
+  close,
+  send,
+  personAdd,
+  mail,
+  checkmark,
+  closeCircle,
+  time,
+  search,
+  atOutline,
+} from 'ionicons/icons';
 import { ChatInvitationService } from '../../services/chat-invitation.service';
 import { ChatInvitation } from '../../models/chat.models';
 import { generateClient } from 'aws-amplify/data';
@@ -37,7 +47,6 @@ import type { Schema } from '../../../../amplify/data/resource';
   styleUrls: ['./chat-invitation-manager.component.scss'],
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     IonModal,
     IonHeader,
@@ -58,8 +67,8 @@ import type { Schema } from '../../../../amplify/data/resource';
     IonCardTitle,
     IonCardContent,
     IonSearchbar,
-    IonAvatar
-  ]
+    IonAvatar,
+  ],
 })
 export class ChatInvitationManagerComponent implements OnInit {
   @Input() chatId!: string;
@@ -86,9 +95,19 @@ export class ChatInvitationManagerComponent implements OnInit {
 
   constructor(
     private invitationService: ChatInvitationService,
-    private toastController: ToastController
+    private toastController: ToastController,
   ) {
-    addIcons({ close, send, personAdd, mail, checkmark, closeCircle, time, search, atOutline });
+    addIcons({
+      close,
+      send,
+      personAdd,
+      mail,
+      checkmark,
+      closeCircle,
+      time,
+      search,
+      atOutline,
+    });
   }
 
   ngOnInit() {
@@ -99,7 +118,9 @@ export class ChatInvitationManagerComponent implements OnInit {
 
   async loadPendingInvitations() {
     try {
-      this.pendingInvitations = await this.invitationService.getChatInvitations(this.chatId);
+      this.pendingInvitations = await this.invitationService.getChatInvitations(
+        this.chatId,
+      );
     } catch (error) {
       console.error('Failed to load pending invitations:', error);
     }
@@ -119,16 +140,23 @@ export class ChatInvitationManagerComponent implements OnInit {
       if (!userId && handle) {
         // Remove @ if user included it
         handle = handle.replace(/^@/, '');
-        
+
         // Look up user by handle
         const personResult = await this.client.models.Person.list({
           filter: {
-            handle: { eq: handle }
-          }
+            handle: { eq: handle },
+          },
         });
 
-        if (personResult.errors || !personResult.data || personResult.data.length === 0) {
-          await this.showToast(`User with handle @${handle} not found`, 'danger');
+        if (
+          personResult.errors ||
+          !personResult.data ||
+          personResult.data.length === 0
+        ) {
+          await this.showToast(
+            `User with handle @${handle} not found`,
+            'danger',
+          );
           return;
         }
 
@@ -148,21 +176,21 @@ export class ChatInvitationManagerComponent implements OnInit {
         chatId: this.chatId,
         invitedUserId: userId,
         message: this.invitationMessage.trim() || undefined,
-        expiresAt
+        expiresAt,
       });
 
       await this.showToast('Invitation sent successfully', 'success');
-      
+
       // Reset form
       this.inviteeHandle = '';
       this.selectedUser = null;
       this.invitationMessage = '';
       this.searchTerm = '';
       this.searchResults = [];
-      
+
       // Reload invitations
       await this.loadPendingInvitations();
-      
+
       // Emit event
       this.invitationSent.emit();
     } catch (error) {
@@ -192,25 +220,25 @@ export class ChatInvitationManagerComponent implements OnInit {
     try {
       // Remove @ if user included it
       const searchHandle = this.searchTerm.trim().replace(/^@/, '');
-      
+
       // Search for users by handle or display name
       const result = await this.client.models.Person.list({
         filter: {
           or: [
             { handle: { contains: searchHandle } },
-            { displayName: { contains: this.searchTerm.trim() } }
-          ]
-        }
+            { displayName: { contains: this.searchTerm.trim() } },
+          ],
+        },
       });
 
       if (result.data) {
-        this.searchResults = result.data.slice(0, 10).map(person => ({
+        this.searchResults = result.data.slice(0, 10).map((person) => ({
           id: person.id,
           userId: person.userId || person.id,
           handle: person.handle,
           name: person.displayName,
           avatar: person.profileImage,
-          bio: person.bio
+          bio: person.bio,
         }));
       } else {
         this.searchResults = [];
@@ -243,7 +271,7 @@ export class ChatInvitationManagerComponent implements OnInit {
     if (days < 1) return 'Today';
     if (days === 1) return 'Yesterday';
     if (days < 7) return `${days} days ago`;
-    
+
     return timestamp.toLocaleDateString();
   }
 
@@ -252,12 +280,15 @@ export class ChatInvitationManagerComponent implements OnInit {
     return new Date() > invitation.expiresAt;
   }
 
-  private async showToast(message: string, color: 'success' | 'warning' | 'danger' = 'success') {
+  private async showToast(
+    message: string,
+    color: 'success' | 'warning' | 'danger' = 'success',
+  ) {
     const toast = await this.toastController.create({
       message,
       duration: 3000,
       color,
-      position: 'top'
+      position: 'top',
     });
     await toast.present();
   }

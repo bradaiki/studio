@@ -1,15 +1,19 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button (click)="onBack()" [defaultHref]="isEditMode ? '/art/' + artId : '/tabs/arts'"></ion-back-button>
+      <ion-back-button
+        (click)="onBack()"
+        [defaultHref]="isEditMode ? '/art/' + artId : '/tabs/arts'"
+      ></ion-back-button>
     </ion-buttons>
     <ion-title>{{ pageTitle }}</ion-title>
     <ion-buttons slot="end">
-      <ion-button 
-        (click)="onSave()" 
+      <ion-button
+        (click)="onSave()"
         [disabled]="loading || artForm.invalid"
         fill="solid"
-        color="primary">
+        color="primary"
+      >
         <ion-icon name="save" slot="start"></ion-icon>
         Save
       </ion-button>
@@ -19,7 +23,6 @@
 
 <ion-content [fullscreen]="true">
   <form [formGroup]="artForm" class="art-form-container">
-    
     <!-- Basic Information -->
     <ion-card>
       <ion-card-header>
@@ -28,57 +31,65 @@
       <ion-card-content>
         <ion-item>
           <ion-label position="stacked">Art Name *</ion-label>
-          <ion-input 
-            formControlName="name" 
+          <ion-input
+            formControlName="name"
             placeholder="Enter the name of the art"
-            [class.ion-invalid]="artForm.get('name')?.invalid && artForm.get('name')?.touched">
+            [class.ion-invalid]="artForm.get('name')?.invalid && artForm.get('name')?.touched"
+          >
           </ion-input>
         </ion-item>
 
         <ion-item>
           <ion-label position="stacked">Type *</ion-label>
           <ion-select formControlName="type" placeholder="Select art type">
-            <ion-select-option *ngFor="let type of artTypes" [value]="type.value">
+            @for (type of artTypes; track type) {
+            <ion-select-option [value]="type.value">
               {{ type.label }}
             </ion-select-option>
+            }
           </ion-select>
         </ion-item>
 
         <ion-item>
           <ion-label position="stacked">Category *</ion-label>
           <ion-select formControlName="category" placeholder="Select category">
-            <ion-select-option *ngFor="let category of categories" [value]="category.value">
+            @for (category of categories; track category) {
+            <ion-select-option [value]="category.value">
               {{ category.label }}
             </ion-select-option>
+            }
           </ion-select>
         </ion-item>
 
         <ion-item>
           <ion-label position="stacked">Short Description *</ion-label>
-          <ion-textarea 
-            formControlName="shortDescription" 
+          <ion-textarea
+            formControlName="shortDescription"
             placeholder="Brief description (max 200 characters)"
             rows="2"
             maxlength="200"
-            [class.ion-invalid]="artForm.get('shortDescription')?.invalid && artForm.get('shortDescription')?.touched">
+            [class.ion-invalid]="artForm.get('shortDescription')?.invalid && artForm.get('shortDescription')?.touched"
+          >
           </ion-textarea>
         </ion-item>
 
         <ion-item>
           <ion-label position="stacked">Full Description *</ion-label>
-          <ion-textarea 
-            formControlName="description" 
+          <ion-textarea
+            formControlName="description"
             placeholder="Detailed description of the art (minimum 50 characters)"
             rows="4"
-            [class.ion-invalid]="artForm.get('description')?.invalid && artForm.get('description')?.touched">
+            [class.ion-invalid]="artForm.get('description')?.invalid && artForm.get('description')?.touched"
+          >
           </ion-textarea>
         </ion-item>
 
         <ion-item>
           <ion-label position="stacked">Image URL</ion-label>
-          <ion-input 
-            formControlName="image" 
-            placeholder="https://example.com/image.jpg">
+          <ion-input
+            formControlName="image"
+            placeholder="https://example.com/image.jpg"
+          >
           </ion-input>
         </ion-item>
       </ion-card-content>
@@ -92,42 +103,50 @@
       <ion-card-content>
         <ion-item>
           <ion-label position="stacked">Origin</ion-label>
-          <ion-input 
-            formControlName="origin" 
-            placeholder="e.g., Ancient Japan, Modern USA">
+          <ion-input
+            formControlName="origin"
+            placeholder="e.g., Ancient Japan, Modern USA"
+          >
           </ion-input>
         </ion-item>
 
         <ion-item>
           <ion-label position="stacked">Philosophy</ion-label>
-          <ion-textarea 
-            formControlName="philosophy" 
+          <ion-textarea
+            formControlName="philosophy"
             placeholder="Core philosophy or principles"
-            rows="3">
+            rows="3"
+          >
           </ion-textarea>
         </ion-item>
 
         <ion-item>
           <ion-label position="stacked">Difficulty Level *</ion-label>
           <ion-select formControlName="difficulty">
-            <ion-select-option *ngFor="let difficulty of difficulties" [value]="difficulty.value">
+            @for (difficulty of difficulties; track difficulty) {
+            <ion-select-option [value]="difficulty.value">
               {{ difficulty.label }}
             </ion-select-option>
+            }
           </ion-select>
         </ion-item>
 
         <ion-item>
           <ion-label position="stacked">Physical Demands *</ion-label>
           <ion-select formControlName="physicalDemands">
-            <ion-select-option *ngFor="let demand of physicalDemands" [value]="demand.value">
+            @for (demand of physicalDemands; track demand) {
+            <ion-select-option [value]="demand.value">
               {{ demand.label }}
             </ion-select-option>
+            }
           </ion-select>
         </ion-item>
 
         <ion-item>
           <ion-checkbox formControlName="isPublic"></ion-checkbox>
-          <ion-label class="ion-margin-start">Make this art publicly visible</ion-label>
+          <ion-label class="ion-margin-start"
+            >Make this art publicly visible</ion-label
+          >
         </ion-item>
       </ion-card-content>
     </ion-card>
@@ -137,7 +156,11 @@
       <ion-card-header>
         <ion-card-title>
           Benefits
-          <ion-button fill="clear" size="small" (click)="addArrayItem('benefits')">
+          <ion-button
+            fill="clear"
+            size="small"
+            (click)="addArrayItem('benefits')"
+          >
             <ion-icon name="add" slot="icon-only"></ion-icon>
           </ion-button>
         </ion-card-title>
@@ -145,22 +168,27 @@
       <ion-card-content>
         <ion-list>
           <ion-reorder-group [disabled]="false">
-            <ion-item *ngFor="let benefit of getFormArray('benefits').controls; let i = index">
-              <ion-input 
-                [formControl]="$any(benefit)" 
-                placeholder="Enter a benefit">
+            @for (benefit of getFormArray('benefits').controls; track benefit;
+            let i = $index) {
+            <ion-item>
+              <ion-input
+                [formControl]="$any(benefit)"
+                placeholder="Enter a benefit"
+              >
               </ion-input>
-              <ion-button 
-                fill="clear" 
-                color="danger" 
-                slot="end" 
-                (click)="removeArrayItem('benefits', i)">
+              <ion-button
+                fill="clear"
+                color="danger"
+                slot="end"
+                (click)="removeArrayItem('benefits', i)"
+              >
                 <ion-icon name="trash" slot="icon-only"></ion-icon>
               </ion-button>
               <ion-reorder slot="end">
                 <ion-icon name="reorder-three"></ion-icon>
               </ion-reorder>
             </ion-item>
+            }
           </ion-reorder-group>
         </ion-list>
       </ion-card-content>
@@ -171,7 +199,11 @@
       <ion-card-header>
         <ion-card-title>
           Techniques
-          <ion-button fill="clear" size="small" (click)="addArrayItem('techniques')">
+          <ion-button
+            fill="clear"
+            size="small"
+            (click)="addArrayItem('techniques')"
+          >
             <ion-icon name="add" slot="icon-only"></ion-icon>
           </ion-button>
         </ion-card-title>
@@ -179,22 +211,27 @@
       <ion-card-content>
         <ion-list>
           <ion-reorder-group [disabled]="false">
-            <ion-item *ngFor="let technique of getFormArray('techniques').controls; let i = index">
-              <ion-input 
-                [formControl]="$any(technique)" 
-                placeholder="Enter a technique">
+            @for (technique of getFormArray('techniques').controls; track
+            technique; let i = $index) {
+            <ion-item>
+              <ion-input
+                [formControl]="$any(technique)"
+                placeholder="Enter a technique"
+              >
               </ion-input>
-              <ion-button 
-                fill="clear" 
-                color="danger" 
-                slot="end" 
-                (click)="removeArrayItem('techniques', i)">
+              <ion-button
+                fill="clear"
+                color="danger"
+                slot="end"
+                (click)="removeArrayItem('techniques', i)"
+              >
                 <ion-icon name="trash" slot="icon-only"></ion-icon>
               </ion-button>
               <ion-reorder slot="end">
                 <ion-icon name="reorder-three"></ion-icon>
               </ion-reorder>
             </ion-item>
+            }
           </ion-reorder-group>
         </ion-list>
       </ion-card-content>
@@ -205,7 +242,11 @@
       <ion-card-header>
         <ion-card-title>
           Equipment & Materials
-          <ion-button fill="clear" size="small" (click)="addArrayItem('equipment')">
+          <ion-button
+            fill="clear"
+            size="small"
+            (click)="addArrayItem('equipment')"
+          >
             <ion-icon name="add" slot="icon-only"></ion-icon>
           </ion-button>
         </ion-card-title>
@@ -213,22 +254,27 @@
       <ion-card-content>
         <ion-list>
           <ion-reorder-group [disabled]="false">
-            <ion-item *ngFor="let item of getFormArray('equipment').controls; let i = index">
-              <ion-input 
-                [formControl]="$any(item)" 
-                placeholder="Enter equipment or material">
+            @for (item of getFormArray('equipment').controls; track item; let i
+            = $index) {
+            <ion-item>
+              <ion-input
+                [formControl]="$any(item)"
+                placeholder="Enter equipment or material"
+              >
               </ion-input>
-              <ion-button 
-                fill="clear" 
-                color="danger" 
-                slot="end" 
-                (click)="removeArrayItem('equipment', i)">
+              <ion-button
+                fill="clear"
+                color="danger"
+                slot="end"
+                (click)="removeArrayItem('equipment', i)"
+              >
                 <ion-icon name="trash" slot="icon-only"></ion-icon>
               </ion-button>
               <ion-reorder slot="end">
                 <ion-icon name="reorder-three"></ion-icon>
               </ion-reorder>
             </ion-item>
+            }
           </ion-reorder-group>
         </ion-list>
       </ion-card-content>
@@ -239,7 +285,11 @@
       <ion-card-header>
         <ion-card-title>
           Mental Aspects
-          <ion-button fill="clear" size="small" (click)="addArrayItem('mentalAspects')">
+          <ion-button
+            fill="clear"
+            size="small"
+            (click)="addArrayItem('mentalAspects')"
+          >
             <ion-icon name="add" slot="icon-only"></ion-icon>
           </ion-button>
         </ion-card-title>
@@ -247,51 +297,58 @@
       <ion-card-content>
         <ion-list>
           <ion-reorder-group [disabled]="false">
-            <ion-item *ngFor="let aspect of getFormArray('mentalAspects').controls; let i = index">
-              <ion-input 
-                [formControl]="$any(aspect)" 
-                placeholder="Enter mental aspect">
+            @for (aspect of getFormArray('mentalAspects').controls; track
+            aspect; let i = $index) {
+            <ion-item>
+              <ion-input
+                [formControl]="$any(aspect)"
+                placeholder="Enter mental aspect"
+              >
               </ion-input>
-              <ion-button 
-                fill="clear" 
-                color="danger" 
-                slot="end" 
-                (click)="removeArrayItem('mentalAspects', i)">
+              <ion-button
+                fill="clear"
+                color="danger"
+                slot="end"
+                (click)="removeArrayItem('mentalAspects', i)"
+              >
                 <ion-icon name="trash" slot="icon-only"></ion-icon>
               </ion-button>
               <ion-reorder slot="end">
                 <ion-icon name="reorder-three"></ion-icon>
               </ion-reorder>
             </ion-item>
+            }
           </ion-reorder-group>
         </ion-list>
       </ion-card-content>
     </ion-card>
 
     <!-- Action Buttons -->
-    <ion-card *ngIf="isEditMode">
+    @if (isEditMode) {
+    <ion-card>
       <ion-card-content>
-        <ion-button 
-          expand="block" 
-          color="danger" 
+        <ion-button
+          expand="block"
+          color="danger"
           fill="outline"
-          (click)="onDelete()">
+          (click)="onDelete()"
+        >
           <ion-icon name="trash" slot="start"></ion-icon>
           Delete Art
         </ion-button>
       </ion-card-content>
     </ion-card>
-
+    }
   </form>
 
   <!-- Floating Action Button for Save -->
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button 
-      (click)="onSave()" 
+    <ion-fab-button
+      (click)="onSave()"
       [disabled]="loading || artForm.invalid"
-      color="primary">
+      color="primary"
+    >
       <ion-icon name="save"></ion-icon>
     </ion-fab-button>
   </ion-fab>
-
 </ion-content>

@@ -1,7 +1,9 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button [defaultHref]="'/dash/studio/' + studio?.id"></ion-back-button>
+      <ion-back-button
+        [defaultHref]="'/dash/studio/' + studio?.id"
+      ></ion-back-button>
     </ion-buttons>
     <ion-title>Manage Studio</ion-title>
     <ion-buttons slot="end">
@@ -13,7 +15,8 @@
 </ion-header>
 
 <ion-content>
-  <div class="studio-management-container" *ngIf="studio">
+  @if (studio) {
+  <div class="studio-management-container">
     <!-- Studio Header -->
     <ion-card class="studio-header-card">
       <ion-card-content>
@@ -25,17 +28,21 @@
               <ion-icon name="people"></ion-icon>
               <ion-label>{{ studio.memberCount }} members</ion-label>
             </ion-chip>
-            <ion-chip color="secondary" *ngIf="studio.verified">
+            @if (studio.verified) {
+            <ion-chip color="secondary">
               <ion-icon name="checkmark-circle"></ion-icon>
               <ion-label>Verified</ion-label>
             </ion-chip>
+            }
           </div>
         </div>
       </ion-card-content>
     </ion-card>
-
     <!-- Management Segments -->
-    <ion-segment [(ngModel)]="selectedSegment" (ionChange)="onSegmentChange($event)">
+    <ion-segment
+      [(ngModel)]="selectedSegment"
+      (ionChange)="onSegmentChange($event)"
+    >
       <ion-segment-button value="join-requests">
         <ion-icon name="person-add"></ion-icon>
         <ion-label>Join Requests</ion-label>
@@ -57,12 +64,14 @@
         <ion-label>Overview</ion-label>
       </ion-segment-button>
     </ion-segment>
-
     <!-- Join Requests Management -->
-    <div *ngIf="selectedSegment === 'join-requests'">
-      <app-studio-join-requests [studioId]="studio.id"></app-studio-join-requests>
-      
-      <ion-card *ngIf="!studio.id" class="empty-state-card">
+    @if (selectedSegment === 'join-requests') {
+    <div>
+      <app-studio-join-requests
+        [studioId]="studio.id"
+      ></app-studio-join-requests>
+      @if (!studio.id) {
+      <ion-card class="empty-state-card">
         <ion-card-content>
           <div class="empty-state">
             <ion-icon name="person-add" size="large"></ion-icon>
@@ -71,10 +80,12 @@
           </div>
         </ion-card-content>
       </ion-card>
+      }
     </div>
-
+    }
     <!-- Instructors Management -->
-    <div *ngIf="selectedSegment === 'instructors'">
+    @if (selectedSegment === 'instructors') {
+    <div>
       <ion-card>
         <ion-card-header>
           <ion-card-title>
@@ -87,84 +98,115 @@
           </ion-card-title>
         </ion-card-header>
         <ion-card-content>
-          <ion-list *ngIf="studio.instructors && studio.instructors.length > 0; else noInstructors">
-            <ion-item *ngFor="let instructor of studio.instructors" class="instructor-item">
+          @if (studio.instructors && studio.instructors.length > 0) {
+          <ion-list>
+            @for (instructor of studio.instructors; track instructor) {
+            <ion-item class="instructor-item">
               <ion-avatar slot="start">
                 <img [src]="instructor.image" [alt]="instructor.name" />
               </ion-avatar>
-              
               <ion-label>
                 <h2>{{ instructor.name }}</h2>
                 <p>{{ getInstructorRole(instructor) }}</p>
                 <div class="instructor-details">
-                  <ion-chip *ngIf="instructor.rank" color="tertiary" outline="true">
+                  @if (instructor.rank) {
+                  <ion-chip color="tertiary" outline="true">
                     <ion-label>{{ instructor.rank }}</ion-label>
                   </ion-chip>
-                  <ion-chip *ngIf="isHeadInstructor(instructor)" color="warning">
+                  } @if (isHeadInstructor(instructor)) {
+                  <ion-chip color="warning">
                     <ion-icon name="star"></ion-icon>
                     <ion-label>Head</ion-label>
                   </ion-chip>
-                  <ion-chip *ngIf="isStudioChief(instructor)" color="success">
+                  } @if (isStudioChief(instructor)) {
+                  <ion-chip color="success">
                     <ion-icon name="school"></ion-icon>
                     <ion-label>Chief</ion-label>
                   </ion-chip>
-                  <ion-chip [color]="instructor.isActive ? 'success' : 'medium'" outline="true">
-                    <ion-icon [name]="instructor.isActive ? 'checkmark-circle' : 'close-circle'"></ion-icon>
-                    <ion-label>{{ instructor.isActive ? 'Active' : 'Inactive' }}</ion-label>
+                  }
+                  <ion-chip
+                    [color]="instructor.isActive ? 'success' : 'medium'"
+                    outline="true"
+                  >
+                    <ion-icon
+                      [name]="instructor.isActive ? 'checkmark-circle' : 'close-circle'"
+                    ></ion-icon>
+                    <ion-label
+                      >{{ instructor.isActive ? 'Active' : 'Inactive'
+                      }}</ion-label
+                    >
                   </ion-chip>
                 </div>
-                <div class="instructor-contact" *ngIf="instructor.email || instructor.phone">
-                  <span *ngIf="instructor.email" class="contact-item">
+                @if (instructor.email || instructor.phone) {
+                <div class="instructor-contact">
+                  @if (instructor.email) {
+                  <span class="contact-item">
                     <ion-icon name="mail"></ion-icon>
                     {{ instructor.email }}
                   </span>
-                  <span *ngIf="instructor.phone" class="contact-item">
+                  } @if (instructor.phone) {
+                  <span class="contact-item">
                     <ion-icon name="call"></ion-icon>
                     {{ instructor.phone }}
                   </span>
+                  }
                 </div>
+                }
               </ion-label>
-
               <div slot="end" class="instructor-actions">
-                <ion-button fill="clear" (click)="toggleInstructorStatus(instructor)">
-                  <ion-icon [name]="instructor.isActive ? 'close-circle' : 'checkmark-circle'"></ion-icon>
+                <ion-button
+                  fill="clear"
+                  (click)="toggleInstructorStatus(instructor)"
+                >
+                  <ion-icon
+                    [name]="instructor.isActive ? 'close-circle' : 'checkmark-circle'"
+                  ></ion-icon>
                 </ion-button>
                 <ion-button fill="clear" (click)="editInstructor(instructor)">
                   <ion-icon name="create"></ion-icon>
                 </ion-button>
-                <ion-button fill="clear" color="danger" (click)="removeInstructor(instructor)">
+                <ion-button
+                  fill="clear"
+                  color="danger"
+                  (click)="removeInstructor(instructor)"
+                >
                   <ion-icon name="trash"></ion-icon>
                 </ion-button>
               </div>
             </ion-item>
+            }
           </ion-list>
-
-          <ng-template #noInstructors>
-            <div class="empty-state">
-              <ion-icon name="people" size="large"></ion-icon>
-              <h3>No Instructors</h3>
-              <p>Add instructors to your studio to get started.</p>
-              <ion-button (click)="addInstructor()">
-                <ion-icon name="person-add" slot="start"></ion-icon>
-                Add Instructor
-              </ion-button>
-            </div>
-          </ng-template>
+          } @else {
+          <div class="empty-state">
+            <ion-icon name="people" size="large"></ion-icon>
+            <h3>No Instructors</h3>
+            <p>Add instructors to your studio to get started.</p>
+            <ion-button (click)="addInstructor()">
+              <ion-icon name="person-add" slot="start"></ion-icon>
+              Add Instructor
+            </ion-button>
+          </div>
+          }
         </ion-card-content>
       </ion-card>
     </div>
-
+    }
     <!-- Activities Management -->
-    <div *ngIf="selectedSegment === 'activities'">
+    @if (selectedSegment === 'activities') {
+    <div>
       <ion-card>
         <ion-card-header>
           <ion-card-title>
             <div class="section-header">
               <span>Activities & Classes ({{ studioActivities.length }})</span>
               <div class="header-actions">
-                <ion-chip *ngIf="hasMoreActivities()" color="primary" outline="true" size="small">
-                  <ion-label>Showing 20 of {{ studioActivities.length }}</ion-label>
+                @if (hasMoreActivities()) {
+                <ion-chip color="primary" outline="true" size="small">
+                  <ion-label
+                    >Showing 20 of {{ studioActivities.length }}</ion-label
+                  >
                 </ion-chip>
+                }
                 <ion-button fill="clear" (click)="openClassModal()">
                   <ion-icon name="add"></ion-icon>
                 </ion-button>
@@ -173,90 +215,135 @@
           </ion-card-title>
         </ion-card-header>
         <ion-card-content>
-          <div *ngIf="studioActivities.length > 0; else noActivities">
+          @if (studioActivities.length > 0) {
+          <div>
             <div class="activities-scroll-container">
               <div class="activities-grid">
-                <ion-card *ngFor="let activity of getDisplayedActivities()" class="activity-card" (click)="navigateToActivity(activity)">
+                @for (activity of getDisplayedActivities(); track activity) {
+                <ion-card
+                  class="activity-card"
+                  (click)="navigateToActivity(activity)"
+                >
                   <ion-card-content>
                     <div class="activity-header">
-                      <div class="activity-type-indicator" [style.background-color]="activity.color || '#3880ff'"></div>
+                      <div
+                        class="activity-type-indicator"
+                        [style.background-color]="activity.color || '#3880ff'"
+                      ></div>
                       <div class="activity-basic-info">
                         <h3>{{ activity.title }}</h3>
-                        <p class="activity-instructor">{{ activity.instructor }} • {{ activity.level }}</p>
+                        <p class="activity-instructor">
+                          {{ activity.instructor }} • {{ activity.level }}
+                        </p>
                         <div class="activity-badges">
-                          <ion-chip [color]="activity.type === 'class' ? 'primary' : 'secondary'" size="small">
+                          <ion-chip
+                            [color]="activity.type === 'class' ? 'primary' : 'secondary'"
+                            size="small"
+                          >
                             <ion-label>{{ activity.category }}</ion-label>
                           </ion-chip>
-                          <ion-chip [color]="activity.isRecurring ? 'success' : 'warning'" size="small" outline="true">
-                            <ion-icon [name]="activity.isRecurring ? 'repeat' : 'calendar'"></ion-icon>
-                            <ion-label>{{ activity.isRecurring ? 'Recurring' : 'One-time' }}</ion-label>
+                          <ion-chip
+                            [color]="activity.isRecurring ? 'success' : 'warning'"
+                            size="small"
+                            outline="true"
+                          >
+                            <ion-icon
+                              [name]="activity.isRecurring ? 'repeat' : 'calendar'"
+                            ></ion-icon>
+                            <ion-label
+                              >{{ activity.isRecurring ? 'Recurring' :
+                              'One-time' }}</ion-label
+                            >
                           </ion-chip>
                         </div>
                       </div>
                       <div class="activity-actions">
-                        <ion-button fill="clear" size="small" (click)="editActivity(activity); $event.stopPropagation()">
+                        <ion-button
+                          fill="clear"
+                          size="small"
+                          (click)="editActivity(activity); $event.stopPropagation()"
+                        >
                           <ion-icon name="create"></ion-icon>
                         </ion-button>
-                        <ion-button fill="clear" size="small" color="danger" (click)="deleteActivity(activity); $event.stopPropagation()">
+                        <ion-button
+                          fill="clear"
+                          size="small"
+                          color="danger"
+                          (click)="deleteActivity(activity); $event.stopPropagation()"
+                        >
                           <ion-icon name="trash"></ion-icon>
                         </ion-button>
                       </div>
                     </div>
-                    
                     <div class="activity-details">
                       <div class="activity-schedule">
                         <span class="activity-time">
                           <ion-icon name="time"></ion-icon>
-                          {{ formatTime(activity.startTime) }} - {{ formatTime(activity.endTime) }}
+                          {{ formatTime(activity.startTime) }} - {{
+                          formatTime(activity.endTime) }}
                         </span>
-                        <span *ngIf="activity.location" class="activity-location">
+                        @if (activity.location) {
+                        <span class="activity-location">
                           <ion-icon name="location"></ion-icon>
                           {{ activity.location }}
                         </span>
-                        <span *ngIf="activity.isRecurring && activity.recurrenceDays" class="activity-recurring">
+                        } @if (activity.isRecurring && activity.recurrenceDays)
+                        {
+                        <span class="activity-recurring">
                           <ion-icon name="repeat"></ion-icon>
                           {{ getRecurringDaysText(activity.recurrenceDays) }}
                         </span>
-                        <span *ngIf="!activity.isRecurring && activity.startDate" class="activity-date">
+                        } @if (!activity.isRecurring && activity.startDate) {
+                        <span class="activity-date">
                           <ion-icon name="calendar"></ion-icon>
                           {{ activity.startDate | date }}
                         </span>
+                        }
                       </div>
-                      <div *ngIf="activity.cost" class="activity-cost">
+                      @if (activity.cost) {
+                      <div class="activity-cost">
                         <ion-icon name="card"></ion-icon>
                         {{ activity.cost }}
                       </div>
-                      <p *ngIf="activity.description" class="activity-description">{{ activity.description }}</p>
+                      } @if (activity.description) {
+                      <p class="activity-description">
+                        {{ activity.description }}
+                      </p>
+                      }
                     </div>
                   </ion-card-content>
                 </ion-card>
+                }
               </div>
             </div>
           </div>
-
-          <ng-template #noActivities>
-            <div class="empty-state">
-              <ion-icon name="calendar" size="large"></ion-icon>
-              <h3>No Activities</h3>
-              <p>Create classes and events for your studio.</p>
-              <ion-button (click)="openClassModal()">
-                <ion-icon name="add" slot="start"></ion-icon>
-                Add Activity
-              </ion-button>
-            </div>
-          </ng-template>
+          } @else {
+          <div class="empty-state">
+            <ion-icon name="calendar" size="large"></ion-icon>
+            <h3>No Activities</h3>
+            <p>Create classes and events for your studio.</p>
+            <ion-button (click)="openClassModal()">
+              <ion-icon name="add" slot="start"></ion-icon>
+              Add Activity
+            </ion-button>
+          </div>
+          }
         </ion-card-content>
       </ion-card>
     </div>
-
+    }
     <!-- Schedule Management -->
-    <div *ngIf="selectedSegment === 'schedule'">
+    @if (selectedSegment === 'schedule') {
+    <div>
       <!-- Schedule Controls -->
       <ion-card class="schedule-controls">
         <ion-card-content>
           <div class="schedule-header">
             <div class="view-controls">
-              <ion-segment [(ngModel)]="scheduleView" (ionChange)="changeScheduleView($event.detail.value)">
+              <ion-segment
+                [(ngModel)]="scheduleView"
+                (ionChange)="changeScheduleView($event.detail.value)"
+              >
                 <ion-segment-button value="week">
                   <ion-label>Week</ion-label>
                 </ion-segment-button>
@@ -268,7 +355,6 @@
                 </ion-segment-button>
               </ion-segment>
             </div>
-            
             <div class="navigation-controls">
               <ion-button fill="clear" (click)="navigateDate('prev')">
                 <ion-icon name="chevron-back"></ion-icon>
@@ -280,103 +366,123 @@
                 <ion-icon name="chevron-forward"></ion-icon>
               </ion-button>
             </div>
-            
             <ion-button (click)="openClassModal()" color="primary">
               <ion-icon name="add" slot="start"></ion-icon>
               Add Class
             </ion-button>
           </div>
-          
           <div class="current-period">
             <h2>{{ getCurrentViewTitle() }}</h2>
           </div>
         </ion-card-content>
       </ion-card>
-
       <!-- Week View - Hourly Time Grid -->
-      <ion-card *ngIf="scheduleView === 'week'" class="calendar-view">
+      @if (scheduleView === 'week') {
+      <ion-card class="calendar-view">
         <ion-card-content>
           <!-- Hourly Time Grid Calendar -->
           <div class="time-grid-calendar">
             <!-- Header with days -->
             <div class="time-grid-header">
               <div class="time-column-header"></div>
-              <div class="day-header" *ngFor="let date of getWeekDates(); let i = index">
+              @for (date of getWeekDates(); track date; let i = $index) {
+              <div class="day-header">
                 <div class="day-name">{{ weekDays[i].substring(0, 3) }}</div>
-                <div class="day-number" [class.today]="isToday(date)">{{ date.getDate() }}</div>
+                <div class="day-number" [class.today]="isToday(date)">
+                  {{ date.getDate() }}
+                </div>
               </div>
+              }
             </div>
-            
             <!-- Time grid body -->
             <div class="time-grid-body">
               <!-- Time labels column -->
               <div class="time-labels">
-                <div class="time-slot" *ngFor="let timeSlot of timeSlots">
-                  {{ formatTime(timeSlot) }}
-                </div>
+                @for (timeSlot of timeSlots; track timeSlot) {
+                <div class="time-slot">{{ formatTime(timeSlot) }}</div>
+                }
               </div>
-              
               <!-- Day columns with activities -->
               <div class="day-columns">
-                <div class="day-column" *ngFor="let date of getWeekDates()">
+                @for (date of getWeekDates(); track date) {
+                <div class="day-column">
                   <!-- Time slot grid -->
                   <div class="time-slots">
-                    <div class="time-slot-row" *ngFor="let timeSlot of timeSlots"></div>
+                    @for (timeSlot of timeSlots; track timeSlot) {
+                    <div class="time-slot-row"></div>
+                    }
                   </div>
-                  
                   <!-- Activities positioned absolutely -->
                   <div class="activities-container">
-                    <div class="activity-block" 
-                         *ngFor="let activity of getActivitiesForDate(date)"
-                         [ngStyle]="getActivityStyle(activity)"
-                         [title]="activity.title + ' - ' + formatTime(activity.startTime) + ' to ' + formatTime(activity.endTime)"
-                         (click)="navigateToActivity(activity)">
+                    @for (activity of getActivitiesForDate(date); track
+                    activity) {
+                    <div
+                      class="activity-block"
+                      [ngStyle]="getActivityStyle(activity)"
+                      [title]="activity.title + ' - ' + formatTime(activity.startTime) + ' to ' + formatTime(activity.endTime)"
+                      (click)="navigateToActivity(activity)"
+                    >
                       <div class="activity-title">{{ activity.title }}</div>
-                      <div class="activity-time">{{ formatTime(activity.startTime) }}</div>
-                      <div class="activity-instructor">{{ activity.instructor }}</div>
+                      <div class="activity-time">
+                        {{ formatTime(activity.startTime) }}
+                      </div>
+                      <div class="activity-instructor">
+                        {{ activity.instructor }}
+                      </div>
                     </div>
+                    }
                   </div>
                 </div>
+                }
               </div>
             </div>
           </div>
         </ion-card-content>
       </ion-card>
-
+      }
       <!-- Month View -->
-      <ion-card *ngIf="scheduleView === 'month'" class="calendar-view">
+      @if (scheduleView === 'month') {
+      <ion-card class="calendar-view">
         <ion-card-content>
           <div class="month-view">
             <div class="month-header">
-              <div class="day-name" *ngFor="let day of weekDays">{{ day.substring(0, 3) }}</div>
+              @for (day of weekDays; track day) {
+              <div class="day-name">{{ day.substring(0, 3) }}</div>
+              }
             </div>
-            
             <div class="month-body">
-              <div class="month-day" 
-                   *ngFor="let date of getMonthDates()"
-                   [class.other-month]="!isCurrentMonth(date)"
-                   [class.today]="isToday(date)">
+              @for (date of getMonthDates(); track date) {
+              <div
+                class="month-day"
+                [class.other-month]="!isCurrentMonth(date)"
+                [class.today]="isToday(date)"
+              >
                 <div class="day-number">{{ date.getDate() }}</div>
                 <div class="day-schedules">
-                  <div class="schedule-dot" 
-                       *ngFor="let schedule of getScheduleForDate(date)"
-                       [style.background-color]="schedule.color"
-                       [title]="schedule.title + ' - ' + formatTime(schedule.startTime)"
-                       (click)="openClassModal()">
-                  </div>
+                  @for (schedule of getScheduleForDate(date); track schedule) {
+                  <div
+                    class="schedule-dot"
+                    [style.background-color]="schedule.color"
+                    [title]="schedule.title + ' - ' + formatTime(schedule.startTime)"
+                    (click)="openClassModal()"
+                  ></div>
+                  }
                 </div>
               </div>
+              }
             </div>
           </div>
         </ion-card-content>
       </ion-card>
-
+      }
       <!-- Year View -->
-      <ion-card *ngIf="scheduleView === 'year'" class="calendar-view">
+      @if (scheduleView === 'year') {
+      <ion-card class="calendar-view">
         <ion-card-content>
           <div class="year-view">
             <div class="year-grid">
-              <div class="month-mini" *ngFor="let month of months; let i = index">
+              @for (month of months; track month; let i = $index) {
+              <div class="month-mini">
                 <h4>{{ month }}</h4>
                 <div class="mini-calendar">
                   <!-- Simplified month display for year view -->
@@ -387,85 +493,116 @@
                   </div>
                 </div>
               </div>
+              }
             </div>
           </div>
         </ion-card-content>
       </ion-card>
-
+      }
       <!-- Schedule List View -->
       <ion-card class="schedule-list">
         <ion-card-header>
           <ion-card-title>
             <div class="section-header">
               <span>All Classes ({{ studioActivities.length }})</span>
-              <ion-chip *ngIf="hasMoreActivities()" color="primary" outline="true" size="small">
-                <ion-label>Showing 20 of {{ studioActivities.length }}</ion-label>
+              @if (hasMoreActivities()) {
+              <ion-chip color="primary" outline="true" size="small">
+                <ion-label
+                  >Showing 20 of {{ studioActivities.length }}</ion-label
+                >
               </ion-chip>
+              }
             </div>
           </ion-card-title>
         </ion-card-header>
         <ion-card-content>
-          <div *ngIf="studioActivities && studioActivities.length > 0; else noSchedule">
+          @if (studioActivities && studioActivities.length > 0) {
+          <div>
             <div class="schedule-scroll-container">
               <div class="schedule-grid">
-                <ion-card *ngFor="let item of getDisplayedActivities()" class="schedule-card" (click)="navigateToActivity(item)">
+                @for (item of getDisplayedActivities(); track item) {
+                <ion-card
+                  class="schedule-card"
+                  (click)="navigateToActivity(item)"
+                >
                   <ion-card-content>
                     <div class="schedule-header">
-                      <div class="schedule-color" [style.background-color]="item.color"></div>
+                      <div
+                        class="schedule-color"
+                        [style.background-color]="item.color"
+                      ></div>
                       <div class="schedule-basic-info">
                         <h3>{{ item.title }}</h3>
-                        <p class="schedule-instructor">{{ item.instructor }} • {{ item.level }}</p>
+                        <p class="schedule-instructor">
+                          {{ item.instructor }} • {{ item.level }}
+                        </p>
                       </div>
                       <div class="schedule-actions">
-                        <ion-button fill="clear" size="small" (click)="editActivity(item); $event.stopPropagation()">
+                        <ion-button
+                          fill="clear"
+                          size="small"
+                          (click)="editActivity(item); $event.stopPropagation()"
+                        >
                           <ion-icon name="create"></ion-icon>
                         </ion-button>
-                        <ion-button fill="clear" size="small" color="danger" (click)="deleteActivity(item); $event.stopPropagation()">
+                        <ion-button
+                          fill="clear"
+                          size="small"
+                          color="danger"
+                          (click)="deleteActivity(item); $event.stopPropagation()"
+                        >
                           <ion-icon name="trash"></ion-icon>
                         </ion-button>
                       </div>
                     </div>
-                    
                     <div class="schedule-details">
                       <span class="schedule-time">
                         <ion-icon name="time"></ion-icon>
-                        {{ formatTime(item.startTime) }} - {{ formatTime(item.endTime) }}
+                        {{ formatTime(item.startTime) }} - {{
+                        formatTime(item.endTime) }}
                       </span>
-                      <span *ngIf="item.location" class="schedule-location">
+                      @if (item.location) {
+                      <span class="schedule-location">
                         <ion-icon name="location"></ion-icon>
                         {{ item.location }}
                       </span>
-                      <span *ngIf="item.isRecurring" class="schedule-recurring">
+                      } @if (item.isRecurring) {
+                      <span class="schedule-recurring">
                         <ion-icon name="repeat"></ion-icon>
-                        {{ item.recurrencePattern }}
-                        <span *ngIf="item.recurrencePattern === 'weekly' && item.recurrenceDays && item.recurrenceDays.length > 0" class="recurring-days">
+                        {{ item.recurrencePattern }} @if (item.recurrencePattern
+                        === 'weekly' && item.recurrenceDays &&
+                        item.recurrenceDays.length > 0) {
+                        <span class="recurring-days">
                           ({{ getRecurringDaysText(item.recurrenceDays) }})
                         </span>
+                        }
                       </span>
+                      }
                     </div>
                   </ion-card-content>
                 </ion-card>
+                }
               </div>
             </div>
           </div>
-
-          <ng-template #noSchedule>
-            <div class="empty-state">
-              <ion-icon name="calendar" size="large"></ion-icon>
-              <h3>No Classes Scheduled</h3>
-              <p>Create your first class schedule.</p>
-              <ion-button (click)="openClassModal()">
-                <ion-icon name="add" slot="start"></ion-icon>
-                Add Class
-              </ion-button>
-            </div>
-          </ng-template>
+          } @else {
+          <div class="empty-state">
+            <ion-icon name="calendar" size="large"></ion-icon>
+            <h3>No Classes Scheduled</h3>
+            <p>Create your first class schedule.</p>
+            <ion-button (click)="openClassModal()">
+              <ion-icon name="add" slot="start"></ion-icon>
+              Add Class
+            </ion-button>
+          </div>
+          }
         </ion-card-content>
       </ion-card>
     </div>
-
+    }
     <!-- Studio Overview -->
-    <div *ngIf="selectedSegment === 'overview'">
+    @if (selectedSegment === 'overview') {
+    <div>
       <ion-grid>
         <ion-row>
           <ion-col size="12" size-md="6">
@@ -498,22 +635,33 @@
               </ion-card-content>
             </ion-card>
           </ion-col>
-          
           <ion-col size="12" size-md="6">
             <ion-card>
               <ion-card-header>
                 <ion-card-title>Quick Actions</ion-card-title>
               </ion-card-header>
               <ion-card-content>
-                <ion-button expand="block" fill="outline" (click)="addInstructor()">
+                <ion-button
+                  expand="block"
+                  fill="outline"
+                  (click)="addInstructor()"
+                >
                   <ion-icon name="person-add" slot="start"></ion-icon>
                   Add Instructor
                 </ion-button>
-                <ion-button expand="block" fill="outline" (click)="manageSchedule()">
+                <ion-button
+                  expand="block"
+                  fill="outline"
+                  (click)="manageSchedule()"
+                >
                   <ion-icon name="calendar" slot="start"></ion-icon>
                   Manage Schedule
                 </ion-button>
-                <ion-button expand="block" fill="outline" (click)="studioSettings()">
+                <ion-button
+                  expand="block"
+                  fill="outline"
+                  (click)="studioSettings()"
+                >
                   <ion-icon name="settings" slot="start"></ion-icon>
                   Studio Settings
                 </ion-button>
@@ -523,16 +671,20 @@
         </ion-row>
       </ion-grid>
     </div>
+    }
   </div>
+  }
 
   <!-- Loading state -->
-  <div *ngIf="!studio" class="loading-state">
+  @if (!studio) {
+  <div class="loading-state">
     <ion-card>
       <ion-card-content>
         <p>Loading studio information...</p>
       </ion-card-content>
     </ion-card>
   </div>
+  }
 
   <!-- Alert for confirmations -->
   <ion-alert
@@ -540,7 +692,8 @@
     header="Confirm Action"
     message="Are you sure you want to remove this instructor?"
     [buttons]="alertButtons"
-    (didDismiss)="isAlertOpen = false">
+    (didDismiss)="isAlertOpen = false"
+  >
   </ion-alert>
 
   <!-- Toast for notifications -->
@@ -548,15 +701,22 @@
     [isOpen]="isToastOpen"
     [message]="toastMessage"
     duration="3000"
-    (didDismiss)="isToastOpen = false">
+    (didDismiss)="isToastOpen = false"
+  >
   </ion-toast>
 
   <!-- Instructor Modal -->
-  <ion-modal [isOpen]="isInstructorModalOpen" (didDismiss)="closeInstructorModal()">
+  <ion-modal
+    [isOpen]="isInstructorModalOpen"
+    (didDismiss)="closeInstructorModal()"
+  >
     <ng-template>
       <ion-header>
         <ion-toolbar>
-          <ion-title>{{ isEditingInstructor ? 'Edit Instructor' : 'Add New Instructor' }}</ion-title>
+          <ion-title
+            >{{ isEditingInstructor ? 'Edit Instructor' : 'Add New Instructor'
+            }}</ion-title
+          >
           <ion-buttons slot="end">
             <ion-button (click)="closeInstructorModal()">
               <ion-icon name="close"></ion-icon>
@@ -564,113 +724,174 @@
           </ion-buttons>
         </ion-toolbar>
       </ion-header>
-      
+
       <ion-content class="ion-padding">
         <form (ngSubmit)="saveInstructor()">
           <!-- Basic Information -->
           <div class="form-section">
             <h3>Basic Information</h3>
-            
+
             <ion-item>
               <ion-label position="stacked">Full Name *</ion-label>
-              <ion-input [(ngModel)]="newInstructor.name" name="name" placeholder="e.g., John Smith" required></ion-input>
+              <ion-input
+                [(ngModel)]="newInstructor.name"
+                name="name"
+                placeholder="e.g., John Smith"
+                required
+              ></ion-input>
             </ion-item>
 
             <ion-item>
               <ion-label position="stacked">Title</ion-label>
               <ion-select [(ngModel)]="newInstructor.title" name="title">
-                <ion-select-option *ngFor="let title of instructorTitles" [value]="title">
+                @for (title of instructorTitles; track title) {
+                <ion-select-option [value]="title">
                   {{ title }}
                 </ion-select-option>
+                }
               </ion-select>
             </ion-item>
 
             <ion-item>
               <ion-label position="stacked">Rank</ion-label>
-              <ion-select [(ngModel)]="newInstructor.rank" name="rank" placeholder="Select rank">
-                <ion-select-option *ngFor="let rank of ranks" [value]="rank">
+              <ion-select
+                [(ngModel)]="newInstructor.rank"
+                name="rank"
+                placeholder="Select rank"
+              >
+                @for (rank of ranks; track rank) {
+                <ion-select-option [value]="rank">
                   {{ rank }}
                 </ion-select-option>
+                }
               </ion-select>
             </ion-item>
 
             <ion-item>
               <ion-label position="stacked">Experience</ion-label>
-              <ion-input [(ngModel)]="newInstructor.experience" name="experience" placeholder="e.g., 15+ years"></ion-input>
+              <ion-input
+                [(ngModel)]="newInstructor.experience"
+                name="experience"
+                placeholder="e.g., 15+ years"
+              ></ion-input>
             </ion-item>
           </div>
 
           <!-- Contact Information -->
           <div class="form-section">
             <h3>Contact Information</h3>
-            
+
             <ion-item>
               <ion-label position="stacked">Email</ion-label>
-              <ion-input [(ngModel)]="newInstructor.email" name="email" type="email" placeholder="instructor@example.com"></ion-input>
+              <ion-input
+                [(ngModel)]="newInstructor.email"
+                name="email"
+                type="email"
+                placeholder="instructor@example.com"
+              ></ion-input>
             </ion-item>
 
             <ion-item>
               <ion-label position="stacked">Phone</ion-label>
-              <ion-input [(ngModel)]="newInstructor.phone" name="phone" type="tel" placeholder="(555) 123-4567"></ion-input>
+              <ion-input
+                [(ngModel)]="newInstructor.phone"
+                name="phone"
+                type="tel"
+                placeholder="(555) 123-4567"
+              ></ion-input>
             </ion-item>
           </div>
 
           <!-- Bio -->
           <div class="form-section">
             <h3>Biography</h3>
-            
+
             <ion-item>
               <ion-label position="stacked">Bio</ion-label>
-              <ion-textarea [(ngModel)]="newInstructor.bio" name="bio" rows="4" placeholder="Brief biography and background..."></ion-textarea>
+              <ion-textarea
+                [(ngModel)]="newInstructor.bio"
+                name="bio"
+                rows="4"
+                placeholder="Brief biography and background..."
+              ></ion-textarea>
             </ion-item>
           </div>
 
           <!-- Specialties -->
           <div class="form-section">
             <h3>Specialties</h3>
-            
+
             <ion-item>
               <ion-label position="stacked">Add Specialty</ion-label>
-              <ion-select (ionChange)="onSpecialtyChange($event)" placeholder="Select specialties">
-                <ion-select-option *ngFor="let specialty of commonSpecialties" [value]="specialty">
+              <ion-select
+                (ionChange)="onSpecialtyChange($event)"
+                placeholder="Select specialties"
+              >
+                @for (specialty of commonSpecialties; track specialty) {
+                <ion-select-option [value]="specialty">
                   {{ specialty }}
                 </ion-select-option>
+                }
               </ion-select>
             </ion-item>
 
-            <div class="chips-container" *ngIf="newInstructor.specialties && newInstructor.specialties.length > 0">
-              <ion-chip *ngFor="let specialty of newInstructor.specialties" color="primary" outline="true">
+            @if (newInstructor.specialties && newInstructor.specialties.length >
+            0) {
+            <div class="chips-container">
+              @for (specialty of newInstructor.specialties; track specialty) {
+              <ion-chip color="primary" outline="true">
                 <ion-label>{{ specialty }}</ion-label>
-                <ion-icon name="close" (click)="removeSpecialty(specialty)"></ion-icon>
+                <ion-icon
+                  name="close"
+                  (click)="removeSpecialty(specialty)"
+                ></ion-icon>
               </ion-chip>
+              }
             </div>
+            }
           </div>
 
           <!-- Certifications -->
           <div class="form-section">
             <h3>Certifications</h3>
-            
+
             <ion-item>
               <ion-label position="stacked">Add Certification</ion-label>
-              <ion-select (ionChange)="onCertificationChange($event)" placeholder="Select certifications">
-                <ion-select-option *ngFor="let cert of commonCertifications" [value]="cert">
+              <ion-select
+                (ionChange)="onCertificationChange($event)"
+                placeholder="Select certifications"
+              >
+                @for (cert of commonCertifications; track cert) {
+                <ion-select-option [value]="cert">
                   {{ cert }}
                 </ion-select-option>
+                }
               </ion-select>
             </ion-item>
 
-            <div class="chips-container" *ngIf="newInstructor.certifications && newInstructor.certifications.length > 0">
-              <ion-chip *ngFor="let cert of newInstructor.certifications" color="secondary" outline="true">
+            @if (newInstructor.certifications &&
+            newInstructor.certifications.length > 0) {
+            <div class="chips-container">
+              @for (cert of newInstructor.certifications; track cert) {
+              <ion-chip color="secondary" outline="true">
                 <ion-label>{{ cert }}</ion-label>
-                <ion-icon name="close" (click)="removeCertification(cert)"></ion-icon>
+                <ion-icon
+                  name="close"
+                  (click)="removeCertification(cert)"
+                ></ion-icon>
               </ion-chip>
+              }
             </div>
+            }
           </div>
 
           <!-- Status -->
           <div class="form-section">
             <ion-item>
-              <ion-checkbox [(ngModel)]="newInstructor.isActive" name="isActive"></ion-checkbox>
+              <ion-checkbox
+                [(ngModel)]="newInstructor.isActive"
+                name="isActive"
+              ></ion-checkbox>
               <ion-label class="ion-margin-start">Active Instructor</ion-label>
             </ion-item>
           </div>
@@ -680,7 +901,11 @@
             <ion-button expand="block" type="submit" color="primary">
               {{ isEditingInstructor ? 'Update Instructor' : 'Add Instructor' }}
             </ion-button>
-            <ion-button expand="block" fill="outline" (click)="closeInstructorModal()">
+            <ion-button
+              expand="block"
+              fill="outline"
+              (click)="closeInstructorModal()"
+            >
               Cancel
             </ion-button>
           </div>
@@ -694,7 +919,9 @@
     <ng-template>
       <ion-header>
         <ion-toolbar>
-          <ion-title>{{ isEditingClass ? 'Edit Class' : 'Add New Class' }}</ion-title>
+          <ion-title
+            >{{ isEditingClass ? 'Edit Class' : 'Add New Class' }}</ion-title
+          >
           <ion-buttons slot="end">
             <ion-button (click)="closeClassModal()">
               <ion-icon name="close"></ion-icon>
@@ -702,27 +929,42 @@
           </ion-buttons>
         </ion-toolbar>
       </ion-header>
-      
+
       <ion-content class="ion-padding">
         <form (ngSubmit)="saveClass()">
           <!-- Basic Information -->
           <ion-item>
             <ion-label position="stacked">Class Title *</ion-label>
-            <ion-input [(ngModel)]="newClass.title" name="title" placeholder="e.g., Adult Aikido" required></ion-input>
+            <ion-input
+              [(ngModel)]="newClass.title"
+              name="title"
+              placeholder="e.g., Adult Aikido"
+              required
+            ></ion-input>
           </ion-item>
 
           <ion-item>
             <ion-label position="stacked">Instructor *</ion-label>
-            <ion-select [(ngModel)]="newClass.instructor" name="instructor" placeholder="Select Instructor">
-              <ion-select-option *ngFor="let instructor of studio?.instructors" [value]="instructor.name">
+            <ion-select
+              [(ngModel)]="newClass.instructor"
+              name="instructor"
+              placeholder="Select Instructor"
+            >
+              @for (instructor of studio?.instructors; track instructor) {
+              <ion-select-option [value]="instructor.name">
                 {{ instructor.name }}
               </ion-select-option>
+              }
             </ion-select>
           </ion-item>
 
           <ion-item>
             <ion-label position="stacked">Location</ion-label>
-            <ion-input [(ngModel)]="newClass.location" name="location" placeholder="e.g., Main Dojo"></ion-input>
+            <ion-input
+              [(ngModel)]="newClass.location"
+              name="location"
+              placeholder="e.g., Main Dojo"
+            ></ion-input>
           </ion-item>
 
           <!-- Time -->
@@ -731,13 +973,23 @@
               <ion-col size="6">
                 <ion-item>
                   <ion-label position="stacked">Start Time *</ion-label>
-                  <ion-input [(ngModel)]="newClass.startTime" name="startTime" type="time" required></ion-input>
+                  <ion-input
+                    [(ngModel)]="newClass.startTime"
+                    name="startTime"
+                    type="time"
+                    required
+                  ></ion-input>
                 </ion-item>
               </ion-col>
               <ion-col size="6">
                 <ion-item>
                   <ion-label position="stacked">End Time *</ion-label>
-                  <ion-input [(ngModel)]="newClass.endTime" name="endTime" type="time" required></ion-input>
+                  <ion-input
+                    [(ngModel)]="newClass.endTime"
+                    name="endTime"
+                    type="time"
+                    required
+                  ></ion-input>
                 </ion-item>
               </ion-col>
             </ion-row>
@@ -745,43 +997,61 @@
 
           <!-- Date and Recurrence -->
           <ion-item>
-            <ion-checkbox [(ngModel)]="newClass.isRecurring" name="isRecurring"></ion-checkbox>
+            <ion-checkbox
+              [(ngModel)]="newClass.isRecurring"
+              name="isRecurring"
+            ></ion-checkbox>
             <ion-label class="ion-margin-start">Recurring Class</ion-label>
           </ion-item>
 
           <!-- One-time date -->
-          <div *ngIf="!newClass.isRecurring">
+          @if (!newClass.isRecurring) {
+          <div>
             <ion-item>
               <ion-label position="stacked">Date *</ion-label>
-              <ion-input [(ngModel)]="newClass.date" name="date" type="date" required></ion-input>
+              <ion-input
+                [(ngModel)]="newClass.date"
+                name="date"
+                type="date"
+                required
+              ></ion-input>
             </ion-item>
           </div>
+          }
 
           <!-- Recurring days -->
-          <div *ngIf="newClass.isRecurring" class="days-selection">
+          @if (newClass.isRecurring) {
+          <div class="days-selection">
             <ion-item>
               <ion-label position="stacked">Days of Week *</ion-label>
             </ion-item>
-            
             <div class="days-grid">
               <div class="day-buttons">
-                <ion-button 
-                  *ngFor="let day of weekDays; let i = index"
+                @for (day of weekDays; track day; let i = $index) {
+                <ion-button
                   [fill]="isDaySelected(i) ? 'solid' : 'outline'"
                   [color]="isDaySelected(i) ? 'primary' : 'medium'"
                   size="small"
                   class="day-button"
-                  (click)="toggleDay(i)">
+                  (click)="toggleDay(i)"
+                >
                   {{ day.substring(0, 3) }}
                 </ion-button>
+                }
               </div>
             </div>
           </div>
+          }
 
           <!-- Description -->
           <ion-item>
             <ion-label position="stacked">Description</ion-label>
-            <ion-textarea [(ngModel)]="newClass.description" name="description" rows="3" placeholder="Class description..."></ion-textarea>
+            <ion-textarea
+              [(ngModel)]="newClass.description"
+              name="description"
+              rows="3"
+              placeholder="Class description..."
+            ></ion-textarea>
           </ion-item>
 
           <!-- Action Buttons -->
@@ -789,7 +1059,11 @@
             <ion-button expand="block" type="submit" color="primary">
               {{ isEditingClass ? 'Update Class' : 'Add Class' }}
             </ion-button>
-            <ion-button expand="block" fill="outline" (click)="closeClassModal()">
+            <ion-button
+              expand="block"
+              fill="outline"
+              (click)="closeClassModal()"
+            >
               Cancel
             </ion-button>
           </div>

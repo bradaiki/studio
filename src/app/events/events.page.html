@@ -15,32 +15,35 @@
   </ion-header>
 
   <div class="events-container">
-    
     <!-- Filter Indicator -->
-    <div *ngIf="isFiltered" class="filter-indicator">
+    @if (isFiltered) {
+    <div class="filter-indicator">
       <ion-chip color="primary">
         <ion-icon name="home"></ion-icon>
         <ion-label>{{ filteredEntityName }}</ion-label>
         <ion-icon name="close" (click)="clearFilter()"></ion-icon>
       </ion-chip>
     </div>
+    }
 
     <!-- Search and Filter Section -->
     <div class="search-section" [class.filtered]="isFiltered">
-      <ion-searchbar 
+      <ion-searchbar
         [(ngModel)]="searchTerm"
         (ionInput)="onSearchChange($event)"
         [placeholder]="'events.search_placeholder' | translate"
         show-clear-button="focus"
         debounce="300"
-        [disabled]="isFiltered">
+        [disabled]="isFiltered"
+      >
       </ion-searchbar>
-      
-      <ion-segment 
-        [(ngModel)]="selectedFilter" 
+
+      <ion-segment
+        [(ngModel)]="selectedFilter"
         (ionChange)="onFilterChange($event)"
         class="filter-segment"
-        [disabled]="isFiltered">
+        [disabled]="isFiltered"
+      >
         <ion-segment-button value="all">
           <ion-label>{{ 'events.all_events' | translate }}</ion-label>
         </ion-segment-button>
@@ -65,23 +68,31 @@
     <!-- Results Count -->
     <div class="results-info">
       <ion-text color="medium">
-        <p *ngIf="filteredEvents.length === 1">1 event found</p>
-        <p *ngIf="filteredEvents.length !== 1">{{ filteredEvents.length }} events found</p>
+        @if (filteredEvents.length === 1) {
+        <p>1 event found</p>
+        } @if (filteredEvents.length !== 1) {
+        <p>{{ filteredEvents.length }} events found</p>
+        }
       </ion-text>
     </div>
 
     <!-- Events List -->
     <div class="events-list">
-      <ion-card *ngFor="let event of displayedEvents" class="event-card" [class.featured]="event.featured" (click)="onEventClick(event)">
-        
+      @for (event of displayedEvents; track event) {
+      <ion-card
+        class="event-card"
+        [class.featured]="event.featured"
+        (click)="onEventClick(event)"
+      >
         <!-- Featured Badge -->
-        <div *ngIf="event.featured" class="featured-badge">
+        @if (event.featured) {
+        <div class="featured-badge">
           <ion-badge color="warning">
             <ion-icon name="star"></ion-icon>
             {{ 'events.featured' | translate }}
           </ion-badge>
         </div>
-
+        }
         <!-- Event Image -->
         <div class="event-image">
           <img [src]="event.image" [alt]="event.title" />
@@ -91,7 +102,6 @@
             </ion-chip>
           </div>
         </div>
-
         <ion-card-content>
           <!-- Event Header -->
           <div class="event-header">
@@ -101,20 +111,20 @@
                 <ion-icon name="calendar" color="primary"></ion-icon>
                 <span>{{ formatEventDate(event.date) }}</span>
               </div>
-              <div class="meta-item" *ngIf="event.endDate && event.endDate !== event.date">
+              @if (event.endDate && event.endDate !== event.date) {
+              <div class="meta-item">
                 <ion-icon name="time" color="primary"></ion-icon>
                 <span>{{ 'events.multi_day' | translate }}</span>
               </div>
+              }
               <div class="meta-item">
                 <ion-icon name="time" color="primary"></ion-icon>
                 <span>{{ formatEventTime(event.time) }}</span>
               </div>
             </div>
           </div>
-
           <!-- Event Description -->
           <p class="event-description">{{ event.description }}</p>
-
           <!-- Event Details Grid -->
           <ion-grid class="event-details">
             <ion-row>
@@ -128,7 +138,6 @@
                   <p class="location-address">{{ event.address }}</p>
                 </div>
               </ion-col>
-              
               <ion-col size="12" size-md="6">
                 <div class="detail-section">
                   <h4>
@@ -140,7 +149,6 @@
                 </div>
               </ion-col>
             </ion-row>
-
             <ion-row>
               <ion-col size="6" size-md="3">
                 <div class="detail-section">
@@ -148,122 +156,159 @@
                     <ion-icon name="cash-outline" color="primary"></ion-icon>
                     {{ 'events.cost' | translate }}
                   </h4>
-                  <p class="event-cost" [class.free]="event.cost === 'Free'">{{ event.cost }}</p>
+                  <p class="event-cost" [class.free]="event.cost === 'Free'">
+                    {{ event.cost }}
+                  </p>
                 </div>
               </ion-col>
-              
               <ion-col size="6" size-md="3">
                 <div class="detail-section">
                   <h4>
                     <ion-icon name="ribbon" color="primary"></ion-icon>
                     {{ 'events.level' | translate }}
                   </h4>
-                  <ion-chip [color]="getDifficultyColor(event.difficulty)" outline="true" class="difficulty-chip">
+                  <ion-chip
+                    [color]="getDifficultyColor(event.difficulty)"
+                    outline="true"
+                    class="difficulty-chip"
+                  >
                     {{ event.difficulty | titlecase }}
                   </ion-chip>
                 </div>
               </ion-col>
-
-              <ion-col size="12" size-md="6" *ngIf="event.maxParticipants">
+              @if (event.maxParticipants) {
+              <ion-col size="12" size-md="6">
                 <div class="detail-section">
                   <h4>
                     <ion-icon name="people" color="primary"></ion-icon>
                     {{ 'events.availability' | translate }}
                   </h4>
-                  <p class="availability" [class.sold-out]="isEventSoldOut(event)">
+                  <p
+                    class="availability"
+                    [class.sold-out]="isEventSoldOut(event)"
+                  >
                     {{ getAvailabilityText(event) }}
                   </p>
                 </div>
               </ion-col>
+              }
             </ion-row>
           </ion-grid>
-
           <!-- Tags -->
-          <div class="event-tags" *ngIf="event.tags.length > 0">
-            <ion-chip *ngFor="let tag of event.tags" color="light" outline="true" class="tag-chip">
+          @if (event.tags.length > 0) {
+          <div class="event-tags">
+            @for (tag of event.tags; track tag) {
+            <ion-chip color="light" outline="true" class="tag-chip">
               {{ tag }}
             </ion-chip>
+            }
           </div>
-
+          }
           <!-- Requirements -->
-          <div class="requirements-section" *ngIf="event.requirements && event.requirements.length > 0">
+          @if (event.requirements && event.requirements.length > 0) {
+          <div class="requirements-section">
             <h4>
-              <ion-icon name="information-circle-outline" color="medium"></ion-icon>
+              <ion-icon
+                name="information-circle-outline"
+                color="medium"
+              ></ion-icon>
               {{ 'events.requirements' | translate }}
             </h4>
             <ul class="requirements-list">
-              <li *ngFor="let requirement of event.requirements">{{ requirement }}</li>
+              @for (requirement of event.requirements; track requirement) {
+              <li>{{ requirement }}</li>
+              }
             </ul>
           </div>
-
+          }
           <!-- What to Bring -->
-          <div class="bring-section" *ngIf="event.whatToBring && event.whatToBring.length > 0">
+          @if (event.whatToBring && event.whatToBring.length > 0) {
+          <div class="bring-section">
             <h4>
               <ion-icon name="book-outline" color="medium"></ion-icon>
               {{ 'events.what_to_bring' | translate }}
             </h4>
             <ul class="bring-list">
-              <li *ngFor="let item of event.whatToBring">{{ item }}</li>
+              @for (item of event.whatToBring; track item) {
+              <li>{{ item }}</li>
+              }
             </ul>
           </div>
-
+          }
           <!-- Action Buttons -->
           <div class="action-buttons">
-            <ion-button 
-              expand="block" 
-              color="primary" 
+            <ion-button
+              expand="block"
+              color="primary"
               [disabled]="isEventSoldOut(event)"
-              (click)="registerForEvent(event)">
+              (click)="registerForEvent(event)"
+            >
               <ion-icon name="person-outline" slot="start"></ion-icon>
-              {{ isEventSoldOut(event) ? ('events.sold_out' | translate) : ('events.register_now' | translate) }}
+              {{ isEventSoldOut(event) ? ('events.sold_out' | translate) :
+              ('events.register_now' | translate) }}
             </ion-button>
-            
             <div class="secondary-actions">
-              <ion-button fill="outline" color="medium" (click)="getDirections(event)">
+              <ion-button
+                fill="outline"
+                color="medium"
+                (click)="getDirections(event)"
+              >
                 <ion-icon name="map-outline" slot="start"></ion-icon>
                 {{ 'events.directions' | translate }}
               </ion-button>
-              
-              <ion-button fill="outline" color="medium" (click)="contactOrganizer(event)">
+              <ion-button
+                fill="outline"
+                color="medium"
+                (click)="contactOrganizer(event)"
+              >
                 <ion-icon name="call-outline" slot="start"></ion-icon>
                 {{ 'events.contact' | translate }}
               </ion-button>
-              
-              <ion-button fill="clear" color="medium" (click)="shareEvent(event)">
+              <ion-button
+                fill="clear"
+                color="medium"
+                (click)="shareEvent(event)"
+              >
                 <ion-icon name="share-outline" slot="icon-only"></ion-icon>
               </ion-button>
             </div>
           </div>
-
           <!-- Organizer Info -->
           <div class="organizer-info">
             <p class="organizer-text">
-              <strong>{{ 'events.organized_by' | translate }}:</strong> {{ event.organizer }}
+              <strong>{{ 'events.organized_by' | translate }}:</strong> {{
+              event.organizer }}
             </p>
           </div>
-
         </ion-card-content>
       </ion-card>
+      }
     </div>
 
     <!-- Infinite Scroll -->
     <ion-infinite-scroll threshold="100px" (ionInfinite)="loadMore($event)">
       <ion-infinite-scroll-content
         loadingSpinner="bubbles"
-        [loadingText]="'events.loading_more' | translate">
+        [loadingText]="'events.loading_more' | translate"
+      >
       </ion-infinite-scroll-content>
     </ion-infinite-scroll>
 
     <!-- Empty State -->
-    <div *ngIf="filteredEvents.length === 0" class="empty-state">
+    @if (filteredEvents.length === 0) {
+    <div class="empty-state">
       <ion-icon name="calendar" color="medium"></ion-icon>
       <h3>{{ 'events.no_events_found' | translate }}</h3>
       <p>{{ 'events.try_adjusting' | translate }}</p>
-      <ion-button fill="outline" color="primary" (click)="searchTerm = ''; selectedFilter = 'all'; filterEvents()">
+      <ion-button
+        fill="outline"
+        color="primary"
+        (click)="searchTerm = ''; selectedFilter = 'all'; filterEvents()"
+      >
         {{ 'events.clear_filters' | translate }}
       </ion-button>
     </div>
-
+    }
   </div>
 
   <!-- Floating Action Button -->
@@ -272,5 +317,4 @@
       <ion-icon name="add-outline"></ion-icon>
     </ion-fab-button>
   </ion-fab>
-
 </ion-content>

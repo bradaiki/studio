@@ -10,154 +10,182 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <div class="studio-info" *ngIf="studioName">
-    <h2>{{ studioName }}</h2>
-    <p>Request to join this studio</p>
-  </div>
-
-  <form [formGroup]="joinForm" (ngSubmit)="onSubmit()" *ngIf="joinForm; else loadingForm">
-    <!-- General Error Message -->
-    <ion-item *ngIf="errors.general" lines="none" class="error-item">
-      <ion-label color="danger">
-        <p>{{ errors.general }}</p>
-      </ion-label>
-    </ion-item>
-
-    <!-- Name Field -->
-    <ion-item>
-      <ion-label position="stacked">Your Name *</ion-label>
-      <ion-input 
-        formControlName="userName"
-        placeholder="Enter your full name"
-        type="text"
-        [class.ion-invalid]="errors.userName"
-        [class.ion-valid]="joinForm.get('userName')?.valid && (joinForm.get('userName')?.touched || joinForm.get('userName')?.dirty)"
-        [class.ion-touched]="joinForm.get('userName')?.touched"
-        (ionInput)="onUserNameInput($event)"
-        (ionBlur)="onUserNameBlur()">
-        <ion-icon name="person" slot="start"></ion-icon>
-      </ion-input>
-    </ion-item>
-    
-    <!-- Real-time validation feedback for name -->
-    <ion-item *ngIf="errors.userName" lines="none" class="error-item">
-      <ion-label color="danger">
-        <p>{{ errors.userName }}</p>
-      </ion-label>
-    </ion-item>
-    
-    <!-- Success feedback for valid name -->
-    <ion-item *ngIf="!errors.userName && joinForm.get('userName')?.valid && (joinForm.get('userName')?.touched || joinForm.get('userName')?.dirty)" lines="none" class="success-item">
-      <ion-label color="success">
-        <p>✓ Name looks good</p>
-      </ion-label>
-    </ion-item>
-
-    <!-- Message Field -->
-    <ion-item>
-      <ion-label position="stacked">Message to Instructors</ion-label>
-      <ion-textarea 
-        formControlName="message"
-        placeholder="Optional message about your interest in joining..."
-        rows="4"
-        [class.ion-invalid]="errors.message"
-        [class.ion-valid]="joinForm.get('message')?.valid && (joinForm.get('message')?.touched || joinForm.get('message')?.dirty)"
-        (ionInput)="onMessageInput($event)"
-        (ionBlur)="onMessageBlur()">
-        <ion-icon name="mail" slot="start"></ion-icon>
-      </ion-textarea>
-    </ion-item>
-    
-    <!-- Real-time validation feedback for message -->
-    <ion-item *ngIf="errors.message" lines="none" class="error-item">
-      <ion-label color="danger">
-        <p>{{ errors.message }}</p>
-      </ion-label>
-    </ion-item>
-    
-    <!-- Character count feedback for message (always visible when typing) -->
-    <ion-item *ngIf="joinForm.get('message')?.value || joinForm.get('message')?.touched" lines="none" class="info-item">
-      <ion-label [color]="getCharacterCountColor()">
-        <p>{{ joinForm.get('message')?.value?.length || 0 }}/500 characters</p>
-      </ion-label>
-    </ion-item>
-
-    <!-- Real-time form validation status -->
-    <ion-item *ngIf="showFormValidationStatus()" lines="none" class="validation-status-item">
-      <ion-label [color]="isFormValid ? 'success' : 'medium'">
-        <p *ngIf="isFormValid">✓ Ready to submit</p>
-        <p *ngIf="!isFormValid && hasFormInteraction()">Please complete required fields</p>
-      </ion-label>
-    </ion-item>
-
-    <!-- Submit Button with Enhanced Loading States -->
-    <div class="submit-section">
-      <ion-button 
-        type="submit"
-        expand="block"
-        [disabled]="!isFormValid || isSubmitting"
-        color="primary"
-        [class.loading-button]="isSubmitting">
-        
-        <!-- Loading Spinner -->
-        <ion-spinner 
-          *ngIf="isSubmitting" 
-          name="crescent" 
-          slot="start"
-          class="submit-spinner">
-        </ion-spinner>
-        
-        <!-- Button Icon (when not loading) -->
-        <ion-icon 
-          *ngIf="!isSubmitting" 
-          name="send" 
-          slot="start">
-        </ion-icon>
-        
-        <!-- Dynamic Button Text -->
-        <span *ngIf="!isSubmitting">Send Join Request</span>
-        <span *ngIf="isSubmitting">{{ getSubmissionStatusText() }}</span>
-      </ion-button>
-      
-      <!-- Retry Button (shown when there are errors) -->
-      <ion-button 
-        *ngIf="errors.general && !isSubmitting"
-        expand="block"
-        fill="outline"
-        color="primary"
-        (click)="onRetry()"
-        class="retry-button">
-        <ion-icon name="refresh" slot="start"></ion-icon>
-        Try Again
-      </ion-button>
+  @if (studioName) {
+    <div class="studio-info">
+      <h2>{{ studioName }}</h2>
+      <p>Request to join this studio</p>
     </div>
+  }
 
-    <!-- Cancel Button with Loading State -->
-    <div class="cancel-section">
-      <ion-button 
-        fill="clear"
-        expand="block"
-        (click)="onCancel()"
-        [disabled]="isSubmitting">
-        <ion-icon name="close" slot="start"></ion-icon>
-        <span *ngIf="!isSubmitting">Cancel</span>
-        <span *ngIf="isSubmitting">Please wait...</span>
-      </ion-button>
-    </div>
-
-    <!-- Loading Overlay for Form Fields -->
-    <div *ngIf="isSubmitting" class="form-loading-overlay">
-      <ion-item lines="none">
-        <ion-label color="medium">
-          <p>Processing your request...</p>
-        </ion-label>
-        <ion-spinner name="dots" slot="end"></ion-spinner>
+  @if (joinForm) {
+    <form [formGroup]="joinForm" (ngSubmit)="onSubmit()">
+      <!-- General Error Message -->
+      @if (errors.general) {
+        <ion-item lines="none" class="error-item">
+          <ion-label color="danger">
+            <p>{{ errors.general }}</p>
+          </ion-label>
+        </ion-item>
+      }
+      <!-- Name Field -->
+      <ion-item>
+        <ion-label position="stacked">Your Name *</ion-label>
+        <ion-input
+          formControlName="userName"
+          placeholder="Enter your full name"
+          type="text"
+          [class.ion-invalid]="errors.userName"
+          [class.ion-valid]="
+            joinForm.get('userName')?.valid &&
+            (joinForm.get('userName')?.touched ||
+              joinForm.get('userName')?.dirty)
+          "
+          [class.ion-touched]="joinForm.get('userName')?.touched"
+          (ionInput)="onUserNameInput($event)"
+          (ionBlur)="onUserNameBlur()"
+        >
+          <ion-icon name="person" slot="start"></ion-icon>
+        </ion-input>
       </ion-item>
-    </div>
-  </form>
-
-  <!-- Loading template (should rarely be seen since form initializes immediately) -->
-  <ng-template #loadingForm>
+      <!-- Real-time validation feedback for name -->
+      @if (errors.userName) {
+        <ion-item lines="none" class="error-item">
+          <ion-label color="danger">
+            <p>{{ errors.userName }}</p>
+          </ion-label>
+        </ion-item>
+      }
+      <!-- Success feedback for valid name -->
+      @if (
+        !errors.userName &&
+        joinForm.get("userName")?.valid &&
+        (joinForm.get("userName")?.touched || joinForm.get("userName")?.dirty)
+      ) {
+        <ion-item lines="none" class="success-item">
+          <ion-label color="success">
+            <p>✓ Name looks good</p>
+          </ion-label>
+        </ion-item>
+      }
+      <!-- Message Field -->
+      <ion-item>
+        <ion-label position="stacked">Message to Instructors</ion-label>
+        <ion-textarea
+          formControlName="message"
+          placeholder="Optional message about your interest in joining..."
+          rows="4"
+          [class.ion-invalid]="errors.message"
+          [class.ion-valid]="
+            joinForm.get('message')?.valid &&
+            (joinForm.get('message')?.touched || joinForm.get('message')?.dirty)
+          "
+          (ionInput)="onMessageInput($event)"
+          (ionBlur)="onMessageBlur()"
+        >
+          <ion-icon name="mail" slot="start"></ion-icon>
+        </ion-textarea>
+      </ion-item>
+      <!-- Real-time validation feedback for message -->
+      @if (errors.message) {
+        <ion-item lines="none" class="error-item">
+          <ion-label color="danger">
+            <p>{{ errors.message }}</p>
+          </ion-label>
+        </ion-item>
+      }
+      <!-- Character count feedback for message (always visible when typing) -->
+      @if (joinForm.get("message")?.value || joinForm.get("message")?.touched) {
+        <ion-item lines="none" class="info-item">
+          <ion-label [color]="getCharacterCountColor()">
+            <p>
+              {{ joinForm.get("message")?.value?.length || 0 }}/500 characters
+            </p>
+          </ion-label>
+        </ion-item>
+      }
+      <!-- Real-time form validation status -->
+      @if (showFormValidationStatus()) {
+        <ion-item lines="none" class="validation-status-item">
+          <ion-label [color]="isFormValid ? 'success' : 'medium'">
+            @if (isFormValid) {
+              <p>✓ Ready to submit</p>
+            }
+            @if (!isFormValid && hasFormInteraction()) {
+              <p>Please complete required fields</p>
+            }
+          </ion-label>
+        </ion-item>
+      }
+      <!-- Submit Button with Enhanced Loading States -->
+      <div class="submit-section">
+        <ion-button
+          type="submit"
+          expand="block"
+          [disabled]="!isFormValid || isSubmitting"
+          color="primary"
+          [class.loading-button]="isSubmitting"
+        >
+          <!-- Loading Spinner -->
+          @if (isSubmitting) {
+            <ion-spinner name="crescent" slot="start" class="submit-spinner">
+            </ion-spinner>
+          }
+          <!-- Button Icon (when not loading) -->
+          @if (!isSubmitting) {
+            <ion-icon name="send" slot="start"> </ion-icon>
+          }
+          <!-- Dynamic Button Text -->
+          @if (!isSubmitting) {
+            <span>Send Join Request</span>
+          }
+          @if (isSubmitting) {
+            <span>{{ getSubmissionStatusText() }}</span>
+          }
+        </ion-button>
+        <!-- Retry Button (shown when there are errors) -->
+        @if (errors.general && !isSubmitting) {
+          <ion-button
+            expand="block"
+            fill="outline"
+            color="primary"
+            (click)="onRetry()"
+            class="retry-button"
+          >
+            <ion-icon name="refresh" slot="start"></ion-icon>
+            Try Again
+          </ion-button>
+        }
+      </div>
+      <!-- Cancel Button with Loading State -->
+      <div class="cancel-section">
+        <ion-button
+          fill="clear"
+          expand="block"
+          (click)="onCancel()"
+          [disabled]="isSubmitting"
+        >
+          <ion-icon name="close" slot="start"></ion-icon>
+          @if (!isSubmitting) {
+            <span>Cancel</span>
+          }
+          @if (isSubmitting) {
+            <span>Please wait...</span>
+          }
+        </ion-button>
+      </div>
+      <!-- Loading Overlay for Form Fields -->
+      @if (isSubmitting) {
+        <div class="form-loading-overlay">
+          <ion-item lines="none">
+            <ion-label color="medium">
+              <p>Processing your request...</p>
+            </ion-label>
+            <ion-spinner name="dots" slot="end"></ion-spinner>
+          </ion-item>
+        </div>
+      }
+    </form>
+  } @else {
     <div class="loading-container">
       <ion-item lines="none">
         <ion-spinner name="crescent" slot="start"></ion-spinner>
@@ -166,5 +194,7 @@
         </ion-label>
       </ion-item>
     </div>
-  </ng-template>
+  }
+
+  <!-- Loading template (should rarely be seen since form initializes immediately) -->
 </ion-content>

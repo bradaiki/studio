@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import {
   IonCard,
   IonCardHeader,
@@ -14,7 +14,7 @@ import {
   IonAvatar,
   IonText,
   IonSpinner,
-  ToastController
+  ToastController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { checkmarkCircle, closeCircle, time, person } from 'ionicons/icons';
@@ -27,7 +27,6 @@ import { StudioJoinRequest } from '../../models/studio-membership.models';
   styleUrls: ['./studio-join-requests.component.scss'],
   standalone: true,
   imports: [
-    CommonModule,
     IonCard,
     IonCardHeader,
     IonCardTitle,
@@ -40,19 +39,19 @@ import { StudioJoinRequest } from '../../models/studio-membership.models';
     IonChip,
     IonAvatar,
     IonText,
-    IonSpinner
-  ]
+    IonSpinner,
+  ],
 })
 export class StudioJoinRequestsComponent implements OnInit {
   @Input() studioId!: string;
-  
+
   joinRequests: StudioJoinRequest[] = [];
   loading = false;
   processingRequestId: string | null = null;
 
   constructor(
     private membershipService: StudioMembershipService,
-    private toastController: ToastController
+    private toastController: ToastController,
   ) {
     addIcons({ checkmarkCircle, closeCircle, time, person });
   }
@@ -64,9 +63,19 @@ export class StudioJoinRequestsComponent implements OnInit {
   async loadJoinRequests() {
     this.loading = true;
     try {
-      console.log('[StudioJoinRequests] Loading requests for studio:', this.studioId);
-      this.joinRequests = await this.membershipService.getStudioJoinRequests(this.studioId);
-      console.log('[StudioJoinRequests] Loaded', this.joinRequests.length, 'requests:', this.joinRequests);
+      console.log(
+        '[StudioJoinRequests] Loading requests for studio:',
+        this.studioId,
+      );
+      this.joinRequests = await this.membershipService.getStudioJoinRequests(
+        this.studioId,
+      );
+      console.log(
+        '[StudioJoinRequests] Loaded',
+        this.joinRequests.length,
+        'requests:',
+        this.joinRequests,
+      );
     } catch (error) {
       console.error('[StudioJoinRequests] Failed to load requests:', error);
       await this.showToast('Failed to load join requests', 'danger');
@@ -79,7 +88,10 @@ export class StudioJoinRequestsComponent implements OnInit {
     this.processingRequestId = request.id;
     try {
       await this.membershipService.approveJoinRequest(request.id);
-      await this.showToast(`${request.userName} has been added to the studio`, 'success');
+      await this.showToast(
+        `${request.userName} has been added to the studio`,
+        'success',
+      );
       await this.loadJoinRequests();
     } catch (error) {
       console.error('[StudioJoinRequests] Failed to approve request:', error);
@@ -114,7 +126,7 @@ export class StudioJoinRequestsComponent implements OnInit {
     if (minutes < 60) return `${minutes}m ago`;
     if (hours < 24) return `${hours}h ago`;
     if (days < 7) return `${days}d ago`;
-    
+
     return date.toLocaleDateString();
   }
 
@@ -123,7 +135,7 @@ export class StudioJoinRequestsComponent implements OnInit {
       message,
       duration: 3000,
       position: 'top',
-      color
+      color,
     });
     await toast.present();
   }

@@ -1,132 +1,149 @@
 <ion-card class="person-card" [class.compact]="compact" (click)="onProfileClick()">
   <ion-card-content>
-    
+
     <!-- Person Header -->
     <div class="person-header">
       <ion-avatar class="person-avatar" [class.large]="!compact">
         <img [src]="person.avatar" [alt]="person.name" />
       </ion-avatar>
-      
+
       <div class="person-info">
         <div class="person-name-section">
           <h3 class="person-name">{{ person.name }}</h3>
-          <ion-icon 
-            *ngIf="person.isVerified" 
-            name="checkmark-circle" 
-            color="primary" 
-            class="verified-badge">
-          </ion-icon>
+          @if (person.isVerified) {
+            <ion-icon
+              name="checkmark-circle"
+              color="primary"
+              class="verified-badge">
+            </ion-icon>
+          }
         </div>
-        
+
         <p class="person-username">@{{ person.handle }}</p>
-        
-        <div *ngIf="person.location && !compact" class="person-location">
-          <ion-icon name="location" color="medium"></ion-icon>
-          <span>{{ person.location }}</span>
+
+        @if (person.location && !compact) {
+          <div class="person-location">
+            <ion-icon name="location" color="medium"></ion-icon>
+            <span>{{ person.location }}</span>
+          </div>
+        }
+      </div>
+
+      @if (showActions) {
+        <div class="person-actions">
+          <ion-button
+            [fill]="getFollowButtonFill()"
+            [color]="getFollowButtonColor()"
+            size="small"
+            (click)="onFollow(); $event.stopPropagation()">
+            <ion-icon [name]="getFollowIcon()" slot="start"></ion-icon>
+            {{ getFollowButtonText() }}
+          </ion-button>
+          <ion-button
+            fill="clear"
+            color="medium"
+            size="small"
+            (click)="onMoreOptions(); $event.stopPropagation()">
+            <ion-icon name="ellipsis-horizontal" slot="icon-only"></ion-icon>
+          </ion-button>
         </div>
-      </div>
-      
-      <div *ngIf="showActions" class="person-actions">
-        <ion-button 
-          [fill]="getFollowButtonFill()" 
-          [color]="getFollowButtonColor()" 
-          size="small"
-          (click)="onFollow(); $event.stopPropagation()">
-          <ion-icon [name]="getFollowIcon()" slot="start"></ion-icon>
-          {{ getFollowButtonText() }}
-        </ion-button>
-        
-        <ion-button 
-          fill="clear" 
-          color="medium" 
-          size="small"
-          (click)="onMoreOptions(); $event.stopPropagation()">
-          <ion-icon name="ellipsis-horizontal" slot="icon-only"></ion-icon>
-        </ion-button>
-      </div>
+      }
     </div>
 
     <!-- Person Bio -->
-    <div *ngIf="person.bio && !compact" class="person-bio">
-      <p>{{ getDisplayBio() }}</p>
-    </div>
+    @if (person.bio && !compact) {
+      <div class="person-bio">
+        <p>{{ getDisplayBio() }}</p>
+      </div>
+    }
 
     <!-- Person Stats -->
-    <div *ngIf="showStats && !compact" class="person-stats">
-      <div class="stat-item">
-        <span class="stat-number">{{ formatNumber(person.postsCount) }}</span>
-        <span class="stat-label">{{ 'person_detail.posts' | translate }}</span>
+    @if (showStats && !compact) {
+      <div class="person-stats">
+        <div class="stat-item">
+          <span class="stat-number">{{ formatNumber(person.postsCount) }}</span>
+          <span class="stat-label">{{ 'person_detail.posts' | translate }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">{{ formatNumber(person.followers) }}</span>
+          <span class="stat-label">{{ 'person_detail.followers' | translate }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">{{ formatNumber(person.following) }}</span>
+          <span class="stat-label">{{ 'person_detail.following_count' | translate }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">{{ formatJoinDate(person.joinDate) }}</span>
+          <span class="stat-label">{{ 'person_component.joined' | translate }}</span>
+        </div>
       </div>
-      <div class="stat-item">
-        <span class="stat-number">{{ formatNumber(person.followers) }}</span>
-        <span class="stat-label">{{ 'person_detail.followers' | translate }}</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-number">{{ formatNumber(person.following) }}</span>
-        <span class="stat-label">{{ 'person_detail.following_count' | translate }}</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-number">{{ formatJoinDate(person.joinDate) }}</span>
-        <span class="stat-label">{{ 'person_component.joined' | translate }}</span>
-      </div>
-    </div>
+    }
 
     <!-- Person Tags -->
-    <div *ngIf="showTags && person.tags && person.tags.length > 0 && !compact" class="person-tags">
-      <ion-chip 
-        *ngFor="let tag of person.tags.slice(0, 4)" 
-        color="light" 
-        outline="true"
-        class="tag-chip">
-        {{ tag }}
-      </ion-chip>
-      <ion-chip 
-        *ngIf="person.tags.length > 4"
-        color="medium" 
-        outline="true"
-        class="more-tags">
-        +{{ person.tags.length - 4 }}
-      </ion-chip>
-    </div>
+    @if (showTags && person.tags && person.tags.length > 0 && !compact) {
+      <div class="person-tags">
+        @for (tag of person.tags.slice(0, 4); track tag) {
+          <ion-chip
+            color="light"
+            outline="true"
+            class="tag-chip">
+            {{ tag }}
+          </ion-chip>
+        }
+        @if (person.tags.length > 4) {
+          <ion-chip
+            color="medium"
+            outline="true"
+            class="more-tags">
+            +{{ person.tags.length - 4 }}
+          </ion-chip>
+        }
+      </div>
+    }
 
     <!-- Compact Mode Tags (fewer tags) -->
-    <div *ngIf="showTags && person.tags && person.tags.length > 0 && compact" class="person-tags compact">
-      <ion-chip 
-        *ngFor="let tag of person.tags.slice(0, 2)" 
-        color="light" 
-        outline="true"
-        class="tag-chip small">
-        {{ tag }}
-      </ion-chip>
-      <ion-chip 
-        *ngIf="person.tags.length > 2"
-        color="medium" 
-        outline="true"
-        class="more-tags small">
-        +{{ person.tags.length - 2 }}
-      </ion-chip>
-    </div>
+    @if (showTags && person.tags && person.tags.length > 0 && compact) {
+      <div class="person-tags compact">
+        @for (tag of person.tags.slice(0, 2); track tag) {
+          <ion-chip
+            color="light"
+            outline="true"
+            class="tag-chip small">
+            {{ tag }}
+          </ion-chip>
+        }
+        @if (person.tags.length > 2) {
+          <ion-chip
+            color="medium"
+            outline="true"
+            class="more-tags small">
+            +{{ person.tags.length - 2 }}
+          </ion-chip>
+        }
+      </div>
+    }
 
     <!-- Action Buttons (Bottom) -->
-    <div *ngIf="showActions && !compact" class="person-bottom-actions">
-      <ion-button 
-        fill="outline" 
-        color="primary" 
-        size="small"
-        (click)="onMessage(); $event.stopPropagation()">
-        <ion-icon name="chatbubble" slot="start"></ion-icon>
-        {{ 'person_detail.message' | translate }}
-      </ion-button>
-      
-      <ion-button 
-        fill="clear" 
-        color="primary" 
-        size="small"
-        (click)="onProfileClick(); $event.stopPropagation()">
-        <ion-icon name="person" slot="start"></ion-icon>
-        {{ 'person_component.view_profile' | translate }}
-      </ion-button>
-    </div>
+    @if (showActions && !compact) {
+      <div class="person-bottom-actions">
+        <ion-button
+          fill="outline"
+          color="primary"
+          size="small"
+          (click)="onMessage(); $event.stopPropagation()">
+          <ion-icon name="chatbubble" slot="start"></ion-icon>
+          {{ 'person_detail.message' | translate }}
+        </ion-button>
+        <ion-button
+          fill="clear"
+          color="primary"
+          size="small"
+          (click)="onProfileClick(); $event.stopPropagation()">
+          <ion-icon name="person" slot="start"></ion-icon>
+          {{ 'person_component.view_profile' | translate }}
+        </ion-button>
+      </div>
+    }
 
   </ion-card-content>
 </ion-card>

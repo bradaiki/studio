@@ -1,12 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { 
-  IonContent, 
-  IonHeader, 
-  IonTitle, 
+import {
+  IonContent,
+  IonHeader,
+  IonTitle,
   IonToolbar,
   IonBackButton,
   IonButtons,
@@ -16,7 +22,7 @@ import {
   IonTextarea,
   IonInput,
   IonIcon,
-  ToastController
+  ToastController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { save, image, pricetag } from 'ionicons/icons';
@@ -27,12 +33,11 @@ import { save, image, pricetag } from 'ionicons/icons';
   styleUrls: ['./post-form.page.scss'],
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    IonContent, 
-    IonHeader, 
-    IonTitle, 
+    IonContent,
+    IonHeader,
+    IonTitle,
     IonToolbar,
     IonBackButton,
     IonButtons,
@@ -41,8 +46,8 @@ import { save, image, pricetag } from 'ionicons/icons';
     IonLabel,
     IonTextarea,
     IonInput,
-    IonIcon
-  ]
+    IonIcon,
+  ],
 })
 export class PostFormPage implements OnInit {
   postForm: FormGroup;
@@ -52,14 +57,14 @@ export class PostFormPage implements OnInit {
     private fb: FormBuilder,
     private router: Router,
     private location: Location,
-    private toastController: ToastController
+    private toastController: ToastController,
   ) {
     addIcons({ save, image, pricetag });
-    
+
     this.postForm = this.fb.group({
       content: ['', [Validators.required, Validators.minLength(1)]],
       image: [''],
-      tags: ['']
+      tags: [''],
     });
   }
 
@@ -68,18 +73,21 @@ export class PostFormPage implements OnInit {
   async onSubmit() {
     if (this.postForm.valid && !this.isSubmitting) {
       this.isSubmitting = true;
-      
+
       try {
         const formValue = this.postForm.value;
-        
+
         // TODO: Implement post creation service
         console.log('Creating post:', formValue);
-        
+
         await this.showToast('Post created successfully', 'success');
         this.router.navigate(['/dash/feed']);
       } catch (error) {
         console.error('Error creating post:', error);
-        await this.showToast('Error creating post. Please try again.', 'danger');
+        await this.showToast(
+          'Error creating post. Please try again.',
+          'danger',
+        );
       } finally {
         this.isSubmitting = false;
       }
@@ -97,7 +105,7 @@ export class PostFormPage implements OnInit {
       message,
       duration: 3000,
       color,
-      position: 'top'
+      position: 'top',
     });
     await toast.present();
   }

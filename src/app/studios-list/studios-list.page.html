@@ -10,17 +10,19 @@
 <ion-content>
   <div class="studios-container">
     <!-- Search Bar -->
-    <ion-searchbar 
-      placeholder="Search studios..." 
+    <ion-searchbar
+      placeholder="Search studios..."
       (ionInput)="onSearch($event)"
-      [(ngModel)]="searchTerm">
+      [(ngModel)]="searchTerm"
+    >
     </ion-searchbar>
 
     <!-- Segment Control -->
-    <ion-segment 
-      [(ngModel)]="selectedSegment" 
+    <ion-segment
+      [(ngModel)]="selectedSegment"
       (ionChange)="onSegmentChange($event)"
-      class="segment-control">
+      class="segment-control"
+    >
       <ion-segment-button value="my-studios">
         <ion-label>My Studios</ion-label>
       </ion-segment-button>
@@ -34,49 +36,47 @@
 
     <!-- Studios List -->
     <div class="studios-grid">
-      <ion-card *ngFor="let studio of displayedStudios" (click)="viewStudio(studio.id)">
+      @for (studio of displayedStudios; track studio) {
+      <ion-card (click)="viewStudio(studio.id)">
         <img [src]="studio.heroImage" [alt]="studio.name" />
-        
         <ion-card-header>
           <div class="card-header-content">
             <ion-card-title>{{ studio.name }}</ion-card-title>
-            <ion-icon *ngIf="studio.verified" name="star" color="warning"></ion-icon>
+            @if (studio.verified) {
+            <ion-icon name="star" color="warning"></ion-icon>
+            }
           </div>
           <ion-card-subtitle>
             <ion-icon name="location"></ion-icon>
             {{ studio.location }}
           </ion-card-subtitle>
         </ion-card-header>
-
         <ion-card-content>
           <p>{{ studio.description }}</p>
-          
           <div class="studio-meta">
             <ion-chip>
               <ion-icon name="people"></ion-icon>
               <ion-label>{{ studio.memberCount }} members</ion-label>
             </ion-chip>
           </div>
-
           <div class="contact-info">
             <div class="contact-item">
               <ion-icon name="call"></ion-icon>
               <span>{{ studio.phone }}</span>
             </div>
           </div>
-
-          <ion-button expand="block" fill="outline">
-            View Details
-          </ion-button>
+          <ion-button expand="block" fill="outline"> View Details </ion-button>
         </ion-card-content>
       </ion-card>
+      }
     </div>
 
     <!-- Infinite Scroll -->
     <ion-infinite-scroll (ionInfinite)="loadMore($event)">
       <ion-infinite-scroll-content
         loadingSpinner="bubbles"
-        loadingText="Loading more studios...">
+        loadingText="Loading more studios..."
+      >
       </ion-infinite-scroll-content>
     </ion-infinite-scroll>
   </div>

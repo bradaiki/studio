@@ -1,27 +1,27 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { Person } from '../../services/people.service';
-import { 
-  IonCard, 
-  IonCardContent, 
-  IonAvatar, 
-  IonButton, 
+import {
+  IonCard,
+  IonCardContent,
+  IonAvatar,
+  IonButton,
   IonIcon,
-  IonChip
+  IonChip,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { 
-  personAdd, 
-  personRemove, 
-  chatbubble, 
-  mail, 
-  location, 
+import {
+  personAdd,
+  personRemove,
+  chatbubble,
+  mail,
+  location,
   calendar,
   person,
   checkmarkCircle,
-  ellipsisHorizontal
+  ellipsisHorizontal,
 } from 'ionicons/icons';
 
 // Person interface now imported from service
@@ -32,15 +32,14 @@ import {
   styleUrls: ['./person.component.scss'],
   standalone: true,
   imports: [
-    CommonModule,
     TranslateModule,
     IonCard,
     IonCardContent,
     IonAvatar,
     IonButton,
     IonIcon,
-    IonChip
-  ]
+    IonChip,
+  ],
 })
 export class PersonComponent {
   @Input() person!: Person;
@@ -55,16 +54,16 @@ export class PersonComponent {
   @Output() profileClick = new EventEmitter<Person>();
 
   constructor(private router: Router) {
-    addIcons({ 
-      personAdd, 
-      personRemove, 
-      chatbubble, 
-      mail, 
-      location, 
+    addIcons({
+      personAdd,
+      personRemove,
+      chatbubble,
+      mail,
+      location,
       calendar,
       person,
       checkmarkCircle,
-      ellipsisHorizontal
+      ellipsisHorizontal,
     });
   }
 
@@ -89,9 +88,9 @@ export class PersonComponent {
 
   formatJoinDate(dateString: string): string {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'short' 
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
     });
   }
 

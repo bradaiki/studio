@@ -1,28 +1,38 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button [defaultHref]="isViewingOtherPerson ? '/dash/people' : '/dash/feed'" (click)="isViewingOtherPerson ? onBack() : null"></ion-back-button>
+      <ion-back-button
+        [defaultHref]="isViewingOtherPerson ? '/dash/people' : '/dash/feed'"
+        (click)="isViewingOtherPerson ? onBack() : null"
+      ></ion-back-button>
     </ion-buttons>
-    <ion-title>{{ isViewingOtherPerson ? (userProfile.name || ('person_detail.title' | translate)) : ('profile.title' | translate) }}</ion-title>
-    <ion-buttons slot="end" *ngIf="isOwnProfile">
+    <ion-title
+      >{{ isViewingOtherPerson ? (userProfile.name || ('person_detail.title' |
+      translate)) : ('profile.title' | translate) }}</ion-title
+    >
+    @if (isOwnProfile) {
+    <ion-buttons slot="end">
       <ion-button (click)="toggleEdit()">
         <ion-icon [name]="isEditing ? 'save' : 'create'"></ion-icon>
       </ion-button>
     </ion-buttons>
+    }
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding">
-  
   <!-- Loading State -->
-  <div *ngIf="loading" class="loading-state">
+  @if (loading) {
+  <div class="loading-state">
     <ion-text color="medium">
       <p>{{ 'person_detail.loading' | translate }}</p>
     </ion-text>
   </div>
+  }
 
   <!-- Not Found State -->
-  <div *ngIf="notFound && !loading" class="not-found-state">
+  @if (notFound && !loading) {
+  <div class="not-found-state">
     <ion-text color="medium">
       <h2>{{ 'person_detail.not_found' | translate }}</h2>
       <p>{{ 'person_detail.not_found_message' | translate }}</p>
@@ -32,9 +42,14 @@
       {{ 'person_detail.go_back' | translate }}
     </ion-button>
   </div>
+  }
 
   <!-- Profile Segments (only for own profile) -->
-  <ion-segment *ngIf="!loading && !notFound && isOwnProfile" [(ngModel)]="selectedSegment" (ionChange)="onSegmentChange($event)">
+  @if (!loading && !notFound && isOwnProfile) {
+  <ion-segment
+    [(ngModel)]="selectedSegment"
+    (ionChange)="onSegmentChange($event)"
+  >
     <ion-segment-button value="profile">
       <ion-icon name="person-circle"></ion-icon>
       <ion-label>Profile</ion-label>
@@ -48,94 +63,131 @@
       <ion-label>Settings</ion-label>
     </ion-segment-button>
   </ion-segment>
+  }
 
   <!-- Profile Tab -->
-  <div *ngIf="!loading && !notFound && (selectedSegment === 'profile' || isViewingOtherPerson)">
-    
+  @if (!loading && !notFound && (selectedSegment === 'profile' ||
+  isViewingOtherPerson)) {
+  <div>
     <!-- User Profile Header -->
     <ion-card class="profile-header-card">
       <ion-card-content>
         <div class="profile-header">
           <div class="avatar-section">
-            <ion-avatar class="large-avatar" [class.clickable]="isEditing" (click)="isEditing ? changeAvatar() : null">
+            <ion-avatar
+              class="large-avatar"
+              [class.clickable]="isEditing"
+              (click)="isEditing ? changeAvatar() : null"
+            >
               <img [src]="userProfile.avatar" [alt]="userProfile.name" />
-              <div class="avatar-overlay" *ngIf="isEditing">
+              @if (isEditing) {
+              <div class="avatar-overlay">
                 <ion-icon name="camera"></ion-icon>
               </div>
+              }
             </ion-avatar>
-            <ion-badge *ngIf="userProfile.isVerified" color="primary" class="verified-badge">
+            @if (userProfile.isVerified) {
+            <ion-badge color="primary" class="verified-badge">
               <ion-icon name="checkmark-circle"></ion-icon>
             </ion-badge>
+            }
           </div>
-          
           <div class="profile-info">
-            <div *ngIf="!isEditing">
+            @if (!isEditing) {
+            <div>
               <h1>{{ userProfile.name }}</h1>
-              <p class="username" *ngIf="userProfile.handle">{{ userProfile.handle }}</p>
-              <p class="rank" *ngIf="userProfile.rank">
-                <ion-badge [color]="getRankColor()">{{ userProfile.rank }}</ion-badge>
-                <ion-badge *ngIf="userProfile.experience" color="medium" outline="true" class="experience-badge">
+              @if (userProfile.handle) {
+              <p class="username">{{ userProfile.handle }}</p>
+              } @if (userProfile.rank) {
+              <p class="rank">
+                <ion-badge [color]="getRankColor()"
+                  >{{ userProfile.rank }}</ion-badge
+                >
+                @if (userProfile.experience) {
+                <ion-badge
+                  color="medium"
+                  outline="true"
+                  class="experience-badge"
+                >
                   {{ userProfile.experience }}
                 </ion-badge>
+                }
               </p>
-              <p class="location" *ngIf="userProfile.location">
+              } @if (userProfile.location) {
+              <p class="location">
                 <ion-icon name="location"></ion-icon>
                 {{ userProfile.location }}
               </p>
+              }
             </div>
-            
-            <div *ngIf="isEditing" class="edit-fields">
-              <ion-input 
-                [(ngModel)]="userProfile.name" 
+            } @if (isEditing) {
+            <div class="edit-fields">
+              <ion-input
+                [(ngModel)]="userProfile.name"
                 placeholder="Full Name"
-                class="edit-input">
+                class="edit-input"
+              >
               </ion-input>
-              <ion-input 
-                [(ngModel)]="userProfile.handle" 
+              <ion-input
+                [(ngModel)]="userProfile.handle"
                 placeholder="Handle (@yourhandle)"
-                class="edit-input">
+                class="edit-input"
+              >
               </ion-input>
-              <ion-input 
-                [(ngModel)]="userProfile.rank" 
+              <ion-input
+                [(ngModel)]="userProfile.rank"
                 placeholder="Rank (e.g., 2nd Kyu)"
-                class="edit-input">
+                class="edit-input"
+              >
               </ion-input>
             </div>
+            }
           </div>
         </div>
-
         <!-- Action Buttons (for viewing other people) -->
-        <div class="action-buttons" *ngIf="isViewingOtherPerson && personProfile">
-          <ion-button 
+        @if (isViewingOtherPerson && personProfile) {
+        <div class="action-buttons">
+          <ion-button
             [color]="personProfile.isFollowing ? 'medium' : 'primary'"
             [fill]="personProfile.isFollowing ? 'outline' : 'solid'"
-            (click)="onFollow()">
-            <ion-icon 
-              [name]="personProfile.isFollowing ? 'heart' : 'heart-outline'" 
-              slot="start">
+            (click)="onFollow()"
+          >
+            <ion-icon
+              [name]="personProfile.isFollowing ? 'heart' : 'heart-outline'"
+              slot="start"
+            >
             </ion-icon>
-            {{ personProfile.isFollowing ? ('person_detail.following' | translate) : ('person_detail.follow' | translate) }}
+            {{ personProfile.isFollowing ? ('person_detail.following' |
+            translate) : ('person_detail.follow' | translate) }}
           </ion-button>
-          
           <ion-button fill="outline" color="medium" (click)="onMessage()">
             <ion-icon name="chatbubble-outline" slot="start"></ion-icon>
             {{ 'person_detail.message' | translate }}
           </ion-button>
         </div>
-
+        }
         <!-- Stats -->
         <div class="stats-grid">
           <div class="stat-item">
             <h3>{{ userProfile.stats.followers }}</h3>
-            <p>{{ isViewingOtherPerson ? ('person_detail.followers' | translate) : 'Followers' }}</p>
+            <p>
+              {{ isViewingOtherPerson ? ('person_detail.followers' | translate)
+              : 'Followers' }}
+            </p>
           </div>
           <div class="stat-item">
             <h3>{{ userProfile.stats.following }}</h3>
-            <p>{{ isViewingOtherPerson ? ('person_detail.following_count' | translate) : 'Following' }}</p>
+            <p>
+              {{ isViewingOtherPerson ? ('person_detail.following_count' |
+              translate) : 'Following' }}
+            </p>
           </div>
           <div class="stat-item">
             <h3>{{ userProfile.stats.postsCount }}</h3>
-            <p>{{ isViewingOtherPerson ? ('person_detail.posts' | translate) : 'Posts' }}</p>
+            <p>
+              {{ isViewingOtherPerson ? ('person_detail.posts' | translate) :
+              'Posts' }}
+            </p>
           </div>
           <div class="stat-item">
             <h3>{{ userProfile.stats.studiosCount }}</h3>
@@ -144,152 +196,212 @@
         </div>
       </ion-card-content>
     </ion-card>
-
     <!-- Community Profile Section (Viewing Other Person - Read Only) -->
-    <ion-card *ngIf="isViewingOtherPerson && personProfile">
+    @if (isViewingOtherPerson && personProfile) {
+    <ion-card>
       <ion-card-header>
         <ion-card-title>{{ 'person_detail.about' | translate }}</ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        <div class="profile-field" *ngIf="personProfile.bio">
+        @if (personProfile.bio) {
+        <div class="profile-field">
           <p class="bio-text">{{ personProfile.bio }}</p>
         </div>
-
+        }
         <div class="profile-details-grid">
-          <div class="detail-item" *ngIf="personProfile.location">
+          @if (personProfile.location) {
+          <div class="detail-item">
             <ion-icon name="location" color="medium"></ion-icon>
             <span>{{ personProfile.location }}</span>
           </div>
-          <div class="detail-item" *ngIf="personProfile.experience">
+          } @if (personProfile.experience) {
+          <div class="detail-item">
             <ion-icon name="calendar" color="medium"></ion-icon>
             <span>{{ personProfile.experience }} experience</span>
           </div>
+          }
           <div class="detail-item">
             <ion-icon name="calendar" color="medium"></ion-icon>
-            <span>{{ 'person_detail.joined' | translate: {date: formatJoinDate()} }}</span>
+            <span
+              >{{ 'person_detail.joined' | translate: {date: formatJoinDate()}
+              }}</span
+            >
           </div>
         </div>
       </ion-card-content>
     </ion-card>
-
+    }
     <!-- Studio Affiliations (Viewing Other Person) -->
-    <ion-card *ngIf="isViewingOtherPerson && userStudios && userStudios.length > 0">
+    @if (isViewingOtherPerson && userStudios && userStudios.length > 0) {
+    <ion-card>
       <ion-card-header>
         <ion-card-title>
-          {{ userStudios.length === 1 ? ('person_detail.training_at' | translate) : ('person_detail.training_at_multiple' | translate) }}
-          <ion-badge color="primary" *ngIf="userStudios.length > 1">{{ userStudios.length }}</ion-badge>
+          {{ userStudios.length === 1 ? ('person_detail.training_at' |
+          translate) : ('person_detail.training_at_multiple' | translate) }} @if
+          (userStudios.length > 1) {
+          <ion-badge color="primary">{{ userStudios.length }}</ion-badge>
+          }
         </ion-card-title>
       </ion-card-header>
       <ion-card-content>
         <ion-list lines="none">
-          <ion-item *ngFor="let studio of userStudios" button (click)="onStudioClick(studio.id)" class="studio-item">
+          @for (studio of userStudios; track studio) {
+          <ion-item
+            button
+            (click)="onStudioClick(studio.id)"
+            class="studio-item"
+          >
             <ion-icon name="home" color="primary" slot="start"></ion-icon>
             <ion-label>
               <h3>{{ studio.name }}</h3>
               <p>{{ 'person_detail.view_studio_details' | translate }}</p>
             </ion-label>
-            <ion-icon name="chevron-forward" color="medium" slot="end"></ion-icon>
+            <ion-icon
+              name="chevron-forward"
+              color="medium"
+              slot="end"
+            ></ion-icon>
           </ion-item>
+          }
         </ion-list>
       </ion-card-content>
     </ion-card>
-
+    }
     <!-- Specialties (Viewing Other Person) -->
-    <ion-card *ngIf="isViewingOtherPerson && personProfile && personProfile.specialties && personProfile.specialties.length > 0">
+    @if (isViewingOtherPerson && personProfile && personProfile.specialties &&
+    personProfile.specialties.length > 0) {
+    <ion-card>
       <ion-card-header>
-        <ion-card-title>{{ 'person_detail.specialties' | translate }}</ion-card-title>
+        <ion-card-title
+          >{{ 'person_detail.specialties' | translate }}</ion-card-title
+        >
       </ion-card-header>
       <ion-card-content>
         <div class="specialties-list">
-          <ion-chip 
-            *ngFor="let specialty of personProfile.specialties" 
-            color="primary" 
-            outline="true">
-            {{ specialty }}
-          </ion-chip>
+          @for (specialty of personProfile.specialties; track specialty) {
+          <ion-chip color="primary" outline="true"> {{ specialty }} </ion-chip>
+          }
         </div>
       </ion-card-content>
     </ion-card>
-
+    }
     <!-- Achievements (Viewing Other Person) -->
-    <ion-card *ngIf="isViewingOtherPerson && personProfile && personProfile.achievements && personProfile.achievements.length > 0">
+    @if (isViewingOtherPerson && personProfile && personProfile.achievements &&
+    personProfile.achievements.length > 0) {
+    <ion-card>
       <ion-card-header>
-        <ion-card-title>{{ 'person_detail.achievements' | translate }}</ion-card-title>
+        <ion-card-title
+          >{{ 'person_detail.achievements' | translate }}</ion-card-title
+        >
       </ion-card-header>
       <ion-card-content>
         <ion-list lines="none">
-          <ion-item *ngFor="let achievement of personProfile.achievements" class="achievement-item">
-            <ion-icon 
-              [name]="getAchievementIcon(achievement.type)" 
-              [color]="getAchievementColor(achievement.type)" 
-              slot="start">
+          @for (achievement of personProfile.achievements; track achievement) {
+          <ion-item class="achievement-item">
+            <ion-icon
+              [name]="getAchievementIcon(achievement.type)"
+              [color]="getAchievementColor(achievement.type)"
+              slot="start"
+            >
             </ion-icon>
             <ion-label>
               <h3>{{ achievement.title }}</h3>
               <p>{{ achievement.description }}</p>
-              <p class="achievement-date">{{ formatAchievementDate(achievement.date) }}</p>
+              <p class="achievement-date">
+                {{ formatAchievementDate(achievement.date) }}
+              </p>
             </ion-label>
           </ion-item>
+          }
         </ion-list>
       </ion-card-content>
     </ion-card>
-
+    }
     <!-- Tags (Viewing Other Person) -->
-    <ion-card *ngIf="isViewingOtherPerson && personProfile && personProfile.tags && personProfile.tags.length > 0">
+    @if (isViewingOtherPerson && personProfile && personProfile.tags &&
+    personProfile.tags.length > 0) {
+    <ion-card>
       <ion-card-header>
-        <ion-card-title>{{ 'person_detail.interests' | translate }}</ion-card-title>
+        <ion-card-title
+          >{{ 'person_detail.interests' | translate }}</ion-card-title
+        >
       </ion-card-header>
       <ion-card-content>
         <div class="tags-list">
-          <ion-chip 
-            *ngFor="let tag of personProfile.tags" 
-            color="light" 
-            outline="true">
-            #{{ tag }}
-          </ion-chip>
+          @for (tag of personProfile.tags; track tag) {
+          <ion-chip color="light" outline="true"> #{{ tag }} </ion-chip>
+          }
         </div>
       </ion-card-content>
     </ion-card>
-
+    }
     <!-- Social Media (Viewing Other Person) -->
-    <ion-card *ngIf="isViewingOtherPerson && personProfile && personProfile.socialMedia && personProfile.socialMedia.length > 0">
+    @if (isViewingOtherPerson && personProfile && personProfile.socialMedia &&
+    personProfile.socialMedia.length > 0) {
+    <ion-card>
       <ion-card-header>
-        <ion-card-title>{{ 'person_detail.connect' | translate }}</ion-card-title>
+        <ion-card-title
+          >{{ 'person_detail.connect' | translate }}</ion-card-title
+        >
       </ion-card-header>
       <ion-card-content>
         <div class="social-links">
-          <ion-button 
-            *ngFor="let link of personProfile.socialMedia"
-            fill="outline" 
-            color="medium" 
+          @for (link of personProfile.socialMedia; track link) {
+          <ion-button
+            fill="outline"
+            color="medium"
             size="small"
-            (click)="onSocialClick(link)">
-            <ion-icon [name]="getSocialIcon(link.platform)" slot="start"></ion-icon>
+            (click)="onSocialClick(link)"
+          >
+            <ion-icon
+              [name]="getSocialIcon(link.platform)"
+              slot="start"
+            ></ion-icon>
             {{ link.platform | titlecase }}
           </ion-button>
+          }
         </div>
       </ion-card-content>
     </ion-card>
-
+    }
     <!-- Community Profile Section (Own Profile - Editable) -->
-    <ion-card *ngIf="isOwnProfile">
-      <ion-card-header (click)="toggleCommunityProfileSection()" style="cursor: pointer;">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
+    @if (isOwnProfile) {
+    <ion-card>
+      <ion-card-header
+        (click)="toggleCommunityProfileSection()"
+        style="cursor: pointer"
+      >
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          "
+        >
           <ion-card-title>Community Profile</ion-card-title>
-          <ion-icon [name]="isCommunityProfileExpanded ? 'chevron-up' : 'chevron-down'" size="large"></ion-icon>
+          <ion-icon
+            [name]="isCommunityProfileExpanded ? 'chevron-up' : 'chevron-down'"
+            size="large"
+          ></ion-icon>
         </div>
       </ion-card-header>
-      <ion-card-content *ngIf="isCommunityProfileExpanded">
-        <div *ngIf="!isEditingCommunityProfile && !hasPersonProfile" class="empty-profile-message">
+      @if (isCommunityProfileExpanded) {
+      <ion-card-content>
+        @if (!isEditingCommunityProfile && !hasPersonProfile) {
+        <div class="empty-profile-message">
           <ion-icon name="person-circle" size="large" color="medium"></ion-icon>
-          <p>Complete your community profile to connect with other martial artists.</p>
+          <p>
+            Complete your community profile to connect with other martial
+            artists.
+          </p>
           <ion-button expand="block" (click)="toggleCommunityProfileEdit()">
             <ion-icon name="create" slot="start"></ion-icon>
             Create Community Profile
           </ion-button>
         </div>
-
-        <div *ngIf="!isEditingCommunityProfile && hasPersonProfile && personProfile">
+        } @if (!isEditingCommunityProfile && hasPersonProfile && personProfile)
+        {
+        <div>
           <!-- Display Mode -->
           <div class="profile-field">
             <ion-label>
@@ -297,56 +409,57 @@
               <p>{{ personProfile.handle }}</p>
             </ion-label>
           </div>
-
           <div class="profile-field">
             <ion-label>
               <h3>Full Name</h3>
               <p>{{ personProfile.name }}</p>
             </ion-label>
           </div>
-
           <div class="profile-field">
             <ion-label>
               <h3>Handle</h3>
               <p>@{{ personProfile.handle }}</p>
             </ion-label>
           </div>
-
           <div class="profile-field">
             <ion-label>
               <h3>Location</h3>
               <p>{{ personProfile.location }}</p>
             </ion-label>
           </div>
-
-          <div class="profile-field" *ngIf="personProfile.rank">
+          @if (personProfile.rank) {
+          <div class="profile-field">
             <ion-label>
               <h3>Rank</h3>
               <p>{{ personProfile.rank }}</p>
             </ion-label>
           </div>
-
-          <div class="profile-field" *ngIf="personProfile.experience">
+          } @if (personProfile.experience) {
+          <div class="profile-field">
             <ion-label>
               <h3>Experience</h3>
               <p>{{ personProfile.experience }}</p>
             </ion-label>
           </div>
-
-          <div class="profile-field" *ngIf="personProfile.bio">
+          } @if (personProfile.bio) {
+          <div class="profile-field">
             <ion-label>
               <h3>Bio</h3>
               <p>{{ personProfile.bio }}</p>
             </ion-label>
           </div>
-
-          <ion-button expand="block" (click)="toggleCommunityProfileEdit()" style="margin-top: 16px;">
+          }
+          <ion-button
+            expand="block"
+            (click)="toggleCommunityProfileEdit()"
+            style="margin-top: 16px"
+          >
             <ion-icon name="create" slot="start"></ion-icon>
             Edit Community Profile
           </ion-button>
         </div>
-
-        <div *ngIf="isEditingCommunityProfile">
+        } @if (isEditingCommunityProfile) {
+        <div>
           <!-- Edit Mode -->
           <ion-item>
             <ion-label position="stacked">Handle *</ion-label>
@@ -362,7 +475,6 @@
               <small>Displayed in title bar (e.g., @john_aikido)</small>
             </ion-text>
           </ion-item>
-
           <ion-item>
             <ion-label position="stacked">Full Name *</ion-label>
             <ion-input
@@ -373,7 +485,6 @@
               <ion-icon name="person-outline" slot="start"></ion-icon>
             </ion-input>
           </ion-item>
-
           <ion-item>
             <ion-label position="stacked">Handle *</ion-label>
             <ion-input
@@ -384,7 +495,6 @@
               <ion-icon name="at-outline" slot="start"></ion-icon>
             </ion-input>
           </ion-item>
-
           <ion-item>
             <ion-label position="stacked">Location *</ion-label>
             <ion-input
@@ -395,7 +505,6 @@
               <ion-icon name="location-outline" slot="start"></ion-icon>
             </ion-input>
           </ion-item>
-
           <ion-item>
             <ion-label position="stacked">Rank (Optional)</ion-label>
             <ion-input
@@ -404,7 +513,6 @@
               class="edit-input"
             ></ion-input>
           </ion-item>
-
           <ion-item>
             <ion-label position="stacked">Experience (Optional)</ion-label>
             <ion-input
@@ -413,7 +521,6 @@
               class="edit-input"
             ></ion-input>
           </ion-item>
-
           <ion-item>
             <ion-label position="stacked">Bio (Optional)</ion-label>
             <ion-textarea
@@ -423,177 +530,231 @@
               class="edit-textarea"
             ></ion-textarea>
           </ion-item>
-
-          <ion-text color="danger" *ngIf="communityProfileError">
+          @if (communityProfileError) {
+          <ion-text color="danger">
             <p class="error-message">{{ communityProfileError }}</p>
           </ion-text>
-
-          <div style="display: flex; gap: 8px; margin-top: 16px;">
-            <ion-button expand="block" (click)="saveCommunityProfile()" color="primary">
+          }
+          <div style="display: flex; gap: 8px; margin-top: 16px">
+            <ion-button
+              expand="block"
+              (click)="saveCommunityProfile()"
+              color="primary"
+            >
               <ion-icon name="save" slot="start"></ion-icon>
               Save
             </ion-button>
-            <ion-button expand="block" (click)="toggleCommunityProfileEdit()" color="medium" fill="outline">
+            <ion-button
+              expand="block"
+              (click)="toggleCommunityProfileEdit()"
+              color="medium"
+              fill="outline"
+            >
               <ion-icon name="close" slot="start"></ion-icon>
               Cancel
             </ion-button>
           </div>
         </div>
+        }
       </ion-card-content>
+      }
     </ion-card>
-
+    }
     <!-- Bio Section (Own Profile Only) -->
-    <ion-card *ngIf="isOwnProfile">
+    @if (isOwnProfile) {
+    <ion-card>
       <ion-card-header>
         <ion-card-title>About</ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        <div *ngIf="!isEditing">
+        @if (!isEditing) {
+        <div>
           <p>{{ userProfile.bio }}</p>
           <div class="profile-details">
-            <div class="detail-item" *ngIf="userProfile.location">
+            @if (userProfile.location) {
+            <div class="detail-item">
               <ion-icon name="location"></ion-icon>
               <span>{{ userProfile.location }}</span>
             </div>
-            <div class="detail-item" *ngIf="userProfile.experience">
+            } @if (userProfile.experience) {
+            <div class="detail-item">
               <ion-icon name="calendar"></ion-icon>
               <span>{{ userProfile.experience }} experience</span>
             </div>
+            }
             <div class="detail-item">
               <ion-icon name="calendar"></ion-icon>
               <span>Joined {{ formatDate(userProfile.joinDate) }}</span>
             </div>
           </div>
         </div>
-        
-        <div *ngIf="isEditing" class="edit-bio">
-          <ion-textarea 
-            [(ngModel)]="userProfile.bio" 
+        } @if (isEditing) {
+        <div class="edit-bio">
+          <ion-textarea
+            [(ngModel)]="userProfile.bio"
             placeholder="Tell us about yourself..."
             rows="4"
-            class="edit-textarea">
+            class="edit-textarea"
+          >
           </ion-textarea>
-          <ion-input 
-            [(ngModel)]="userProfile.location" 
+          <ion-input
+            [(ngModel)]="userProfile.location"
             placeholder="Location"
-            class="edit-input">
+            class="edit-input"
+          >
           </ion-input>
-          <ion-input 
-            [(ngModel)]="userProfile.experience" 
+          <ion-input
+            [(ngModel)]="userProfile.experience"
             placeholder="Years of experience"
-            class="edit-input">
+            class="edit-input"
+          >
           </ion-input>
         </div>
+        }
       </ion-card-content>
     </ion-card>
-
+    }
     <!-- Specialties (Own Profile Only) -->
-    <ion-card *ngIf="isOwnProfile">
+    @if (isOwnProfile) {
+    <ion-card>
       <ion-card-header>
         <ion-card-title>
           <div class="section-header">
             <span>Specialties</span>
-            <ion-button fill="clear" (click)="addSpecialty()" *ngIf="isEditing">
+            @if (isEditing) {
+            <ion-button fill="clear" (click)="addSpecialty()">
               <ion-icon name="add"></ion-icon>
             </ion-button>
+            }
           </div>
         </ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        <div class="chips-container" *ngIf="userProfile.specialties.length > 0; else noSpecialties">
-          <ion-chip 
-            *ngFor="let specialty of userProfile.specialties" 
+        @if (userProfile.specialties.length > 0) {
+        <div class="chips-container">
+          @for (specialty of userProfile.specialties; track specialty) {
+          <ion-chip
             [class.editable]="isEditing"
-            (click)="isEditing && removeSpecialty(specialty)">
+            (click)="isEditing && removeSpecialty(specialty)"
+          >
             <ion-label>{{ specialty }}</ion-label>
-            <ion-icon name="close" *ngIf="isEditing"></ion-icon>
+            @if (isEditing) {
+            <ion-icon name="close"></ion-icon>
+            }
           </ion-chip>
+          }
         </div>
-        <ng-template #noSpecialties>
-          <p class="empty-message">No specialties added yet.</p>
-        </ng-template>
+        } @else {
+        <p class="empty-message">No specialties added yet.</p>
+        }
       </ion-card-content>
     </ion-card>
-
+    }
     <!-- Achievements (Own Profile Only) -->
-    <ion-card *ngIf="isOwnProfile">
+    @if (isOwnProfile) {
+    <ion-card>
       <ion-card-header>
         <ion-card-title>
           <div class="section-header">
             <span>Achievements</span>
-            <ion-button fill="clear" (click)="addAchievement()" *ngIf="isEditing">
+            @if (isEditing) {
+            <ion-button fill="clear" (click)="addAchievement()">
               <ion-icon name="add"></ion-icon>
             </ion-button>
+            }
           </div>
         </ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        <div *ngIf="userProfile.achievements.length > 0; else noAchievements">
-          <div class="achievement-item" *ngFor="let achievement of userProfile.achievements">
+        @if (userProfile.achievements.length > 0) {
+        <div>
+          @for (achievement of userProfile.achievements; track achievement) {
+          <div class="achievement-item">
             <div class="achievement-icon">
-              <ion-icon [name]="getAchievementIcon(achievement.type)" color="warning"></ion-icon>
+              <ion-icon
+                [name]="getAchievementIcon(achievement.type)"
+                color="warning"
+              ></ion-icon>
             </div>
             <div class="achievement-content">
               <h3>{{ achievement.title }}</h3>
               <p>{{ achievement.description }}</p>
-              <span class="achievement-date">{{ formatDate(achievement.date) }}</span>
+              <span class="achievement-date"
+                >{{ formatDate(achievement.date) }}</span
+              >
             </div>
-            <ion-button 
-              fill="clear" 
-              color="danger" 
-              (click)="removeAchievement(achievement.id)" 
-              *ngIf="isEditing">
+            @if (isEditing) {
+            <ion-button
+              fill="clear"
+              color="danger"
+              (click)="removeAchievement(achievement.id)"
+            >
               <ion-icon name="close"></ion-icon>
             </ion-button>
+            }
           </div>
+          }
         </div>
-        <ng-template #noAchievements>
-          <p class="empty-message">No achievements added yet.</p>
-        </ng-template>
+        } @else {
+        <p class="empty-message">No achievements added yet.</p>
+        }
       </ion-card-content>
     </ion-card>
-
+    }
     <!-- Social Media -->
     <ion-card>
       <ion-card-header>
         <ion-card-title>
           <div class="section-header">
             <span>Social Media</span>
-            <ion-button fill="clear" (click)="addSocialMedia()" *ngIf="isEditing">
+            @if (isEditing) {
+            <ion-button fill="clear" (click)="addSocialMedia()">
               <ion-icon name="add"></ion-icon>
             </ion-button>
+            }
           </div>
         </ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        <div *ngIf="userProfile.socialMedia.length > 0; else noSocialMedia">
-          <ion-item *ngFor="let link of userProfile.socialMedia; let i = index" class="social-item">
-            <ion-icon [name]="getSocialIcon(link.platform)" slot="start" color="primary"></ion-icon>
+        @if (userProfile.socialMedia.length > 0) {
+        <div>
+          @for (link of userProfile.socialMedia; track link; let i = $index) {
+          <ion-item class="social-item">
+            <ion-icon
+              [name]="getSocialIcon(link.platform)"
+              slot="start"
+              color="primary"
+            ></ion-icon>
             <ion-label>
               <h3>{{ link.platform | titlecase }}</h3>
               <p>{{ link.url }}</p>
             </ion-label>
-            <ion-button 
-              fill="clear" 
-              color="danger" 
-              (click)="removeSocialMedia(i)" 
-              *ngIf="isEditing">
+            @if (isEditing) {
+            <ion-button
+              fill="clear"
+              color="danger"
+              (click)="removeSocialMedia(i)"
+            >
               <ion-icon name="close"></ion-icon>
             </ion-button>
+            }
           </ion-item>
+          }
         </div>
-        <ng-template #noSocialMedia>
-          <p class="empty-message">No social media links added yet.</p>
-        </ng-template>
+        } @else {
+        <p class="empty-message">No social media links added yet.</p>
+        }
       </ion-card-content>
     </ion-card>
   </div>
+  }
 
   <!-- Studios Tab -->
-  <div *ngIf="selectedSegment === 'studios'">
-    
+  @if (selectedSegment === 'studios') {
+  <div>
     <!-- Member Studios -->
-    <ion-card *ngIf="userStudios.length > 0">
+    @if (userStudios.length > 0) {
+    <ion-card>
       <ion-card-header>
         <ion-card-title>
           <ion-icon name="school" color="primary"></ion-icon>
@@ -601,11 +762,12 @@
         </ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        <ion-item 
-          *ngFor="let studio of userStudios" 
-          button 
+        @for (studio of userStudios; track studio) {
+        <ion-item
+          button
           (click)="navigateToStudio(studio.id)"
-          class="studio-item">
+          class="studio-item"
+        >
           <ion-avatar slot="start">
             <img [src]="studio.heroImage" [alt]="studio.name" />
           </ion-avatar>
@@ -617,11 +779,13 @@
             </ion-chip>
           </ion-label>
         </ion-item>
+        }
       </ion-card-content>
     </ion-card>
-
+    }
     <!-- Instructor Studios -->
-    <ion-card *ngIf="instructorStudios.length > 0">
+    @if (instructorStudios.length > 0) {
+    <ion-card>
       <ion-card-header>
         <ion-card-title>
           <ion-icon name="people" color="secondary"></ion-icon>
@@ -629,11 +793,12 @@
         </ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        <ion-item 
-          *ngFor="let studio of instructorStudios" 
-          button 
+        @for (studio of instructorStudios; track studio) {
+        <ion-item
+          button
           (click)="navigateToStudio(studio.id)"
-          class="studio-item">
+          class="studio-item"
+        >
           <ion-avatar slot="start">
             <img [src]="studio.heroImage" [alt]="studio.name" />
           </ion-avatar>
@@ -644,18 +809,21 @@
               <ion-label>Instructor</ion-label>
             </ion-chip>
           </ion-label>
-          <ion-button 
-            fill="clear" 
+          <ion-button
+            fill="clear"
             [routerLink]="['/dash/studio', studio.id, 'manage']"
-            slot="end">
+            slot="end"
+          >
             <ion-icon name="settings"></ion-icon>
           </ion-button>
         </ion-item>
+        }
       </ion-card-content>
     </ion-card>
-
+    }
     <!-- No Studios -->
-    <ion-card *ngIf="userStudios.length === 0 && instructorStudios.length === 0">
+    @if (userStudios.length === 0 && instructorStudios.length === 0) {
+    <ion-card>
       <ion-card-content>
         <div class="empty-state">
           <ion-icon name="school" size="large" color="medium"></ion-icon>
@@ -667,11 +835,13 @@
         </div>
       </ion-card-content>
     </ion-card>
+    }
   </div>
+  }
 
   <!-- Notifications/Settings Tab -->
-  <div *ngIf="selectedSegment === 'notifications'">
-    
+  @if (selectedSegment === 'notifications') {
+  <div>
     <!-- Language Settings Card -->
     <ion-card class="language-card">
       <ion-card-header>
@@ -690,24 +860,35 @@
         </ion-item>
       </ion-card-content>
     </ion-card>
-
     <!-- Subscription Card -->
-    <ion-card class="subscription-card" *ngIf="isAuthenticated">
+    @if (isAuthenticated) {
+    <ion-card class="subscription-card">
       <ion-card-header>
         <ion-card-title>
-          <ion-icon [name]="subscriptionService.isPremium() ? 'star' : 'star-outline'" [color]="subscriptionService.isPremium() ? 'warning' : 'medium'"></ion-icon>
+          <ion-icon
+            [name]="subscriptionService.isPremium() ? 'star' : 'star-outline'"
+            [color]="subscriptionService.isPremium() ? 'warning' : 'medium'"
+          ></ion-icon>
           Subscription
         </ion-card-title>
       </ion-card-header>
       <ion-card-content>
         <ion-item lines="full">
-          <ion-icon [name]="subscriptionService.isPremium() ? 'shield-checkmark' : 'remove-circle'" slot="start" [color]="subscriptionService.isPremium() ? 'success' : 'medium'"></ion-icon>
+          <ion-icon
+            [name]="subscriptionService.isPremium() ? 'shield-checkmark' : 'remove-circle'"
+            slot="start"
+            [color]="subscriptionService.isPremium() ? 'success' : 'medium'"
+          ></ion-icon>
           <ion-label>
             <h3>Current Plan</h3>
-            <p>{{ subscriptionService.isPremium() ? 'Premium — No ads' : 'Free — Ads enabled' }}</p>
+            <p>
+              {{ subscriptionService.isPremium() ? 'Premium — No ads' : 'Free —
+              Ads enabled' }}
+            </p>
           </ion-label>
         </ion-item>
-        <ion-item lines="none" *ngIf="!subscriptionService.isPremium()">
+        @if (!subscriptionService.isPremium()) {
+        <ion-item lines="none">
           <ion-icon name="rocket" slot="start" color="primary"></ion-icon>
           <ion-label>
             <h3>Go Premium</h3>
@@ -718,18 +899,25 @@
             Upgrade
           </ion-button>
         </ion-item>
-        <ion-item lines="none" *ngIf="subscriptionService.isPremium()">
-          <ion-icon name="checkmark-circle" slot="start" color="success"></ion-icon>
+        } @if (subscriptionService.isPremium()) {
+        <ion-item lines="none">
+          <ion-icon
+            name="checkmark-circle"
+            slot="start"
+            color="success"
+          ></ion-icon>
           <ion-label>
             <h3>Premium Active</h3>
             <p>You're ad-free. Thank you for your support!</p>
           </ion-label>
         </ion-item>
+        }
       </ion-card-content>
     </ion-card>
-
+    }
     <!-- Developer Settings Card -->
-    <ion-card class="developer-card" *ngIf="isAuthenticated && isAdmin">
+    @if (isAuthenticated && isAdmin) {
+    <ion-card class="developer-card">
       <ion-card-header>
         <ion-card-title>
           <ion-icon name="code-slash-outline" color="tertiary"></ion-icon>
@@ -737,95 +925,143 @@
         </ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        
         <!-- Data Source Toggle -->
         <ion-item lines="full">
-          <ion-icon [name]="dataSourceService.isUsingMockData() ? 'phone-portrait' : 'cloud'" slot="start" [color]="dataSourceService.isUsingMockData() ? 'warning' : 'tertiary'"></ion-icon>
+          <ion-icon
+            [name]="dataSourceService.isUsingMockData() ? 'phone-portrait' : 'cloud'"
+            slot="start"
+            [color]="dataSourceService.isUsingMockData() ? 'warning' : 'tertiary'"
+          ></ion-icon>
           <ion-label>
             <h3>Data Source</h3>
-            <p>{{ dataSourceService.isUsingMockData() ? 'Using local mock data' : 'Using database (cloud)' }}</p>
+            <p>
+              {{ dataSourceService.isUsingMockData() ? 'Using local mock data' :
+              'Using database (cloud)' }}
+            </p>
           </ion-label>
-          <ion-button 
-            fill="outline" 
+          <ion-button
+            fill="outline"
             [color]="dataSourceService.isUsingMockData() ? 'warning' : 'tertiary'"
-            (click)="onToggleDataSource()">
-            <ion-icon [name]="dataSourceService.isUsingMockData() ? 'cloud' : 'phone-portrait'" slot="start"></ion-icon>
-            Switch to {{ dataSourceService.isUsingMockData() ? 'Database' : 'Mock' }}
+            (click)="onToggleDataSource()"
+          >
+            <ion-icon
+              [name]="dataSourceService.isUsingMockData() ? 'cloud' : 'phone-portrait'"
+              slot="start"
+            ></ion-icon>
+            Switch to {{ dataSourceService.isUsingMockData() ? 'Database' :
+            'Mock' }}
           </ion-button>
         </ion-item>
-
         <!-- Push Notification Mode Toggle -->
         <ion-item lines="full">
-          <ion-icon [name]="isLocalPushMode() ? 'desktop' : 'cloud-done'" slot="start" [color]="isLocalPushMode() ? 'warning' : 'success'"></ion-icon>
+          <ion-icon
+            [name]="isLocalPushMode() ? 'desktop' : 'cloud-done'"
+            slot="start"
+            [color]="isLocalPushMode() ? 'warning' : 'success'"
+          ></ion-icon>
           <ion-label>
             <h3>Push Notification Mode</h3>
-            <p>{{ isLocalPushMode() ? 'Local test mode (browser only)' : 'Full mode (Firebase + Lambda)' }}</p>
+            <p>
+              {{ isLocalPushMode() ? 'Local test mode (browser only)' : 'Full
+              mode (Firebase + Lambda)' }}
+            </p>
           </ion-label>
-          <ion-button 
-            fill="outline" 
+          <ion-button
+            fill="outline"
             [color]="isLocalPushMode() ? 'warning' : 'success'"
-            (click)="onTogglePushMode()">
-            <ion-icon [name]="isLocalPushMode() ? 'cloud-done' : 'desktop'" slot="start"></ion-icon>
+            (click)="onTogglePushMode()"
+          >
+            <ion-icon
+              [name]="isLocalPushMode() ? 'cloud-done' : 'desktop'"
+              slot="start"
+            ></ion-icon>
             Switch to {{ isLocalPushMode() ? 'Full' : 'Local' }}
           </ion-button>
         </ion-item>
-
         <!-- Push Notification Enable/Disable -->
         <ion-item lines="full">
-          <ion-icon [name]="isPushEnabled() ? 'notifications' : 'notifications-off'" slot="start" [color]="isPushEnabled() ? 'primary' : 'medium'"></ion-icon>
+          <ion-icon
+            [name]="isPushEnabled() ? 'notifications' : 'notifications-off'"
+            slot="start"
+            [color]="isPushEnabled() ? 'primary' : 'medium'"
+          ></ion-icon>
           <ion-label>
             <h3>Push Notifications</h3>
             <p>{{ isPushEnabled() ? 'Enabled' : 'Disabled' }}</p>
           </ion-label>
-          <ion-toggle 
+          <ion-toggle
             [checked]="isPushEnabled()"
-            (ionChange)="onTogglePushNotifications($event)">
+            (ionChange)="onTogglePushNotifications($event)"
+          >
           </ion-toggle>
         </ion-item>
-
         <!-- Request Permission Button -->
-        <ion-item lines="full" *ngIf="isPushEnabled() && !hasNotificationPermission()">
-          <ion-icon name="shield-checkmark" slot="start" color="warning"></ion-icon>
+        @if (isPushEnabled() && !hasNotificationPermission()) {
+        <ion-item lines="full">
+          <ion-icon
+            name="shield-checkmark"
+            slot="start"
+            color="warning"
+          ></ion-icon>
           <ion-label>
             <h3>Notification Permission</h3>
             <p>Click to grant browser notification permission</p>
           </ion-label>
-          <ion-button 
-            fill="solid" 
+          <ion-button
+            fill="solid"
             color="warning"
-            (click)="onRequestNotificationPermission()">
+            (click)="onRequestNotificationPermission()"
+          >
             <ion-icon name="shield-checkmark" slot="start"></ion-icon>
             Grant Permission
           </ion-button>
         </ion-item>
-
+        }
         <!-- Permission Status -->
-        <ion-item lines="full" *ngIf="isPushEnabled()">
-          <ion-icon [name]="hasNotificationPermission() ? 'checkmark-circle' : 'close-circle'" slot="start" [color]="hasNotificationPermission() ? 'success' : 'danger'"></ion-icon>
+        @if (isPushEnabled()) {
+        <ion-item lines="full">
+          <ion-icon
+            [name]="hasNotificationPermission() ? 'checkmark-circle' : 'close-circle'"
+            slot="start"
+            [color]="hasNotificationPermission() ? 'success' : 'danger'"
+          ></ion-icon>
           <ion-label>
             <h3>Permission Status</h3>
             <p>{{ getNotificationPermissionStatus() }}</p>
           </ion-label>
         </ion-item>
-
-
-
+        }
         <!-- Info -->
         <ion-item lines="none" class="info-item">
-          <ion-icon name="information-circle" slot="start" color="medium"></ion-icon>
+          <ion-icon
+            name="information-circle"
+            slot="start"
+            color="medium"
+          ></ion-icon>
           <ion-label class="ion-text-wrap">
             <ion-text color="medium">
-              <p><strong>Mock Mode:</strong> Uses local data for testing without database connection.</p>
-              <p><strong>Database Mode:</strong> Uses AWS DynamoDB for persistent storage.</p>
-              <p><strong>Local Push Mode:</strong> Browser notifications for testing (no Firebase needed).</p>
-              <p><strong>Full Push Mode:</strong> Real push notifications via Firebase Cloud Messaging.</p>
+              <p>
+                <strong>Mock Mode:</strong> Uses local data for testing without
+                database connection.
+              </p>
+              <p>
+                <strong>Database Mode:</strong> Uses AWS DynamoDB for persistent
+                storage.
+              </p>
+              <p>
+                <strong>Local Push Mode:</strong> Browser notifications for
+                testing (no Firebase needed).
+              </p>
+              <p>
+                <strong>Full Push Mode:</strong> Real push notifications via
+                Firebase Cloud Messaging.
+              </p>
             </ion-text>
           </ion-label>
         </ion-item>
-
       </ion-card-content>
     </ion-card>
-
+    }
     <!-- Notification Preferences Card -->
     <ion-card class="notification-card">
       <ion-card-header>
@@ -835,7 +1071,6 @@
         </ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        
         <!-- Notification Methods -->
         <ion-list class="notification-methods">
           <ion-list-header>
@@ -844,67 +1079,78 @@
               <p>Choose how you'd like to receive notifications</p>
             </ion-label>
           </ion-list-header>
-
           <ion-item>
             <ion-icon name="chatbubble" slot="start" color="primary"></ion-icon>
             <ion-label>
               <h3>In-App Notifications</h3>
               <p>Receive notifications within the app</p>
             </ion-label>
-            <ion-toggle 
+            <ion-toggle
               [(ngModel)]="notificationPreferences.inApp"
-              (ionChange)="onNotificationMethodChange('inApp', $event.detail.checked)">
+              (ionChange)="onNotificationMethodChange('inApp', $event.detail.checked)"
+            >
             </ion-toggle>
           </ion-item>
-
           <ion-item>
             <ion-icon name="mail" slot="start" color="secondary"></ion-icon>
             <ion-label>
               <h3>Email Notifications</h3>
               <p>Receive notifications via email</p>
             </ion-label>
-            <ion-toggle 
+            <ion-toggle
               [(ngModel)]="notificationPreferences.email"
-              (ionChange)="onNotificationMethodChange('email', $event.detail.checked)">
+              (ionChange)="onNotificationMethodChange('email', $event.detail.checked)"
+            >
             </ion-toggle>
           </ion-item>
-
-          <ion-item *ngIf="notificationPreferences.email">
-            <ion-label position="stacked">{{ 'auth.email' | translate }}</ion-label>
-            <ion-input 
+          @if (notificationPreferences.email) {
+          <ion-item>
+            <ion-label position="stacked"
+              >{{ 'auth.email' | translate }}</ion-label
+            >
+            <ion-input
               [(ngModel)]="notificationPreferences.emailAddress"
               (ionBlur)="onContactInfoChange()"
               type="email"
               placeholder="Enter your email address"
-              class="contact-input">
+              class="contact-input"
+            >
             </ion-input>
           </ion-item>
-
+          }
           <ion-item>
-            <ion-icon name="phone-portrait" slot="start" color="success"></ion-icon>
+            <ion-icon
+              name="phone-portrait"
+              slot="start"
+              color="success"
+            ></ion-icon>
             <ion-label>
               <h3>SMS Text Messages</h3>
               <p>Receive notifications via text message</p>
             </ion-label>
-            <ion-toggle 
+            <ion-toggle
               [(ngModel)]="notificationPreferences.sms"
-              (ionChange)="onNotificationMethodChange('sms', $event.detail.checked)">
+              (ionChange)="onNotificationMethodChange('sms', $event.detail.checked)"
+            >
             </ion-toggle>
           </ion-item>
-
-          <ion-item *ngIf="notificationPreferences.sms">
+          @if (notificationPreferences.sms) {
+          <ion-item>
             <ion-label position="stacked">Phone Number</ion-label>
-            <ion-input 
+            <ion-input
               [(ngModel)]="notificationPreferences.phoneNumber"
               (ionBlur)="onContactInfoChange()"
               type="tel"
               placeholder="Enter your phone number"
-              class="contact-input">
+              class="contact-input"
+            >
             </ion-input>
-            <ion-note slot="helper">Include country code (e.g., +1 555-123-4567)</ion-note>
+            <ion-note slot="helper"
+              >Include country code (e.g., +1 555-123-4567)</ion-note
+            >
           </ion-item>
+          }
         </ion-list>
-
         <!-- Notification Frequency -->
         <ion-list class="notification-frequency">
           <ion-list-header>
@@ -913,8 +1159,10 @@
               <p>How often would you like to receive notifications?</p>
             </ion-label>
           </ion-list-header>
-
-          <ion-radio-group [(ngModel)]="notificationPreferences.frequency" (ionChange)="onFrequencyChange()">
+          <ion-radio-group
+            [(ngModel)]="notificationPreferences.frequency"
+            (ionChange)="onFrequencyChange()"
+          >
             <ion-item>
               <ion-radio slot="start" value="immediate"></ion-radio>
               <ion-label>
@@ -922,7 +1170,6 @@
                 <p>Get notified right away</p>
               </ion-label>
             </ion-item>
-
             <ion-item>
               <ion-radio slot="start" value="daily"></ion-radio>
               <ion-label>
@@ -930,7 +1177,6 @@
                 <p>Receive a summary once per day</p>
               </ion-label>
             </ion-item>
-
             <ion-item>
               <ion-radio slot="start" value="weekly"></ion-radio>
               <ion-label>
@@ -940,7 +1186,6 @@
             </ion-item>
           </ion-radio-group>
         </ion-list>
-
         <!-- Event Types -->
         <ion-list class="event-types">
           <ion-list-header>
@@ -949,60 +1194,60 @@
               <p>Choose what types of notifications you want to receive</p>
             </ion-label>
           </ion-list-header>
-
           <ion-item>
-            <ion-checkbox 
-              slot="start" 
+            <ion-checkbox
+              slot="start"
               [(ngModel)]="notificationPreferences.eventTypes.newEvents"
-              (ionChange)="onEventTypeChange('newEvents', $event.detail.checked)">
+              (ionChange)="onEventTypeChange('newEvents', $event.detail.checked)"
+            >
             </ion-checkbox>
             <ion-label>
               <h3>New Events</h3>
               <p>When new martial arts events are posted</p>
             </ion-label>
           </ion-item>
-
           <ion-item>
-            <ion-checkbox 
-              slot="start" 
+            <ion-checkbox
+              slot="start"
               [(ngModel)]="notificationPreferences.eventTypes.eventReminders"
-              (ionChange)="onEventTypeChange('eventReminders', $event.detail.checked)">
+              (ionChange)="onEventTypeChange('eventReminders', $event.detail.checked)"
+            >
             </ion-checkbox>
             <ion-label>
               <h3>Event Reminders</h3>
               <p>Reminders for events you've registered for</p>
             </ion-label>
           </ion-item>
-
           <ion-item>
-            <ion-checkbox 
-              slot="start" 
+            <ion-checkbox
+              slot="start"
               [(ngModel)]="notificationPreferences.eventTypes.classUpdates"
-              (ionChange)="onEventTypeChange('classUpdates', $event.detail.checked)">
+              (ionChange)="onEventTypeChange('classUpdates', $event.detail.checked)"
+            >
             </ion-checkbox>
             <ion-label>
               <h3>Class Updates</h3>
               <p>Schedule changes and class announcements</p>
             </ion-label>
           </ion-item>
-
           <ion-item>
-            <ion-checkbox 
-              slot="start" 
+            <ion-checkbox
+              slot="start"
               [(ngModel)]="notificationPreferences.eventTypes.promotions"
-              (ionChange)="onEventTypeChange('promotions', $event.detail.checked)">
+              (ionChange)="onEventTypeChange('promotions', $event.detail.checked)"
+            >
             </ion-checkbox>
             <ion-label>
               <h3>Promotions & Offers</h3>
               <p>Special deals and promotional content</p>
             </ion-label>
           </ion-item>
-
           <ion-item>
-            <ion-checkbox 
-              slot="start" 
+            <ion-checkbox
+              slot="start"
               [(ngModel)]="notificationPreferences.eventTypes.systemUpdates"
-              (ionChange)="onEventTypeChange('systemUpdates', $event.detail.checked)">
+              (ionChange)="onEventTypeChange('systemUpdates', $event.detail.checked)"
+            >
             </ion-checkbox>
             <ion-label>
               <h3>System Updates</h3>
@@ -1010,44 +1255,49 @@
             </ion-label>
           </ion-item>
         </ion-list>
-
         <!-- Action Buttons -->
         <div class="notification-actions">
-          <ion-button 
-            expand="block" 
-            color="primary" 
+          <ion-button
+            expand="block"
+            color="primary"
             (click)="testNotification()"
-            class="test-button">
+            class="test-button"
+          >
             <ion-icon name="checkmark-circle" slot="start"></ion-icon>
             Test Notifications
           </ion-button>
-
           <div class="secondary-actions">
-            <ion-button 
-              fill="outline" 
-              color="medium" 
-              (click)="resetNotificationPreferences()">
+            <ion-button
+              fill="outline"
+              color="medium"
+              (click)="resetNotificationPreferences()"
+            >
               <ion-icon name="refresh" slot="start"></ion-icon>
               Reset to Defaults
             </ion-button>
           </div>
         </div>
-
         <!-- Info Section -->
         <div class="notification-info">
           <ion-item lines="none" class="info-item">
-            <ion-icon name="information-circle" slot="start" color="medium"></ion-icon>
+            <ion-icon
+              name="information-circle"
+              slot="start"
+              color="medium"
+            ></ion-icon>
             <ion-label class="ion-text-wrap">
               <ion-text color="medium">
-                <p>Your notification preferences are saved locally and will be remembered across app sessions. You can change these settings at any time.</p>
+                <p>
+                  Your notification preferences are saved locally and will be
+                  remembered across app sessions. You can change these settings
+                  at any time.
+                </p>
               </ion-text>
             </ion-label>
           </ion-item>
         </div>
-
       </ion-card-content>
     </ion-card>
-
     <!-- Account Actions -->
     <ion-card class="account-actions">
       <ion-card-content>
@@ -1058,12 +1308,14 @@
       </ion-card-content>
     </ion-card>
   </div>
+  }
 
   <!-- No User State -->
-  <ion-card *ngIf="!currentUser">
+  @if (!currentUser) {
+  <ion-card>
     <ion-card-content>
       <p class="ion-text-center">No user information available</p>
     </ion-card-content>
   </ion-card>
-
+  }
 </ion-content>

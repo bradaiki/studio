@@ -1,27 +1,32 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button (click)="onBack()" defaultHref="/tabs/studios"></ion-back-button>
+      <ion-back-button
+        (click)="onBack()"
+        defaultHref="/tabs/studios"
+      ></ion-back-button>
     </ion-buttons>
     <ion-title>{{ studio.name || 'Studio Details' }}</ion-title>
-    
+
     <!-- Review Requests Button for Instructors -->
-    <ion-buttons slot="end" *ngIf="canReviewRequests && !isLoadingPermissions">
-      <ion-button 
-        fill="clear" 
+    @if (canReviewRequests && !isLoadingPermissions) {
+    <ion-buttons slot="end">
+      <ion-button
+        fill="clear"
         color="primary"
         (click)="openJoinRequestReviewModal()"
-        [disabled]="!canReviewRequests">
+        [disabled]="!canReviewRequests"
+      >
         <ion-icon name="checkmark-circle" slot="start"></ion-icon>
         <ion-label>Review Requests</ion-label>
-        <ion-badge 
-          *ngIf="pendingRequestCount > 0" 
-          color="warning"
-          class="request-count-badge">
+        @if (pendingRequestCount > 0) {
+        <ion-badge color="warning" class="request-count-badge">
           {{ pendingRequestCount }}
         </ion-badge>
+        }
       </ion-button>
     </ion-buttons>
+    }
   </ion-toolbar>
 </ion-header>
 
@@ -30,18 +35,22 @@
     <!-- Main Content Column -->
     <div class="main-content">
       <!-- Hero Image -->
-      <div class="hero-image" [style.background-image]="'url(' + studio.heroImage + ')'">
+      <div
+        class="hero-image"
+        [style.background-image]="'url(' + studio.heroImage + ')'"
+      >
         <div class="hero-overlay">
           <h1>{{ studio.name }}</h1>
           <p>{{ studio.tagline }}</p>
-          
+
           <!-- Join Studio Button -->
           <div class="hero-actions">
-            <ion-button 
-              color="primary" 
+            <ion-button
+              color="primary"
               size="default"
               (click)="openJoinStudioModal()"
-              class="join-studio-btn">
+              class="join-studio-btn"
+            >
               <ion-icon name="person-add" slot="start"></ion-icon>
               Join Studio
             </ion-button>
@@ -49,386 +58,496 @@
         </div>
       </div>
 
-    <!-- Info Card -->
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>About Our Studio</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <p>{{ studio.description }}</p>
-      </ion-card-content>
-    </ion-card>
+      <!-- Info Card -->
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>About Our Studio</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <p>{{ studio.description }}</p>
+        </ion-card-content>
+      </ion-card>
 
-    <!-- Benefits -->
-    <ion-card *ngIf="studio.benefits && studio.benefits.length > 0">
-      <ion-card-header>
-        <ion-card-title>Benefits</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <div class="benefit-item" *ngFor="let benefit of studio.benefits">
-          <ion-icon [name]="benefit.icon"></ion-icon>
-          <div>
-            <h3>{{ benefit.title }}</h3>
-            <p>{{ benefit.description }}</p>
-          </div>
-        </div>
-      </ion-card-content>
-    </ion-card>
-
-    <!-- Enhanced Schedule Section -->
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>
-          <div class="schedule-header-controls">
-            <span>Class Schedule</span>
-            <ion-segment [(ngModel)]="scheduleView" (ionChange)="changeScheduleView($event)">
-              <ion-segment-button value="calendar">
-                <ion-icon name="grid"></ion-icon>
-                <ion-label>Calendar</ion-label>
-              </ion-segment-button>
-              <ion-segment-button value="list">
-                <ion-icon name="list"></ion-icon>
-                <ion-label>List</ion-label>
-              </ion-segment-button>
-            </ion-segment>
-          </div>
-        </ion-card-title>
-
-      </ion-card-header>
-      <ion-card-content>
-        
-        <!-- List View -->
-        <div *ngIf="scheduleView === 'list'" class="schedule-list-view">
-          <div *ngIf="studioActivities && studioActivities.length > 0">
-            <div class="schedule-item" *ngFor="let activity of getUpcomingActivities()" (click)="navigateToActivity(activity)">
-            <div class="schedule-header">
-              <h3>{{ activity.title }}</h3>
-              <div class="schedule-badges">
-                <ion-chip [color]="activity.type === 'class' ? 'primary' : 'secondary'">
-                  <ion-label>{{ activity.level }}</ion-label>
-                </ion-chip>
-                <ion-chip *ngIf="activity.isRecurring" color="success" outline="true">
-                  <ion-icon name="repeat"></ion-icon>
-                  <ion-label>Recurring</ion-label>
-                </ion-chip>
-              </div>
-            </div>
-            
-            <div class="schedule-details">
-              <div class="schedule-time">
-                <ion-icon name="time"></ion-icon>
-                <span>{{ formatTime(activity.startTime) }} - {{ formatTime(activity.endTime) }}</span>
-              </div>
-              
-              <div class="schedule-instructor">
-                <ion-icon name="person"></ion-icon>
-                <span>{{ activity.instructor }}</span>
-              </div>
-              
-              <div class="schedule-location" *ngIf="activity.location">
-                <ion-icon name="location"></ion-icon>
-                <span>{{ activity.location }}</span>
-              </div>
-              
-              <div *ngIf="activity.isRecurring && activity.recurrenceDays" class="schedule-days">
-                <ion-icon name="calendar"></ion-icon>
-                <span>{{ getRecurringDaysText(activity.recurrenceDays) }}</span>
-              </div>
-              
-              <div *ngIf="!activity.isRecurring && activity.startDate" class="schedule-date">
-                <ion-icon name="calendar"></ion-icon>
-                <span>{{ activity.startDate | date }}</span>
-              </div>
-              
-              <div *ngIf="activity.cost" class="schedule-cost">
-                <ion-icon name="card"></ion-icon>
-                <span>{{ activity.cost }}</span>
-              </div>
-            </div>
-            
-            <p *ngIf="activity.description" class="schedule-description">{{ activity.description }}</p>
-            
-            <div class="schedule-tags" *ngIf="activity.tags && activity.tags.length > 0">
-              <ion-chip *ngFor="let tag of activity.tags" size="small" outline="true">
-                <ion-label>{{ tag }}</ion-label>
-              </ion-chip>
-            </div>
+      <!-- Benefits -->
+      @if (studio.benefits && studio.benefits.length > 0) {
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Benefits</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          @for (benefit of studio.benefits; track benefit) {
+          <div class="benefit-item">
+            <ion-icon [name]="benefit.icon"></ion-icon>
+            <div>
+              <h3>{{ benefit.title }}</h3>
+              <p>{{ benefit.description }}</p>
             </div>
           </div>
-          
-          <!-- Empty State for List View -->
-          <div *ngIf="!studioActivities || studioActivities.length === 0" class="empty-schedule">
-            <ion-icon name="calendar" size="large"></ion-icon>
-            <h3>No Classes Scheduled</h3>
-            <p>Check back later for updated class schedules.</p>
-          </div>
-        </div>
+          }
+        </ion-card-content>
+      </ion-card>
+      }
 
-        <!-- Calendar View -->
-        <div *ngIf="scheduleView === 'calendar'" class="schedule-calendar-view">
-          <!-- Calendar Controls -->
-          <div class="calendar-controls">
-            <ion-button fill="clear" (click)="navigateWeek('prev')">
-              <ion-icon name="chevron-back"></ion-icon>
-            </ion-button>
-            <div class="calendar-title">
-              <h3>{{ getCurrentWeekTitle() }}</h3>
+      <!-- Enhanced Schedule Section -->
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>
+            <div class="schedule-header-controls">
+              <span>Class Schedule</span>
+              <ion-segment
+                [(ngModel)]="scheduleView"
+                (ionChange)="changeScheduleView($event)"
+              >
+                <ion-segment-button value="calendar">
+                  <ion-icon name="grid"></ion-icon>
+                  <ion-label>Calendar</ion-label>
+                </ion-segment-button>
+                <ion-segment-button value="list">
+                  <ion-icon name="list"></ion-icon>
+                  <ion-label>List</ion-label>
+                </ion-segment-button>
+              </ion-segment>
             </div>
-            <ion-button fill="clear" (click)="navigateWeek('next')">
-              <ion-icon name="chevron-forward"></ion-icon>
-            </ion-button>
-          </div>
-          
-          <ion-button fill="clear" size="small" (click)="goToToday()" class="today-button">
-            Today
-          </ion-button>
-
-          <!-- Hourly Time Grid Calendar -->
-          <div class="time-grid-calendar">
-            <!-- Header with days -->
-            <div class="time-grid-header">
-              <div class="time-column-header"></div>
-              <div class="day-header" *ngFor="let date of getWeekDates(); let i = index">
-                <div class="day-name">{{ weekDays[i] }}</div>
-                <div class="day-number" [class.today]="isToday(date)">{{ date.getDate() }}</div>
-              </div>
-            </div>
-            
-            <!-- Time grid body -->
-            <div class="time-grid-body">
-              <!-- Time labels column -->
-              <div class="time-labels">
-                <div class="time-slot" *ngFor="let timeSlot of timeSlots">
-                  {{ formatTime(timeSlot) }}
-                </div>
-              </div>
-              
-              <!-- Day columns with activities -->
-              <div class="day-columns">
-                <div class="day-column" *ngFor="let date of getWeekDates()">
-                  <!-- Time slot grid -->
-                  <div class="time-slots">
-                    <div class="time-slot-row" *ngFor="let timeSlot of timeSlots"></div>
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <!-- List View -->
+          @if (scheduleView === 'list') {
+          <div class="schedule-list-view">
+            @if (studioActivities && studioActivities.length > 0) {
+            <div>
+              @for (activity of getUpcomingActivities(); track activity) {
+              <div class="schedule-item" (click)="navigateToActivity(activity)">
+                <div class="schedule-header">
+                  <h3>{{ activity.title }}</h3>
+                  <div class="schedule-badges">
+                    <ion-chip
+                      [color]="activity.type === 'class' ? 'primary' : 'secondary'"
+                    >
+                      <ion-label>{{ activity.level }}</ion-label>
+                    </ion-chip>
+                    @if (activity.isRecurring) {
+                    <ion-chip color="success" outline="true">
+                      <ion-icon name="repeat"></ion-icon>
+                      <ion-label>Recurring</ion-label>
+                    </ion-chip>
+                    }
                   </div>
-                  
-                  <!-- Activities positioned absolutely -->
-                  <div class="activities-container">
-                    <div class="activity-block" 
-                         *ngFor="let activity of getActivitiesForDate(date)"
-                         [ngStyle]="getActivityStyle(activity)"
-                         [title]="activity.title + ' - ' + formatTime(activity.startTime) + ' to ' + formatTime(activity.endTime)"
-                         (click)="navigateToActivity(activity)">
-                      <div class="activity-title">{{ activity.title }}</div>
-                      <div class="activity-time">{{ formatTime(activity.startTime) }}</div>
-                      <div class="activity-instructor">{{ activity.instructor }}</div>
+                </div>
+                <div class="schedule-details">
+                  <div class="schedule-time">
+                    <ion-icon name="time"></ion-icon>
+                    <span
+                      >{{ formatTime(activity.startTime) }} - {{
+                      formatTime(activity.endTime) }}</span
+                    >
+                  </div>
+                  <div class="schedule-instructor">
+                    <ion-icon name="person"></ion-icon>
+                    <span>{{ activity.instructor }}</span>
+                  </div>
+                  @if (activity.location) {
+                  <div class="schedule-location">
+                    <ion-icon name="location"></ion-icon>
+                    <span>{{ activity.location }}</span>
+                  </div>
+                  } @if (activity.isRecurring && activity.recurrenceDays) {
+                  <div class="schedule-days">
+                    <ion-icon name="calendar"></ion-icon>
+                    <span
+                      >{{ getRecurringDaysText(activity.recurrenceDays) }}</span
+                    >
+                  </div>
+                  } @if (!activity.isRecurring && activity.startDate) {
+                  <div class="schedule-date">
+                    <ion-icon name="calendar"></ion-icon>
+                    <span>{{ activity.startDate | date }}</span>
+                  </div>
+                  } @if (activity.cost) {
+                  <div class="schedule-cost">
+                    <ion-icon name="card"></ion-icon>
+                    <span>{{ activity.cost }}</span>
+                  </div>
+                  }
+                </div>
+                @if (activity.description) {
+                <p class="schedule-description">{{ activity.description }}</p>
+                } @if (activity.tags && activity.tags.length > 0) {
+                <div class="schedule-tags">
+                  @for (tag of activity.tags; track tag) {
+                  <ion-chip size="small" outline="true">
+                    <ion-label>{{ tag }}</ion-label>
+                  </ion-chip>
+                  }
+                </div>
+                }
+              </div>
+              }
+            </div>
+            }
+            <!-- Empty State for List View -->
+            @if (!studioActivities || studioActivities.length === 0) {
+            <div class="empty-schedule">
+              <ion-icon name="calendar" size="large"></ion-icon>
+              <h3>No Classes Scheduled</h3>
+              <p>Check back later for updated class schedules.</p>
+            </div>
+            }
+          </div>
+          }
+
+          <!-- Calendar View -->
+          @if (scheduleView === 'calendar') {
+          <div class="schedule-calendar-view">
+            <!-- Calendar Controls -->
+            <div class="calendar-controls">
+              <ion-button fill="clear" (click)="navigateWeek('prev')">
+                <ion-icon name="chevron-back"></ion-icon>
+              </ion-button>
+              <div class="calendar-title">
+                <h3>{{ getCurrentWeekTitle() }}</h3>
+              </div>
+              <ion-button fill="clear" (click)="navigateWeek('next')">
+                <ion-icon name="chevron-forward"></ion-icon>
+              </ion-button>
+            </div>
+            <ion-button
+              fill="clear"
+              size="small"
+              (click)="goToToday()"
+              class="today-button"
+            >
+              Today
+            </ion-button>
+            <!-- Hourly Time Grid Calendar -->
+            <div class="time-grid-calendar">
+              <!-- Header with days -->
+              <div class="time-grid-header">
+                <div class="time-column-header"></div>
+                @for (date of getWeekDates(); track date; let i = $index) {
+                <div class="day-header">
+                  <div class="day-name">{{ weekDays[i] }}</div>
+                  <div class="day-number" [class.today]="isToday(date)">
+                    {{ date.getDate() }}
+                  </div>
+                </div>
+                }
+              </div>
+              <!-- Time grid body -->
+              <div class="time-grid-body">
+                <!-- Time labels column -->
+                <div class="time-labels">
+                  @for (timeSlot of timeSlots; track timeSlot) {
+                  <div class="time-slot">{{ formatTime(timeSlot) }}</div>
+                  }
+                </div>
+                <!-- Day columns with activities -->
+                <div class="day-columns">
+                  @for (date of getWeekDates(); track date) {
+                  <div class="day-column">
+                    <!-- Time slot grid -->
+                    <div class="time-slots">
+                      @for (timeSlot of timeSlots; track timeSlot) {
+                      <div class="time-slot-row"></div>
+                      }
+                    </div>
+                    <!-- Activities positioned absolutely -->
+                    <div class="activities-container">
+                      @for (activity of getActivitiesForDate(date); track
+                      activity) {
+                      <div
+                        class="activity-block"
+                        [ngStyle]="getActivityStyle(activity)"
+                        [title]="activity.title + ' - ' + formatTime(activity.startTime) + ' to ' + formatTime(activity.endTime)"
+                        (click)="navigateToActivity(activity)"
+                      >
+                        <div class="activity-title">{{ activity.title }}</div>
+                        <div class="activity-time">
+                          {{ formatTime(activity.startTime) }}
+                        </div>
+                        <div class="activity-instructor">
+                          {{ activity.instructor }}
+                        </div>
+                      </div>
+                      }
                     </div>
                   </div>
+                  }
                 </div>
               </div>
             </div>
-          </div>
-          
-          <!-- Empty State for Calendar View -->
-          <div *ngIf="!studioActivities || studioActivities.length === 0" class="empty-schedule">
-            <ion-icon name="calendar" size="large"></ion-icon>
-            <h3>No Classes Scheduled</h3>
-            <p>Check back later for updated class schedules.</p>
-          </div>
-        </div>
-      </ion-card-content>
-    </ion-card>
-
-    <!-- Instructors -->
-    <ion-card *ngIf="studio.instructors && studio.instructors.length > 0">
-      <ion-card-header>
-        <ion-card-title>
-          <div class="section-header">
-            <span>Instructors ({{ studio.instructors.length }})</span>
-            <ion-chip *ngIf="hasMoreInstructors()" color="primary" outline="true" size="small">
-              <ion-label>Showing 20 of {{ studio.instructors.length }}</ion-label>
-            </ion-chip>
-          </div>
-        </ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <div class="instructors-scroll-container">
-          <div class="instructors-grid">
-            <div class="instructor-card" *ngFor="let instructor of getDisplayedInstructors()" (click)="navigateToInstructor(instructor)">
-              <div class="instructor-header">
-                <img *ngIf="instructor.image" [src]="instructor.image" [alt]="instructor.name" class="instructor-avatar" />
-                <div class="instructor-basic-info">
-                  <h3>{{ instructor.name }}</h3>
-                  <p class="instructor-title" *ngIf="instructor.title">{{ instructor.title }}</p>
-                  <ion-chip *ngIf="instructor.rank" size="small">
-                    <ion-label>{{ instructor.rank }}</ion-label>
-                  </ion-chip>
-                </div>
-              </div>
-              <div class="instructor-details">
-                <p *ngIf="instructor.experience" class="instructor-experience">{{ instructor.experience }} experience</p>
-                <p *ngIf="instructor.bio" class="instructor-bio">{{ instructor.bio }}</p>
-                <div *ngIf="instructor.specialties && instructor.specialties.length > 0" class="instructor-specialties">
-                  <ion-chip *ngFor="let specialty of instructor.specialties.slice(0, 2)" size="small" outline="true">
-                    <ion-label>{{ specialty }}</ion-label>
-                  </ion-chip>
-                  <span *ngIf="instructor.specialties.length > 2" class="more-specialties">
-                    +{{ instructor.specialties.length - 2 }} more
-                  </span>
-                </div>
-              </div>
+            <!-- Empty State for Calendar View -->
+            @if (!studioActivities || studioActivities.length === 0) {
+            <div class="empty-schedule">
+              <ion-icon name="calendar" size="large"></ion-icon>
+              <h3>No Classes Scheduled</h3>
+              <p>Check back later for updated class schedules.</p>
             </div>
+            }
           </div>
-        </div>
-      </ion-card-content>
-    </ion-card>
+          }
+        </ion-card-content>
+      </ion-card>
 
-    <!-- Empty State for Instructors -->
-    <ion-card *ngIf="!studio.instructors || studio.instructors.length === 0">
-      <ion-card-header>
-        <ion-card-title>Instructors</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <div class="empty-state">
-          <ion-icon name="people" size="large"></ion-icon>
-          <p>No instructors listed yet.</p>
-        </div>
-      </ion-card-content>
-    </ion-card>
-
-    <!-- Students (only visible to logged in users) -->
-    <ion-card *ngIf="currentUserId && studioStudents && studioStudents.length > 0">
-      <ion-card-header>
-        <ion-card-title>
-          <div class="section-header">
-            <span>Students ({{ studioStudents.length }})</span>
-            <ion-chip *ngIf="hasMoreStudents()" color="primary" outline="true" size="small">
-              <ion-label>Showing 20 of {{ studioStudents.length }}</ion-label>
-            </ion-chip>
-          </div>
-        </ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <div class="students-scroll-container">
-          <div class="students-grid">
-            <ion-card *ngFor="let student of getDisplayedStudents()" (click)="navigateToPerson(student)" class="student-card" button>
-              <ion-card-content>
-                <div class="student-header">
-                  <ion-avatar class="student-avatar">
-                    <img [src]="student.avatar" [alt]="student.name" />
-                  </ion-avatar>
-                  <ion-icon *ngIf="student.isVerified" name="checkmark-circle" color="success" class="verified-badge"></ion-icon>
-                </div>
-                <div class="student-info">
-                  <h3 class="student-name">{{ student.name }}</h3>
-                  <p *ngIf="student.rank" class="student-rank">{{ student.rank }}</p>
-                  <p *ngIf="student.experience" class="student-experience">{{ student.experience }}</p>
-                  <div *ngIf="student.specialties && student.specialties.length > 0" class="student-specialties">
-                    <ion-chip *ngFor="let specialty of student.specialties.slice(0, 2)" size="small" outline="true">
-                      <ion-label>{{ specialty }}</ion-label>
+      <!-- Instructors -->
+      @if (studio.instructors && studio.instructors.length > 0) {
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>
+            <div class="section-header">
+              <span>Instructors ({{ studio.instructors.length }})</span>
+              @if (hasMoreInstructors()) {
+              <ion-chip color="primary" outline="true" size="small">
+                <ion-label
+                  >Showing 20 of {{ studio.instructors.length }}</ion-label
+                >
+              </ion-chip>
+              }
+            </div>
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="instructors-scroll-container">
+            <div class="instructors-grid">
+              @for (instructor of getDisplayedInstructors(); track instructor) {
+              <div
+                class="instructor-card"
+                (click)="navigateToInstructor(instructor)"
+              >
+                <div class="instructor-header">
+                  @if (instructor.image) {
+                  <img
+                    [src]="instructor.image"
+                    [alt]="instructor.name"
+                    class="instructor-avatar"
+                  />
+                  }
+                  <div class="instructor-basic-info">
+                    <h3>{{ instructor.name }}</h3>
+                    @if (instructor.title) {
+                    <p class="instructor-title">{{ instructor.title }}</p>
+                    } @if (instructor.rank) {
+                    <ion-chip size="small">
+                      <ion-label>{{ instructor.rank }}</ion-label>
                     </ion-chip>
-                    <span *ngIf="student.specialties.length > 2" class="more-specialties">
-                      +{{ student.specialties.length - 2 }} more
-                    </span>
+                    }
                   </div>
                 </div>
-              </ion-card-content>
-            </ion-card>
+                <div class="instructor-details">
+                  @if (instructor.experience) {
+                  <p class="instructor-experience">
+                    {{ instructor.experience }} experience
+                  </p>
+                  } @if (instructor.bio) {
+                  <p class="instructor-bio">{{ instructor.bio }}</p>
+                  } @if (instructor.specialties && instructor.specialties.length
+                  > 0) {
+                  <div class="instructor-specialties">
+                    @for (specialty of instructor.specialties.slice(0, 2); track
+                    specialty) {
+                    <ion-chip size="small" outline="true">
+                      <ion-label>{{ specialty }}</ion-label>
+                    </ion-chip>
+                    } @if (instructor.specialties.length > 2) {
+                    <span class="more-specialties">
+                      +{{ instructor.specialties.length - 2 }} more
+                    </span>
+                    }
+                  </div>
+                  }
+                </div>
+              </div>
+              }
+            </div>
           </div>
-        </div>
-      </ion-card-content>
-    </ion-card>
+        </ion-card-content>
+      </ion-card>
+      }
 
-    <!-- Empty State for Students -->
-    <ion-card *ngIf="currentUserId && (!studioStudents || studioStudents.length === 0)">
-      <ion-card-header>
-        <ion-card-title>Students</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <div class="empty-state">
-          <ion-icon name="people" size="large"></ion-icon>
-          <p>No students listed yet.</p>
-        </div>
-      </ion-card-content>
-    </ion-card>
-
-    <!-- Contact Info -->
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>Contact Information</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <div class="contact-item">
-          <ion-icon name="location"></ion-icon>
-          <span>{{ studio.address }}</span>
-        </div>
-        <div class="contact-item">
-          <ion-icon name="call"></ion-icon>
-          <span>{{ studio.phone }}</span>
-        </div>
-        <div class="contact-item">
-          <ion-icon name="mail"></ion-icon>
-          <span>{{ studio.email }}</span>
-        </div>
-        <div class="contact-item">
-          <ion-icon name="globe"></ion-icon>
-          <span>{{ studio.website }}</span>
-        </div>
-      </ion-card-content>
-    </ion-card>
-
-    <!-- Location Map -->
-    <ion-card *ngIf="studio.address">
-      <ion-card-header>
-        <ion-card-title>Location</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <div class="location-map">
-          <iframe
-            [src]="getStudioMapUrl()"
-            width="100%"
-            height="300"
-            style="border:0; border-radius: 8px;"
-            allowfullscreen=""
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade">
-          </iframe>
-          <div class="map-actions">
-            <ion-button 
-              fill="outline" 
-              size="small" 
-              (click)="openDirections()">
-              <ion-icon name="navigate" slot="start"></ion-icon>
-              Get Directions
-            </ion-button>
-            <ion-button 
-              fill="outline" 
-              size="small" 
-              (click)="openInMaps()">
-              <ion-icon name="map" slot="start"></ion-icon>
-              Open in Maps
-            </ion-button>
+      <!-- Empty State for Instructors -->
+      @if (!studio.instructors || studio.instructors.length === 0) {
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Instructors</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="empty-state">
+            <ion-icon name="people" size="large"></ion-icon>
+            <p>No instructors listed yet.</p>
           </div>
-        </div>
-      </ion-card-content>
-    </ion-card>
+        </ion-card-content>
+      </ion-card>
+      }
 
-    <!-- Management Actions (Only for Instructors and Studio Chiefs) -->
-    <!-- Instructors and studio chiefs can access studio management -->
-    <ion-card *ngIf="studio.isInstructor || studio.isStudioChief">
-      <ion-card-header>
-        <ion-card-title>Studio Management</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <ion-button expand="block" fill="outline" [routerLink]="['/dash/studio', studio.id, 'manage']">
-          <ion-icon name="settings" slot="start"></ion-icon>
-          Manage Studio
-        </ion-button>
-      </ion-card-content>
-    </ion-card>
+      <!-- Students (only visible to logged in users) -->
+      @if (currentUserId && studioStudents && studioStudents.length > 0) {
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>
+            <div class="section-header">
+              <span>Students ({{ studioStudents.length }})</span>
+              @if (hasMoreStudents()) {
+              <ion-chip color="primary" outline="true" size="small">
+                <ion-label>Showing 20 of {{ studioStudents.length }}</ion-label>
+              </ion-chip>
+              }
+            </div>
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="students-scroll-container">
+            <div class="students-grid">
+              @for (student of getDisplayedStudents(); track student) {
+              <ion-card
+                (click)="navigateToPerson(student)"
+                class="student-card"
+                button
+              >
+                <ion-card-content>
+                  <div class="student-header">
+                    <ion-avatar class="student-avatar">
+                      <img [src]="student.avatar" [alt]="student.name" />
+                    </ion-avatar>
+                    @if (student.isVerified) {
+                    <ion-icon
+                      name="checkmark-circle"
+                      color="success"
+                      class="verified-badge"
+                    ></ion-icon>
+                    }
+                  </div>
+                  <div class="student-info">
+                    <h3 class="student-name">{{ student.name }}</h3>
+                    @if (student.rank) {
+                    <p class="student-rank">{{ student.rank }}</p>
+                    } @if (student.experience) {
+                    <p class="student-experience">{{ student.experience }}</p>
+                    } @if (student.specialties && student.specialties.length >
+                    0) {
+                    <div class="student-specialties">
+                      @for (specialty of student.specialties.slice(0, 2); track
+                      specialty) {
+                      <ion-chip size="small" outline="true">
+                        <ion-label>{{ specialty }}</ion-label>
+                      </ion-chip>
+                      } @if (student.specialties.length > 2) {
+                      <span class="more-specialties">
+                        +{{ student.specialties.length - 2 }} more
+                      </span>
+                      }
+                    </div>
+                    }
+                  </div>
+                </ion-card-content>
+              </ion-card>
+              }
+            </div>
+          </div>
+        </ion-card-content>
+      </ion-card>
+      }
+
+      <!-- Empty State for Students -->
+      @if (currentUserId && (!studioStudents || studioStudents.length === 0)) {
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Students</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="empty-state">
+            <ion-icon name="people" size="large"></ion-icon>
+            <p>No students listed yet.</p>
+          </div>
+        </ion-card-content>
+      </ion-card>
+      }
+
+      <!-- Contact Info -->
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Contact Information</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="contact-item">
+            <ion-icon name="location"></ion-icon>
+            <span>{{ studio.address }}</span>
+          </div>
+          <div class="contact-item">
+            <ion-icon name="call"></ion-icon>
+            <span>{{ studio.phone }}</span>
+          </div>
+          <div class="contact-item">
+            <ion-icon name="mail"></ion-icon>
+            <span>{{ studio.email }}</span>
+          </div>
+          <div class="contact-item">
+            <ion-icon name="globe"></ion-icon>
+            <span>{{ studio.website }}</span>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Location Map -->
+      @if (studio.address) {
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Location</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="location-map">
+            <iframe
+              [src]="getStudioMapUrl()"
+              width="100%"
+              height="300"
+              style="border: 0; border-radius: 8px"
+              allowfullscreen=""
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+            >
+            </iframe>
+            <div class="map-actions">
+              <ion-button
+                fill="outline"
+                size="small"
+                (click)="openDirections()"
+              >
+                <ion-icon name="navigate" slot="start"></ion-icon>
+                Get Directions
+              </ion-button>
+              <ion-button fill="outline" size="small" (click)="openInMaps()">
+                <ion-icon name="map" slot="start"></ion-icon>
+                Open in Maps
+              </ion-button>
+            </div>
+          </div>
+        </ion-card-content>
+      </ion-card>
+      }
+
+      <!-- Management Actions (Only for Instructors and Studio Chiefs) -->
+      <!-- Instructors and studio chiefs can access studio management -->
+      @if (studio.isInstructor || studio.isStudioChief) {
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Studio Management</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-button
+            expand="block"
+            fill="outline"
+            [routerLink]="['/dash/studio', studio.id, 'manage']"
+          >
+            <ion-icon name="settings" slot="start"></ion-icon>
+            Manage Studio
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
+      }
     </div>
 
     <!-- Chat Column (only show in studio view as sidebar) -->
-    <div class="chat-sidebar" *ngIf="currentUserId">
+    @if (currentUserId) {
+    <div class="chat-sidebar">
       <app-chat-messages
         [studioId]="studio.id"
         [studioName]="studio.name"
@@ -441,8 +560,10 @@
         (sendMessage)="onSendChatMessage($event)"
         (leaveChat)="onLeaveChat($event)"
         (muteChat)="onMuteChat($event)"
-        (chatInfo)="onChatInfo($event)">
+        (chatInfo)="onChatInfo($event)"
+      >
       </app-chat-messages>
     </div>
+    }
   </div>
 </ion-content>

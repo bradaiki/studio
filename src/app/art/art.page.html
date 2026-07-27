@@ -1,23 +1,28 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button (click)="onBack()" defaultHref="/tabs/arts"></ion-back-button>
+      <ion-back-button
+        (click)="onBack()"
+        defaultHref="/tabs/arts"
+      ></ion-back-button>
     </ion-buttons>
     <ion-title>{{ art?.name || ('art_detail.title' | translate) }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  
   <!-- Loading State -->
-  <div *ngIf="loading" class="loading-state">
+  @if (loading) {
+  <div class="loading-state">
     <ion-text color="medium">
       <p>{{ 'art_detail.loading' | translate }}</p>
     </ion-text>
   </div>
+  }
 
   <!-- Not Found State -->
-  <div *ngIf="notFound && !loading" class="not-found-state">
+  @if (notFound && !loading) {
+  <div class="not-found-state">
     <ion-text color="medium">
       <h2>{{ 'art_detail.not_found' | translate }}</h2>
       <p>{{ 'art_detail.not_found_message' | translate }}</p>
@@ -26,16 +31,15 @@
       {{ 'art_detail.go_back' | translate }}
     </ion-button>
   </div>
+  }
 
   <!-- Art Content -->
-  <div *ngIf="art && !loading" class="art-container">
-    
+  @if (art && !loading) {
+  <div class="art-container">
     <!-- Main Content and Chat Layout -->
     <div class="content-with-chat">
-      
       <!-- Main Content Column -->
       <div class="main-content">
-        
         <!-- Hero Section -->
         <ion-card class="hero-card">
           <div class="hero-image">
@@ -43,47 +47,61 @@
             <div class="hero-overlay">
               <h1>{{ art.name }}</h1>
               <p>{{ art.shortDescription }}</p>
-              
               <!-- Category and Meta Info -->
               <div class="hero-meta">
                 <ion-chip [color]="getArtColor()" class="category-chip">
                   <ion-icon [name]="getArtIcon()"></ion-icon>
                   <ion-label>{{ art.category | titlecase }}</ion-label>
                 </ion-chip>
-                <ion-chip [color]="getDifficultyColor()" outline="true" class="meta-chip">
+                <ion-chip
+                  [color]="getDifficultyColor()"
+                  outline="true"
+                  class="meta-chip"
+                >
                   <ion-label>{{ art.difficulty | titlecase }}</ion-label>
                 </ion-chip>
-                <ion-chip [color]="getPhysicalDemandsColor()" outline="true" class="meta-chip">
-                  <ion-label>{{ art.physicalDemands | titlecase }} {{ 'art_detail.intensity' | translate }}</ion-label>
+                <ion-chip
+                  [color]="getPhysicalDemandsColor()"
+                  outline="true"
+                  class="meta-chip"
+                >
+                  <ion-label
+                    >{{ art.physicalDemands | titlecase }} {{
+                    'art_detail.intensity' | translate }}</ion-label
+                  >
                 </ion-chip>
               </div>
-              
               <!-- Action Buttons -->
               <div class="action-buttons">
-                <ion-button 
-                  [fill]="art.isUserPracticing ? 'solid' : 'outline'" 
+                <ion-button
+                  [fill]="art.isUserPracticing ? 'solid' : 'outline'"
                   [color]="art.isUserPracticing ? 'success' : 'primary'"
                   (click)="onTogglePracticing()"
-                  class="toggle-button">
-                  <ion-icon [name]="art.isUserPracticing ? 'checkmark-circle' : 'add-circle-outline'" slot="start"></ion-icon>
-                  {{ art.isUserPracticing ? ('arts.practicing' | translate) : ('art_detail.add_to_my_arts' | translate) }}
+                  class="toggle-button"
+                >
+                  <ion-icon
+                    [name]="art.isUserPracticing ? 'checkmark-circle' : 'add-circle-outline'"
+                    slot="start"
+                  ></ion-icon>
+                  {{ art.isUserPracticing ? ('arts.practicing' | translate) :
+                  ('art_detail.add_to_my_arts' | translate) }}
                 </ion-button>
-                
                 <!-- Edit Button (only for art owners) -->
-                <ion-button 
-                  *ngIf="canUserEdit"
-                  fill="outline" 
+                @if (canUserEdit) {
+                <ion-button
+                  fill="outline"
                   color="warning"
                   (click)="onEdit()"
-                  class="edit-button">
+                  class="edit-button"
+                >
                   <ion-icon name="create-outline" slot="start"></ion-icon>
                   {{ 'app.edit' | translate }}
                 </ion-button>
+                }
               </div>
             </div>
           </div>
         </ion-card>
-
         <!-- Description -->
         <ion-card>
           <ion-card-header>
@@ -94,23 +112,26 @@
           </ion-card-header>
           <ion-card-content>
             <p>{{ art.description }}</p>
-            
-            <div *ngIf="art.origin" class="origin-info">
+            @if (art.origin) {
+            <div class="origin-info">
               <ion-text color="medium">
-                <strong>{{ 'art_detail.origin' | translate }}:</strong> {{ art.origin }}
+                <strong>{{ 'art_detail.origin' | translate }}:</strong> {{
+                art.origin }}
               </ion-text>
             </div>
-            
-            <div *ngIf="art.philosophy" class="philosophy-info">
+            } @if (art.philosophy) {
+            <div class="philosophy-info">
               <ion-text color="medium">
-                <strong>{{ 'art_detail.philosophy' | translate }}:</strong> {{ art.philosophy }}
+                <strong>{{ 'art_detail.philosophy' | translate }}:</strong> {{
+                art.philosophy }}
               </ion-text>
             </div>
+            }
           </ion-card-content>
         </ion-card>
-
         <!-- Benefits -->
-        <ion-card *ngIf="art.benefits && art.benefits.length > 0">
+        @if (art.benefits && art.benefits.length > 0) {
+        <ion-card>
           <ion-card-header>
             <ion-card-title>
               <ion-icon name="heart-outline" color="success"></ion-icon>
@@ -120,19 +141,25 @@
           <ion-card-content>
             <ion-grid>
               <ion-row>
-                <ion-col size="12" size-md="6" *ngFor="let benefit of art.benefits">
+                @for (benefit of art.benefits; track benefit) {
+                <ion-col size="12" size-md="6">
                   <div class="benefit-item">
-                    <ion-icon name="checkmark-circle" color="success"></ion-icon>
+                    <ion-icon
+                      name="checkmark-circle"
+                      color="success"
+                    ></ion-icon>
                     <span>{{ benefit }}</span>
                   </div>
                 </ion-col>
+                }
               </ion-row>
             </ion-grid>
           </ion-card-content>
         </ion-card>
-
+        }
         <!-- Techniques -->
-        <ion-card *ngIf="art.techniques && art.techniques.length > 0">
+        @if (art.techniques && art.techniques.length > 0) {
+        <ion-card>
           <ion-card-header>
             <ion-card-title>
               <ion-icon name="fitness-outline" color="primary"></ion-icon>
@@ -141,15 +168,18 @@
           </ion-card-header>
           <ion-card-content>
             <div class="techniques-grid">
-              <ion-chip *ngFor="let technique of art.techniques" color="light" outline="true">
+              @for (technique of art.techniques; track technique) {
+              <ion-chip color="light" outline="true">
                 {{ technique }}
               </ion-chip>
+              }
             </div>
           </ion-card-content>
         </ion-card>
-
+        }
         <!-- Mental Aspects -->
-        <ion-card *ngIf="art.mentalAspects && art.mentalAspects.length > 0">
+        @if (art.mentalAspects && art.mentalAspects.length > 0) {
+        <ion-card>
           <ion-card-header>
             <ion-card-title>
               <ion-icon name="bulb-outline" color="secondary"></ion-icon>
@@ -158,15 +188,18 @@
           </ion-card-header>
           <ion-card-content>
             <div class="mental-aspects-grid">
-              <ion-chip *ngFor="let aspect of art.mentalAspects" color="secondary" outline="true">
+              @for (aspect of art.mentalAspects; track aspect) {
+              <ion-chip color="secondary" outline="true">
                 {{ aspect }}
               </ion-chip>
+              }
             </div>
           </ion-card-content>
         </ion-card>
-
+        }
         <!-- Equipment -->
-        <ion-card *ngIf="art.equipment && art.equipment.length > 0">
+        @if (art.equipment && art.equipment.length > 0) {
+        <ion-card>
           <ion-card-header>
             <ion-card-title>
               <ion-icon name="construct-outline" color="warning"></ion-icon>
@@ -175,14 +208,20 @@
           </ion-card-header>
           <ion-card-content>
             <ion-list>
-              <ion-item *ngFor="let item of art.equipment">
-                <ion-icon name="ellipse" color="warning" slot="start"></ion-icon>
+              @for (item of art.equipment; track item) {
+              <ion-item>
+                <ion-icon
+                  name="ellipse"
+                  color="warning"
+                  slot="start"
+                ></ion-icon>
                 <ion-label>{{ item }}</ion-label>
               </ion-item>
+              }
             </ion-list>
           </ion-card-content>
         </ion-card>
-
+        }
         <!-- Organizations and Studios Segments -->
         <ion-card>
           <ion-card-header>
@@ -191,37 +230,49 @@
               {{ 'art_detail.find_near_you' | translate: {name: art.name} }}
             </ion-card-title>
           </ion-card-header>
-          
           <ion-card-content>
             <!-- Segment Control -->
-            <ion-segment 
-              [(ngModel)]="selectedSegment" 
+            <ion-segment
+              [(ngModel)]="selectedSegment"
               (ionChange)="onSegmentChange($event)"
-              class="segment-control">
+              class="segment-control"
+            >
               <ion-segment-button value="organizations">
                 <ion-icon name="business-outline"></ion-icon>
-                <ion-label>{{ 'art_detail.organizations' | translate }} ({{ artOrganizations.length }})</ion-label>
+                <ion-label
+                  >{{ 'art_detail.organizations' | translate }} ({{
+                  artOrganizations.length }})</ion-label
+                >
               </ion-segment-button>
               <ion-segment-button value="studios">
                 <ion-icon name="home-outline"></ion-icon>
-                <ion-label>{{ 'art_detail.studios' | translate }} ({{ artStudios.length }})</ion-label>
+                <ion-label
+                  >{{ 'art_detail.studios' | translate }} ({{ artStudios.length
+                  }})</ion-label
+                >
               </ion-segment-button>
             </ion-segment>
-
             <!-- Organizations List -->
-            <div *ngIf="selectedSegment === 'organizations'">
-              <div *ngIf="artOrganizations.length === 0" class="empty-segment">
+            @if (selectedSegment === 'organizations') {
+            <div>
+              @if (artOrganizations.length === 0) {
+              <div class="empty-segment">
                 <ion-text color="medium">
-                  <p>{{ 'art_detail.no_organizations' | translate: {name: art.name} }}</p>
+                  <p>
+                    {{ 'art_detail.no_organizations' | translate: {name:
+                    art.name} }}
+                  </p>
                 </ion-text>
               </div>
-              
-              <ion-list *ngIf="artOrganizations.length > 0">
-                <ion-item 
-                  *ngFor="let org of artOrganizations" 
-                  button 
-                  (click)="onOrganizationClick(org)">
-                  <ion-icon name="business-outline" color="primary" slot="start"></ion-icon>
+              } @if (artOrganizations.length > 0) {
+              <ion-list>
+                @for (org of artOrganizations; track org) {
+                <ion-item button (click)="onOrganizationClick(org)">
+                  <ion-icon
+                    name="business-outline"
+                    color="primary"
+                    slot="start"
+                  ></ion-icon>
                   <ion-label>
                     <h3>{{ org.name }}</h3>
                     <p>{{ org.headquarters }}</p>
@@ -231,23 +282,31 @@
                   </ion-label>
                   <ion-icon name="chevron-forward" slot="end"></ion-icon>
                 </ion-item>
+                }
               </ion-list>
+              }
             </div>
-
+            }
             <!-- Studios List -->
-            <div *ngIf="selectedSegment === 'studios'">
-              <div *ngIf="artStudios.length === 0" class="empty-segment">
+            @if (selectedSegment === 'studios') {
+            <div>
+              @if (artStudios.length === 0) {
+              <div class="empty-segment">
                 <ion-text color="medium">
-                  <p>{{ 'art_detail.no_studios' | translate: {name: art.name} }}</p>
+                  <p>
+                    {{ 'art_detail.no_studios' | translate: {name: art.name} }}
+                  </p>
                 </ion-text>
               </div>
-              
-              <ion-list *ngIf="artStudios.length > 0">
-                <ion-item 
-                  *ngFor="let studio of artStudios" 
-                  button 
-                  (click)="onStudioClick(studio)">
-                  <ion-icon name="home-outline" color="success" slot="start"></ion-icon>
+              } @if (artStudios.length > 0) {
+              <ion-list>
+                @for (studio of artStudios; track studio) {
+                <ion-item button (click)="onStudioClick(studio)">
+                  <ion-icon
+                    name="home-outline"
+                    color="success"
+                    slot="start"
+                  ></ion-icon>
                   <ion-label>
                     <h3>{{ studio.name }}</h3>
                     <p>{{ studio.location }}</p>
@@ -255,17 +314,25 @@
                       <small>{{ studio.description | slice:0:100 }}...</small>
                     </ion-text>
                   </ion-label>
-                  <ion-badge *ngIf="studio.isMember" color="primary">{{ 'studios.member' | translate }}</ion-badge>
-                  <ion-badge *ngIf="studio.isInstructor" color="success">{{ 'studios.instructor' | translate }}</ion-badge>
+                  @if (studio.isMember) {
+                  <ion-badge color="primary"
+                    >{{ 'studios.member' | translate }}</ion-badge
+                  >
+                  } @if (studio.isInstructor) {
+                  <ion-badge color="success"
+                    >{{ 'studios.instructor' | translate }}</ion-badge
+                  >
+                  }
                   <ion-icon name="chevron-forward" slot="end"></ion-icon>
                 </ion-item>
+                }
               </ion-list>
+              }
             </div>
+            }
           </ion-card-content>
         </ion-card>
-
       </div>
-
       <!-- Chat Column -->
       <div class="chat-sidebar">
         <app-chat-messages
@@ -280,12 +347,11 @@
           (sendMessage)="onSendChatMessage($event)"
           (leaveChat)="onLeaveChat($event)"
           (muteChat)="onMuteChat($event)"
-          (chatInfo)="onChatInfo($event)">
+          (chatInfo)="onChatInfo($event)"
+        >
         </app-chat-messages>
       </div>
-      
     </div>
-
   </div>
-
+  }
 </ion-content>

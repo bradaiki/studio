@@ -1,13 +1,20 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
+
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+  FormArray,
+} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location as AngularLocation } from '@angular/common';
 import { ArtsService, Art } from '../services/arts.service';
-import { 
-  IonContent, 
-  IonHeader, 
-  IonTitle, 
+import {
+  IonContent,
+  IonHeader,
+  IonTitle,
   IonToolbar,
   IonBackButton,
   IonButtons,
@@ -30,17 +37,17 @@ import {
   IonFab,
   IonFabButton,
   AlertController,
-  ToastController
+  ToastController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { 
+import {
   arrowBack,
   save,
   add,
   trash,
   reorderThree,
   checkmarkCircle,
-  closeCircle
+  closeCircle,
 } from 'ionicons/icons';
 
 @Component({
@@ -49,12 +56,11 @@ import {
   styleUrls: ['./art-form.page.scss'],
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    IonContent, 
-    IonHeader, 
-    IonTitle, 
+    IonContent,
+    IonHeader,
+    IonTitle,
     IonToolbar,
     IonBackButton,
     IonButtons,
@@ -75,8 +81,8 @@ import {
     IonReorderGroup,
     IonReorder,
     IonFab,
-    IonFabButton
-  ]
+    IonFabButton,
+  ],
 })
 export class ArtFormPage implements OnInit {
   artForm: FormGroup;
@@ -98,26 +104,26 @@ export class ArtFormPage implements OnInit {
     { value: 'jewelry', label: 'Jewelry Making' },
     { value: 'painting', label: 'Painting' },
     { value: 'sculpture', label: 'Sculpture' },
-    { value: 'crafts', label: 'General Crafts' }
+    { value: 'crafts', label: 'General Crafts' },
   ];
 
   categories = [
     { value: 'martial-arts', label: 'Martial Arts' },
     { value: 'wellness', label: 'Wellness' },
-    { value: 'crafts', label: 'Crafts' }
+    { value: 'crafts', label: 'Crafts' },
   ];
 
   difficulties = [
     { value: 'beginner', label: 'Beginner' },
     { value: 'intermediate', label: 'Intermediate' },
     { value: 'advanced', label: 'Advanced' },
-    { value: 'all-levels', label: 'All Levels' }
+    { value: 'all-levels', label: 'All Levels' },
   ];
 
   physicalDemands = [
     { value: 'low', label: 'Low' },
     { value: 'moderate', label: 'Moderate' },
-    { value: 'high', label: 'High' }
+    { value: 'high', label: 'High' },
   ];
 
   constructor(
@@ -127,23 +133,23 @@ export class ArtFormPage implements OnInit {
     private location: AngularLocation,
     private artsService: ArtsService,
     private alertController: AlertController,
-    private toastController: ToastController
+    private toastController: ToastController,
   ) {
-    addIcons({ 
+    addIcons({
       arrowBack,
       save,
       add,
       trash,
       reorderThree,
       checkmarkCircle,
-      closeCircle
+      closeCircle,
     });
 
     this.artForm = this.createForm();
   }
 
   ngOnInit() {
-    this.route.params.subscribe(params => {
+    this.route.params.subscribe((params) => {
       if (params['id'] && params['id'] !== 'new') {
         this.artId = params['id'];
         this.isEditMode = true;
@@ -159,7 +165,9 @@ export class ArtFormPage implements OnInit {
       category: ['crafts', Validators.required],
       shortDescription: ['', [Validators.required, Validators.maxLength(200)]],
       description: ['', [Validators.required, Validators.minLength(50)]],
-      image: ['https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=400&fit=crop'],
+      image: [
+        'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=400&fit=crop',
+      ],
       origin: [''],
       philosophy: [''],
       difficulty: ['beginner', Validators.required],
@@ -168,7 +176,7 @@ export class ArtFormPage implements OnInit {
       benefits: this.fb.array([]),
       techniques: this.fb.array([]),
       equipment: this.fb.array([]),
-      mentalAspects: this.fb.array([])
+      mentalAspects: this.fb.array([]),
     });
   }
 
@@ -201,7 +209,7 @@ export class ArtFormPage implements OnInit {
       philosophy: art.philosophy || '',
       difficulty: art.difficulty,
       physicalDemands: art.physicalDemands,
-      isPublic: art.isPublic !== false
+      isPublic: art.isPublic !== false,
     });
 
     // Populate arrays
@@ -214,7 +222,7 @@ export class ArtFormPage implements OnInit {
   setFormArray(arrayName: string, values: string[]) {
     const formArray = this.artForm.get(arrayName) as FormArray;
     formArray.clear();
-    values.forEach(value => {
+    values.forEach((value) => {
       formArray.push(this.fb.control(value, Validators.required));
     });
   }
@@ -243,10 +251,13 @@ export class ArtFormPage implements OnInit {
 
     try {
       const formValue = this.artForm.value;
-      
+
       if (this.isEditMode && this.artId) {
         // Update existing art
-        const updatedArt = await this.artsService.updateArt(this.artId, formValue);
+        const updatedArt = await this.artsService.updateArt(
+          this.artId,
+          formValue,
+        );
         if (updatedArt) {
           this.showToast('Art updated successfully', 'success');
           this.router.navigate(['/art', this.artId]);
@@ -269,20 +280,21 @@ export class ArtFormPage implements OnInit {
 
     const alert = await this.alertController.create({
       header: 'Delete Art',
-      message: 'Are you sure you want to delete this art? This action cannot be undone.',
+      message:
+        'Are you sure you want to delete this art? This action cannot be undone.',
       buttons: [
         {
           text: 'Cancel',
-          role: 'cancel'
+          role: 'cancel',
         },
         {
           text: 'Delete',
           role: 'destructive',
           handler: () => {
             this.deleteArt();
-          }
-        }
-      ]
+          },
+        },
+      ],
     });
 
     await alert.present();
@@ -311,7 +323,7 @@ export class ArtFormPage implements OnInit {
       message,
       duration: 3000,
       color,
-      position: 'top'
+      position: 'top',
     });
     await toast.present();
   }

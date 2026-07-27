@@ -1,8 +1,8 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { TranslateModule } from '@ngx-translate/core';
 import { FavoritesService } from '../../services/favorites.service';
-import { 
+import {
   IonCard,
   IonCardHeader,
   IonCardTitle,
@@ -17,20 +17,20 @@ import {
   IonText,
   IonChip,
   IonList,
-  IonAvatar
+  IonAvatar,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { 
-  location, 
-  time, 
-  call, 
-  mail, 
-  globe, 
+import {
+  location,
+  time,
+  call,
+  mail,
+  globe,
   star,
   starOutline,
-  people, 
-  fitness, 
-  shield, 
+  people,
+  fitness,
+  shield,
   heart,
   calendar,
   checkmark,
@@ -38,7 +38,7 @@ import {
   school,
   chevronForward,
   person,
-  create
+  create,
 } from 'ionicons/icons';
 
 export interface StudioInfo {
@@ -115,7 +115,6 @@ export interface PricingOption {
   styleUrls: ['./studio.component.scss'],
   standalone: true,
   imports: [
-    CommonModule,
     TranslateModule,
     IonCard,
     IonCardHeader,
@@ -131,8 +130,8 @@ export interface PricingOption {
     IonText,
     IonChip,
     IonList,
-    IonAvatar
-  ]
+    IonAvatar,
+  ],
 })
 export class StudioComponent implements OnInit {
   @Input() studio!: StudioInfo;
@@ -156,17 +155,17 @@ export class StudioComponent implements OnInit {
   isFavorited: boolean = false;
 
   constructor(private favoritesService: FavoritesService) {
-    addIcons({ 
-      location, 
-      time, 
-      call, 
-      mail, 
-      globe, 
+    addIcons({
+      location,
+      time,
+      call,
+      mail,
+      globe,
       star,
       starOutline,
-      people, 
-      fitness, 
-      shield, 
+      people,
+      fitness,
+      shield,
       heart,
       calendar,
       checkmark,
@@ -174,7 +173,7 @@ export class StudioComponent implements OnInit {
       school,
       chevronForward,
       person,
-      create
+      create,
     });
   }
 
@@ -215,15 +214,21 @@ export class StudioComponent implements OnInit {
   }
 
   getDisplayBenefits(): Benefit[] {
-    return this.compact ? this.studio.benefits.slice(0, 2) : this.studio.benefits;
+    return this.compact
+      ? this.studio.benefits.slice(0, 2)
+      : this.studio.benefits;
   }
 
   getDisplayInstructors(): Instructor[] {
-    return this.compact ? this.studio.instructors.slice(0, 1) : this.studio.instructors;
+    return this.compact
+      ? this.studio.instructors.slice(0, 1)
+      : this.studio.instructors;
   }
 
   getDisplaySchedule(): ClassSchedule[] {
-    return this.compact ? this.studio.schedule.slice(0, 3) : this.studio.schedule;
+    return this.compact
+      ? this.studio.schedule.slice(0, 3)
+      : this.studio.schedule;
   }
 
   getDisplayPricing(): PricingOption[] {
@@ -234,7 +239,7 @@ export class StudioComponent implements OnInit {
     const startTime = this.formatTime(scheduleItem.startTime);
     const endTime = this.formatTime(scheduleItem.endTime);
     const dayName = this.getDayName(scheduleItem.startDate);
-    
+
     if (scheduleItem.isRecurring) {
       return `${dayName}s ${startTime} - ${endTime}`;
     } else {
@@ -255,7 +260,15 @@ export class StudioComponent implements OnInit {
   private getDayName(dateString: string): string {
     if (!dateString) return '';
     const date = new Date(dateString);
-    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const days = [
+      'Sunday',
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+    ];
     return days[date.getDay()];
   }
 

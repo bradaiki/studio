@@ -3,7 +3,9 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/dash/orgs"></ion-back-button>
     </ion-buttons>
-    <ion-title>{{ isEditMode ? 'Edit Organization' : 'Create Organization' }}</ion-title>
+    <ion-title
+      >{{ isEditMode ? 'Edit Organization' : 'Create Organization' }}</ion-title
+    >
     <ion-buttons slot="end">
       <ion-button (click)="onSubmit()" [disabled]="isSubmitting">
         <ion-icon name="save"></ion-icon>
@@ -14,7 +16,6 @@
 
 <ion-content [fullscreen]="true">
   <form [formGroup]="orgForm" (ngSubmit)="onSubmit()">
-    
     <!-- Basic Information -->
     <ion-card>
       <ion-card-header>
@@ -23,41 +24,50 @@
       <ion-card-content>
         <ion-item>
           <ion-label position="stacked">Organization Name *</ion-label>
-          <ion-input 
-            formControlName="name" 
+          <ion-input
+            formControlName="name"
             placeholder="Enter organization name"
-            [class.ion-invalid]="orgForm.get('name')?.invalid && orgForm.get('name')?.touched">
+            [class.ion-invalid]="orgForm.get('name')?.invalid && orgForm.get('name')?.touched"
+          >
           </ion-input>
         </ion-item>
 
         <ion-item>
           <ion-label position="stacked">Tagline</ion-label>
-          <ion-input formControlName="tagline" placeholder="Organization motto or tagline"></ion-input>
+          <ion-input
+            formControlName="tagline"
+            placeholder="Organization motto or tagline"
+          ></ion-input>
         </ion-item>
 
         <ion-item>
           <ion-label position="stacked">Mission *</ion-label>
-          <ion-textarea 
-            formControlName="mission" 
+          <ion-textarea
+            formControlName="mission"
             placeholder="Organization mission statement"
             rows="4"
-            [class.ion-invalid]="orgForm.get('mission')?.invalid && orgForm.get('mission')?.touched">
+            [class.ion-invalid]="orgForm.get('mission')?.invalid && orgForm.get('mission')?.touched"
+          >
           </ion-textarea>
         </ion-item>
 
         <ion-item>
           <ion-label position="stacked">Description *</ion-label>
-          <ion-textarea 
-            formControlName="description" 
+          <ion-textarea
+            formControlName="description"
             placeholder="Detailed organization description"
             rows="4"
-            [class.ion-invalid]="orgForm.get('description')?.invalid && orgForm.get('description')?.touched">
+            [class.ion-invalid]="orgForm.get('description')?.invalid && orgForm.get('description')?.touched"
+          >
           </ion-textarea>
         </ion-item>
 
         <ion-item>
           <ion-label position="stacked">Hero Image URL</ion-label>
-          <ion-input formControlName="heroImage" placeholder="https://..."></ion-input>
+          <ion-input
+            formControlName="heroImage"
+            placeholder="https://..."
+          ></ion-input>
         </ion-item>
 
         <ion-item>
@@ -67,56 +77,69 @@
 
         <ion-item>
           <ion-label position="stacked">Headquarters</ion-label>
-          <ion-input formControlName="headquarters" placeholder="New York, NY, USA"></ion-input>
+          <ion-input
+            formControlName="headquarters"
+            placeholder="New York, NY, USA"
+          ></ion-input>
         </ion-item>
 
         <ion-item>
           <ion-label position="stacked">Website</ion-label>
-          <ion-input formControlName="website" placeholder="organization.org"></ion-input>
+          <ion-input
+            formControlName="website"
+            placeholder="organization.org"
+          ></ion-input>
         </ion-item>
 
         <ion-item>
           <ion-label position="stacked">Email</ion-label>
-          <ion-input 
-            formControlName="email" 
-            type="email" 
+          <ion-input
+            formControlName="email"
+            type="email"
             placeholder="info@organization.org"
-            [class.ion-invalid]="orgForm.get('email')?.invalid && orgForm.get('email')?.touched">
+            [class.ion-invalid]="orgForm.get('email')?.invalid && orgForm.get('email')?.touched"
+          >
           </ion-input>
         </ion-item>
 
         <ion-item>
           <ion-label position="stacked">Phone</ion-label>
-          <ion-input formControlName="phone" placeholder="+1 (555) 123-4567"></ion-input>
+          <ion-input
+            formControlName="phone"
+            placeholder="+1 (555) 123-4567"
+          ></ion-input>
         </ion-item>
 
         <ion-item>
           <ion-label position="stacked">Member Count</ion-label>
-          <ion-input 
-            formControlName="memberCount" 
-            type="number" 
+          <ion-input
+            formControlName="memberCount"
+            type="number"
             placeholder="0"
-            [class.ion-invalid]="orgForm.get('memberCount')?.invalid && orgForm.get('memberCount')?.touched">
+            [class.ion-invalid]="orgForm.get('memberCount')?.invalid && orgForm.get('memberCount')?.touched"
+          >
           </ion-input>
         </ion-item>
 
         <ion-item>
           <ion-label position="stacked">Dojo Count</ion-label>
-          <ion-input 
-            formControlName="dojoCount" 
-            type="number" 
+          <ion-input
+            formControlName="dojoCount"
+            type="number"
             placeholder="0"
-            [class.ion-invalid]="orgForm.get('dojoCount')?.invalid && orgForm.get('dojoCount')?.touched">
+            [class.ion-invalid]="orgForm.get('dojoCount')?.invalid && orgForm.get('dojoCount')?.touched"
+          >
           </ion-input>
         </ion-item>
 
         <ion-item>
           <ion-label position="stacked">Country Count</ion-label>
-          <ion-input 
-            formControlName="countryCount" 
-            type="number" 
+          <ion-input
+            formControlName="countryCount"
+            type="number"
             placeholder="0"
-            [class.ion-invalid]="orgForm.get('countryCount')?.invalid && orgForm.get('countryCount')?.touched">
+            [class.ion-invalid]="orgForm.get('countryCount')?.invalid && orgForm.get('countryCount')?.touched"
+          >
           </ion-input>
         </ion-item>
 
@@ -135,19 +158,32 @@
       <ion-card-content>
         <ion-item>
           <ion-label position="stacked">Quote</ion-label>
-          <ion-textarea formControlName="quote" placeholder="Inspirational quote"></ion-textarea>
+          <ion-textarea
+            formControlName="quote"
+            placeholder="Inspirational quote"
+          ></ion-textarea>
         </ion-item>
         <ion-item>
           <ion-label position="stacked">Attribution</ion-label>
-          <ion-input formControlName="attribution" placeholder="— Author Name"></ion-input>
+          <ion-input
+            formControlName="attribution"
+            placeholder="— Author Name"
+          ></ion-input>
         </ion-item>
         <ion-item>
           <ion-label position="stacked">Description</ion-label>
-          <ion-textarea formControlName="description" placeholder="Philosophy description" rows="3"></ion-textarea>
+          <ion-textarea
+            formControlName="description"
+            placeholder="Philosophy description"
+            rows="3"
+          ></ion-textarea>
         </ion-item>
         <ion-item>
           <ion-label position="stacked">Philosophy Image URL</ion-label>
-          <ion-input formControlName="image" placeholder="https://..."></ion-input>
+          <ion-input
+            formControlName="image"
+            placeholder="https://..."
+          ></ion-input>
         </ion-item>
       </ion-card-content>
     </ion-card>
@@ -164,12 +200,19 @@
       </ion-card-header>
       <ion-card-content>
         <div formArrayName="statistics">
-          <div *ngFor="let statistic of statistics.controls; let i = index" [formGroupName]="i">
+          @for (statistic of statistics.controls; track statistic; let i =
+          $index) {
+          <div [formGroupName]="i">
             <ion-card>
               <ion-card-header>
                 <ion-card-title>
                   Statistic {{ i + 1 }}
-                  <ion-button fill="clear" size="small" color="danger" (click)="removeStatistic(i)">
+                  <ion-button
+                    fill="clear"
+                    size="small"
+                    color="danger"
+                    (click)="removeStatistic(i)"
+                  >
                     <ion-icon name="remove"></ion-icon>
                   </ion-button>
                 </ion-card-title>
@@ -177,15 +220,22 @@
               <ion-card-content>
                 <ion-item>
                   <ion-label position="stacked">Number *</ion-label>
-                  <ion-input formControlName="number" placeholder="150+"></ion-input>
+                  <ion-input
+                    formControlName="number"
+                    placeholder="150+"
+                  ></ion-input>
                 </ion-item>
                 <ion-item>
                   <ion-label position="stacked">Label *</ion-label>
-                  <ion-input formControlName="label" placeholder="Member Dojos"></ion-input>
+                  <ion-input
+                    formControlName="label"
+                    placeholder="Member Dojos"
+                  ></ion-input>
                 </ion-item>
               </ion-card-content>
             </ion-card>
           </div>
+          }
         </div>
       </ion-card-content>
     </ion-card>
@@ -202,12 +252,18 @@
       </ion-card-header>
       <ion-card-content>
         <div formArrayName="programs">
-          <div *ngFor="let program of programs.controls; let i = index" [formGroupName]="i">
+          @for (program of programs.controls; track program; let i = $index) {
+          <div [formGroupName]="i">
             <ion-card>
               <ion-card-header>
                 <ion-card-title>
                   Program {{ i + 1 }}
-                  <ion-button fill="clear" size="small" color="danger" (click)="removeProgram(i)">
+                  <ion-button
+                    fill="clear"
+                    size="small"
+                    color="danger"
+                    (click)="removeProgram(i)"
+                  >
                     <ion-icon name="remove"></ion-icon>
                   </ion-button>
                 </ion-card-title>
@@ -215,27 +271,43 @@
               <ion-card-content>
                 <ion-item>
                   <ion-label position="stacked">Name *</ion-label>
-                  <ion-input formControlName="name" placeholder="Traditional Aikido"></ion-input>
+                  <ion-input
+                    formControlName="name"
+                    placeholder="Traditional Aikido"
+                  ></ion-input>
                 </ion-item>
                 <ion-item>
                   <ion-label position="stacked">Description *</ion-label>
-                  <ion-textarea formControlName="description" placeholder="Program description"></ion-textarea>
+                  <ion-textarea
+                    formControlName="description"
+                    placeholder="Program description"
+                  ></ion-textarea>
                 </ion-item>
                 <ion-item>
                   <ion-label position="stacked">Level</ion-label>
-                  <ion-input formControlName="level" placeholder="All Levels"></ion-input>
+                  <ion-input
+                    formControlName="level"
+                    placeholder="All Levels"
+                  ></ion-input>
                 </ion-item>
                 <ion-item>
                   <ion-label position="stacked">Duration</ion-label>
-                  <ion-input formControlName="duration" placeholder="Ongoing"></ion-input>
+                  <ion-input
+                    formControlName="duration"
+                    placeholder="Ongoing"
+                  ></ion-input>
                 </ion-item>
                 <ion-item>
                   <ion-label position="stacked">Certification</ion-label>
-                  <ion-input formControlName="certification" placeholder="Dan/Kyu Rankings"></ion-input>
+                  <ion-input
+                    formControlName="certification"
+                    placeholder="Dan/Kyu Rankings"
+                  ></ion-input>
                 </ion-item>
               </ion-card-content>
             </ion-card>
           </div>
+          }
         </div>
       </ion-card-content>
     </ion-card>
@@ -252,12 +324,18 @@
       </ion-card-header>
       <ion-card-content>
         <div formArrayName="memberDojos">
-          <div *ngFor="let dojo of memberDojos.controls; let i = index" [formGroupName]="i">
+          @for (dojo of memberDojos.controls; track dojo; let i = $index) {
+          <div [formGroupName]="i">
             <ion-card>
               <ion-card-header>
                 <ion-card-title>
                   Dojo {{ i + 1 }}
-                  <ion-button fill="clear" size="small" color="danger" (click)="removeDojo(i)">
+                  <ion-button
+                    fill="clear"
+                    size="small"
+                    color="danger"
+                    (click)="removeDojo(i)"
+                  >
                     <ion-icon name="remove"></ion-icon>
                   </ion-button>
                 </ion-card-title>
@@ -265,35 +343,58 @@
               <ion-card-content>
                 <ion-item>
                   <ion-label position="stacked">Name *</ion-label>
-                  <ion-input formControlName="name" placeholder="Dojo name"></ion-input>
+                  <ion-input
+                    formControlName="name"
+                    placeholder="Dojo name"
+                  ></ion-input>
                 </ion-item>
                 <ion-item>
                   <ion-label position="stacked">Location *</ion-label>
-                  <ion-input formControlName="location" placeholder="City, State"></ion-input>
+                  <ion-input
+                    formControlName="location"
+                    placeholder="City, State"
+                  ></ion-input>
                 </ion-item>
                 <ion-item>
                   <ion-label position="stacked">Instructor</ion-label>
-                  <ion-input formControlName="instructor" placeholder="Instructor name"></ion-input>
+                  <ion-input
+                    formControlName="instructor"
+                    placeholder="Instructor name"
+                  ></ion-input>
                 </ion-item>
                 <ion-item>
                   <ion-label position="stacked">Rank</ion-label>
-                  <ion-input formControlName="rank" placeholder="6th Dan"></ion-input>
+                  <ion-input
+                    formControlName="rank"
+                    placeholder="6th Dan"
+                  ></ion-input>
                 </ion-item>
                 <ion-item>
                   <ion-label position="stacked">Students</ion-label>
-                  <ion-input formControlName="students" type="number" placeholder="0"></ion-input>
+                  <ion-input
+                    formControlName="students"
+                    type="number"
+                    placeholder="0"
+                  ></ion-input>
                 </ion-item>
                 <ion-item>
                   <ion-label position="stacked">Established</ion-label>
-                  <ion-input formControlName="established" placeholder="2010"></ion-input>
+                  <ion-input
+                    formControlName="established"
+                    placeholder="2010"
+                  ></ion-input>
                 </ion-item>
                 <ion-item>
                   <ion-label position="stacked">Image URL</ion-label>
-                  <ion-input formControlName="image" placeholder="https://..."></ion-input>
+                  <ion-input
+                    formControlName="image"
+                    placeholder="https://..."
+                  ></ion-input>
                 </ion-item>
               </ion-card-content>
             </ion-card>
           </div>
+          }
         </div>
       </ion-card-content>
     </ion-card>
@@ -310,12 +411,18 @@
       </ion-card-header>
       <ion-card-content>
         <div formArrayName="upcomingEvents">
-          <div *ngFor="let event of upcomingEvents.controls; let i = index" [formGroupName]="i">
+          @for (event of upcomingEvents.controls; track event; let i = $index) {
+          <div [formGroupName]="i">
             <ion-card>
               <ion-card-header>
                 <ion-card-title>
                   Event {{ i + 1 }}
-                  <ion-button fill="clear" size="small" color="danger" (click)="removeEvent(i)">
+                  <ion-button
+                    fill="clear"
+                    size="small"
+                    color="danger"
+                    (click)="removeEvent(i)"
+                  >
                     <ion-icon name="remove"></ion-icon>
                   </ion-button>
                 </ion-card-title>
@@ -323,7 +430,10 @@
               <ion-card-content>
                 <ion-item>
                   <ion-label position="stacked">Title *</ion-label>
-                  <ion-input formControlName="title" placeholder="Event title"></ion-input>
+                  <ion-input
+                    formControlName="title"
+                    placeholder="Event title"
+                  ></ion-input>
                 </ion-item>
                 <ion-item>
                   <ion-label position="stacked">Date *</ion-label>
@@ -331,29 +441,47 @@
                 </ion-item>
                 <ion-item>
                   <ion-label position="stacked">Location *</ion-label>
-                  <ion-input formControlName="location" placeholder="City, State"></ion-input>
+                  <ion-input
+                    formControlName="location"
+                    placeholder="City, State"
+                  ></ion-input>
                 </ion-item>
                 <ion-item>
                   <ion-label position="stacked">Type *</ion-label>
                   <ion-select formControlName="type">
-                    <ion-select-option value="seminar">Seminar</ion-select-option>
-                    <ion-select-option value="tournament">Tournament</ion-select-option>
-                    <ion-select-option value="testing">Testing</ion-select-option>
-                    <ion-select-option value="workshop">Workshop</ion-select-option>
+                    <ion-select-option value="seminar"
+                      >Seminar</ion-select-option
+                    >
+                    <ion-select-option value="tournament"
+                      >Tournament</ion-select-option
+                    >
+                    <ion-select-option value="testing"
+                      >Testing</ion-select-option
+                    >
+                    <ion-select-option value="workshop"
+                      >Workshop</ion-select-option
+                    >
                     <ion-select-option value="meetup">Meetup</ion-select-option>
                   </ion-select>
                 </ion-item>
                 <ion-item>
                   <ion-label position="stacked">Instructor</ion-label>
-                  <ion-input formControlName="instructor" placeholder="Instructor name"></ion-input>
+                  <ion-input
+                    formControlName="instructor"
+                    placeholder="Instructor name"
+                  ></ion-input>
                 </ion-item>
                 <ion-item>
                   <ion-label position="stacked">Cost</ion-label>
-                  <ion-input formControlName="cost" placeholder="$150"></ion-input>
+                  <ion-input
+                    formControlName="cost"
+                    placeholder="$150"
+                  ></ion-input>
                 </ion-item>
               </ion-card-content>
             </ion-card>
           </div>
+          }
         </div>
       </ion-card-content>
     </ion-card>
@@ -370,12 +498,19 @@
       </ion-card-header>
       <ion-card-content>
         <div formArrayName="lineageFeatures">
-          <div *ngFor="let feature of lineageFeatures.controls; let i = index" [formGroupName]="i">
+          @for (feature of lineageFeatures.controls; track feature; let i =
+          $index) {
+          <div [formGroupName]="i">
             <ion-card>
               <ion-card-header>
                 <ion-card-title>
                   Feature {{ i + 1 }}
-                  <ion-button fill="clear" size="small" color="danger" (click)="removeLineageFeature(i)">
+                  <ion-button
+                    fill="clear"
+                    size="small"
+                    color="danger"
+                    (click)="removeLineageFeature(i)"
+                  >
                     <ion-icon name="remove"></ion-icon>
                   </ion-button>
                 </ion-card-title>
@@ -383,19 +518,29 @@
               <ion-card-content>
                 <ion-item>
                   <ion-label position="stacked">Icon *</ion-label>
-                  <ion-input formControlName="icon" placeholder="book-outline"></ion-input>
+                  <ion-input
+                    formControlName="icon"
+                    placeholder="book-outline"
+                  ></ion-input>
                 </ion-item>
                 <ion-item>
                   <ion-label position="stacked">Title *</ion-label>
-                  <ion-input formControlName="title" placeholder="Feature title"></ion-input>
+                  <ion-input
+                    formControlName="title"
+                    placeholder="Feature title"
+                  ></ion-input>
                 </ion-item>
                 <ion-item>
                   <ion-label position="stacked">Description *</ion-label>
-                  <ion-textarea formControlName="description" placeholder="Feature description"></ion-textarea>
+                  <ion-textarea
+                    formControlName="description"
+                    placeholder="Feature description"
+                  ></ion-textarea>
                 </ion-item>
               </ion-card-content>
             </ion-card>
           </div>
+          }
         </div>
       </ion-card-content>
     </ion-card>
@@ -412,12 +557,18 @@
       </ion-card-header>
       <ion-card-content>
         <div formArrayName="socialMedia">
-          <div *ngFor="let social of socialMedia.controls; let i = index" [formGroupName]="i">
+          @for (social of socialMedia.controls; track social; let i = $index) {
+          <div [formGroupName]="i">
             <ion-card>
               <ion-card-header>
                 <ion-card-title>
                   Social Media {{ i + 1 }}
-                  <ion-button fill="clear" size="small" color="danger" (click)="removeSocialMedia(i)">
+                  <ion-button
+                    fill="clear"
+                    size="small"
+                    color="danger"
+                    (click)="removeSocialMedia(i)"
+                  >
                     <ion-icon name="remove"></ion-icon>
                   </ion-button>
                 </ion-card-title>
@@ -426,24 +577,41 @@
                 <ion-item>
                   <ion-label position="stacked">Platform *</ion-label>
                   <ion-select formControlName="platform">
-                    <ion-select-option value="facebook">Facebook</ion-select-option>
-                    <ion-select-option value="instagram">Instagram</ion-select-option>
-                    <ion-select-option value="twitter">Twitter</ion-select-option>
-                    <ion-select-option value="linkedin">LinkedIn</ion-select-option>
-                    <ion-select-option value="youtube">YouTube</ion-select-option>
+                    <ion-select-option value="facebook"
+                      >Facebook</ion-select-option
+                    >
+                    <ion-select-option value="instagram"
+                      >Instagram</ion-select-option
+                    >
+                    <ion-select-option value="twitter"
+                      >Twitter</ion-select-option
+                    >
+                    <ion-select-option value="linkedin"
+                      >LinkedIn</ion-select-option
+                    >
+                    <ion-select-option value="youtube"
+                      >YouTube</ion-select-option
+                    >
                   </ion-select>
                 </ion-item>
                 <ion-item>
                   <ion-label position="stacked">URL *</ion-label>
-                  <ion-input formControlName="url" placeholder="https://..."></ion-input>
+                  <ion-input
+                    formControlName="url"
+                    placeholder="https://..."
+                  ></ion-input>
                 </ion-item>
                 <ion-item>
                   <ion-label position="stacked">Username</ion-label>
-                  <ion-input formControlName="username" placeholder="@username"></ion-input>
+                  <ion-input
+                    formControlName="username"
+                    placeholder="@username"
+                  ></ion-input>
                 </ion-item>
               </ion-card-content>
             </ion-card>
           </div>
+          }
         </div>
       </ion-card-content>
     </ion-card>
@@ -460,12 +628,18 @@
       </ion-card-header>
       <ion-card-content>
         <div formArrayName="leadership">
-          <div *ngFor="let leader of leadership.controls; let i = index" [formGroupName]="i">
+          @for (leader of leadership.controls; track leader; let i = $index) {
+          <div [formGroupName]="i">
             <ion-card>
               <ion-card-header>
                 <ion-card-title>
                   Leader {{ i + 1 }}
-                  <ion-button fill="clear" size="small" color="danger" (click)="removeLeader(i)">
+                  <ion-button
+                    fill="clear"
+                    size="small"
+                    color="danger"
+                    (click)="removeLeader(i)"
+                  >
                     <ion-icon name="remove"></ion-icon>
                   </ion-button>
                 </ion-card-title>
@@ -473,31 +647,53 @@
               <ion-card-content>
                 <ion-item>
                   <ion-label position="stacked">Name *</ion-label>
-                  <ion-input formControlName="name" placeholder="Leader name"></ion-input>
+                  <ion-input
+                    formControlName="name"
+                    placeholder="Leader name"
+                  ></ion-input>
                 </ion-item>
                 <ion-item>
                   <ion-label position="stacked">Title *</ion-label>
-                  <ion-input formControlName="title" placeholder="Chief Instructor"></ion-input>
+                  <ion-input
+                    formControlName="title"
+                    placeholder="Chief Instructor"
+                  ></ion-input>
                 </ion-item>
                 <ion-item>
                   <ion-label position="stacked">Rank</ion-label>
-                  <ion-input formControlName="rank" placeholder="8th Dan"></ion-input>
+                  <ion-input
+                    formControlName="rank"
+                    placeholder="8th Dan"
+                  ></ion-input>
                 </ion-item>
                 <ion-item>
                   <ion-label position="stacked">Bio</ion-label>
-                  <ion-textarea formControlName="bio" placeholder="Leader biography"></ion-textarea>
+                  <ion-textarea
+                    formControlName="bio"
+                    placeholder="Leader biography"
+                  ></ion-textarea>
                 </ion-item>
                 <ion-item>
                   <ion-label position="stacked">Image URL</ion-label>
-                  <ion-input formControlName="image" placeholder="https://..."></ion-input>
+                  <ion-input
+                    formControlName="image"
+                    placeholder="https://..."
+                  ></ion-input>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Years with Organization</ion-label>
-                  <ion-input formControlName="yearsWithOrg" type="number" placeholder="0"></ion-input>
+                  <ion-label position="stacked"
+                    >Years with Organization</ion-label
+                  >
+                  <ion-input
+                    formControlName="yearsWithOrg"
+                    type="number"
+                    placeholder="0"
+                  ></ion-input>
                 </ion-item>
               </ion-card-content>
             </ion-card>
           </div>
+          }
         </div>
       </ion-card-content>
     </ion-card>
@@ -514,12 +710,19 @@
       </ion-card-header>
       <ion-card-content>
         <div formArrayName="achievements">
-          <div *ngFor="let achievement of achievements.controls; let i = index" [formGroupName]="i">
+          @for (achievement of achievements.controls; track achievement; let i =
+          $index) {
+          <div [formGroupName]="i">
             <ion-card>
               <ion-card-header>
                 <ion-card-title>
                   Achievement {{ i + 1 }}
-                  <ion-button fill="clear" size="small" color="danger" (click)="removeAchievement(i)">
+                  <ion-button
+                    fill="clear"
+                    size="small"
+                    color="danger"
+                    (click)="removeAchievement(i)"
+                  >
                     <ion-icon name="remove"></ion-icon>
                   </ion-button>
                 </ion-card-title>
@@ -527,11 +730,17 @@
               <ion-card-content>
                 <ion-item>
                   <ion-label position="stacked">Title *</ion-label>
-                  <ion-input formControlName="title" placeholder="Achievement title"></ion-input>
+                  <ion-input
+                    formControlName="title"
+                    placeholder="Achievement title"
+                  ></ion-input>
                 </ion-item>
                 <ion-item>
                   <ion-label position="stacked">Description *</ion-label>
-                  <ion-textarea formControlName="description" placeholder="Achievement description"></ion-textarea>
+                  <ion-textarea
+                    formControlName="description"
+                    placeholder="Achievement description"
+                  ></ion-textarea>
                 </ion-item>
                 <ion-item>
                   <ion-label position="stacked">Date *</ion-label>
@@ -540,19 +749,31 @@
                 <ion-item>
                   <ion-label position="stacked">Type *</ion-label>
                   <ion-select formControlName="type">
-                    <ion-select-option value="recognition">Recognition</ion-select-option>
-                    <ion-select-option value="milestone">Milestone</ion-select-option>
-                    <ion-select-option value="expansion">Expansion</ion-select-option>
-                    <ion-select-option value="certification">Certification</ion-select-option>
+                    <ion-select-option value="recognition"
+                      >Recognition</ion-select-option
+                    >
+                    <ion-select-option value="milestone"
+                      >Milestone</ion-select-option
+                    >
+                    <ion-select-option value="expansion"
+                      >Expansion</ion-select-option
+                    >
+                    <ion-select-option value="certification"
+                      >Certification</ion-select-option
+                    >
                   </ion-select>
                 </ion-item>
                 <ion-item>
                   <ion-label position="stacked">Icon</ion-label>
-                  <ion-input formControlName="icon" placeholder="trophy"></ion-input>
+                  <ion-input
+                    formControlName="icon"
+                    placeholder="trophy"
+                  ></ion-input>
                 </ion-item>
               </ion-card-content>
             </ion-card>
           </div>
+          }
         </div>
       </ion-card-content>
     </ion-card>
@@ -561,24 +782,26 @@
     <ion-card>
       <ion-card-content>
         <ion-button expand="block" type="submit" [disabled]="isSubmitting">
-          {{ isSubmitting ? 'Saving...' : (isEditMode ? 'Update Organization' : 'Create Organization') }}
+          {{ isSubmitting ? 'Saving...' : (isEditMode ? 'Update Organization' :
+          'Create Organization') }}
         </ion-button>
-        
+
         <ion-button expand="block" fill="outline" (click)="onCancel()">
           Cancel
         </ion-button>
-        
-        <ion-button 
-          *ngIf="isEditMode" 
-          expand="block" 
-          color="danger" 
-          fill="outline" 
-          (click)="confirmDelete()">
+
+        @if (isEditMode) {
+        <ion-button
+          expand="block"
+          color="danger"
+          fill="outline"
+          (click)="confirmDelete()"
+        >
           Delete Organization
         </ion-button>
+        }
       </ion-card-content>
     </ion-card>
-
   </form>
 
   <!-- Delete Confirmation Alert -->
@@ -586,7 +809,8 @@
     [isOpen]="showDeleteAlert"
     header="Confirm Delete"
     message="Are you sure you want to delete this organization? This action cannot be undone."
-    [buttons]="deleteAlertButtons">
+    [buttons]="deleteAlertButtons"
+  >
   </ion-alert>
 
   <!-- Toast Messages -->
@@ -594,7 +818,7 @@
     [isOpen]="showToast"
     [message]="toastMessage"
     duration="3000"
-    (didDismiss)="onToastDismiss()">
+    (didDismiss)="onToastDismiss()"
+  >
   </ion-toast>
-
 </ion-content>

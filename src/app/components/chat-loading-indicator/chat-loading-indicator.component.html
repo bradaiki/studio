@@ -1,32 +1,39 @@
-<div class="chat-loading-indicator" *ngIf="isLoading" [class]="'size-' + size">
-  <div class="loading-content">
-    <!-- Spinner -->
-    <ion-spinner 
-      [name]="'crescent'" 
-      [color]="color"
-      [style.width]="spinnerSize"
-      [style.height]="spinnerSize">
-    </ion-spinner>
-    
-    <!-- Message -->
-    <div class="loading-message" *ngIf="showMessage && message">
-      {{ message }}
-    </div>
-    
-    <!-- Progress bar -->
-    <div class="progress-container" *ngIf="showProgress && progress > 0">
-      <ion-progress-bar 
-        [value]="progress / 100" 
+@if (isLoading) {
+  <div class="chat-loading-indicator" [class]="'size-' + size">
+    <div class="loading-content">
+      <!-- Spinner -->
+      <ion-spinner
+        [name]="'crescent'"
         [color]="color"
-        class="loading-progress">
-      </ion-progress-bar>
-      <div class="progress-text">{{ progress }}%</div>
-    </div>
-    
-    <!-- Offline indicator -->
-    <div class="offline-indicator" *ngIf="!isOnline">
-      <ion-icon name="cloud-offline-outline" color="warning"></ion-icon>
-      <span>Offline Mode</span>
+        [style.width]="spinnerSize"
+        [style.height]="spinnerSize"
+      >
+      </ion-spinner>
+      <!-- Message -->
+      @if (showMessage && message) {
+        <div class="loading-message">
+          {{ message }}
+        </div>
+      }
+      <!-- Progress bar -->
+      @if (showProgress && progress > 0) {
+        <div class="progress-container">
+          <ion-progress-bar
+            [value]="progress / 100"
+            [color]="color"
+            class="loading-progress"
+          >
+          </ion-progress-bar>
+          <div class="progress-text">{{ progress }}%</div>
+        </div>
+      }
+      <!-- Offline indicator -->
+      @if (!isOnline) {
+        <div class="offline-indicator">
+          <ion-icon name="cloud-offline-outline" color="warning"></ion-icon>
+          <span>Offline Mode</span>
+        </div>
+      }
     </div>
   </div>
-</div>
+}

@@ -3,19 +3,23 @@
     <ion-title id="modal-title">Review Join Requests</ion-title>
     <ion-buttons slot="end">
       <!-- Manual refresh button -->
-      <ion-button 
-        (click)="refreshData()" 
-        fill="clear" 
+      <ion-button
+        (click)="refreshData()"
+        fill="clear"
         [disabled]="isLoading"
-        [attr.aria-label]="'Refresh join requests' + (isLoading ? ' (currently loading)' : '')"
-        title="Refresh requests">
+        [attr.aria-label]="
+          'Refresh join requests' + (isLoading ? ' (currently loading)' : '')
+        "
+        title="Refresh requests"
+      >
         <ion-icon name="refresh" [attr.aria-hidden]="true"></ion-icon>
       </ion-button>
-      <ion-button 
-        (click)="closeModal()" 
+      <ion-button
+        (click)="closeModal()"
         fill="clear"
         aria-label="Close modal"
-        title="Close modal">
+        title="Close modal"
+      >
         <ion-icon name="close" [attr.aria-hidden]="true"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -25,331 +29,535 @@
 <ion-content [attr.aria-labelledby]="'modal-title'">
   <!-- Pull to refresh -->
   <ion-refresher slot="fixed" (ionRefresh)="onRefresh($event)">
-    <ion-refresher-content 
+    <ion-refresher-content
       pullingText="Pull to refresh requests"
-      refreshingText="Refreshing requests...">
+      refreshingText="Refreshing requests..."
+    >
     </ion-refresher-content>
   </ion-refresher>
 
   <!-- Loading state -->
-  <div *ngIf="isLoading && pendingRequests.length === 0" 
-       class="loading-container loading-state"
-       role="status"
-       aria-live="polite"
-       aria-label="Loading join requests">
-    <div class="loading-content">
-      <ion-spinner name="crescent" [attr.aria-hidden]="true"></ion-spinner>
-      <ion-text>
-        <h3>Loading Join Requests</h3>
-        <p>Please wait while we fetch the pending requests...</p>
-      </ion-text>
-      <div class="loading-progress" *ngIf="loadingProgress > 0">
-        <div class="progress-bar">
-          <div class="progress-fill" [style.width.%]="loadingProgress"></div>
-        </div>
-        <span class="progress-text">{{ loadingProgress }}%</span>
+  @if (isLoading && pendingRequests.length === 0) {
+    <div
+      class="loading-container loading-state"
+      role="status"
+      aria-live="polite"
+      aria-label="Loading join requests"
+    >
+      <div class="loading-content">
+        <ion-spinner name="crescent" [attr.aria-hidden]="true"></ion-spinner>
+        <ion-text>
+          <h3>Loading Join Requests</h3>
+          <p>Please wait while we fetch the pending requests...</p>
+        </ion-text>
+        @if (loadingProgress > 0) {
+          <div class="loading-progress">
+            <div class="progress-bar">
+              <div
+                class="progress-fill"
+                [style.width.%]="loadingProgress"
+              ></div>
+            </div>
+            <span class="progress-text">{{ loadingProgress }}%</span>
+          </div>
+        }
       </div>
     </div>
-  </div>
+  }
 
   <!-- Error state -->
-  <div *ngIf="error && !isLoading" 
-       class="error-container"
-       role="alert"
-       aria-live="assertive">
-    <ion-icon name="alert-circle" color="danger" [attr.aria-hidden]="true"></ion-icon>
-    <ion-text color="danger">
-      <p>{{ error }}</p>
-    </ion-text>
-    
-    <!-- Network error specific actions -->
-    <div *ngIf="networkError" class="recovery-actions">
-      <ion-button 
-        (click)="refreshData()" 
-        fill="solid" 
-        color="primary"
-        aria-label="Retry loading requests due to network error">
-        <ion-icon name="refresh" slot="start" [attr.aria-hidden]="true"></ion-icon>
-        Retry Now
-      </ion-button>
+  @if (error && !isLoading) {
+    <div class="error-container" role="alert" aria-live="assertive">
+      <ion-icon
+        name="alert-circle"
+        color="danger"
+        [attr.aria-hidden]="true"
+      ></ion-icon>
+      <ion-text color="danger">
+        <p>{{ error }}</p>
+      </ion-text>
+      <!-- Network error specific actions -->
+      @if (networkError) {
+        <div class="recovery-actions">
+          <ion-button
+            (click)="refreshData()"
+            fill="solid"
+            color="primary"
+            aria-label="Retry loading requests due to network error"
+          >
+            <ion-icon
+              name="refresh"
+              slot="start"
+              [attr.aria-hidden]="true"
+            ></ion-icon>
+            Retry Now
+          </ion-button>
+          <ion-text>
+            <p class="recovery-hint" role="note">
+              <ion-icon
+                name="information-circle"
+                [attr.aria-hidden]="true"
+              ></ion-icon>
+              Auto-retry is active. The system will automatically attempt to
+              reconnect.
+            </p>
+          </ion-text>
+        </div>
+      }
+      <!-- Authentication error specific actions -->
+      @if (authenticationError) {
+        <div class="recovery-actions">
+          <ion-button
+            (click)="refreshData()"
+            fill="outline"
+            color="primary"
+            aria-label="Try again after authentication error"
+          >
+            <ion-icon
+              name="refresh"
+              slot="start"
+              [attr.aria-hidden]="true"
+            ></ion-icon>
+            Try Again
+          </ion-button>
+        </div>
+      }
+      <!-- General error actions -->
+      @if (!networkError && !authenticationError) {
+        <div class="recovery-actions">
+          <ion-button
+            (click)="refreshData()"
+            fill="outline"
+            color="primary"
+            aria-label="Retry loading requests"
+          >
+            <ion-icon
+              name="refresh"
+              slot="start"
+              [attr.aria-hidden]="true"
+            ></ion-icon>
+            Retry
+          </ion-button>
+        </div>
+      }
+      <!-- Retry indicator -->
+      @if (isRetrying) {
+        <div class="retry-indicator" role="status" aria-live="polite">
+          <ion-spinner
+            name="crescent"
+            color="primary"
+            [attr.aria-hidden]="true"
+          ></ion-spinner>
+          <ion-text>
+            <p>
+              Retrying... (Attempt {{ retryCount + 1 }} of {{ maxRetries }})
+            </p>
+          </ion-text>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Empty state -->
+  @if (!isLoading && !error && pendingRequests.length === 0) {
+    <div class="empty-container" role="status" aria-live="polite">
+      <ion-icon
+        name="checkmark"
+        color="success"
+        size="large"
+        [attr.aria-hidden]="true"
+      ></ion-icon>
       <ion-text>
-        <p class="recovery-hint" role="note">
-          <ion-icon name="information-circle" [attr.aria-hidden]="true"></ion-icon>
-          Auto-retry is active. The system will automatically attempt to reconnect.
+        <h3>No Pending Requests</h3>
+        <p>
+          All join requests have been reviewed. New requests will appear here
+          automatically.
         </p>
       </ion-text>
     </div>
-    
-    <!-- Authentication error specific actions -->
-    <div *ngIf="authenticationError" class="recovery-actions">
-      <ion-button 
-        (click)="refreshData()" 
-        fill="outline" 
-        color="primary"
-        aria-label="Try again after authentication error">
-        <ion-icon name="refresh" slot="start" [attr.aria-hidden]="true"></ion-icon>
-        Try Again
-      </ion-button>
-    </div>
-    
-    <!-- General error actions -->
-    <div *ngIf="!networkError && !authenticationError" class="recovery-actions">
-      <ion-button 
-        (click)="refreshData()" 
-        fill="outline" 
-        color="primary"
-        aria-label="Retry loading requests">
-        <ion-icon name="refresh" slot="start" [attr.aria-hidden]="true"></ion-icon>
-        Retry
-      </ion-button>
-    </div>
-    
-    <!-- Retry indicator -->
-    <div *ngIf="isRetrying" 
-         class="retry-indicator"
-         role="status"
-         aria-live="polite">
-      <ion-spinner name="crescent" color="primary" [attr.aria-hidden]="true"></ion-spinner>
-      <ion-text>
-        <p>Retrying... (Attempt {{ retryCount + 1 }} of {{ maxRetries }})</p>
-      </ion-text>
-    </div>
-  </div>
-
-  <!-- Empty state -->
-  <div *ngIf="!isLoading && !error && pendingRequests.length === 0" 
-       class="empty-container"
-       role="status"
-       aria-live="polite">
-    <ion-icon name="checkmark" color="success" size="large" [attr.aria-hidden]="true"></ion-icon>
-    <ion-text>
-      <h3>No Pending Requests</h3>
-      <p>All join requests have been reviewed. New requests will appear here automatically.</p>
-    </ion-text>
-  </div>
+  }
 
   <!-- Bulk actions toolbar -->
-  <div *ngIf="showBulkActions" 
-       class="bulk-actions-toolbar"
-       role="toolbar"
-       [attr.aria-label]="'Bulk actions for ' + selectedCount + ' selected requests'">
-    <ion-text>
-      <strong>{{ selectedCount }} selected</strong>
-    </ion-text>
-    <div class="bulk-buttons">
-      <ion-button 
-        (click)="bulkApproveRequests()" 
-        fill="solid" 
-        color="success" 
-        size="small"
-        [disabled]="isBulkProcessing"
-        [attr.aria-label]="'Approve all ' + selectedCount + ' selected requests'"
-        [attr.aria-describedby]="isBulkProcessing ? 'bulk-processing-status' : null">
-        <ion-icon name="checkmark" slot="start" [attr.aria-hidden]="true"></ion-icon>
-        Approve All
-      </ion-button>
-      <ion-button 
-        (click)="bulkRejectRequests()" 
-        fill="solid" 
-        color="danger" 
-        size="small"
-        [disabled]="isBulkProcessing"
-        [attr.aria-label]="'Reject all ' + selectedCount + ' selected requests'"
-        [attr.aria-describedby]="isBulkProcessing ? 'bulk-processing-status' : null">
-        <ion-icon name="close-circle" slot="start" [attr.aria-hidden]="true"></ion-icon>
-        Reject All
-      </ion-button>
-      <ion-button 
-        (click)="clearAllSelections()" 
-        fill="outline" 
-        color="medium" 
-        size="small"
-        [disabled]="isBulkProcessing"
-        aria-label="Clear all selections">
-        Clear
-      </ion-button>
+  @if (showBulkActions) {
+    <div
+      class="bulk-actions-toolbar"
+      role="toolbar"
+      [attr.aria-label]="
+        'Bulk actions for ' + selectedCount + ' selected requests'
+      "
+    >
+      <ion-text>
+        <strong>{{ selectedCount }} selected</strong>
+      </ion-text>
+      <div class="bulk-buttons">
+        <ion-button
+          (click)="bulkApproveRequests()"
+          fill="solid"
+          color="success"
+          size="small"
+          [disabled]="isBulkProcessing"
+          [attr.aria-label]="
+            'Approve all ' + selectedCount + ' selected requests'
+          "
+          [attr.aria-describedby]="
+            isBulkProcessing ? 'bulk-processing-status' : null
+          "
+        >
+          <ion-icon
+            name="checkmark"
+            slot="start"
+            [attr.aria-hidden]="true"
+          ></ion-icon>
+          Approve All
+        </ion-button>
+        <ion-button
+          (click)="bulkRejectRequests()"
+          fill="solid"
+          color="danger"
+          size="small"
+          [disabled]="isBulkProcessing"
+          [attr.aria-label]="
+            'Reject all ' + selectedCount + ' selected requests'
+          "
+          [attr.aria-describedby]="
+            isBulkProcessing ? 'bulk-processing-status' : null
+          "
+        >
+          <ion-icon
+            name="close-circle"
+            slot="start"
+            [attr.aria-hidden]="true"
+          ></ion-icon>
+          Reject All
+        </ion-button>
+        <ion-button
+          (click)="clearAllSelections()"
+          fill="outline"
+          color="medium"
+          size="small"
+          [disabled]="isBulkProcessing"
+          aria-label="Clear all selections"
+        >
+          Clear
+        </ion-button>
+      </div>
     </div>
-  </div>
+  }
 
   <!-- Select all/none controls -->
-  <div *ngIf="pendingRequests.length > 0 && config?.enableBulkActions" class="select-controls">
-    <ion-item lines="none">
-      <ion-checkbox 
-        slot="start"
-        [checked]="allSelected"
-        [indeterminate]="someSelected"
-        (ionChange)="allSelected ? clearAllSelections() : selectAllRequests()"
-        [attr.aria-label]="allSelected ? 'Deselect all requests' : 'Select all ' + pendingRequests.length + ' requests'"
-        [attr.aria-describedby]="'select-all-description'">
-      </ion-checkbox>
-      <ion-label id="select-all-description">
-        <span *ngIf="allSelected">Deselect All</span>
-        <span *ngIf="!allSelected">Select All ({{ pendingRequests.length }} requests)</span>
-      </ion-label>
-    </ion-item>
-  </div>
+  @if (pendingRequests.length > 0 && config?.enableBulkActions) {
+    <div class="select-controls">
+      <ion-item lines="none">
+        <ion-checkbox
+          slot="start"
+          [checked]="allSelected"
+          [indeterminate]="someSelected"
+          (ionChange)="allSelected ? clearAllSelections() : selectAllRequests()"
+          [attr.aria-label]="
+            allSelected
+              ? 'Deselect all requests'
+              : 'Select all ' + pendingRequests.length + ' requests'
+          "
+          [attr.aria-describedby]="'select-all-description'"
+        >
+        </ion-checkbox>
+        <ion-label id="select-all-description">
+          @if (allSelected) {
+            <span>Deselect All</span>
+          }
+          @if (!allSelected) {
+            <span>Select All ({{ pendingRequests.length }} requests)</span>
+          }
+        </ion-label>
+      </ion-item>
+    </div>
+  }
 
   <!-- Requests list -->
-  <ion-list *ngIf="pendingRequests.length > 0" 
-            role="list"
-            [attr.aria-label]="pendingRequests.length + ' pending join requests'">
-    <ion-item 
-      *ngFor="let request of pendingRequests; trackBy: trackByRequestId; let i = index" 
-      class="request-item"
-      [class.selected]="request.isSelected"
-      [class.processing]="request.isProcessing"
-      role="listitem"
-      [attr.aria-label]="'Join request from ' + (request.userProfile?.displayName || request.userName || 'Unknown User')"
-      [attr.aria-describedby]="'request-details-' + i"
-      tabindex="0"
-      (keydown)="onRequestKeydown($event, request)">
-      
-      <!-- Selection checkbox (if bulk actions enabled) -->
-      <ion-checkbox 
-        *ngIf="config?.enableBulkActions"
-        slot="start"
-        [checked]="!!request.isSelected"
-        (ionChange)="toggleRequestSelection(request.id)"
-        [disabled]="request.isProcessing"
-        [attr.aria-label]="(request.isSelected ? 'Deselect' : 'Select') + ' request from ' + (request.userProfile?.displayName || request.userName || 'Unknown User')"
-        tabindex="-1">
-      </ion-checkbox>
-
-      <!-- Request content -->
-      <ion-label class="request-content" [id]="'request-details-' + i">
-        <!-- User info header -->
-        <div class="user-info">
-          <div class="user-avatar" *ngIf="request.userProfile?.avatar">
-            <img 
-              [src]="request.userProfile!.avatar" 
-              [alt]="(request.userProfile!.displayName || request.userName || 'Unknown User') + ' profile picture'" />
-          </div>
-          <div class="user-details">
-            <div class="user-name-section">
-              <h3>{{ request.userProfile?.displayName || request.userName || 'Unknown User' }}</h3>
-              <ion-button 
-                *ngIf="request.userProfile && (request.userProfile.displayName || request.userProfile.bio || request.userProfile.avatar)"
-                (click)="navigateToProfile(request.userId)"
-                fill="clear" 
-                size="small" 
-                color="primary"
-                class="profile-link"
-                [attr.aria-label]="'View profile of ' + (request.userProfile!.displayName || request.userName || 'Unknown User')"
-                tabindex="0">
-                <ion-icon name="person" slot="start" [attr.aria-hidden]="true"></ion-icon>
-                View Profile
-              </ion-button>
+  @if (pendingRequests.length > 0) {
+    <ion-list
+      role="list"
+      [attr.aria-label]="pendingRequests.length + ' pending join requests'"
+    >
+      @for (
+        request of pendingRequests;
+        track trackByRequestId(i, request);
+        let i = $index
+      ) {
+        <ion-item
+          class="request-item"
+          [class.selected]="request.isSelected"
+          [class.processing]="request.isProcessing"
+          role="listitem"
+          [attr.aria-label]="
+            'Join request from ' +
+            (request.userProfile?.displayName ||
+              request.userName ||
+              'Unknown User')
+          "
+          [attr.aria-describedby]="'request-details-' + i"
+          tabindex="0"
+          (keydown)="onRequestKeydown($event, request)"
+        >
+          <!-- Selection checkbox (if bulk actions enabled) -->
+          @if (config?.enableBulkActions) {
+            <ion-checkbox
+              slot="start"
+              [checked]="!!request.isSelected"
+              (ionChange)="toggleRequestSelection(request.id)"
+              [disabled]="request.isProcessing"
+              [attr.aria-label]="
+                (request.isSelected ? 'Deselect' : 'Select') +
+                ' request from ' +
+                (request.userProfile?.displayName ||
+                  request.userName ||
+                  'Unknown User')
+              "
+              tabindex="-1"
+            >
+            </ion-checkbox>
+          }
+          <!-- Request content -->
+          <ion-label class="request-content" [id]="'request-details-' + i">
+            <!-- User info header -->
+            <div class="user-info">
+              @if (request.userProfile?.avatar) {
+                <div class="user-avatar">
+                  <img
+                    [src]="request.userProfile!.avatar"
+                    [alt]="
+                      (request.userProfile!.displayName ||
+                        request.userName ||
+                        'Unknown User') + ' profile picture'
+                    "
+                  />
+                </div>
+              }
+              <div class="user-details">
+                <div class="user-name-section">
+                  <h3>
+                    {{
+                      request.userProfile?.displayName ||
+                        request.userName ||
+                        "Unknown User"
+                    }}
+                  </h3>
+                  @if (
+                    request.userProfile &&
+                    (request.userProfile.displayName ||
+                      request.userProfile.bio ||
+                      request.userProfile.avatar)
+                  ) {
+                    <ion-button
+                      (click)="navigateToProfile(request.userId)"
+                      fill="clear"
+                      size="small"
+                      color="primary"
+                      class="profile-link"
+                      [attr.aria-label]="
+                        'View profile of ' +
+                        (request.userProfile!.displayName ||
+                          request.userName ||
+                          'Unknown User')
+                      "
+                      tabindex="0"
+                    >
+                      <ion-icon
+                        name="person"
+                        slot="start"
+                        [attr.aria-hidden]="true"
+                      ></ion-icon>
+                      View Profile
+                    </ion-button>
+                  }
+                </div>
+                <p class="user-email">{{ request.userEmail }}</p>
+                @if (request.userProfile?.bio) {
+                  <div class="user-bio">
+                    <p>{{ request.userProfile!.bio }}</p>
+                  </div>
+                }
+                @if (request.userProfile?.joinedAt) {
+                  <div class="user-joined">
+                    <ion-icon name="time" [attr.aria-hidden]="true"></ion-icon>
+                    <span
+                      >Member since
+                      {{
+                        request.userProfile!.joinedAt
+                          ? getFormattedDate(request.userProfile!.joinedAt)
+                          : "Unknown"
+                      }}</span
+                    >
+                  </div>
+                }
+              </div>
+              <div class="request-meta">
+                <ion-badge
+                  color="primary"
+                  role="status"
+                  aria-label="Request status: Pending"
+                  >Pending</ion-badge
+                >
+                <span class="request-time">{{
+                  getRelativeTime(request.requestedAt)
+                }}</span>
+              </div>
             </div>
-            <p class="user-email">{{ request.userEmail }}</p>
-            <div *ngIf="request.userProfile?.bio" class="user-bio">
-              <p>{{ request.userProfile!.bio }}</p>
-            </div>
-            <div *ngIf="request.userProfile?.joinedAt" class="user-joined">
+            <!-- Rejection history indicator -->
+            @if (false) {
+              <div class="rejection-history" role="note">
+                <ion-icon
+                  name="information-circle"
+                  color="warning"
+                  [attr.aria-hidden]="true"
+                ></ion-icon>
+                <span
+                  >This user has been previously rejected from this studio</span
+                >
+                <ion-button
+                  (click)="showRejectionHistory(request.userId)"
+                  fill="clear"
+                  size="small"
+                  color="warning"
+                  aria-label="View rejection history for this user"
+                  tabindex="0"
+                >
+                  View History
+                </ion-button>
+              </div>
+            }
+            <!-- Request message -->
+            @if (request.message) {
+              <div class="request-message" role="note">
+                <p>{{ request.message }}</p>
+              </div>
+            }
+            <!-- Request timestamp -->
+            <div class="request-timestamp">
               <ion-icon name="time" [attr.aria-hidden]="true"></ion-icon>
-              <span>Member since {{ request.userProfile!.joinedAt ? getFormattedDate(request.userProfile!.joinedAt) : 'Unknown' }}</span>
+              <span>Requested {{ getFormattedDate(request.requestedAt) }}</span>
             </div>
-          </div>
-          <div class="request-meta">
-            <ion-badge color="primary" role="status" aria-label="Request status: Pending">Pending</ion-badge>
-            <span class="request-time">{{ getRelativeTime(request.requestedAt) }}</span>
-          </div>
-        </div>
-
-        <!-- Rejection history indicator -->
-        <div *ngIf="false" class="rejection-history" role="note">
-          <ion-icon name="information-circle" color="warning" [attr.aria-hidden]="true"></ion-icon>
-          <span>This user has been previously rejected from this studio</span>
-          <ion-button 
-            (click)="showRejectionHistory(request.userId)"
-            fill="clear" 
-            size="small" 
-            color="warning"
-            aria-label="View rejection history for this user"
-            tabindex="0">
-            View History
-          </ion-button>
-        </div>
-
-        <!-- Request message -->
-        <div *ngIf="request.message" class="request-message" role="note">
-          <p>{{ request.message }}</p>
-        </div>
-
-        <!-- Request timestamp -->
-        <div class="request-timestamp">
-          <ion-icon name="time" [attr.aria-hidden]="true"></ion-icon>
-          <span>Requested {{ getFormattedDate(request.requestedAt) }}</span>
-        </div>
-
-        <!-- Action buttons -->
-        <div class="action-buttons" 
-             *ngIf="!request.isProcessing"
-             role="group"
-             [attr.aria-label]="'Actions for request from ' + (request.userProfile?.displayName || request.userName || 'Unknown User')">
-          <ion-button 
-            (click)="approveRequest(request.id)" 
-            fill="solid" 
-            color="success" 
-            size="small"
-            [attr.aria-label]="'Approve request from ' + (request.userProfile?.displayName || request.userName || 'Unknown User')"
-            tabindex="0">
-            <ion-icon name="checkmark" slot="start" [attr.aria-hidden]="true"></ion-icon>
-            Approve
-          </ion-button>
-          <ion-button 
-            (click)="rejectRequest(request.id)" 
-            fill="outline" 
-            color="danger" 
-            size="small"
-            [attr.aria-label]="'Reject request from ' + (request.userProfile?.displayName || request.userName || 'Unknown User')"
-            tabindex="0">
-            <ion-icon name="close-circle" slot="start" [attr.aria-hidden]="true"></ion-icon>
-            Reject
-          </ion-button>
-        </div>
-
-        <!-- Processing indicator -->
-        <div class="processing-indicator" 
-             *ngIf="request.isProcessing"
-             role="status"
-             aria-live="polite"
-             [attr.aria-label]="'Processing request from ' + (request.userProfile?.displayName || request.userName || 'Unknown User')">
-          <ion-spinner name="crescent" color="primary" [attr.aria-hidden]="true"></ion-spinner>
-          <span>Processing...</span>
-        </div>
-      </ion-label>
-    </ion-item>
-  </ion-list>
+            <!-- Action buttons -->
+            @if (!request.isProcessing) {
+              <div
+                class="action-buttons"
+                role="group"
+                [attr.aria-label]="
+                  'Actions for request from ' +
+                  (request.userProfile?.displayName ||
+                    request.userName ||
+                    'Unknown User')
+                "
+              >
+                <ion-button
+                  (click)="approveRequest(request.id)"
+                  fill="solid"
+                  color="success"
+                  size="small"
+                  [attr.aria-label]="
+                    'Approve request from ' +
+                    (request.userProfile?.displayName ||
+                      request.userName ||
+                      'Unknown User')
+                  "
+                  tabindex="0"
+                >
+                  <ion-icon
+                    name="checkmark"
+                    slot="start"
+                    [attr.aria-hidden]="true"
+                  ></ion-icon>
+                  Approve
+                </ion-button>
+                <ion-button
+                  (click)="rejectRequest(request.id)"
+                  fill="outline"
+                  color="danger"
+                  size="small"
+                  [attr.aria-label]="
+                    'Reject request from ' +
+                    (request.userProfile?.displayName ||
+                      request.userName ||
+                      'Unknown User')
+                  "
+                  tabindex="0"
+                >
+                  <ion-icon
+                    name="close-circle"
+                    slot="start"
+                    [attr.aria-hidden]="true"
+                  ></ion-icon>
+                  Reject
+                </ion-button>
+              </div>
+            }
+            <!-- Processing indicator -->
+            @if (request.isProcessing) {
+              <div
+                class="processing-indicator"
+                role="status"
+                aria-live="polite"
+                [attr.aria-label]="
+                  'Processing request from ' +
+                  (request.userProfile?.displayName ||
+                    request.userName ||
+                    'Unknown User')
+                "
+              >
+                <ion-spinner
+                  name="crescent"
+                  color="primary"
+                  [attr.aria-hidden]="true"
+                ></ion-spinner>
+                <span>Processing...</span>
+              </div>
+            }
+          </ion-label>
+        </ion-item>
+      }
+    </ion-list>
+  }
 
   <!-- Bulk processing indicator -->
-  <div *ngIf="isBulkProcessing" 
-       class="bulk-processing"
-       role="status"
-       aria-live="polite"
-       id="bulk-processing-status">
-    <div class="processing-content">
-      <ion-spinner name="crescent" [attr.aria-hidden]="true"></ion-spinner>
-      <ion-text>
-        <h4>Processing Requests</h4>
-        <p>Processing {{ selectedCount }} request(s)...</p>
-        <div class="processing-progress" *ngIf="bulkOperationProgress > 0">
-          <div class="progress-bar">
-            <div class="progress-fill" [style.width.%]="bulkOperationProgress"></div>
-          </div>
-          <span class="progress-text">{{ bulkOperationProgress }}%</span>
-        </div>
-      </ion-text>
+  @if (isBulkProcessing) {
+    <div
+      class="bulk-processing"
+      role="status"
+      aria-live="polite"
+      id="bulk-processing-status"
+    >
+      <div class="processing-content">
+        <ion-spinner name="crescent" [attr.aria-hidden]="true"></ion-spinner>
+        <ion-text>
+          <h4>Processing Requests</h4>
+          <p>Processing {{ selectedCount }} request(s)...</p>
+          @if (bulkOperationProgress > 0) {
+            <div class="processing-progress">
+              <div class="progress-bar">
+                <div
+                  class="progress-fill"
+                  [style.width.%]="bulkOperationProgress"
+                ></div>
+              </div>
+              <span class="progress-text">{{ bulkOperationProgress }}%</span>
+            </div>
+          }
+        </ion-text>
+      </div>
     </div>
-  </div>
+  }
 
   <!-- Loading overlay for refresh -->
-  <div *ngIf="isLoading && pendingRequests.length > 0" 
-       class="loading-overlay"
-       role="status"
-       aria-live="polite">
-    <div class="overlay-content">
-      <ion-spinner name="crescent" color="primary" [attr.aria-hidden]="true"></ion-spinner>
-      <span>Refreshing...</span>
+  @if (isLoading && pendingRequests.length > 0) {
+    <div class="loading-overlay" role="status" aria-live="polite">
+      <div class="overlay-content">
+        <ion-spinner
+          name="crescent"
+          color="primary"
+          [attr.aria-hidden]="true"
+        ></ion-spinner>
+        <span>Refreshing...</span>
+      </div>
     </div>
-  </div>
+  }
 </ion-content>

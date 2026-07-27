@@ -1,12 +1,26 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
+
+import {
+  FormBuilder,
+  FormGroup,
+  FormArray,
+  Validators,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { StudiosService, Studio, Instructor, StudioInstructor, ClassSchedule, PricingOption, Benefit } from '../services/studios.service';
-import { 
-  IonContent, 
-  IonHeader, 
-  IonTitle, 
+import {
+  StudiosService,
+  Studio,
+  Instructor,
+  StudioInstructor,
+  ClassSchedule,
+  PricingOption,
+  Benefit,
+} from '../services/studios.service';
+import {
+  IonContent,
+  IonHeader,
+  IonTitle,
   IonToolbar,
   IonButton,
   IonItem,
@@ -25,7 +39,7 @@ import {
   IonToast,
   IonBackButton,
   IonButtons,
-  IonDatetime
+  IonDatetime,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { add, remove, save, arrowBack } from 'ionicons/icons';
@@ -36,11 +50,10 @@ import { add, remove, save, arrowBack } from 'ionicons/icons';
   styleUrls: ['./studio-form.page.scss'],
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
-    IonContent, 
-    IonHeader, 
-    IonTitle, 
+    IonContent,
+    IonHeader,
+    IonTitle,
     IonToolbar,
     IonButton,
     IonItem,
@@ -59,8 +72,8 @@ import { add, remove, save, arrowBack } from 'ionicons/icons';
     IonToast,
     IonBackButton,
     IonButtons,
-    IonDatetime
-  ]
+    IonDatetime,
+  ],
 })
 export class StudioFormPage implements OnInit {
   studioForm: FormGroup;
@@ -77,25 +90,25 @@ export class StudioFormPage implements OnInit {
       role: 'cancel',
       handler: () => {
         this.onDeleteAlertDismiss();
-      }
+      },
     },
     {
       text: 'Delete',
       role: 'confirm',
       handler: () => {
         this.onDelete();
-      }
-    }
+      },
+    },
   ];
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
-    private studiosService: StudiosService
+    private studiosService: StudiosService,
   ) {
     addIcons({ add, remove, save, arrowBack });
-    
+
     this.studioForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
       location: ['', [Validators.required]],
@@ -116,12 +129,12 @@ export class StudioFormPage implements OnInit {
       pricing: this.fb.array([]),
       benefits: this.fb.array([]),
       isMember: [false],
-      isInstructor: [false]
+      isInstructor: [false],
     });
   }
 
   ngOnInit() {
-    this.route.params.subscribe(params => {
+    this.route.params.subscribe((params) => {
       if (params['id'] && params['id'] !== 'new') {
         this.isEditMode = true;
         this.studioId = params['id'];
@@ -160,7 +173,7 @@ export class StudioFormPage implements OnInit {
       studioChiefId: studio.studioChiefId,
       isMember: studio.isMember,
       isInstructor: studio.isInstructor,
-      isStudioChief: studio.isStudioChief
+      isStudioChief: studio.isStudioChief,
     });
 
     // Populate form arrays
@@ -200,9 +213,17 @@ export class StudioFormPage implements OnInit {
       experience: [instructor?.experience || ''],
       email: [instructor?.email || ''],
       phone: [instructor?.phone || ''],
-      specialties: this.fb.array(instructor?.specialties?.map((s: string) => this.fb.control(s)) || [this.fb.control('')]),
-      certifications: this.fb.array(instructor?.certifications?.map((c: string) => this.fb.control(c)) || [this.fb.control('')]),
-      isActive: [instructor?.isActive ?? true]
+      specialties: this.fb.array(
+        instructor?.specialties?.map((s: string) => this.fb.control(s)) || [
+          this.fb.control(''),
+        ],
+      ),
+      certifications: this.fb.array(
+        instructor?.certifications?.map((c: string) => this.fb.control(c)) || [
+          this.fb.control(''),
+        ],
+      ),
+      isActive: [instructor?.isActive ?? true],
     });
   }
 
@@ -215,7 +236,9 @@ export class StudioFormPage implements OnInit {
   }
 
   setInstructors(instructors: Instructor[]) {
-    const instructorFGs = instructors.map(instructor => this.createInstructorForm(instructor));
+    const instructorFGs = instructors.map((instructor) =>
+      this.createInstructorForm(instructor),
+    );
     const instructorFormArray = this.fb.array(instructorFGs);
     this.studioForm.setControl('instructors', instructorFormArray);
   }
@@ -233,15 +256,22 @@ export class StudioFormPage implements OnInit {
   }
 
   getInstructorCertifications(instructorIndex: number): FormArray {
-    return this.instructors.at(instructorIndex).get('certifications') as FormArray;
+    return this.instructors
+      .at(instructorIndex)
+      .get('certifications') as FormArray;
   }
 
   addInstructorCertification(instructorIndex: number) {
     this.getInstructorCertifications(instructorIndex).push(this.fb.control(''));
   }
 
-  removeInstructorCertification(instructorIndex: number, certificationIndex: number) {
-    this.getInstructorCertifications(instructorIndex).removeAt(certificationIndex);
+  removeInstructorCertification(
+    instructorIndex: number,
+    certificationIndex: number,
+  ) {
+    this.getInstructorCertifications(instructorIndex).removeAt(
+      certificationIndex,
+    );
   }
 
   // Schedule methods
@@ -260,7 +290,7 @@ export class StudioFormPage implements OnInit {
       recurrencePattern: [scheduleItem?.recurrencePattern || ''],
       recurrenceEnd: [scheduleItem?.recurrenceEnd || ''],
       color: [scheduleItem?.color || '#3880ff'],
-      location: [scheduleItem?.location || '']
+      location: [scheduleItem?.location || ''],
     });
   }
 
@@ -273,7 +303,7 @@ export class StudioFormPage implements OnInit {
   }
 
   setSchedule(schedule: ClassSchedule[]) {
-    const scheduleFGs = schedule.map(item => this.createScheduleForm(item));
+    const scheduleFGs = schedule.map((item) => this.createScheduleForm(item));
     const scheduleFormArray = this.fb.array(scheduleFGs);
     this.studioForm.setControl('schedule', scheduleFormArray);
   }
@@ -284,8 +314,12 @@ export class StudioFormPage implements OnInit {
       name: [pricing?.name || '', [Validators.required]],
       price: [pricing?.price || '', [Validators.required]],
       description: [pricing?.description || ''],
-      features: this.fb.array(pricing?.features?.map(feature => this.fb.control(feature)) || [this.fb.control('')]),
-      featured: [pricing?.featured || false]
+      features: this.fb.array(
+        pricing?.features?.map((feature) => this.fb.control(feature)) || [
+          this.fb.control(''),
+        ],
+      ),
+      featured: [pricing?.featured || false],
     });
   }
 
@@ -298,7 +332,7 @@ export class StudioFormPage implements OnInit {
   }
 
   setPricing(pricing: PricingOption[]) {
-    const pricingFGs = pricing.map(option => this.createPricingForm(option));
+    const pricingFGs = pricing.map((option) => this.createPricingForm(option));
     const pricingFormArray = this.fb.array(pricingFGs);
     this.studioForm.setControl('pricing', pricingFormArray);
   }
@@ -320,7 +354,7 @@ export class StudioFormPage implements OnInit {
     return this.fb.group({
       icon: [benefit?.icon || '', [Validators.required]],
       title: [benefit?.title || '', [Validators.required]],
-      description: [benefit?.description || '', [Validators.required]]
+      description: [benefit?.description || '', [Validators.required]],
     });
   }
 
@@ -333,7 +367,9 @@ export class StudioFormPage implements OnInit {
   }
 
   setBenefits(benefits: Benefit[]) {
-    const benefitFGs = benefits.map(benefit => this.createBenefitForm(benefit));
+    const benefitFGs = benefits.map((benefit) =>
+      this.createBenefitForm(benefit),
+    );
     const benefitFormArray = this.fb.array(benefitFGs);
     this.studioForm.setControl('benefits', benefitFormArray);
   }
@@ -349,10 +385,10 @@ export class StudioFormPage implements OnInit {
   async onSubmit() {
     if (this.studioForm.valid && !this.isSubmitting) {
       this.isSubmitting = true;
-      
+
       try {
         const formValue = this.studioForm.value;
-        
+
         if (this.isEditMode && this.studioId) {
           await this.studiosService.updateStudio(this.studioId, formValue);
           this.showToastMessage('Studio updated successfully');
@@ -360,7 +396,7 @@ export class StudioFormPage implements OnInit {
           await this.studiosService.createStudio(formValue);
           this.showToastMessage('Studio created successfully');
         }
-        
+
         this.router.navigate(['/dash/studios']);
       } catch (error) {
         console.error('Error saving studio:', error);
@@ -392,14 +428,14 @@ export class StudioFormPage implements OnInit {
   }
 
   private markFormGroupTouched(formGroup: FormGroup) {
-    Object.keys(formGroup.controls).forEach(key => {
+    Object.keys(formGroup.controls).forEach((key) => {
       const control = formGroup.get(key);
       control?.markAsTouched();
 
       if (control instanceof FormGroup) {
         this.markFormGroupTouched(control);
       } else if (control instanceof FormArray) {
-        control.controls.forEach(arrayControl => {
+        control.controls.forEach((arrayControl) => {
           if (arrayControl instanceof FormGroup) {
             this.markFormGroupTouched(arrayControl);
           } else {
@@ -417,14 +453,14 @@ export class StudioFormPage implements OnInit {
   // Calendar methods
   getHighlightedDates() {
     const dates: any[] = [];
-    this.schedule.controls.forEach(control => {
+    this.schedule.controls.forEach((control) => {
       const startDate = control.get('startDate')?.value;
       const color = control.get('color')?.value || '#3880ff';
       if (startDate) {
         dates.push({
           date: startDate,
           textColor: '#ffffff',
-          backgroundColor: color
+          backgroundColor: color,
         });
       }
     });

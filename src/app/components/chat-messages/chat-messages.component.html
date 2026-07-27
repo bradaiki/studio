@@ -1,369 +1,398 @@
 <ion-card class="chat-messages-card" [class.compact]="compact" [class.muted]="isMuted">
   <!-- Search Bar and Recent Chats -->
-  <div class="chat-navigation" *ngIf="!compact">
-    <!-- Current Chat Title (above everything) -->
-    <div 
-      *ngIf="chatId && currentChatName"
-      class="current-chat-title">
-      <div class="title-content">
-        <ion-icon 
-          [name]="getCurrentChatTypeIcon()" 
-          class="title-icon">
-        </ion-icon>
-        <h3 class="title-text">{{ currentChatName }}</h3>
-        
-        <!-- Enhanced status indicators for current chat (Requirement 2.4 & 2.5) -->
-        <div class="title-status-indicators">
-          <ion-icon 
-            *ngIf="isChatPinnedSync(chatId)" 
-            name="pin" 
-            class="status-icon pinned"
-            title="Pinned chat">
-          </ion-icon>
-          
-          <!-- Enhanced chat type indicator with clear distinction (Requirement 2.4) -->
-          <ion-chip 
-            *ngIf="currentChatAccess"
-            class="chat-type-indicator"
-            [color]="currentChatTypeColor">
-            <ion-icon [name]="currentChatTypeIcon"></ion-icon>
-            <ion-label>{{ currentChatTypeLabel }}</ion-label>
-          </ion-chip>
-
-          <!-- Invitation status indicator (Requirement 2.5) -->
-          <ion-chip 
-            *ngIf="hasInvitationStatus"
-            class="invitation-status-indicator"
-            color="tertiary"
-            outline="true">
-            <ion-icon name="mail"></ion-icon>
-            <ion-label>{{ invitationStatusText }}</ion-label>
-          </ion-chip>
-
-          <!-- Member count for private chats (Requirement 2.5) -->
-          <ion-chip 
-            *ngIf="isCurrentChatPrivate && currentChatMemberCount > 0"
-            class="member-count-indicator"
-            color="medium"
-            outline="true">
-            <ion-icon name="people"></ion-icon>
-            <ion-label>{{ currentChatMemberCount }} members</ion-label>
-          </ion-chip>
+  @if (!compact) {
+    <div class="chat-navigation">
+      <!-- Current Chat Title (above everything) -->
+      @if (chatId && currentChatName) {
+        <div
+          class="current-chat-title">
+          <div class="title-content">
+            <ion-icon
+              [name]="getCurrentChatTypeIcon()"
+              class="title-icon">
+            </ion-icon>
+            <h3 class="title-text">{{ currentChatName }}</h3>
+            <!-- Enhanced status indicators for current chat (Requirement 2.4 & 2.5) -->
+            <div class="title-status-indicators">
+              @if (isChatPinnedSync(chatId)) {
+                <ion-icon
+                  name="pin"
+                  class="status-icon pinned"
+                  title="Pinned chat">
+                </ion-icon>
+              }
+              <!-- Enhanced chat type indicator with clear distinction (Requirement 2.4) -->
+              @if (currentChatAccess) {
+                <ion-chip
+                  class="chat-type-indicator"
+                  [color]="currentChatTypeColor">
+                  <ion-icon [name]="currentChatTypeIcon"></ion-icon>
+                  <ion-label>{{ currentChatTypeLabel }}</ion-label>
+                </ion-chip>
+              }
+              <!-- Invitation status indicator (Requirement 2.5) -->
+              @if (hasInvitationStatus) {
+                <ion-chip
+                  class="invitation-status-indicator"
+                  color="tertiary"
+                  outline="true">
+                  <ion-icon name="mail"></ion-icon>
+                  <ion-label>{{ invitationStatusText }}</ion-label>
+                </ion-chip>
+              }
+              <!-- Member count for private chats (Requirement 2.5) -->
+              @if (isCurrentChatPrivate && currentChatMemberCount > 0) {
+                <ion-chip
+                  class="member-count-indicator"
+                  color="medium"
+                  outline="true">
+                  <ion-icon name="people"></ion-icon>
+                  <ion-label>{{ currentChatMemberCount }} members</ion-label>
+                </ion-chip>
+              }
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-    
-    <!-- Chat List Navigation -->
-    <div class="chat-list-navigation">
-      <div class="nav-buttons">
-        <ion-button 
-          fill="clear" 
-          size="small"
-          [class.active]="!showingStudioChats && !showingFavorites"
-          (click)="showRecentChats()">
-          Recent
-        </ion-button>
-        <ion-button 
-          fill="clear" 
-          size="small"
-          [class.active]="showingStudioChats"
-          (click)="showStudioChatList()">
-          Studio Chats
-        </ion-button>
-        <ion-button 
-          fill="clear" 
-          size="small"
-          [class.active]="showingFavorites"
-          (click)="showFavoritesList()">
-          Favorites
-        </ion-button>
-      </div>
-      <div class="view-title">
-        <span>{{ currentViewTitle }}</span>
-      </div>
-    </div>
-    
-    <!-- Search Bar -->
-    <ion-searchbar
-      [(ngModel)]="searchTerm"
-      placeholder="Search messages..."
-      debounce="300"
-      (ionInput)="onSearchMessages($event)"
-      class="chat-search">
-    </ion-searchbar>
-    
-    <!-- Recent Chat Tabs -->
-    <div class="recent-chats-tabs" *ngIf="currentChatList.length > 0 || !compact">
-      <!-- Create Chat Button (only show for recent/studio chats) -->
-      <ion-chip 
-        *ngIf="!showingFavorites"
-        class="create-chat-button"
-        (click)="openCreateChatModal()">
-        <ion-icon name="add"></ion-icon>
-      </ion-chip>
-
-      <!-- Chat Tabs (Dynamic based on current view) with enhanced type distinction -->
-      <ion-chip 
-        *ngFor="let chat of currentChatList; trackBy: trackByChat" 
-        [class.pinned]="chat.isPinned"
-        [class.favorite]="chat.isFavorite"
-        [class.current-in-list]="chat.id === chatId"
-        [class.public-chat]="getChatTypeLabel(chat) === 'Public'"
-        [class.private-chat]="getChatTypeLabel(chat) === 'Private'"
-        (click)="chat.id !== chatId ? switchToChat(chat) : null"
-        class="chat-tab">
-        <ion-avatar>
-          <!-- Enhanced chat type icon (Requirement 2.4) -->
-          <ion-icon 
-            [name]="getChatTypeIconForChat(chat)" 
-            [color]="getChatTypeColorForChat(chat)">
-          </ion-icon>
-        </ion-avatar>
-        <ion-label>{{ chat.name }}</ion-label>
-        
-        <!-- Enhanced chat type label (Requirement 2.4) -->
-        <ion-chip 
-          class="chat-type-label"
-          [color]="getChatTypeColorForChat(chat)"
-          size="small"
-          outline="true">
-          <ion-label>{{ getChatTypeLabel(chat) }}</ion-label>
-        </ion-chip>
-        
-        <!-- Visual indicators -->
-        <div class="chat-indicators">
-          <!-- Favorite indicator -->
-          <ion-icon 
-            *ngIf="isChatFavoriteSync(chat.id)" 
-            name="heart" 
-            class="favorite-indicator"
-            title="Favorite chat">
-          </ion-icon>
-          <!-- Pinned indicator -->
-          <ion-icon 
-            *ngIf="isChatPinnedSync(chat.id)" 
-            name="pin" 
-            class="pinned-indicator"
-            title="Pinned chat">
-          </ion-icon>
-        </div>
-        
-        <ion-badge *ngIf="chat.unreadCount > 0" color="danger">{{ chat.unreadCount }}</ion-badge>
-        
-        <!-- Favorite button -->
-        <ion-button 
-          fill="clear" 
-          size="small"
-          (click)="toggleChatFavorite(chat.id, $event)"
-          class="favorite-chat-button">
-          <ion-icon 
-            [name]="isChatFavoriteSync(chat.id) ? 'heart' : 'heart-outline'" 
-            slot="icon-only">
-          </ion-icon>
-        </ion-button>
-        
-        <!-- Pin/Unpin button -->
-        <ion-button 
-          fill="clear" 
-          size="small"
-          (click)="toggleChatPin(chat.id, $event)"
-          class="pin-chat-button">
-          <ion-icon 
-            [name]="isChatPinnedSync(chat.id) ? 'pin' : 'pin-outline'" 
-            slot="icon-only">
-          </ion-icon>
-        </ion-button>
-        
-        <!-- Delete button for user-created chats -->
-        <ion-button 
-          *ngIf="canDeleteChat(chat.id)"
-          fill="clear" 
-          size="small"
-          (click)="confirmDeleteChat(chat.id, chat.name); $event.stopPropagation()"
-          class="delete-chat-button">
-          <ion-icon name="trash" slot="icon-only" color="danger"></ion-icon>
-        </ion-button>
-      </ion-chip>
-    </div>
-  </div>
-
-  <ion-card-header *ngIf="showHeader">
-    <ion-card-title class="chat-header">
-      <div class="header-content">
-        <div class="chat-title-section">
-          <span>{{ currentChatName || studioName + ' Chat' }}</span>
-          <ion-icon *ngIf="isMuted" name="notifications-off" color="medium" class="muted-indicator"></ion-icon>
-        </div>
-        <div class="header-actions">
-          <ion-badge *ngIf="unreadCount > 0" color="primary">{{ unreadCount }}</ion-badge>
-          <ion-button 
-            *ngIf="unreadCount > 0" 
-            fill="clear" 
-            size="small" 
-            (click)="markAllAsRead()">
-            <ion-icon name="checkmark-done" slot="start"></ion-icon>
-            Mark all read
-          </ion-button>
-          <!-- Chat Menu Button -->
-          <ion-button 
-            fill="clear" 
+      }
+      <!-- Chat List Navigation -->
+      <div class="chat-list-navigation">
+        <div class="nav-buttons">
+          <ion-button
+            fill="clear"
             size="small"
-            (click)="onMenuClick($event)"
-            id="chat-menu-trigger">
-            <ion-icon name="ellipsis-vertical" slot="icon-only"></ion-icon>
+            [class.active]="!showingStudioChats && !showingFavorites"
+            (click)="showRecentChats()">
+            Recent
+          </ion-button>
+          <ion-button
+            fill="clear"
+            size="small"
+            [class.active]="showingStudioChats"
+            (click)="showStudioChatList()">
+            Studio Chats
+          </ion-button>
+          <ion-button
+            fill="clear"
+            size="small"
+            [class.active]="showingFavorites"
+            (click)="showFavoritesList()">
+            Favorites
           </ion-button>
         </div>
+        <div class="view-title">
+          <span>{{ currentViewTitle }}</span>
+        </div>
       </div>
-    </ion-card-title>
-  </ion-card-header>
+      <!-- Search Bar -->
+      <ion-searchbar
+        [(ngModel)]="searchTerm"
+        placeholder="Search messages..."
+        debounce="300"
+        (ionInput)="onSearchMessages($event)"
+        class="chat-search">
+      </ion-searchbar>
+      <!-- Recent Chat Tabs -->
+      @if (currentChatList.length > 0 || !compact) {
+        <div class="recent-chats-tabs">
+          <!-- Create Chat Button (only show for recent/studio chats) -->
+          @if (!showingFavorites) {
+            <ion-chip
+              class="create-chat-button"
+              (click)="openCreateChatModal()">
+              <ion-icon name="add"></ion-icon>
+            </ion-chip>
+          }
+          <!-- Chat Tabs (Dynamic based on current view) with enhanced type distinction -->
+          @for (chat of currentChatList; track trackByChat($index, chat)) {
+            <ion-chip
+              [class.pinned]="chat.isPinned"
+              [class.favorite]="chat.isFavorite"
+              [class.current-in-list]="chat.id === chatId"
+              [class.public-chat]="getChatTypeLabel(chat) === 'Public'"
+              [class.private-chat]="getChatTypeLabel(chat) === 'Private'"
+              (click)="chat.id !== chatId ? switchToChat(chat) : null"
+              class="chat-tab">
+              <ion-avatar>
+                <!-- Enhanced chat type icon (Requirement 2.4) -->
+                <ion-icon
+                  [name]="getChatTypeIconForChat(chat)"
+                  [color]="getChatTypeColorForChat(chat)">
+                </ion-icon>
+              </ion-avatar>
+              <ion-label>{{ chat.name }}</ion-label>
+              <!-- Enhanced chat type label (Requirement 2.4) -->
+              <ion-chip
+                class="chat-type-label"
+                [color]="getChatTypeColorForChat(chat)"
+                size="small"
+                outline="true">
+                <ion-label>{{ getChatTypeLabel(chat) }}</ion-label>
+              </ion-chip>
+              <!-- Visual indicators -->
+              <div class="chat-indicators">
+                <!-- Favorite indicator -->
+                @if (isChatFavoriteSync(chat.id)) {
+                  <ion-icon
+                    name="heart"
+                    class="favorite-indicator"
+                    title="Favorite chat">
+                  </ion-icon>
+                }
+                <!-- Pinned indicator -->
+                @if (isChatPinnedSync(chat.id)) {
+                  <ion-icon
+                    name="pin"
+                    class="pinned-indicator"
+                    title="Pinned chat">
+                  </ion-icon>
+                }
+              </div>
+              @if (chat.unreadCount > 0) {
+                <ion-badge color="danger">{{ chat.unreadCount }}</ion-badge>
+              }
+              <!-- Favorite button -->
+              <ion-button
+                fill="clear"
+                size="small"
+                (click)="toggleChatFavorite(chat.id, $event)"
+                class="favorite-chat-button">
+                <ion-icon
+                  [name]="isChatFavoriteSync(chat.id) ? 'heart' : 'heart-outline'"
+                  slot="icon-only">
+                </ion-icon>
+              </ion-button>
+              <!-- Pin/Unpin button -->
+              <ion-button
+                fill="clear"
+                size="small"
+                (click)="toggleChatPin(chat.id, $event)"
+                class="pin-chat-button">
+                <ion-icon
+                  [name]="isChatPinnedSync(chat.id) ? 'pin' : 'pin-outline'"
+                  slot="icon-only">
+                </ion-icon>
+              </ion-button>
+              <!-- Delete button for user-created chats -->
+              @if (canDeleteChat(chat.id)) {
+                <ion-button
+                  fill="clear"
+                  size="small"
+                  (click)="confirmDeleteChat(chat.id, chat.name); $event.stopPropagation()"
+                  class="delete-chat-button">
+                  <ion-icon name="trash" slot="icon-only" color="danger"></ion-icon>
+                </ion-button>
+              }
+            </ion-chip>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  @if (showHeader) {
+    <ion-card-header>
+      <ion-card-title class="chat-header">
+        <div class="header-content">
+          <div class="chat-title-section">
+            <span>{{ currentChatName || studioName + ' Chat' }}</span>
+            @if (isMuted) {
+              <ion-icon name="notifications-off" color="medium" class="muted-indicator"></ion-icon>
+            }
+          </div>
+          <div class="header-actions">
+            @if (unreadCount > 0) {
+              <ion-badge color="primary">{{ unreadCount }}</ion-badge>
+            }
+            @if (unreadCount > 0) {
+              <ion-button
+                fill="clear"
+                size="small"
+                (click)="markAllAsRead()">
+                <ion-icon name="checkmark-done" slot="start"></ion-icon>
+                Mark all read
+              </ion-button>
+            }
+            <!-- Chat Menu Button -->
+            <ion-button
+              fill="clear"
+              size="small"
+              (click)="onMenuClick($event)"
+              id="chat-menu-trigger">
+              <ion-icon name="ellipsis-vertical" slot="icon-only"></ion-icon>
+            </ion-button>
+          </div>
+        </div>
+      </ion-card-title>
+    </ion-card-header>
+  }
 
   <ion-card-content class="chat-content">
     <!-- Enhanced Access Control and Invitation UI (Requirements 3.3 & 3.4) -->
-    <div *ngIf="showInvitationUI && currentChatInvitation" class="invitation-section">
-      <ion-card class="invitation-card">
-        <ion-card-header>
-          <ion-card-title>
-            <ion-icon name="mail" color="primary"></ion-icon>
-            Private Chat Invitation
-          </ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <div class="invitation-details">
-            <p><strong>You've been invited to join this private chat.</strong></p>
-            <p *ngIf="currentChatInvitation.message" class="invitation-message">
-              <strong>Message:</strong> {{ currentChatInvitation.message }}
-            </p>
-            <div class="invitation-meta">
-              <p><strong>Invited by:</strong> {{ currentChatInvitation.invitedBy }}</p>
-              <p><strong>Invited on:</strong> {{ formatTime(currentChatInvitation.invitedAt) }}</p>
-              <p *ngIf="currentChatInvitation.expiresAt" class="expiration-info">
-                <strong>Expires:</strong> {{ formatTime(currentChatInvitation.expiresAt) }}
-              </p>
+    @if (showInvitationUI && currentChatInvitation) {
+      <div class="invitation-section">
+        <ion-card class="invitation-card">
+          <ion-card-header>
+            <ion-card-title>
+              <ion-icon name="mail" color="primary"></ion-icon>
+              Private Chat Invitation
+            </ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <div class="invitation-details">
+              <p><strong>You've been invited to join this private chat.</strong></p>
+              @if (currentChatInvitation.message) {
+                <p class="invitation-message">
+                  <strong>Message:</strong> {{ currentChatInvitation.message }}
+                </p>
+              }
+              <div class="invitation-meta">
+                <p><strong>Invited by:</strong> {{ currentChatInvitation.invitedBy }}</p>
+                <p><strong>Invited on:</strong> {{ formatTime(currentChatInvitation.invitedAt) }}</p>
+                @if (currentChatInvitation.expiresAt) {
+                  <p class="expiration-info">
+                    <strong>Expires:</strong> {{ formatTime(currentChatInvitation.expiresAt) }}
+                  </p>
+                }
+              </div>
             </div>
-          </div>
-          <div class="invitation-actions">
-            <ion-button 
-              fill="solid" 
-              color="success"
-              (click)="acceptChatInvitation(currentChatInvitation.id)">
-              <ion-icon name="checkmark" slot="start"></ion-icon>
-              Accept Invitation
-            </ion-button>
-            <ion-button 
-              fill="outline" 
-              color="medium"
-              (click)="declineChatInvitation(currentChatInvitation.id)">
-              <ion-icon name="close" slot="start"></ion-icon>
-              Decline
-            </ion-button>
-          </div>
-        </ion-card-content>
-      </ion-card>
-    </div>
+            <div class="invitation-actions">
+              <ion-button
+                fill="solid"
+                color="success"
+                (click)="acceptChatInvitation(currentChatInvitation.id)">
+                <ion-icon name="checkmark" slot="start"></ion-icon>
+                Accept Invitation
+              </ion-button>
+              <ion-button
+                fill="outline"
+                color="medium"
+                (click)="declineChatInvitation(currentChatInvitation.id)">
+                <ion-icon name="close" slot="start"></ion-icon>
+                Decline
+              </ion-button>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    }
 
     <!-- Global invitation notifications (Requirement 3.3) -->
-    <div *ngIf="invitationNotifications.length > 0 && !showInvitationUI" class="global-invitations-section">
-      <ion-card class="notifications-card">
-        <ion-card-header>
-          <ion-card-title>
-            <ion-icon name="notifications" color="primary"></ion-icon>
-            Chat Invitations ({{ invitationNotifications.length }})
-          </ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <p>You have {{ invitationNotifications.length }} pending chat invitation(s).</p>
-          <ion-button 
-            fill="outline" 
-            size="small"
-            (click)="showInvitationUI = true">
-            <ion-icon name="eye" slot="start"></ion-icon>
-            View Invitations
-          </ion-button>
-        </ion-card-content>
-      </ion-card>
-    </div>
+    @if (invitationNotifications.length > 0 && !showInvitationUI) {
+      <div class="global-invitations-section">
+        <ion-card class="notifications-card">
+          <ion-card-header>
+            <ion-card-title>
+              <ion-icon name="notifications" color="primary"></ion-icon>
+              Chat Invitations ({{ invitationNotifications.length }})
+            </ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <p>You have {{ invitationNotifications.length }} pending chat invitation(s).</p>
+            <ion-button
+              fill="outline"
+              size="small"
+              (click)="showInvitationUI = true">
+              <ion-icon name="eye" slot="start"></ion-icon>
+              View Invitations
+            </ion-button>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    }
 
     <!-- Access Error Display -->
-    <div *ngIf="accessError && !showInvitationUI" class="access-error-section">
-      <ion-card class="error-card">
-        <ion-card-content>
-          <div class="error-content">
-            <ion-icon name="lock-closed" color="warning"></ion-icon>
-            <h3>Access Restricted</h3>
-            <p>{{ accessError }}</p>
-            <ion-button 
-              fill="clear" 
-              size="small"
-              (click)="retryInitialization()">
-              <ion-icon name="refresh" slot="start"></ion-icon>
-              Retry
-            </ion-button>
-          </div>
-        </ion-card-content>
-      </ion-card>
-    </div>
+    @if (accessError && !showInvitationUI) {
+      <div class="access-error-section">
+        <ion-card class="error-card">
+          <ion-card-content>
+            <div class="error-content">
+              <ion-icon name="lock-closed" color="warning"></ion-icon>
+              <h3>Access Restricted</h3>
+              <p>{{ accessError }}</p>
+              <ion-button
+                fill="clear"
+                size="small"
+                (click)="retryInitialization()">
+                <ion-icon name="refresh" slot="start"></ion-icon>
+                Retry
+              </ion-button>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    }
 
     <div class="messages-container" #messagesContainer [style.max-height]="maxHeight">
       <!-- Infinite Scroll for loading older messages -->
-      <ion-infinite-scroll 
-        threshold="100px" 
-        position="top"
-        (ionInfinite)="onLoadMore($event)"
-        *ngIf="!compact && hasReadAccess">
-        <ion-infinite-scroll-content
-          loadingSpinner="bubbles"
-          loadingText="Loading older messages...">
-        </ion-infinite-scroll-content>
-      </ion-infinite-scroll>
+      @if (!compact && hasReadAccess) {
+        <ion-infinite-scroll
+          threshold="100px"
+          position="top"
+          (ionInfinite)="onLoadMore($event)"
+          >
+          <ion-infinite-scroll-content
+            loadingSpinner="bubbles"
+            loadingText="Loading older messages...">
+          </ion-infinite-scroll-content>
+        </ion-infinite-scroll>
+      }
 
-      <div class="messages-list" *ngIf="hasReadAccess && !accessError">
-        <div 
-          *ngFor="let message of messagesToDisplay" 
-          class="message-item"
-          [class.own-message]="message.isOwn"
-          [class.unread]="!message.isRead && !message.isOwn"
-          (click)="onMessageClick(message)">
-          
-          <div class="message-content">
-            <div class="message-header" *ngIf="!message.isOwn">
-              <ion-avatar class="message-avatar">
-                <img [src]="message.senderAvatar || 'https://ionicframework.com/docs/img/demos/avatar.svg'" 
-                     [alt]="message.senderName" />
-              </ion-avatar>
-              <div class="sender-info">
-                <span class="sender-name">{{ message.senderName }}</span>
-                <span class="message-time">{{ formatTime(message.timestamp) }}</span>
+      @if (hasReadAccess && !accessError) {
+        <div class="messages-list">
+          @for (message of messagesToDisplay; track message) {
+            <div
+              class="message-item"
+              [class.own-message]="message.isOwn"
+              [class.unread]="!message.isRead && !message.isOwn"
+              (click)="onMessageClick(message)">
+              <div class="message-content">
+                @if (!message.isOwn) {
+                  <div class="message-header">
+                    <ion-avatar class="message-avatar">
+                      <img [src]="message.senderAvatar || 'https://ionicframework.com/docs/img/demos/avatar.svg'"
+                        [alt]="message.senderName" />
+                    </ion-avatar>
+                    <div class="sender-info">
+                      <span class="sender-name">{{ message.senderName }}</span>
+                      <span class="message-time">{{ formatTime(message.timestamp) }}</span>
+                    </div>
+                  </div>
+                }
+                <div class="message-bubble" [class.own-bubble]="message.isOwn">
+                  <p class="message-text">{{ message.message }}</p>
+                  @if (message.isOwn) {
+                    <div class="message-meta">
+                      <span class="message-time">{{ formatTime(message.timestamp) }}</span>
+                      <ion-icon
+                        [name]="message.isRead ? 'checkmark-done' : 'checkmark'"
+                        class="read-status"
+                        [class.read]="message.isRead">
+                      </ion-icon>
+                    </div>
+                  }
+                </div>
               </div>
             </div>
-            
-            <div class="message-bubble" [class.own-bubble]="message.isOwn">
-              <p class="message-text">{{ message.message }}</p>
-              <div class="message-meta" *ngIf="message.isOwn">
-                <span class="message-time">{{ formatTime(message.timestamp) }}</span>
-                <ion-icon 
-                  [name]="message.isRead ? 'checkmark-done' : 'checkmark'" 
-                  class="read-status"
-                  [class.read]="message.isRead">
-                </ion-icon>
-              </div>
+          }
+          <!-- Show more indicator in compact mode -->
+          @if (compact && displayedMessages.length > 3) {
+            <div class="more-messages">
+              <ion-chip color="medium" outline="true">
+                <ion-label>{{ displayedMessages.length - 3 }} more messages</ion-label>
+              </ion-chip>
             </div>
-          </div>
+          }
         </div>
+      }
 
-        <!-- Show more indicator in compact mode -->
-        <div *ngIf="compact && displayedMessages.length > 3" class="more-messages">
-          <ion-chip color="medium" outline="true">
-            <ion-label>{{ displayedMessages.length - 3 }} more messages</ion-label>
-          </ion-chip>
-        </div>
-      </div>
-      
       <!-- No access message -->
-      <div *ngIf="!hasReadAccess || accessError" class="no-access-message">
-        <ion-text color="medium">
-          <p>{{ accessError || 'Select a chat to start messaging' }}</p>
-        </ion-text>
-      </div>
+      @if (!hasReadAccess || accessError) {
+        <div class="no-access-message">
+          <ion-text color="medium">
+            <p>{{ accessError || 'Select a chat to start messaging' }}</p>
+          </ion-text>
+        </div>
+      }
     </div>
 
     <!-- Message Input -->
@@ -378,8 +407,8 @@
         [disabled]="isMessageInputDisabled || !hasWriteAccess"
         (keydown)="onKeyDown($event)">
       </ion-textarea>
-      <ion-button 
-        (click)="onSendMessage()" 
+      <ion-button
+        (click)="onSendMessage()"
         [disabled]="!canSendMessage || !hasWriteAccess"
         fill="clear"
         class="send-button"
@@ -389,209 +418,234 @@
     </div>
 
     <!-- Access status message for message input -->
-    <div *ngIf="!hasWriteAccess && hasReadAccess && !accessError" class="access-status-message">
-      <ion-chip color="warning" outline="true">
-        <ion-icon name="eye" slot="start"></ion-icon>
-        <ion-label>Read-only access</ion-label>
-      </ion-chip>
-    </div>
+    @if (!hasWriteAccess && hasReadAccess && !accessError) {
+      <div class="access-status-message">
+        <ion-chip color="warning" outline="true">
+          <ion-icon name="eye" slot="start"></ion-icon>
+          <ion-label>Read-only access</ion-label>
+        </ion-chip>
+      </div>
+    }
 
     <!-- Chat status messages -->
-    <div *ngIf="!chatId && studioId" class="chat-status-messages">
-      <!-- Pending Invitations UI -->
-      <div *ngIf="showInvitationUI && pendingInvitations.length > 0" class="status-message pending-invitations">
-        <div class="status-content">
-          <div class="status-header">
-            <span class="status-icon">📨</span>
-            <strong>Chat Invitations</strong>
-          </div>
-          <p>You have {{ pendingInvitations.length }} pending chat invitation(s)</p>
-          
-          <div class="invitations-list">
-            <div *ngFor="let invitation of pendingInvitations" class="invitation-item">
-              <div class="invitation-info">
-                <h4>Chat Invitation</h4>
-                <p class="invitation-message">{{ getInvitationMessage(invitation) }}</p>
-                <div class="invitation-meta">
-                  <span class="invited-by">From: {{ invitation.invitedBy }}</span>
-                  <span class="invited-at">{{ formatTime(invitation.invitedAt) }}</span>
-                  <span *ngIf="invitation.expiresAt" class="expires-at" 
-                        [class.expired]="isInvitationExpired(invitation)">
-                    {{ isInvitationExpired(invitation) ? 'Expired' : 'Expires' }}: {{ formatTime(invitation.expiresAt) }}
-                  </span>
-                </div>
+    @if (!chatId && studioId) {
+      <div class="chat-status-messages">
+        <!-- Pending Invitations UI -->
+        @if (showInvitationUI && pendingInvitations.length > 0) {
+          <div class="status-message pending-invitations">
+            <div class="status-content">
+              <div class="status-header">
+                <span class="status-icon">📨</span>
+                <strong>Chat Invitations</strong>
               </div>
-              
-              <div class="invitation-actions" *ngIf="!isInvitationExpired(invitation)">
-                <ion-button 
-                  size="small" 
-                  fill="solid" 
-                  color="success"
-                  (click)="acceptInvitation(invitation.id)">
-                  Accept
-                </ion-button>
-                <ion-button 
-                  size="small" 
-                  fill="outline" 
-                  color="medium"
-                  (click)="declineInvitation(invitation.id)">
-                  Decline
-                </ion-button>
-              </div>
-              
-              <div class="invitation-expired" *ngIf="isInvitationExpired(invitation)">
-                <ion-chip color="danger" outline="true">
-                  <ion-label>Expired</ion-label>
-                </ion-chip>
+              <p>You have {{ pendingInvitations.length }} pending chat invitation(s)</p>
+              <div class="invitations-list">
+                @for (invitation of pendingInvitations; track invitation) {
+                  <div class="invitation-item">
+                    <div class="invitation-info">
+                      <h4>Chat Invitation</h4>
+                      <p class="invitation-message">{{ getInvitationMessage(invitation) }}</p>
+                      <div class="invitation-meta">
+                        <span class="invited-by">From: {{ invitation.invitedBy }}</span>
+                        <span class="invited-at">{{ formatTime(invitation.invitedAt) }}</span>
+                        @if (invitation.expiresAt) {
+                          <span class="expires-at"
+                            [class.expired]="isInvitationExpired(invitation)">
+                            {{ isInvitationExpired(invitation) ? 'Expired' : 'Expires' }}: {{ formatTime(invitation.expiresAt) }}
+                          </span>
+                        }
+                      </div>
+                    </div>
+                    @if (!isInvitationExpired(invitation)) {
+                      <div class="invitation-actions">
+                        <ion-button
+                          size="small"
+                          fill="solid"
+                          color="success"
+                          (click)="acceptInvitation(invitation.id)">
+                          Accept
+                        </ion-button>
+                        <ion-button
+                          size="small"
+                          fill="outline"
+                          color="medium"
+                          (click)="declineInvitation(invitation.id)">
+                          Decline
+                        </ion-button>
+                      </div>
+                    }
+                    @if (isInvitationExpired(invitation)) {
+                      <div class="invitation-expired">
+                        <ion-chip color="danger" outline="true">
+                          <ion-label>Expired</ion-label>
+                        </ion-chip>
+                      </div>
+                    }
+                  </div>
+                }
               </div>
             </div>
           </div>
-        </div>
+        }
+        <!-- Access Error Message -->
+        @if (accessError && !showInvitationUI) {
+          <div class="status-message access-error">
+            <div class="status-content">
+              <div class="status-header">
+                <span class="status-icon">🔒</span>
+                <strong>Access Denied</strong>
+              </div>
+              <p>{{ accessError }}</p>
+              <div class="status-actions">
+                <ion-button size="small" fill="clear" (click)="retryInitialization()">
+                  Retry
+                </ion-button>
+              </div>
+            </div>
+          </div>
+        }
+        @if (currentChatName === 'Authentication Required') {
+          <div class="status-message auth-required">
+            <div class="status-content">
+              <div class="status-header">
+                <span class="status-icon">🔐</span>
+                <strong>Authentication Required</strong>
+              </div>
+              <p>You need to be logged in to access chat features.</p>
+              <div class="status-actions">
+                <ion-button size="small" fill="solid" color="primary" routerLink="/login">
+                  Sign In
+                </ion-button>
+                <ion-button size="small" fill="clear" (click)="retryInitialization()">
+                  Retry
+                </ion-button>
+              </div>
+            </div>
+          </div>
+        }
+        @if (currentChatName === 'Chat Unavailable') {
+          <div class="status-message chat-unavailable">
+            <div class="status-content">
+              <div class="status-header">
+                <span class="status-icon">💬</span>
+                <strong>Chat Unavailable</strong>
+              </div>
+              <p>Unable to connect to chat database. This usually means you need to sign in first.</p>
+              <div class="status-actions">
+                <ion-button size="small" fill="solid" color="primary" routerLink="/login">
+                  Sign In
+                </ion-button>
+                <ion-button size="small" fill="clear" (click)="retryInitialization()">
+                  Retry
+                </ion-button>
+              </div>
+            </div>
+          </div>
+        }
+        @if (currentChatName === 'Connection Error') {
+          <div class="status-message connection-error">
+            <div class="status-content">
+              <div class="status-header">
+                <span class="status-icon">🌐</span>
+                <strong>Connection Error</strong>
+              </div>
+              <p>Network connectivity issue. Please check your internet connection.</p>
+              <div class="status-actions">
+                <ion-button size="small" fill="clear" (click)="retryInitialization()">
+                  Retry
+                </ion-button>
+              </div>
+            </div>
+          </div>
+        }
+        @if (currentChatName === 'Service Unavailable') {
+          <div class="status-message service-unavailable">
+            <div class="status-content">
+              <div class="status-header">
+                <span class="status-icon">⚠️</span>
+                <strong>Service Unavailable</strong>
+              </div>
+              <p>Chat service is temporarily unavailable. Please try again later.</p>
+              <div class="status-actions">
+                <ion-button size="small" fill="clear" (click)="retryInitialization()">
+                  Retry
+                </ion-button>
+              </div>
+            </div>
+          </div>
+        }
+        @if (currentChatName !== 'Chat Unavailable' && currentChatName !== 'Authentication Required' && currentChatName !== 'Connection Error' && currentChatName !== 'Service Unavailable' && currentChatName !== 'Pending Invitations' && !accessError && !showInvitationUI) {
+          <div class="status-message loading">
+            <div class="status-content">
+              <div class="status-header">
+                <span class="status-icon">⏳</span>
+                <strong>Loading chat...</strong>
+              </div>
+              <p>Please wait while we set up your chat.</p>
+              <div class="status-actions">
+                <ion-button size="small" fill="clear" (click)="retryInitialization()">
+                  Retry
+                </ion-button>
+                <ion-button size="small" fill="clear" (click)="debugServiceStatus()">
+                  Debug
+                </ion-button>
+              </div>
+            </div>
+          </div>
+        }
       </div>
-      
-      <!-- Access Error Message -->
-      <div *ngIf="accessError && !showInvitationUI" class="status-message access-error">
-        <div class="status-content">
-          <div class="status-header">
-            <span class="status-icon">🔒</span>
-            <strong>Access Denied</strong>
-          </div>
-          <p>{{ accessError }}</p>
-          <div class="status-actions">
-            <ion-button size="small" fill="clear" (click)="retryInitialization()">
-              Retry
-            </ion-button>
-          </div>
-        </div>
-      </div>
-      
-      <div *ngIf="currentChatName === 'Authentication Required'" class="status-message auth-required">
-        <div class="status-content">
-          <div class="status-header">
-            <span class="status-icon">🔐</span>
-            <strong>Authentication Required</strong>
-          </div>
-          <p>You need to be logged in to access chat features.</p>
-          <div class="status-actions">
-            <ion-button size="small" fill="solid" color="primary" routerLink="/login">
-              Sign In
-            </ion-button>
-            <ion-button size="small" fill="clear" (click)="retryInitialization()">
-              Retry
-            </ion-button>
-          </div>
-        </div>
-      </div>
-      
-      <div *ngIf="currentChatName === 'Chat Unavailable'" class="status-message chat-unavailable">
-        <div class="status-content">
-          <div class="status-header">
-            <span class="status-icon">💬</span>
-            <strong>Chat Unavailable</strong>
-          </div>
-          <p>Unable to connect to chat database. This usually means you need to sign in first.</p>
-          <div class="status-actions">
-            <ion-button size="small" fill="solid" color="primary" routerLink="/login">
-              Sign In
-            </ion-button>
-            <ion-button size="small" fill="clear" (click)="retryInitialization()">
-              Retry
-            </ion-button>
-          </div>
-        </div>
-      </div>
-      
-      <div *ngIf="currentChatName === 'Connection Error'" class="status-message connection-error">
-        <div class="status-content">
-          <div class="status-header">
-            <span class="status-icon">🌐</span>
-            <strong>Connection Error</strong>
-          </div>
-          <p>Network connectivity issue. Please check your internet connection.</p>
-          <div class="status-actions">
-            <ion-button size="small" fill="clear" (click)="retryInitialization()">
-              Retry
-            </ion-button>
-          </div>
-        </div>
-      </div>
-      
-      <div *ngIf="currentChatName === 'Service Unavailable'" class="status-message service-unavailable">
-        <div class="status-content">
-          <div class="status-header">
-            <span class="status-icon">⚠️</span>
-            <strong>Service Unavailable</strong>
-          </div>
-          <p>Chat service is temporarily unavailable. Please try again later.</p>
-          <div class="status-actions">
-            <ion-button size="small" fill="clear" (click)="retryInitialization()">
-              Retry
-            </ion-button>
-          </div>
-        </div>
-      </div>
-      
-      <div *ngIf="currentChatName !== 'Chat Unavailable' && currentChatName !== 'Authentication Required' && currentChatName !== 'Connection Error' && currentChatName !== 'Service Unavailable' && currentChatName !== 'Pending Invitations' && !accessError && !showInvitationUI" class="status-message loading">
-        <div class="status-content">
-          <div class="status-header">
-            <span class="status-icon">⏳</span>
-            <strong>Loading chat...</strong>
-          </div>
-          <p>Please wait while we set up your chat.</p>
-          <div class="status-actions">
-            <ion-button size="small" fill="clear" (click)="retryInitialization()">
-              Retry
-            </ion-button>
-            <ion-button size="small" fill="clear" (click)="debugServiceStatus()">
-              Debug
-            </ion-button>
-          </div>
-        </div>
-      </div>
-    </div>
+    }
 
     <!-- Fallback message when no studio ID -->
-    <div *ngIf="!studioId" class="chat-status-messages">
-      <div class="status-message loading">
-        <div class="status-content">
-          <div class="status-header">
-            <span class="status-icon">📋</span>
-            <strong>Chat Not Available</strong>
+    @if (!studioId) {
+      <div class="chat-status-messages">
+        <div class="status-message loading">
+          <div class="status-content">
+            <div class="status-header">
+              <span class="status-icon">📋</span>
+              <strong>Chat Not Available</strong>
+            </div>
+            <p>Chat is not available for this page or content is still loading.</p>
           </div>
-          <p>Chat is not available for this page or content is still loading.</p>
         </div>
       </div>
-    </div>
+    }
 
   </ion-card-content>
 
   <!-- Chat Menu Popover -->
-  <ion-popover 
-    trigger="chat-menu-trigger" 
+  <ion-popover
+    trigger="chat-menu-trigger"
     [isOpen]="isMenuOpen"
     (didDismiss)="closeMenu()"
     side="bottom"
     alignment="end">
     <ng-template>
       <ion-list>
-        <ion-item button (click)="onChatInfo()" *ngIf="!compact">
-          <ion-icon name="information-circle" slot="start" color="primary"></ion-icon>
-          <ion-label>Chat Info</ion-label>
-        </ion-item>
-        
-        <ion-item button (click)="onMuteToggle()" *ngIf="canMute">
-          <ion-icon 
-            [name]="isMuted ? 'notifications' : 'notifications-off'" 
-            slot="start" 
-            [color]="isMuted ? 'success' : 'warning'">
-          </ion-icon>
-          <ion-label>{{ isMuted ? 'Unmute Chat' : 'Mute Chat' }}</ion-label>
-        </ion-item>
-        
-        <ion-item button (click)="onLeaveChat()" *ngIf="canLeave" class="leave-chat-item">
-          <ion-icon name="exit" slot="start" color="danger"></ion-icon>
-          <ion-label color="danger">Leave Chat</ion-label>
-        </ion-item>
+        @if (!compact) {
+          <ion-item button (click)="onChatInfo()">
+            <ion-icon name="information-circle" slot="start" color="primary"></ion-icon>
+            <ion-label>Chat Info</ion-label>
+          </ion-item>
+        }
+
+        @if (canMute) {
+          <ion-item button (click)="onMuteToggle()">
+            <ion-icon
+              [name]="isMuted ? 'notifications' : 'notifications-off'"
+              slot="start"
+              [color]="isMuted ? 'success' : 'warning'">
+            </ion-icon>
+            <ion-label>{{ isMuted ? 'Unmute Chat' : 'Mute Chat' }}</ion-label>
+          </ion-item>
+        }
+
+        @if (canLeave) {
+          <ion-item button (click)="onLeaveChat()" class="leave-chat-item">
+            <ion-icon name="exit" slot="start" color="danger"></ion-icon>
+            <ion-label color="danger">Leave Chat</ion-label>
+          </ion-item>
+        }
       </ion-list>
     </ng-template>
   </ion-popover>
@@ -617,28 +671,28 @@
           </ion-buttons>
         </ion-toolbar>
       </ion-header>
-      
+
       <ion-content class="ion-padding">
         <div class="create-chat-form">
           <ion-item>
             <ion-label position="stacked">Chat Name *</ion-label>
-            <ion-input 
-              [(ngModel)]="newChatName" 
+            <ion-input
+              [(ngModel)]="newChatName"
               placeholder="Enter chat name"
               maxlength="50">
             </ion-input>
           </ion-item>
-          
+
           <ion-item>
             <ion-label position="stacked">Description (Optional)</ion-label>
-            <ion-textarea 
-              [(ngModel)]="newChatDescription" 
+            <ion-textarea
+              [(ngModel)]="newChatDescription"
               placeholder="Enter chat description"
               rows="3"
               maxlength="200">
             </ion-textarea>
           </ion-item>
-          
+
           <!-- Requirement 4.1: Allow selection between public and private types -->
           <ion-item>
             <ion-label position="stacked">Access Level *</ion-label>
@@ -657,7 +711,7 @@
               </ion-select-option>
             </ion-select>
           </ion-item>
-          
+
           <ion-item>
             <ion-label position="stacked">Chat Type</ion-label>
             <ion-select [(ngModel)]="newChatType" placeholder="Select chat type">
@@ -665,101 +719,112 @@
               <ion-select-option value="private">Private Chat</ion-select-option>
             </ion-select>
           </ion-item>
-          
+
           <!-- Requirement 4.3: Initial member selection for private chats -->
-          <div *ngIf="newChatAccessLevel === 'private'" class="initial-members-section">
-            <ion-item>
-              <ion-label position="stacked">
-                <ion-icon name="at-outline"></ion-icon>
-                Add Members by Handle *
-              </ion-label>
-            </ion-item>
-            
-            <!-- User Search -->
-            <ion-searchbar
-              [(ngModel)]="newChatMemberSearchTerm"
-              (ionInput)="searchUsersForNewChat()"
-              placeholder="Search by @handle or name"
-              debounce="300">
-            </ion-searchbar>
-            
-            <!-- Search Results -->
-            <div *ngIf="newChatMemberSearchResults.length > 0" class="member-search-results">
-              <ion-list>
-                <ion-item 
-                  *ngFor="let user of newChatMemberSearchResults" 
-                  button
-                  (click)="addInitialMemberByUser(user)">
-                  <ion-avatar slot="start">
-                    <img [src]="user.avatar || 'https://ionicframework.com/docs/img/demos/avatar.svg'" />
-                  </ion-avatar>
-                  <ion-label>
-                    <h3>{{ user.name }}</h3>
-                    <p>@{{ user.handle }}</p>
-                  </ion-label>
-                  <ion-icon name="add-circle" slot="end" color="primary"></ion-icon>
-                </ion-item>
-              </ion-list>
-            </div>
-            
-            <!-- Manual Handle Input -->
-            <div class="member-input-container">
-              <ion-input 
-                [(ngModel)]="newChatMemberInput" 
-                placeholder="Or enter @handle directly"
-                (keyup.enter)="addInitialMember()">
-              </ion-input>
-              <ion-button 
-                fill="clear" 
-                size="small"
-                (click)="addInitialMember()"
-                [disabled]="!newChatMemberInput.trim()">
-                <ion-icon name="add" slot="icon-only"></ion-icon>
-              </ion-button>
-            </div>
-            
-            <!-- Display added members -->
-            <div *ngIf="newChatInitialMembers.length > 0" class="initial-members-list">
-              <ion-label>
-                <h3>Members to Invite ({{ newChatInitialMembers.length }})</h3>
-              </ion-label>
-              <div class="member-chips">
-                <ion-chip 
-                  *ngFor="let member of newChatInitialMembers" 
-                  color="primary">
-                  <ion-avatar *ngIf="member.avatar">
-                    <img [src]="member.avatar" />
-                  </ion-avatar>
-                  <ion-label>{{ member.displayName || member.handle }}</ion-label>
-                  <ion-icon name="close" (click)="removeInitialMember(member.handle)"></ion-icon>
-                </ion-chip>
+          @if (newChatAccessLevel === 'private') {
+            <div class="initial-members-section">
+              <ion-item>
+                <ion-label position="stacked">
+                  <ion-icon name="at-outline"></ion-icon>
+                  Add Members by Handle *
+                </ion-label>
+              </ion-item>
+              <!-- User Search -->
+              <ion-searchbar
+                [(ngModel)]="newChatMemberSearchTerm"
+                (ionInput)="searchUsersForNewChat()"
+                placeholder="Search by @handle or name"
+                debounce="300">
+              </ion-searchbar>
+              <!-- Search Results -->
+              @if (newChatMemberSearchResults.length > 0) {
+                <div class="member-search-results">
+                  <ion-list>
+                    @for (user of newChatMemberSearchResults; track user) {
+                      <ion-item
+                        button
+                        (click)="addInitialMemberByUser(user)">
+                        <ion-avatar slot="start">
+                          <img [src]="user.avatar || 'https://ionicframework.com/docs/img/demos/avatar.svg'" />
+                        </ion-avatar>
+                        <ion-label>
+                          <h3>{{ user.name }}</h3>
+                          <p>@{{ user.handle }}</p>
+                        </ion-label>
+                        <ion-icon name="add-circle" slot="end" color="primary"></ion-icon>
+                      </ion-item>
+                    }
+                  </ion-list>
+                </div>
+              }
+              <!-- Manual Handle Input -->
+              <div class="member-input-container">
+                <ion-input
+                  [(ngModel)]="newChatMemberInput"
+                  placeholder="Or enter @handle directly"
+                  (keyup.enter)="addInitialMember()">
+                </ion-input>
+                <ion-button
+                  fill="clear"
+                  size="small"
+                  (click)="addInitialMember()"
+                  [disabled]="!newChatMemberInput.trim()">
+                  <ion-icon name="add" slot="icon-only"></ion-icon>
+                </ion-button>
               </div>
+              <!-- Display added members -->
+              @if (newChatInitialMembers.length > 0) {
+                <div class="initial-members-list">
+                  <ion-label>
+                    <h3>Members to Invite ({{ newChatInitialMembers.length }})</h3>
+                  </ion-label>
+                  <div class="member-chips">
+                    @for (member of newChatInitialMembers; track member) {
+                      <ion-chip
+                        color="primary">
+                        @if (member.avatar) {
+                          <ion-avatar>
+                            <img [src]="member.avatar" />
+                          </ion-avatar>
+                        }
+                        <ion-label>{{ member.displayName || member.handle }}</ion-label>
+                        <ion-icon name="close" (click)="removeInitialMember(member.handle)"></ion-icon>
+                      </ion-chip>
+                    }
+                  </div>
+                </div>
+              }
+              @if (newChatInitialMembers.length === 0) {
+                <ion-item class="requirement-note">
+                  <ion-label color="medium">
+                    <p><ion-icon name="information-circle"></ion-icon> Private chats require at least one initial member</p>
+                  </ion-label>
+                </ion-item>
+              }
             </div>
-            
-            <ion-item *ngIf="newChatInitialMembers.length === 0" class="requirement-note">
-              <ion-label color="medium">
-                <p><ion-icon name="information-circle"></ion-icon> Private chats require at least one initial member</p>
-              </ion-label>
-            </ion-item>
-          </div>
-          
+          }
+
           <!-- Access level explanation -->
           <ion-item class="access-explanation">
             <ion-label color="medium">
-              <div *ngIf="newChatAccessLevel === 'public'">
-                <ion-icon name="eye"></ion-icon>
-                <strong>Public Chat:</strong> All studio visitors can see and join this chat
-              </div>
-              <div *ngIf="newChatAccessLevel === 'private'">
-                <ion-icon name="lock-closed"></ion-icon>
-                <strong>Private Chat:</strong> Only invited members can see and participate
-              </div>
+              @if (newChatAccessLevel === 'public') {
+                <div>
+                  <ion-icon name="eye"></ion-icon>
+                  <strong>Public Chat:</strong> All studio visitors can see and join this chat
+                </div>
+              }
+              @if (newChatAccessLevel === 'private') {
+                <div>
+                  <ion-icon name="lock-closed"></ion-icon>
+                  <strong>Private Chat:</strong> Only invited members can see and participate
+                </div>
+              }
             </ion-label>
           </ion-item>
-          
+
           <div class="form-buttons">
-            <ion-button 
-              expand="block" 
+            <ion-button
+              expand="block"
               (click)="createNewChat()"
               [disabled]="!newChatName.trim() || (newChatAccessLevel === 'private' && newChatInitialMembers.length === 0)">
               Create {{ newChatAccessLevel === 'private' ? 'Private' : 'Public' }} Chat
@@ -783,85 +848,94 @@
           </ion-buttons>
         </ion-toolbar>
       </ion-header>
-      
+
       <ion-content class="ion-padding">
-        <div *ngIf="chatInfoData">
-          <!-- Chat Details -->
-          <ion-card>
-            <ion-card-header>
-              <ion-card-title>{{ chatInfoData.chat.name }}</ion-card-title>
-            </ion-card-header>
-            <ion-card-content>
-              <ion-list lines="none">
-                <ion-item>
-                  <ion-label>
-                    <h3>Type</h3>
-                    <p>{{ chatInfoData.chat.type }}</p>
-                  </ion-label>
-                </ion-item>
-                <ion-item *ngIf="chatInfoData.chat.description">
-                  <ion-label>
-                    <h3>Description</h3>
-                    <p>{{ chatInfoData.chat.description }}</p>
-                  </ion-label>
-                </ion-item>
-                <ion-item>
-                  <ion-label>
-                    <h3>Created</h3>
-                    <p>{{ chatInfoData.chat.createdAt | date:'medium' }}</p>
-                  </ion-label>
-                </ion-item>
-              </ion-list>
-            </ion-card-content>
-          </ion-card>
-
-          <!-- Participants -->
-          <ion-card>
-            <ion-card-header>
-              <div style="display: flex; justify-content: space-between; align-items: center;">
-                <ion-card-title>Participants ({{ chatInfoData.participants.length }})</ion-card-title>
-                <ion-button *ngIf="chatInfoData.isOwner || hasInviteAccess" size="small" (click)="openInvitationManager()">
-                  <ion-icon name="person-add" slot="start"></ion-icon>
-                  Invite
-                </ion-button>
-              </div>
-            </ion-card-header>
-            <ion-card-content>
-              <ion-list>
-                <ion-item *ngFor="let participant of chatInfoData.participants">
-                  <ion-avatar slot="start">
-                    <img [src]="participant.userAvatar || 'https://ionicframework.com/docs/img/demos/avatar.svg'" />
-                  </ion-avatar>
-                  <ion-label>
-                    <h3>{{ participant.userName }}</h3>
-                    <p>{{ participant.role }}</p>
-                  </ion-label>
-                  <ion-button 
-                    *ngIf="chatInfoData.isOwner && participant.userId !== chatInfoData.chat.createdBy"
-                    fill="clear" 
-                    color="danger"
-                    slot="end"
-                    size="small">
-                    <ion-icon name="person-remove" slot="icon-only"></ion-icon>
+        @if (chatInfoData) {
+          <div>
+            <!-- Chat Details -->
+            <ion-card>
+              <ion-card-header>
+                <ion-card-title>{{ chatInfoData.chat.name }}</ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <ion-list lines="none">
+                  <ion-item>
+                    <ion-label>
+                      <h3>Type</h3>
+                      <p>{{ chatInfoData.chat.type }}</p>
+                    </ion-label>
+                  </ion-item>
+                  @if (chatInfoData.chat.description) {
+                    <ion-item>
+                      <ion-label>
+                        <h3>Description</h3>
+                        <p>{{ chatInfoData.chat.description }}</p>
+                      </ion-label>
+                    </ion-item>
+                  }
+                  <ion-item>
+                    <ion-label>
+                      <h3>Created</h3>
+                      <p>{{ chatInfoData.chat.createdAt | date:'medium' }}</p>
+                    </ion-label>
+                  </ion-item>
+                </ion-list>
+              </ion-card-content>
+            </ion-card>
+            <!-- Participants -->
+            <ion-card>
+              <ion-card-header>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <ion-card-title>Participants ({{ chatInfoData.participants.length }})</ion-card-title>
+                  @if (chatInfoData.isOwner || hasInviteAccess) {
+                    <ion-button size="small" (click)="openInvitationManager()">
+                      <ion-icon name="person-add" slot="start"></ion-icon>
+                      Invite
+                    </ion-button>
+                  }
+                </div>
+              </ion-card-header>
+              <ion-card-content>
+                <ion-list>
+                  @for (participant of chatInfoData.participants; track participant) {
+                    <ion-item>
+                      <ion-avatar slot="start">
+                        <img [src]="participant.userAvatar || 'https://ionicframework.com/docs/img/demos/avatar.svg'" />
+                      </ion-avatar>
+                      <ion-label>
+                        <h3>{{ participant.userName }}</h3>
+                        <p>{{ participant.role }}</p>
+                      </ion-label>
+                      @if (chatInfoData.isOwner && participant.userId !== chatInfoData.chat.createdBy) {
+                        <ion-button
+                          fill="clear"
+                          color="danger"
+                          slot="end"
+                          size="small">
+                          <ion-icon name="person-remove" slot="icon-only"></ion-icon>
+                        </ion-button>
+                      }
+                    </ion-item>
+                  }
+                </ion-list>
+              </ion-card-content>
+            </ion-card>
+            <!-- Actions -->
+            @if (chatInfoData.isOwner) {
+              <ion-card>
+                <ion-card-header>
+                  <ion-card-title>Chat Actions</ion-card-title>
+                </ion-card-header>
+                <ion-card-content>
+                  <ion-button expand="block" color="danger" (click)="confirmDeleteChat(chatInfoData.chat.id, chatInfoData.chat.name); closeChatInfo()">
+                    <ion-icon name="trash" slot="start"></ion-icon>
+                    Delete Chat
                   </ion-button>
-                </ion-item>
-              </ion-list>
-            </ion-card-content>
-          </ion-card>
-
-          <!-- Actions -->
-          <ion-card *ngIf="chatInfoData.isOwner">
-            <ion-card-header>
-              <ion-card-title>Chat Actions</ion-card-title>
-            </ion-card-header>
-            <ion-card-content>
-              <ion-button expand="block" color="danger" (click)="confirmDeleteChat(chatInfoData.chat.id, chatInfoData.chat.name); closeChatInfo()">
-                <ion-icon name="trash" slot="start"></ion-icon>
-                Delete Chat
-              </ion-button>
-            </ion-card-content>
-          </ion-card>
-        </div>
+                </ion-card-content>
+              </ion-card>
+            }
+          </div>
+        }
       </ion-content>
     </ng-template>
   </ion-modal>
@@ -875,12 +949,13 @@
   </ion-alert>
 
   <!-- Invitation Manager Modal -->
-  <app-chat-invitation-manager
-    *ngIf="chatId"
-    [chatId]="chatId"
-    [chatName]="currentChatName"
-    [isOpen]="showInvitationManagerModal"
-    (isOpenChange)="showInvitationManagerModal = $event"
-    (invitationSent)="onInvitationSent()">
-  </app-chat-invitation-manager>
+  @if (chatId) {
+    <app-chat-invitation-manager
+      [chatId]="chatId"
+      [chatName]="currentChatName"
+      [isOpen]="showInvitationManagerModal"
+      (isOpenChange)="showInvitationManagerModal = $event"
+      (invitationSent)="onInvitationSent()">
+    </app-chat-invitation-manager>
+  }
 </ion-card>

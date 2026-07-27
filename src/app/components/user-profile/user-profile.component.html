@@ -5,21 +5,23 @@
       <ion-avatar class="profile-avatar">
         <img [src]="profile.avatar" [alt]="profile.name" />
       </ion-avatar>
-      
+
       <div class="profile-info">
         <h2>{{ profile.name }}</h2>
         <p class="username">@{{ profile.handle }}</p>
-        
+
         <ion-text class="bio">
           <p>{{ profile.bio }}</p>
         </ion-text>
 
         <!-- Profile Details -->
         <div class="profile-details">
-          <div *ngIf="profile.location" class="detail-item">
-            <ion-icon name="location" color="medium"></ion-icon>
-            <span>{{ profile.location }}</span>
-          </div>
+          @if (profile.location) {
+            <div class="detail-item">
+              <ion-icon name="location" color="medium"></ion-icon>
+              <span>{{ profile.location }}</span>
+            </div>
+          }
           <div class="detail-item">
             <ion-icon name="calendar" color="medium"></ion-icon>
             <span>Joined {{ formatJoinDate(profile.joinDate) }}</span>
@@ -51,22 +53,26 @@
         </ion-grid>
 
         <!-- Tags/Interests -->
-        <div *ngIf="profile.tags && profile.tags.length > 0" class="profile-tags">
-          <ion-chip *ngFor="let tag of profile.tags" color="primary" outline="true">
-            #{{ tag }}
-          </ion-chip>
-        </div>
+        @if (profile.tags && profile.tags.length > 0) {
+          <div class="profile-tags">
+            @for (tag of profile.tags; track tag) {
+              <ion-chip color="primary" outline="true">
+                #{{ tag }}
+              </ion-chip>
+            }
+          </div>
+        }
       </div>
     </div>
 
     <!-- Action Buttons -->
     <div class="action-buttons">
-      <ion-button 
-        [fill]="profile.isFollowing ? 'outline' : 'solid'" 
+      <ion-button
+        [fill]="profile.isFollowing ? 'outline' : 'solid'"
         [color]="profile.isFollowing ? 'medium' : 'primary'"
         (click)="onFollow()">
-        <ion-icon 
-          [name]="profile.isFollowing ? 'person-remove' : 'person-add'" 
+        <ion-icon
+          [name]="profile.isFollowing ? 'person-remove' : 'person-add'"
           slot="start">
         </ion-icon>
         {{ profile.isFollowing ? 'Unfollow' : 'Follow' }}
@@ -85,17 +91,22 @@
 </ion-card>
 
 <!-- Posts Section -->
-<div *ngIf="showPosts && profile.posts.length > 0" class="posts-section">
-  <h3 class="section-title">Posts by {{ profile.name }}</h3>
-  <app-post 
-    *ngFor="let post of profile.posts; trackBy: trackByPostId" 
-    [post]="post">
-  </app-post>
-</div>
+@if (showPosts && profile.posts.length > 0) {
+  <div class="posts-section">
+    <h3 class="section-title">Posts by {{ profile.name }}</h3>
+    @for (post of profile.posts; track trackByPostId($index, post)) {
+      <app-post
+        [post]="post">
+      </app-post>
+    }
+  </div>
+}
 
 <!-- No Posts Message -->
-<div *ngIf="showPosts && profile.posts.length === 0" class="no-posts">
-  <ion-text color="medium">
-    <p>{{ profile.name }} hasn't posted anything yet.</p>
-  </ion-text>
-</div>
+@if (showPosts && profile.posts.length === 0) {
+  <div class="no-posts">
+    <ion-text color="medium">
+      <p>{{ profile.name }} hasn't posted anything yet.</p>
+    </ion-text>
+  </div>
+}

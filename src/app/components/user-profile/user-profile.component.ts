@@ -1,19 +1,26 @@
 import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { 
-  IonCard, 
-  IonCardHeader, 
-  IonAvatar, 
-  IonButton, 
+
+import {
+  IonCard,
+  IonCardHeader,
+  IonAvatar,
+  IonButton,
   IonIcon,
   IonText,
   IonChip,
   IonGrid,
   IonRow,
-  IonCol
+  IonCol,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { personAdd, personRemove, chatbubble, mail, location, calendar } from 'ionicons/icons';
+import {
+  personAdd,
+  personRemove,
+  chatbubble,
+  mail,
+  location,
+  calendar,
+} from 'ionicons/icons';
 import { PostComponent, Post } from '../post/post.component';
 
 export interface UserProfile {
@@ -39,7 +46,6 @@ export interface UserProfile {
   styleUrls: ['./user-profile.component.scss'],
   standalone: true,
   imports: [
-    CommonModule,
     IonCard,
     IonCardHeader,
     IonAvatar,
@@ -50,8 +56,8 @@ export interface UserProfile {
     IonGrid,
     IonRow,
     IonCol,
-    PostComponent
-  ]
+    PostComponent,
+  ],
 })
 export class UserProfileComponent {
   @Input() profile!: UserProfile;
@@ -76,9 +82,9 @@ export class UserProfileComponent {
 
   formatJoinDate(dateString: string): string {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'long' 
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
     });
   }
 

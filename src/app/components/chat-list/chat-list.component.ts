@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import {
@@ -25,605 +25,705 @@ import {
   IonSearchbar,
   IonSegment,
   IonSegmentButton,
-  ToastController
+  ToastController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { chatbubbles, people, time, add, person, lockClosed, globe, mail, search, funnel, close } from 'ionicons/icons';
+import {
+  chatbubbles,
+  people,
+  time,
+  add,
+  person,
+  lockClosed,
+  globe,
+  mail,
+  search,
+  funnel,
+  close,
+} from 'ionicons/icons';
 import { Subscription } from 'rxjs';
 import { ChatService } from '../../services/chat.service';
 import { ChatPersistenceService } from '../../services/chat-persistence.service';
 import { ChatListItem } from '../../models/chat.models';
-import { StudioChatOrganizer, OrganizedStudioChats } from '../../services/studio-chat-organizer.service';
+import {
+  StudioChatOrganizer,
+  OrganizedStudioChats,
+} from '../../services/studio-chat-organizer.service';
 import { ChatAccessController } from '../../services/chat-access-controller.service';
-import { AccessControlService, ChatInvitation } from '../../services/access-control.service';
+import {
+  AccessControlService,
+  ChatInvitation,
+} from '../../services/access-control.service';
 
 @Component({
   selector: 'app-chat-list',
   template: `
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Chats</ion-title>
-    <ion-button slot="end" fill="clear" (click)="toggleSearch()">
-      <ion-icon [name]="showSearch ? 'close' : 'search'" slot="icon-only"></ion-icon>
-    </ion-button>
-    <ion-button slot="end" fill="clear" (click)="createNewChat()">
-      <ion-icon name="add" slot="icon-only"></ion-icon>
-    </ion-button>
-  </ion-toolbar>
-  
-  <!-- Search and Filter Section -->
-  <ion-toolbar *ngIf="showSearch" class="search-toolbar">
-    <ion-searchbar
-      [(ngModel)]="searchQuery"
-      (ionInput)="onSearchInput($event)"
-      (ionClear)="clearSearch()"
-      placeholder="Search chats..."
-      debounce="300"
-      show-clear-button="focus">
-    </ion-searchbar>
-  </ion-toolbar>
-  
-  <ion-toolbar *ngIf="showSearch" class="filter-toolbar">
-    <ion-segment 
-      [(ngModel)]="selectedFilter" 
-      (ionChange)="onFilterChange($event)"
-      value="all">
-      <ion-segment-button value="all">
-        <ion-label>All</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="public">
-        <ion-icon name="globe"></ion-icon>
-        <ion-label>Public</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="private">
-        <ion-icon name="lockClosed"></ion-icon>
-        <ion-label>Private</ion-label>
-      </ion-segment-button>
-    </ion-segment>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content>
-  <div class="chat-list-container">
-    <!-- Loading state -->
-    <div *ngIf="isLoading" class="loading-container">
-      <ion-spinner name="crescent"></ion-spinner>
-      <p>Loading chats...</p>
-    </div>
-
-    <!-- Search Results Info -->
-    <div *ngIf="showSearch && !isLoading && (searchQuery || selectedFilter !== 'all')" class="search-info">
-      <ion-card class="search-results-card">
-        <ion-card-content>
-          <p class="search-results-text">
-            <span *ngIf="searchQuery">
-              {{ getSearchResultsCount() }} result(s) for "{{ searchQuery }}"
-            </span>
-            <span *ngIf="!searchQuery && selectedFilter !== 'all'">
-              {{ getFilterResultsCount() }} {{ selectedFilter }} chat(s)
-            </span>
-            <span *ngIf="searchQuery && selectedFilter !== 'all'">
-              in {{ selectedFilter }} chats
-            </span>
-          </p>
-          <ion-button 
-            *ngIf="searchQuery || selectedFilter !== 'all'" 
-            fill="clear" 
-            size="small" 
-            (click)="clearAllFilters()">
-            <ion-icon name="close" slot="start"></ion-icon>
-            Clear filters
-          </ion-button>
-        </ion-card-content>
-      </ion-card>
-    </div>
-
-    <!-- Empty state -->
-    <ion-card *ngIf="!isLoading && isEmpty" class="empty-state">
-      <ion-card-header>
-        <ion-card-title>
-          {{ getEmptyStateTitle() }}
-        </ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <p>{{ getEmptyStateMessage() }}</p>
-        <ion-button 
-          *ngIf="!searchQuery && selectedFilter === 'all'" 
-          expand="block" 
-          (click)="createNewChat()">
-          <ion-icon name="add" slot="start"></ion-icon>
-          Create New Chat
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Chats</ion-title>
+        <ion-button slot="end" fill="clear" (click)="toggleSearch()">
+          <ion-icon
+            [name]="showSearch ? 'close' : 'search'"
+            slot="icon-only"
+          ></ion-icon>
         </ion-button>
-        <ion-button 
-          *ngIf="searchQuery || selectedFilter !== 'all'" 
-          expand="block" 
-          fill="outline"
-          (click)="clearAllFilters()">
-          <ion-icon name="close" slot="start"></ion-icon>
-          Clear Search & Filters
+        <ion-button slot="end" fill="clear" (click)="createNewChat()">
+          <ion-icon name="add" slot="icon-only"></ion-icon>
         </ion-button>
-      </ion-card-content>
-    </ion-card>
+      </ion-toolbar>
 
-    <!-- Organized chat list -->
-    <div *ngIf="!isLoading && !isEmpty" class="organized-chats">
-      
-      <!-- Pending Invitations Section -->
-      <ion-item-group *ngIf="filteredOrganizedChats.invitationsPending.length > 0" class="invitations-section">
-        <ion-item-divider color="warning">
-          <ion-icon name="mail" slot="start"></ion-icon>
-          <ion-label>
-            <h2>Pending Invitations</h2>
-            <p>{{ filteredOrganizedChats.invitationsPending.length }} invitation(s)</p>
-          </ion-label>
-        </ion-item-divider>
-        
-        <ion-item 
-          *ngFor="let invitation of filteredOrganizedChats.invitationsPending" 
-          class="invitation-item">
-          <ion-avatar slot="start">
-            <ion-icon name="mail" color="warning"></ion-icon>
-          </ion-avatar>
-          <ion-label>
-            <h3>{{ invitation.chatName || 'Private Chat' }}</h3>
-            <p>Invited by {{ invitation.inviterName }}</p>
-            <ion-note>{{ formatTime(invitation.createdAt) }}</ion-note>
-          </ion-label>
-          <div slot="end" class="invitation-actions">
-            <ion-button 
-              size="small" 
-              fill="solid" 
-              color="success"
-              (click)="acceptInvitation(invitation)">
-              Accept
-            </ion-button>
-            <ion-button 
-              size="small" 
-              fill="outline" 
-              color="medium"
-              (click)="declineInvitation(invitation)">
-              Decline
-            </ion-button>
+      <!-- Search and Filter Section -->
+      @if (showSearch) {
+        <ion-toolbar class="search-toolbar">
+          <ion-searchbar
+            [(ngModel)]="searchQuery"
+            (ionInput)="onSearchInput($event)"
+            (ionClear)="clearSearch()"
+            placeholder="Search chats..."
+            debounce="300"
+            show-clear-button="focus"
+          >
+          </ion-searchbar>
+        </ion-toolbar>
+      }
+
+      @if (showSearch) {
+        <ion-toolbar class="filter-toolbar">
+          <ion-segment
+            [(ngModel)]="selectedFilter"
+            (ionChange)="onFilterChange($event)"
+            value="all"
+          >
+            <ion-segment-button value="all">
+              <ion-label>All</ion-label>
+            </ion-segment-button>
+            <ion-segment-button value="public">
+              <ion-icon name="globe"></ion-icon>
+              <ion-label>Public</ion-label>
+            </ion-segment-button>
+            <ion-segment-button value="private">
+              <ion-icon name="lockClosed"></ion-icon>
+              <ion-label>Private</ion-label>
+            </ion-segment-button>
+          </ion-segment>
+        </ion-toolbar>
+      }
+    </ion-header>
+
+    <ion-content>
+      <div class="chat-list-container">
+        <!-- Loading state -->
+        @if (isLoading) {
+          <div class="loading-container">
+            <ion-spinner name="crescent"></ion-spinner>
+            <p>Loading chats...</p>
           </div>
-        </ion-item>
-      </ion-item-group>
+        }
 
-      <!-- Public Chats Section -->
-      <ion-item-group *ngIf="filteredOrganizedChats.totalPublic > 0" class="public-chats-section">
-        <ion-item-divider color="primary">
-          <ion-icon name="globe" slot="start"></ion-icon>
-          <ion-label>
-            <h2>Public Chats</h2>
-            <p>{{ filteredOrganizedChats.totalPublic }} chat(s) • Open to all studio members</p>
-          </ion-label>
-        </ion-item-divider>
-        
-        <ion-item 
-          *ngFor="let chatItem of filteredOrganizedChats.publicChats" 
-          button 
-          (click)="onChatClick(chatItem)"
-          class="chat-item public-chat">
-          
-          <ion-avatar slot="start">
-            <ion-icon 
-              [name]="getChatTypeIcon(chatItem.chat.type)" 
-              [color]="getChatTypeColor(chatItem.chat.type)"
-              class="chat-type-icon">
-            </ion-icon>
-          </ion-avatar>
+        <!-- Search Results Info -->
+        @if (
+          showSearch && !isLoading && (searchQuery || selectedFilter !== 'all')
+        ) {
+          <div class="search-info">
+            <ion-card class="search-results-card">
+              <ion-card-content>
+                <p class="search-results-text">
+                  @if (searchQuery) {
+                    <span>
+                      {{ getSearchResultsCount() }} result(s) for "{{
+                        searchQuery
+                      }}"
+                    </span>
+                  }
+                  @if (!searchQuery && selectedFilter !== 'all') {
+                    <span>
+                      {{ getFilterResultsCount() }} {{ selectedFilter }} chat(s)
+                    </span>
+                  }
+                  @if (searchQuery && selectedFilter !== 'all') {
+                    <span> in {{ selectedFilter }} chats </span>
+                  }
+                </p>
+                @if (searchQuery || selectedFilter !== 'all') {
+                  <ion-button
+                    fill="clear"
+                    size="small"
+                    (click)="clearAllFilters()"
+                  >
+                    <ion-icon name="close" slot="start"></ion-icon>
+                    Clear filters
+                  </ion-button>
+                }
+              </ion-card-content>
+            </ion-card>
+          </div>
+        }
 
-          <ion-label>
-            <div class="chat-header">
-              <h2 class="chat-name" [innerHTML]="highlightSearchTerm(chatItem.chat.name)"></h2>
-              <div class="chat-meta">
-                <ion-chip 
-                  color="primary" 
-                  size="small" 
-                  outline="true">
+        <!-- Empty state -->
+        @if (!isLoading && isEmpty) {
+          <ion-card class="empty-state">
+            <ion-card-header>
+              <ion-card-title>
+                {{ getEmptyStateTitle() }}
+              </ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <p>{{ getEmptyStateMessage() }}</p>
+              @if (!searchQuery && selectedFilter === 'all') {
+                <ion-button expand="block" (click)="createNewChat()">
+                  <ion-icon name="add" slot="start"></ion-icon>
+                  Create New Chat
+                </ion-button>
+              }
+              @if (searchQuery || selectedFilter !== 'all') {
+                <ion-button
+                  expand="block"
+                  fill="outline"
+                  (click)="clearAllFilters()"
+                >
+                  <ion-icon name="close" slot="start"></ion-icon>
+                  Clear Search & Filters
+                </ion-button>
+              }
+            </ion-card-content>
+          </ion-card>
+        }
+
+        <!-- Organized chat list -->
+        @if (!isLoading && !isEmpty) {
+          <div class="organized-chats">
+            <!-- Pending Invitations Section -->
+            @if (filteredOrganizedChats.invitationsPending.length > 0) {
+              <ion-item-group class="invitations-section">
+                <ion-item-divider color="warning">
+                  <ion-icon name="mail" slot="start"></ion-icon>
+                  <ion-label>
+                    <h2>Pending Invitations</h2>
+                    <p>
+                      {{
+                        filteredOrganizedChats.invitationsPending.length
+                      }}
+                      invitation(s)
+                    </p>
+                  </ion-label>
+                </ion-item-divider>
+                @for (
+                  invitation of filteredOrganizedChats.invitationsPending;
+                  track invitation
+                ) {
+                  <ion-item class="invitation-item">
+                    <ion-avatar slot="start">
+                      <ion-icon name="mail" color="warning"></ion-icon>
+                    </ion-avatar>
+                    <ion-label>
+                      <h3>{{ invitation.chatName || 'Private Chat' }}</h3>
+                      <p>Invited by {{ invitation.inviterName }}</p>
+                      <ion-note>{{
+                        formatTime(invitation.createdAt)
+                      }}</ion-note>
+                    </ion-label>
+                    <div slot="end" class="invitation-actions">
+                      <ion-button
+                        size="small"
+                        fill="solid"
+                        color="success"
+                        (click)="acceptInvitation(invitation)"
+                      >
+                        Accept
+                      </ion-button>
+                      <ion-button
+                        size="small"
+                        fill="outline"
+                        color="medium"
+                        (click)="declineInvitation(invitation)"
+                      >
+                        Decline
+                      </ion-button>
+                    </div>
+                  </ion-item>
+                }
+              </ion-item-group>
+            }
+            <!-- Public Chats Section -->
+            @if (filteredOrganizedChats.totalPublic > 0) {
+              <ion-item-group class="public-chats-section">
+                <ion-item-divider color="primary">
                   <ion-icon name="globe" slot="start"></ion-icon>
-                  Public
-                </ion-chip>
-                <span class="last-message-time" *ngIf="chatItem.lastMessage">
-                  {{ formatTime(chatItem.lastMessage.timestamp) }}
-                </span>
-              </div>
-            </div>
-            
-            <div class="chat-details">
-              <p class="last-message" *ngIf="chatItem.lastMessage">
-                <strong>{{ chatItem.lastMessage.senderName }}:</strong>
-                <span [innerHTML]="highlightSearchTerm(chatItem.lastMessage.message)"></span>
-              </p>
-              <p class="no-messages" *ngIf="!chatItem.lastMessage">
-                No messages yet
-              </p>
-              
-              <div class="chat-info">
-                <span class="participant-count">
-                  <ion-icon name="people"></ion-icon>
-                  {{ chatItem.participants.length }} participants
-                </span>
-              </div>
-            </div>
-          </ion-label>
-
-          <div slot="end" class="chat-badges">
-            <ion-badge 
-              *ngIf="chatItem.unreadCount > 0" 
-              color="primary">
-              {{ chatItem.unreadCount }}
-            </ion-badge>
-          </div>
-        </ion-item>
-      </ion-item-group>
-
-      <!-- Private Chats Section -->
-      <ion-item-group *ngIf="filteredOrganizedChats.totalPrivate > 0" class="private-chats-section">
-        <ion-item-divider color="secondary">
-          <ion-icon name="lockClosed" slot="start"></ion-icon>
-          <ion-label>
-            <h2>Private Chats</h2>
-            <p>{{ filteredOrganizedChats.totalPrivate }} chat(s) • Invitation only</p>
-          </ion-label>
-        </ion-item-divider>
-        
-        <ion-item 
-          *ngFor="let chatItem of filteredOrganizedChats.privateChats" 
-          button 
-          (click)="onChatClick(chatItem)"
-          class="chat-item private-chat">
-          
-          <ion-avatar slot="start">
-            <ion-icon 
-              [name]="getChatTypeIcon(chatItem.chat.type)" 
-              [color]="getChatTypeColor(chatItem.chat.type)"
-              class="chat-type-icon">
-            </ion-icon>
-          </ion-avatar>
-
-          <ion-label>
-            <div class="chat-header">
-              <h2 class="chat-name" [innerHTML]="highlightSearchTerm(chatItem.chat.name)"></h2>
-              <div class="chat-meta">
-                <ion-chip 
-                  color="secondary" 
-                  size="small" 
-                  outline="true">
+                  <ion-label>
+                    <h2>Public Chats</h2>
+                    <p>
+                      {{ filteredOrganizedChats.totalPublic }} chat(s) • Open to
+                      all studio members
+                    </p>
+                  </ion-label>
+                </ion-item-divider>
+                @for (
+                  chatItem of filteredOrganizedChats.publicChats;
+                  track chatItem
+                ) {
+                  <ion-item
+                    button
+                    (click)="onChatClick(chatItem)"
+                    class="chat-item public-chat"
+                  >
+                    <ion-avatar slot="start">
+                      <ion-icon
+                        [name]="getChatTypeIcon(chatItem.chat.type)"
+                        [color]="getChatTypeColor(chatItem.chat.type)"
+                        class="chat-type-icon"
+                      >
+                      </ion-icon>
+                    </ion-avatar>
+                    <ion-label>
+                      <div class="chat-header">
+                        <h2
+                          class="chat-name"
+                          [innerHTML]="highlightSearchTerm(chatItem.chat.name)"
+                        ></h2>
+                        <div class="chat-meta">
+                          <ion-chip color="primary" size="small" outline="true">
+                            <ion-icon name="globe" slot="start"></ion-icon>
+                            Public
+                          </ion-chip>
+                          @if (chatItem.lastMessage) {
+                            <span class="last-message-time">
+                              {{ formatTime(chatItem.lastMessage.timestamp) }}
+                            </span>
+                          }
+                        </div>
+                      </div>
+                      <div class="chat-details">
+                        @if (chatItem.lastMessage) {
+                          <p class="last-message">
+                            <strong
+                              >{{ chatItem.lastMessage.senderName }}:</strong
+                            >
+                            <span
+                              [innerHTML]="
+                                highlightSearchTerm(
+                                  chatItem.lastMessage.message
+                                )
+                              "
+                            ></span>
+                          </p>
+                        }
+                        @if (!chatItem.lastMessage) {
+                          <p class="no-messages">No messages yet</p>
+                        }
+                        <div class="chat-info">
+                          <span class="participant-count">
+                            <ion-icon name="people"></ion-icon>
+                            {{ chatItem.participants.length }} participants
+                          </span>
+                        </div>
+                      </div>
+                    </ion-label>
+                    <div slot="end" class="chat-badges">
+                      @if (chatItem.unreadCount > 0) {
+                        <ion-badge color="primary">
+                          {{ chatItem.unreadCount }}
+                        </ion-badge>
+                      }
+                    </div>
+                  </ion-item>
+                }
+              </ion-item-group>
+            }
+            <!-- Private Chats Section -->
+            @if (filteredOrganizedChats.totalPrivate > 0) {
+              <ion-item-group class="private-chats-section">
+                <ion-item-divider color="secondary">
                   <ion-icon name="lockClosed" slot="start"></ion-icon>
-                  Private
-                </ion-chip>
-                <span class="last-message-time" *ngIf="chatItem.lastMessage">
-                  {{ formatTime(chatItem.lastMessage.timestamp) }}
-                </span>
-              </div>
-            </div>
-            
-            <div class="chat-details">
-              <p class="last-message" *ngIf="chatItem.lastMessage">
-                <strong>{{ chatItem.lastMessage.senderName }}:</strong>
-                <span [innerHTML]="highlightSearchTerm(chatItem.lastMessage.message)"></span>
-              </p>
-              <p class="no-messages" *ngIf="!chatItem.lastMessage">
-                No messages yet
-              </p>
-              
-              <div class="chat-info">
-                <span class="participant-count">
-                  <ion-icon name="people"></ion-icon>
-                  {{ chatItem.participants.length }} participants
-                </span>
-              </div>
-            </div>
-          </ion-label>
-
-          <div slot="end" class="chat-badges">
-            <ion-badge 
-              *ngIf="chatItem.unreadCount > 0" 
-              color="secondary">
-              {{ chatItem.unreadCount }}
-            </ion-badge>
+                  <ion-label>
+                    <h2>Private Chats</h2>
+                    <p>
+                      {{ filteredOrganizedChats.totalPrivate }} chat(s) •
+                      Invitation only
+                    </p>
+                  </ion-label>
+                </ion-item-divider>
+                @for (
+                  chatItem of filteredOrganizedChats.privateChats;
+                  track chatItem
+                ) {
+                  <ion-item
+                    button
+                    (click)="onChatClick(chatItem)"
+                    class="chat-item private-chat"
+                  >
+                    <ion-avatar slot="start">
+                      <ion-icon
+                        [name]="getChatTypeIcon(chatItem.chat.type)"
+                        [color]="getChatTypeColor(chatItem.chat.type)"
+                        class="chat-type-icon"
+                      >
+                      </ion-icon>
+                    </ion-avatar>
+                    <ion-label>
+                      <div class="chat-header">
+                        <h2
+                          class="chat-name"
+                          [innerHTML]="highlightSearchTerm(chatItem.chat.name)"
+                        ></h2>
+                        <div class="chat-meta">
+                          <ion-chip
+                            color="secondary"
+                            size="small"
+                            outline="true"
+                          >
+                            <ion-icon name="lockClosed" slot="start"></ion-icon>
+                            Private
+                          </ion-chip>
+                          @if (chatItem.lastMessage) {
+                            <span class="last-message-time">
+                              {{ formatTime(chatItem.lastMessage.timestamp) }}
+                            </span>
+                          }
+                        </div>
+                      </div>
+                      <div class="chat-details">
+                        @if (chatItem.lastMessage) {
+                          <p class="last-message">
+                            <strong
+                              >{{ chatItem.lastMessage.senderName }}:</strong
+                            >
+                            <span
+                              [innerHTML]="
+                                highlightSearchTerm(
+                                  chatItem.lastMessage.message
+                                )
+                              "
+                            ></span>
+                          </p>
+                        }
+                        @if (!chatItem.lastMessage) {
+                          <p class="no-messages">No messages yet</p>
+                        }
+                        <div class="chat-info">
+                          <span class="participant-count">
+                            <ion-icon name="people"></ion-icon>
+                            {{ chatItem.participants.length }} participants
+                          </span>
+                        </div>
+                      </div>
+                    </ion-label>
+                    <div slot="end" class="chat-badges">
+                      @if (chatItem.unreadCount > 0) {
+                        <ion-badge color="secondary">
+                          {{ chatItem.unreadCount }}
+                        </ion-badge>
+                      }
+                    </div>
+                  </ion-item>
+                }
+              </ion-item-group>
+            }
+            <!-- Empty sections message -->
+            @if (
+              filteredOrganizedChats.totalPublic === 0 &&
+              filteredOrganizedChats.totalPrivate === 0 &&
+              filteredOrganizedChats.invitationsPending.length === 0
+            ) {
+              <ion-card class="empty-organized">
+                <ion-card-content>
+                  <p>No accessible chats found for this studio.</p>
+                  <ion-button fill="outline" (click)="refreshChats()">
+                    <ion-icon name="refresh" slot="start"></ion-icon>
+                    Refresh
+                  </ion-button>
+                </ion-card-content>
+              </ion-card>
+            }
           </div>
-        </ion-item>
-      </ion-item-group>
-
-      <!-- Empty sections message -->
-      <ion-card *ngIf="filteredOrganizedChats.totalPublic === 0 && filteredOrganizedChats.totalPrivate === 0 && filteredOrganizedChats.invitationsPending.length === 0" class="empty-organized">
-        <ion-card-content>
-          <p>No accessible chats found for this studio.</p>
-          <ion-button fill="outline" (click)="refreshChats()">
-            <ion-icon name="refresh" slot="start"></ion-icon>
-            Refresh
-          </ion-button>
-        </ion-card-content>
-      </ion-card>
-    </div>
-  </div>
-</ion-content>
+        }
+      </div>
+    </ion-content>
   `,
-  styles: [`
-.chat-list-container {
-  padding: 16px;
-}
+  styles: [
+    `
+      .chat-list-container {
+        padding: 16px;
+      }
 
-.search-toolbar {
-  --background: var(--ion-color-light);
-  --border-color: var(--ion-color-medium);
-}
+      .search-toolbar {
+        --background: var(--ion-color-light);
+        --border-color: var(--ion-color-medium);
+      }
 
-.filter-toolbar {
-  --background: var(--ion-color-light);
-  --border-color: var(--ion-color-medium);
-  padding: 8px 16px;
-}
+      .filter-toolbar {
+        --background: var(--ion-color-light);
+        --border-color: var(--ion-color-medium);
+        padding: 8px 16px;
+      }
 
-.filter-toolbar ion-segment {
-  --background: var(--ion-color-light-shade);
-}
+      .filter-toolbar ion-segment {
+        --background: var(--ion-color-light-shade);
+      }
 
-.search-info {
-  margin: 8px 0;
-}
+      .search-info {
+        margin: 8px 0;
+      }
 
-.search-results-card {
-  margin: 0;
-  --background: var(--ion-color-light-tint);
-}
+      .search-results-card {
+        margin: 0;
+        --background: var(--ion-color-light-tint);
+      }
 
-.search-results-card ion-card-content {
-  padding: 12px 16px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+      .search-results-card ion-card-content {
+        padding: 12px 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
 
-.search-results-text {
-  margin: 0;
-  font-size: 14px;
-  color: var(--ion-color-medium-shade);
-}
+      .search-results-text {
+        margin: 0;
+        font-size: 14px;
+        color: var(--ion-color-medium-shade);
+      }
 
-.search-highlight {
-  background-color: var(--ion-color-warning-tint);
-  color: var(--ion-color-warning-contrast);
-  padding: 1px 3px;
-  border-radius: 3px;
-  font-weight: 600;
-}
+      .search-highlight {
+        background-color: var(--ion-color-warning-tint);
+        color: var(--ion-color-warning-contrast);
+        padding: 1px 3px;
+        border-radius: 3px;
+        font-weight: 600;
+      }
 
-.loading-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 20px;
-  text-align: center;
-}
+      .loading-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+        text-align: center;
+      }
 
-.loading-container p {
-  margin-top: 16px;
-  color: var(--ion-color-medium);
-}
+      .loading-container p {
+        margin-top: 16px;
+        color: var(--ion-color-medium);
+      }
 
-.empty-state {
-  margin: 20px 0;
-  text-align: center;
-}
+      .empty-state {
+        margin: 20px 0;
+        text-align: center;
+      }
 
-.empty-state ion-card-content {
-  padding: 24px;
-}
+      .empty-state ion-card-content {
+        padding: 24px;
+      }
 
-.empty-state ion-card-content p {
-  color: var(--ion-color-medium);
-  margin-bottom: 20px;
-}
+      .empty-state ion-card-content p {
+        color: var(--ion-color-medium);
+        margin-bottom: 20px;
+      }
 
-.empty-organized {
-  margin: 20px 0;
-  text-align: center;
-}
+      .empty-organized {
+        margin: 20px 0;
+        text-align: center;
+      }
 
-.empty-organized ion-card-content {
-  padding: 24px;
-}
+      .empty-organized ion-card-content {
+        padding: 24px;
+      }
 
-.empty-organized ion-card-content p {
-  color: var(--ion-color-medium);
-  margin-bottom: 16px;
-}
+      .empty-organized ion-card-content p {
+        color: var(--ion-color-medium);
+        margin-bottom: 16px;
+      }
 
-.organized-chats {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
+      .organized-chats {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
 
-.invitations-section,
-.public-chats-section,
-.private-chats-section {
-  margin-bottom: 8px;
-}
+      .invitations-section,
+      .public-chats-section,
+      .private-chats-section {
+        margin-bottom: 8px;
+      }
 
-.invitations-section ion-item-divider {
-  --background: var(--ion-color-warning-tint);
-  --color: var(--ion-color-warning-contrast);
-}
+      .invitations-section ion-item-divider {
+        --background: var(--ion-color-warning-tint);
+        --color: var(--ion-color-warning-contrast);
+      }
 
-.public-chats-section ion-item-divider {
-  --background: var(--ion-color-primary-tint);
-  --color: var(--ion-color-primary-contrast);
-}
+      .public-chats-section ion-item-divider {
+        --background: var(--ion-color-primary-tint);
+        --color: var(--ion-color-primary-contrast);
+      }
 
-.private-chats-section ion-item-divider {
-  --background: var(--ion-color-secondary-tint);
-  --color: var(--ion-color-secondary-contrast);
-}
+      .private-chats-section ion-item-divider {
+        --background: var(--ion-color-secondary-tint);
+        --color: var(--ion-color-secondary-contrast);
+      }
 
-.invitation-item {
-  --padding-start: 16px;
-  --padding-end: 16px;
-  margin-bottom: 4px;
-  border-radius: 8px;
-  --background: var(--ion-color-warning-tint);
-}
+      .invitation-item {
+        --padding-start: 16px;
+        --padding-end: 16px;
+        margin-bottom: 4px;
+        border-radius: 8px;
+        --background: var(--ion-color-warning-tint);
+      }
 
-.invitation-actions {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
+      .invitation-actions {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
 
-.chat-item {
-  --padding-start: 16px;
-  --padding-end: 16px;
-  --inner-padding-end: 0;
-  margin-bottom: 8px;
-  border-radius: 12px;
-  --background: var(--ion-color-light);
-}
+      .chat-item {
+        --padding-start: 16px;
+        --padding-end: 16px;
+        --inner-padding-end: 0;
+        margin-bottom: 8px;
+        border-radius: 12px;
+        --background: var(--ion-color-light);
+      }
 
-.chat-item:hover {
-  --background: var(--ion-color-light-shade);
-}
+      .chat-item:hover {
+        --background: var(--ion-color-light-shade);
+      }
 
-.public-chat {
-  border-left: 4px solid var(--ion-color-primary);
-}
+      .public-chat {
+        border-left: 4px solid var(--ion-color-primary);
+      }
 
-.private-chat {
-  border-left: 4px solid var(--ion-color-secondary);
-}
+      .private-chat {
+        border-left: 4px solid var(--ion-color-secondary);
+      }
 
-.chat-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 4px;
-}
+      .chat-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 4px;
+      }
 
-.chat-name {
-  font-size: 16px;
-  font-weight: 600;
-  margin: 0;
-  color: var(--ion-color-dark);
-}
+      .chat-name {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0;
+        color: var(--ion-color-dark);
+      }
 
-.chat-meta {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+      .chat-meta {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
 
-.last-message-time {
-  font-size: 12px;
-  color: var(--ion-color-medium);
-  white-space: nowrap;
-}
+      .last-message-time {
+        font-size: 12px;
+        color: var(--ion-color-medium);
+        white-space: nowrap;
+      }
 
-.last-message {
-  font-size: 14px;
-  color: var(--ion-color-dark);
-  margin: 0 0 4px 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 250px;
-}
+      .last-message {
+        font-size: 14px;
+        color: var(--ion-color-dark);
+        margin: 0 0 4px 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 250px;
+      }
 
-.last-message strong {
-  color: var(--ion-color-primary);
-}
+      .last-message strong {
+        color: var(--ion-color-primary);
+      }
 
-.no-messages {
-  font-size: 14px;
-  color: var(--ion-color-medium);
-  font-style: italic;
-  margin: 0 0 4px 0;
-}
+      .no-messages {
+        font-size: 14px;
+        color: var(--ion-color-medium);
+        font-style: italic;
+        margin: 0 0 4px 0;
+      }
 
-.chat-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
+      .chat-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
 
-.participant-count {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 12px;
-  color: var(--ion-color-medium);
-}
+      .participant-count {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 12px;
+        color: var(--ion-color-medium);
+      }
 
-.participant-count ion-icon {
-  font-size: 14px;
-}
+      .participant-count ion-icon {
+        font-size: 14px;
+      }
 
-.chat-type-icon {
-  font-size: 24px;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: var(--ion-color-light-shade);
-}
+      .chat-type-icon {
+        font-size: 24px;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: var(--ion-color-light-shade);
+      }
 
-.chat-badges {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 4px;
-}
+      .chat-badges {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 4px;
+      }
 
-.chat-badges ion-badge {
-  min-width: 20px;
-  height: 20px;
-  border-radius: 10px;
-  font-size: 12px;
-  font-weight: 600;
-}
+      .chat-badges ion-badge {
+        min-width: 20px;
+        height: 20px;
+        border-radius: 10px;
+        font-size: 12px;
+        font-weight: 600;
+      }
 
-@media (prefers-color-scheme: dark) {
-  .search-toolbar,
-  .filter-toolbar {
-    --background: var(--ion-color-dark);
-  }
-  
-  .filter-toolbar ion-segment {
-    --background: var(--ion-color-dark-shade);
-  }
-  
-  .search-results-card {
-    --background: var(--ion-color-dark-tint);
-  }
-  
-  .search-highlight {
-    background-color: var(--ion-color-warning-shade);
-    color: var(--ion-color-warning-contrast);
-  }
-  
-  .chat-item {
-    --background: var(--ion-color-dark);
-  }
-  
-  .chat-item:hover {
-    --background: var(--ion-color-dark-shade);
-  }
-  
-  .chat-type-icon {
-    background: var(--ion-color-dark-shade);
-  }
-  
-  .invitation-item {
-    --background: var(--ion-color-warning-shade);
-  }
-}
-  `],
+      @media (prefers-color-scheme: dark) {
+        .search-toolbar,
+        .filter-toolbar {
+          --background: var(--ion-color-dark);
+        }
+
+        .filter-toolbar ion-segment {
+          --background: var(--ion-color-dark-shade);
+        }
+
+        .search-results-card {
+          --background: var(--ion-color-dark-tint);
+        }
+
+        .search-highlight {
+          background-color: var(--ion-color-warning-shade);
+          color: var(--ion-color-warning-contrast);
+        }
+
+        .chat-item {
+          --background: var(--ion-color-dark);
+        }
+
+        .chat-item:hover {
+          --background: var(--ion-color-dark-shade);
+        }
+
+        .chat-type-icon {
+          background: var(--ion-color-dark-shade);
+        }
+
+        .invitation-item {
+          --background: var(--ion-color-warning-shade);
+        }
+      }
+    `,
+  ],
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     IonItem,
     IonLabel,
@@ -646,42 +746,42 @@ import { AccessControlService, ChatInvitation } from '../../services/access-cont
     IonSpinner,
     IonSearchbar,
     IonSegment,
-    IonSegmentButton
-  ]
+    IonSegmentButton,
+  ],
 })
 export class ChatListComponent implements OnInit, OnDestroy {
   @Input() studioId?: string; // Optional studio ID for filtering chats
-  
+
   // Legacy chat list (for backward compatibility)
   chatList: ChatListItem[] = [];
-  
+
   // Organized chats with access control
   organizedChats: OrganizedStudioChats = {
     publicChats: [],
     privateChats: [],
     invitationsPending: [],
     totalPublic: 0,
-    totalPrivate: 0
+    totalPrivate: 0,
   };
-  
+
   // Filtered chats for search and filtering
   filteredOrganizedChats: OrganizedStudioChats = {
     publicChats: [],
     privateChats: [],
     invitationsPending: [],
     totalPublic: 0,
-    totalPrivate: 0
+    totalPrivate: 0,
   };
-  
+
   // Search and filter state
   showSearch = false;
   searchQuery = '';
   selectedFilter: 'all' | 'public' | 'private' = 'all';
-  
+
   // Loading and state management
   isLoading = false;
   isEmpty = false;
-  
+
   private subscriptions: Subscription[] = [];
 
   constructor(
@@ -691,9 +791,21 @@ export class ChatListComponent implements OnInit, OnDestroy {
     private chatAccessController: ChatAccessController,
     private accessControlService: AccessControlService,
     private router: Router,
-    private toastController: ToastController
+    private toastController: ToastController,
   ) {
-    addIcons({ chatbubbles, people, time, add, person, lockClosed, globe, mail, search, funnel, close });
+    addIcons({
+      chatbubbles,
+      people,
+      time,
+      add,
+      person,
+      lockClosed,
+      globe,
+      mail,
+      search,
+      funnel,
+      close,
+    });
   }
 
   ngOnInit() {
@@ -701,7 +813,7 @@ export class ChatListComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.subscriptions.forEach(sub => sub.unsubscribe());
+    this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 
   /**
@@ -711,50 +823,62 @@ export class ChatListComponent implements OnInit, OnDestroy {
   private async loadOrganizedChats() {
     try {
       this.isLoading = true;
-      
+
       if (this.studioId) {
         // Load studio-specific chats with access control
-        this.organizedChats = await this.chatAccessController.getStudioChatsForUser(this.studioId);
+        this.organizedChats =
+          await this.chatAccessController.getStudioChatsForUser(this.studioId);
       } else {
         // Load all user chats and organize them
-        const chatListSub = this.chatService.getChatList().subscribe(async chatList => {
-          try {
-            // Use the organizer to separate public/private chats
-            this.organizedChats = this.studioChatOrganizer.organizeStudioChats(chatList);
-            
-            // Apply current search and filters
-            this.applySearchAndFilters();
-            
-            // Get pending invitations if access controller is available
-            if (this.chatAccessController.isServiceReady()) {
-              const userId = this.chatAccessController.getCurrentUserId();
-              if (userId) {
-                try {
-                  const invitations = await this.accessControlService.getUserChatInvitations(userId);
-                  // Enrich invitations with chat details
-                  this.organizedChats.invitationsPending = await this.enrichInvitations(invitations);
-                  console.log('Loaded', invitations.length, 'pending invitations for user:', userId);
-                } catch (error) {
-                  console.error('Failed to load invitations:', error);
-                  this.organizedChats.invitationsPending = [];
+        const chatListSub = this.chatService
+          .getChatList()
+          .subscribe(async (chatList) => {
+            try {
+              // Use the organizer to separate public/private chats
+              this.organizedChats =
+                this.studioChatOrganizer.organizeStudioChats(chatList);
+
+              // Apply current search and filters
+              this.applySearchAndFilters();
+
+              // Get pending invitations if access controller is available
+              if (this.chatAccessController.isServiceReady()) {
+                const userId = this.chatAccessController.getCurrentUserId();
+                if (userId) {
+                  try {
+                    const invitations =
+                      await this.accessControlService.getUserChatInvitations(
+                        userId,
+                      );
+                    // Enrich invitations with chat details
+                    this.organizedChats.invitationsPending =
+                      await this.enrichInvitations(invitations);
+                    console.log(
+                      'Loaded',
+                      invitations.length,
+                      'pending invitations for user:',
+                      userId,
+                    );
+                  } catch (error) {
+                    console.error('Failed to load invitations:', error);
+                    this.organizedChats.invitationsPending = [];
+                  }
                 }
               }
+
+              this.updateEmptyState();
+            } catch (error) {
+              console.error('Error organizing chats:', error);
+              this.handleLoadError();
             }
-            
-            this.updateEmptyState();
-          } catch (error) {
-            console.error('Error organizing chats:', error);
-            this.handleLoadError();
-          }
-        });
-        
+          });
+
         this.subscriptions.push(chatListSub);
       }
-      
+
       // Apply initial search and filters
       this.applySearchAndFilters();
       this.updateEmptyState();
-      
     } catch (error) {
       console.error('Error loading organized chats:', error);
       this.handleLoadError();
@@ -767,9 +891,10 @@ export class ChatListComponent implements OnInit, OnDestroy {
    * Update empty state based on filtered organized chats
    */
   private updateEmptyState() {
-    this.isEmpty = this.filteredOrganizedChats.totalPublic === 0 && 
-                   this.filteredOrganizedChats.totalPrivate === 0 && 
-                   this.filteredOrganizedChats.invitationsPending.length === 0;
+    this.isEmpty =
+      this.filteredOrganizedChats.totalPublic === 0 &&
+      this.filteredOrganizedChats.totalPrivate === 0 &&
+      this.filteredOrganizedChats.invitationsPending.length === 0;
   }
 
   /**
@@ -781,7 +906,7 @@ export class ChatListComponent implements OnInit, OnDestroy {
       privateChats: [],
       invitationsPending: [],
       totalPublic: 0,
-      totalPrivate: 0
+      totalPrivate: 0,
     };
     this.filteredOrganizedChats = { ...this.organizedChats };
     this.updateEmptyState();
@@ -872,7 +997,7 @@ export class ChatListComponent implements OnInit, OnDestroy {
       privateChats: filteredPrivateChats,
       invitationsPending: filteredInvitations,
       totalPublic: filteredPublicChats.length,
-      totalPrivate: filteredPrivateChats.length
+      totalPrivate: filteredPrivateChats.length,
     };
 
     this.updateEmptyState();
@@ -888,8 +1013,8 @@ export class ChatListComponent implements OnInit, OnDestroy {
     }
 
     const query = this.searchQuery.toLowerCase();
-    
-    return chats.filter(chatItem => {
+
+    return chats.filter((chatItem) => {
       // Search in chat name
       if (chatItem.chat.name.toLowerCase().includes(query)) {
         return true;
@@ -906,9 +1031,11 @@ export class ChatListComponent implements OnInit, OnDestroy {
       }
 
       // Search in participant names (if available)
-      if (chatItem.participants.some(participant => 
-        participant.userName?.toLowerCase().includes(query)
-      )) {
+      if (
+        chatItem.participants.some((participant) =>
+          participant.userName?.toLowerCase().includes(query),
+        )
+      ) {
         return true;
       }
 
@@ -926,8 +1053,8 @@ export class ChatListComponent implements OnInit, OnDestroy {
     }
 
     const query = this.searchQuery.toLowerCase();
-    
-    return invitations.filter(invitation => {
+
+    return invitations.filter((invitation) => {
       // Search in chat name
       if (invitation.chatName?.toLowerCase().includes(query)) {
         return true;
@@ -959,9 +1086,11 @@ export class ChatListComponent implements OnInit, OnDestroy {
    * Get search results count for display
    */
   getSearchResultsCount(): number {
-    return this.filteredOrganizedChats.totalPublic + 
-           this.filteredOrganizedChats.totalPrivate + 
-           this.filteredOrganizedChats.invitationsPending.length;
+    return (
+      this.filteredOrganizedChats.totalPublic +
+      this.filteredOrganizedChats.totalPrivate +
+      this.filteredOrganizedChats.invitationsPending.length
+    );
   }
 
   /**
@@ -972,7 +1101,10 @@ export class ChatListComponent implements OnInit, OnDestroy {
       case 'public':
         return this.filteredOrganizedChats.totalPublic;
       case 'private':
-        return this.filteredOrganizedChats.totalPrivate + this.filteredOrganizedChats.invitationsPending.length;
+        return (
+          this.filteredOrganizedChats.totalPrivate +
+          this.filteredOrganizedChats.invitationsPending.length
+        );
       default:
         return this.getSearchResultsCount();
     }
@@ -1021,22 +1153,26 @@ export class ChatListComponent implements OnInit, OnDestroy {
   /**
    * Enrich invitations with chat details for display
    */
-  private async enrichInvitations(invitations: ChatInvitation[]): Promise<any[]> {
+  private async enrichInvitations(
+    invitations: ChatInvitation[],
+  ): Promise<any[]> {
     const enrichedInvitations = [];
-    
+
     for (const invitation of invitations) {
       try {
         // Get chat details to enrich the invitation
-        const chat = await this.chatPersistenceService.getChatById(invitation.chatId);
-        
+        const chat = await this.chatPersistenceService.getChatById(
+          invitation.chatId,
+        );
+
         const enriched = {
           ...invitation,
           chatName: chat?.name || 'Private Chat',
           inviterName: invitation.invitedBy, // This could be enriched with actual user name
           createdAt: invitation.invitedAt,
-          studioId: chat?.studioId
+          studioId: chat?.studioId,
         };
-        
+
         enrichedInvitations.push(enriched);
       } catch (error) {
         console.error('Failed to enrich invitation:', invitation.id, error);
@@ -1045,11 +1181,11 @@ export class ChatListComponent implements OnInit, OnDestroy {
           ...invitation,
           chatName: 'Private Chat',
           inviterName: invitation.invitedBy,
-          createdAt: invitation.invitedAt
+          createdAt: invitation.invitedAt,
         });
       }
     }
-    
+
     return enrichedInvitations;
   }
 
@@ -1059,38 +1195,37 @@ export class ChatListComponent implements OnInit, OnDestroy {
   async acceptInvitation(invitation: any) {
     try {
       console.log('Accepting invitation:', invitation);
-      
+
       // Accept the invitation through the access control service
       await this.accessControlService.acceptChatInvitation(invitation.id);
-      
+
       // Show success message
       const toast = await this.toastController.create({
         message: `Successfully joined "${invitation.chatName || 'Private Chat'}"!`,
         duration: 3000,
         color: 'success',
-        position: 'top'
+        position: 'top',
       });
       await toast.present();
-      
+
       // Navigate to the newly accessible chat
       if (invitation.studioId && invitation.chatId) {
         this.router.navigate(['/studio', invitation.studioId], {
-          queryParams: { chatId: invitation.chatId }
+          queryParams: { chatId: invitation.chatId },
         });
       }
-      
+
       // Refresh the chat list to show the newly accessible chat and remove the invitation
       await this.refreshChats();
-      
     } catch (error) {
       console.error('Error accepting invitation:', error);
-      
+
       // Show error message
       const toast = await this.toastController.create({
         message: 'Failed to accept invitation. Please try again.',
         duration: 3000,
         color: 'danger',
-        position: 'top'
+        position: 'top',
       });
       await toast.present();
     }
@@ -1102,36 +1237,36 @@ export class ChatListComponent implements OnInit, OnDestroy {
   async declineInvitation(invitation: any) {
     try {
       console.log('Declining invitation:', invitation);
-      
+
       // Decline the invitation through the access control service
       await this.accessControlService.declineChatInvitation(invitation.id);
-      
+
       // Remove from local list
-      this.organizedChats.invitationsPending = this.organizedChats.invitationsPending.filter(
-        inv => inv.id !== invitation.id
-      );
-      
+      this.organizedChats.invitationsPending =
+        this.organizedChats.invitationsPending.filter(
+          (inv) => inv.id !== invitation.id,
+        );
+
       // Show confirmation message
       const toast = await this.toastController.create({
         message: `Declined invitation to "${invitation.chatName || 'Private Chat'}"`,
         duration: 2000,
         color: 'medium',
-        position: 'top'
+        position: 'top',
       });
       await toast.present();
-      
+
       // Apply filters to update the display
       this.applySearchAndFilters();
-      
     } catch (error) {
       console.error('Error declining invitation:', error);
-      
+
       // Show error message
       const toast = await this.toastController.create({
         message: 'Failed to decline invitation. Please try again.',
         duration: 3000,
         color: 'danger',
-        position: 'top'
+        position: 'top',
       });
       await toast.present();
     }
@@ -1139,7 +1274,7 @@ export class ChatListComponent implements OnInit, OnDestroy {
 
   formatTime(date: Date | undefined): string {
     if (!date) return '';
-    
+
     const now = new Date();
     const diff = now.getTime() - date.getTime();
     const minutes = Math.floor(diff / (1000 * 60));
@@ -1150,25 +1285,33 @@ export class ChatListComponent implements OnInit, OnDestroy {
     if (minutes < 60) return `${minutes}m ago`;
     if (hours < 24) return `${hours}h ago`;
     if (days < 7) return `${days}d ago`;
-    
+
     return date.toLocaleDateString();
   }
 
   getChatTypeIcon(type: string): string {
     switch (type) {
-      case 'studio': return 'people';
-      case 'group': return 'chatbubbles';
-      case 'private': return 'person';
-      default: return 'chatbubbles';
+      case 'studio':
+        return 'people';
+      case 'group':
+        return 'chatbubbles';
+      case 'private':
+        return 'person';
+      default:
+        return 'chatbubbles';
     }
   }
 
   getChatTypeColor(type: string): string {
     switch (type) {
-      case 'studio': return 'primary';
-      case 'group': return 'secondary';
-      case 'private': return 'tertiary';
-      default: return 'medium';
+      case 'studio':
+        return 'primary';
+      case 'group':
+        return 'secondary';
+      case 'private':
+        return 'tertiary';
+      default:
+        return 'medium';
     }
   }
 
@@ -1189,10 +1332,10 @@ export class ChatListComponent implements OnInit, OnDestroy {
           allowLeaving: true,
           allowMuting: true,
           allowInviting: true,
-          isPublic: false
-        }
+          isPublic: false,
+        },
       });
-      
+
       console.log('New chat created:', newChat);
     } catch (error) {
       console.error('Failed to create chat:', error);

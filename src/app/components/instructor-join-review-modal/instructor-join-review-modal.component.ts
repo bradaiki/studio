@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { 
+
+import {
   IonHeader,
   IonToolbar,
   IonTitle,
@@ -20,10 +20,10 @@ import {
   ToastController,
   LoadingController,
   ModalController,
-  AlertController
+  AlertController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { 
+import {
   close,
   checkmark,
   closeCircle,
@@ -33,12 +33,14 @@ import {
   mail,
   checkboxOutline,
   checkbox,
-  alertCircle, informationCircle } from 'ionicons/icons';
+  alertCircle,
+  informationCircle,
+} from 'ionicons/icons';
 import { Subscription } from 'rxjs';
 
 import { JoinRequestService } from '../../services/join-request.service';
 import { InstructorPermissionService } from '../../services/instructor-permission.service';
-import { 
+import {
   EnhancedStudioJoinRequest,
   BulkOperationResult,
   JoinRequestModalConfig,
@@ -47,7 +49,7 @@ import {
   InstructorPermissionException,
   RequestProcessingError,
   SystemError,
-  InstructorPermissionError
+  InstructorPermissionError,
 } from '../../models/instructor-join-review.models';
 
 @Component({
@@ -56,7 +58,6 @@ import {
   styleUrls: ['./instructor-join-review-modal.component.scss'],
   standalone: true,
   imports: [
-    CommonModule,
     IonHeader,
     IonToolbar,
     IonTitle,
@@ -72,8 +73,8 @@ import {
     IonText,
     IonBadge,
     IonRefresher,
-    IonRefresherContent
-  ]
+    IonRefresherContent,
+  ],
 })
 export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
   @Input() studioId!: string;
@@ -86,7 +87,7 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
   isLoading = false;
   error: string | null = null;
   loadingProgress = 0;
-  
+
   // Pagination state
   currentPage = 1;
   pageSize = 20;
@@ -94,17 +95,17 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
   totalPages = 0;
   hasNextPage = false;
   hasPreviousPage = false;
-  
+
   // Search and filtering state
   searchTerm = '';
   sortBy: 'requestedAt' | 'userName' | 'userEmail' = 'requestedAt';
   sortOrder: 'asc' | 'desc' = 'desc';
   isSearching = false;
-  
+
   // Bulk operations state
   isBulkProcessing = false;
   bulkOperationProgress = 0;
-  
+
   // Error handling and recovery state
   lastError: Error | null = null;
   retryCount = 0;
@@ -112,7 +113,7 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
   isRetrying = false;
   networkError = false;
   authenticationError = false;
-  
+
   // Real-time updates
   private subscriptions: Subscription[] = [];
   private currentUserId: string | null = null;
@@ -125,16 +126,33 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
     private toastController: ToastController,
     private loadingController: LoadingController,
     private modalController: ModalController,
-    private alertController: AlertController
+    private alertController: AlertController,
   ) {
-    addIcons({refresh,close,alertCircle,informationCircle,checkmark,closeCircle,person,time,mail,checkboxOutline,checkbox});
+    addIcons({
+      refresh,
+      close,
+      alertCircle,
+      informationCircle,
+      checkmark,
+      closeCircle,
+      person,
+      time,
+      mail,
+      checkboxOutline,
+      checkbox,
+    });
   }
 
   ngOnInit() {
-    console.log('InstructorJoinReviewModalComponent initializing for studio:', this.studioId);
-    
+    console.log(
+      'InstructorJoinReviewModalComponent initializing for studio:',
+      this.studioId,
+    );
+
     if (!this.studioId) {
-      console.error('No studioId provided to InstructorJoinReviewModalComponent');
+      console.error(
+        'No studioId provided to InstructorJoinReviewModalComponent',
+      );
       this.error = 'Studio ID is required';
       return;
     }
@@ -147,7 +165,7 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
         enableBulkActions: true,
         enableRealTimeUpdates: true,
         maxRequestsPerPage: 50,
-        autoRefreshInterval: 30000
+        autoRefreshInterval: 30000,
       };
     }
 
@@ -156,15 +174,15 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     console.log('InstructorJoinReviewModalComponent destroying');
-    
+
     // Clean up all subscriptions
-    this.subscriptions.forEach(subscription => {
+    this.subscriptions.forEach((subscription) => {
       if (subscription && !subscription.closed) {
         subscription.unsubscribe();
       }
     });
     this.subscriptions = [];
-    
+
     // Clear state
     this.pendingRequests = [];
     this.selectedRequests.clear();
@@ -178,12 +196,11 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
     try {
       // Load initial data
       await this.loadPendingRequests();
-      
+
       // Set up real-time updates if enabled
       if (this.config?.enableRealTimeUpdates) {
         this.setupRealTimeUpdates();
       }
-      
     } catch (error) {
       console.error('Error initializing modal:', error);
       this.handleError(error, 'Failed to initialize modal');
@@ -206,59 +223,65 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
 
     try {
       console.log('Loading pending requests for studio:', this.studioId);
-      
+
       // Reset pagination if requested
       if (resetPagination) {
         this.currentPage = 1;
       }
-      
+
       // Simulate loading progress for better UX
       this.updateLoadingProgress(20);
-      
+
       // Use automatic retry for loading requests
       await this.autoRetryOperation(async () => {
         this.updateLoadingProgress(50);
-        
-        const result = await this.joinRequestService.getPaginatedRequestsForStudio(this.studioId, {
-          page: this.currentPage,
-          pageSize: this.pageSize,
-          sortBy: this.sortBy,
-          sortOrder: this.sortOrder,
-          searchTerm: this.searchTerm || undefined
-        });
-        
+
+        const result =
+          await this.joinRequestService.getPaginatedRequestsForStudio(
+            this.studioId,
+            {
+              page: this.currentPage,
+              pageSize: this.pageSize,
+              sortBy: this.sortBy,
+              sortOrder: this.sortOrder,
+              searchTerm: this.searchTerm || undefined,
+            },
+          );
+
         this.updateLoadingProgress(80);
-        
+
         // Update pagination state
         this.pendingRequests = result.requests;
         this.totalCount = result.totalCount;
         this.totalPages = result.totalPages;
         this.hasNextPage = result.hasNextPage;
         this.hasPreviousPage = result.hasPreviousPage;
-        
+
         this.updateLoadingProgress(100);
-        
-        console.log(`Loaded ${this.pendingRequests.length} of ${this.totalCount} requests (page ${this.currentPage}/${this.totalPages})`);
-        
+
+        console.log(
+          `Loaded ${this.pendingRequests.length} of ${this.totalCount} requests (page ${this.currentPage}/${this.totalPages})`,
+        );
+
         // Clear any selected requests that are no longer on current page
         this.clearInvalidSelections();
       }, this.maxRetries);
-      
+
       // Reset retry count on successful load
       this.retryCount = 0;
       this.lastError = null;
-      
+
       // Show success feedback
       if (this.pendingRequests.length > 0) {
-        const message = this.searchTerm 
+        const message = this.searchTerm
           ? `Found ${this.totalCount} request${this.totalCount === 1 ? '' : 's'} matching "${this.searchTerm}"`
           : `Loaded ${this.totalCount} pending request${this.totalCount === 1 ? '' : 's'}`;
         await this.showSuccessToast(message);
       }
-      
     } catch (error) {
       console.error('Error loading pending requests:', error);
-      this.lastError = error instanceof Error ? error : new Error('Unknown error');
+      this.lastError =
+        error instanceof Error ? error : new Error('Unknown error');
       await this.handleLoadError(error);
     } finally {
       this.isLoading = false;
@@ -287,8 +310,12 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
         .subscribeToRequestUpdates(this.studioId)
         .subscribe({
           next: (requests) => {
-            console.log('Received optimized real-time update:', requests.length, 'requests');
-            
+            console.log(
+              'Received optimized real-time update:',
+              requests.length,
+              'requests',
+            );
+
             // Update requests with pagination awareness
             if (this.currentPage === 1 || requests.length <= this.pageSize) {
               // If we're on first page or total requests fit in one page, update directly
@@ -301,7 +328,7 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
               // For other pages, we need to refresh to maintain pagination consistency
               this.loadPendingRequests();
             }
-            
+
             // Clear any selected requests that are no longer present
             this.clearInvalidSelections();
           },
@@ -309,7 +336,7 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
             console.error('Error in optimized real-time updates:', error);
             // Don't show error toast for real-time update failures
             // Just log the error and continue with cached data
-          }
+          },
         });
 
       this.subscriptions.push(subscription);
@@ -324,21 +351,22 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
           },
           error: (error) => {
             console.error('Error in connection state subscription:', error);
-          }
+          },
         });
 
       this.subscriptions.push(connectionSubscription);
 
       // Periodically update performance metrics for debugging
       const metricsInterval = setInterval(() => {
-        this.realTimeMetrics = this.joinRequestService.getRealTimeMetrics(this.studioId);
+        this.realTimeMetrics = this.joinRequestService.getRealTimeMetrics(
+          this.studioId,
+        );
       }, 10000); // Every 10 seconds
 
       // Store interval for cleanup
       this.subscriptions.push({
-        unsubscribe: () => clearInterval(metricsInterval)
+        unsubscribe: () => clearInterval(metricsInterval),
       } as any);
-
     } catch (error) {
       console.error('Error setting up optimized real-time updates:', error);
     }
@@ -362,7 +390,7 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
     const searchTerm = event.target.value || '';
     this.searchTerm = searchTerm;
     this.isSearching = true;
-    
+
     // Use the service's debounced search
     this.joinRequestService.setSearchTerm(this.studioId, searchTerm, 300);
   }
@@ -391,7 +419,9 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
   /**
    * Change sort order
    */
-  async changeSortOrder(sortBy: 'requestedAt' | 'userName' | 'userEmail'): Promise<void> {
+  async changeSortOrder(
+    sortBy: 'requestedAt' | 'userName' | 'userEmail',
+  ): Promise<void> {
     if (this.sortBy === sortBy) {
       // Toggle sort order if same field
       this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
@@ -400,7 +430,7 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
       this.sortBy = sortBy;
       this.sortOrder = 'desc';
     }
-    
+
     await this.loadPendingRequests(true); // Reset to first page when sorting changes
   }
 
@@ -428,7 +458,12 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
    * Go to specific page
    */
   async goToPage(page: number): Promise<void> {
-    if (page >= 1 && page <= this.totalPages && page !== this.currentPage && !this.isLoading) {
+    if (
+      page >= 1 &&
+      page <= this.totalPages &&
+      page !== this.currentPage &&
+      !this.isLoading
+    ) {
       this.currentPage = page;
       await this.loadPendingRequests();
     }
@@ -454,9 +489,9 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
     } else {
       this.selectedRequests.add(requestId);
     }
-    
+
     // Update the request's selection state for UI binding
-    const request = this.pendingRequests.find(req => req.id === requestId);
+    const request = this.pendingRequests.find((req) => req.id === requestId);
     if (request) {
       request.isSelected = this.selectedRequests.has(requestId);
     }
@@ -466,7 +501,7 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
    * Select all requests
    */
   selectAllRequests(): void {
-    this.pendingRequests.forEach(request => {
+    this.pendingRequests.forEach((request) => {
       this.selectedRequests.add(request.id);
       request.isSelected = true;
     });
@@ -477,7 +512,7 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
    */
   clearAllSelections(): void {
     this.selectedRequests.clear();
-    this.pendingRequests.forEach(request => {
+    this.pendingRequests.forEach((request) => {
       request.isSelected = false;
     });
   }
@@ -499,8 +534,11 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
   /**
    * Process a single request (approve or reject) with optimistic updates
    */
-  private async processRequest(requestId: string, action: 'approve' | 'reject'): Promise<void> {
-    const request = this.pendingRequests.find(req => req.id === requestId);
+  private async processRequest(
+    requestId: string,
+    action: 'approve' | 'reject',
+  ): Promise<void> {
+    const request = this.pendingRequests.find((req) => req.id === requestId);
     if (!request) {
       await this.showErrorToast('Request not found');
       return;
@@ -511,7 +549,7 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
 
     const loading = await this.loadingController.create({
       message: `${action === 'approve' ? 'Approving' : 'Rejecting'} request...`,
-      spinner: 'crescent'
+      spinner: 'crescent',
     });
     await loading.present();
 
@@ -519,32 +557,42 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
       // Use automatic retry with concurrent modification handling
       await this.autoRetryOperation(async () => {
         if (action === 'approve') {
-          await this.joinRequestService.approveJoinRequest(requestId, this.currentUserId || 'unknown');
+          await this.joinRequestService.approveJoinRequest(
+            requestId,
+            this.currentUserId || 'unknown',
+          );
         } else {
           // For rejection, we could show a prompt for feedback, but for now just reject
-          await this.joinRequestService.rejectJoinRequest(requestId, this.currentUserId || 'unknown');
+          await this.joinRequestService.rejectJoinRequest(
+            requestId,
+            this.currentUserId || 'unknown',
+          );
         }
       }, 3); // Allow more retries for concurrent modifications
 
-      const userName = request.userProfile?.displayName || request.userName || 'Unknown User';
+      const userName =
+        request.userProfile?.displayName || request.userName || 'Unknown User';
       const actionPastTense = action === 'approve' ? 'Approved' : 'Rejected';
-      await this.showSuccessToast(`${actionPastTense} request from ${userName}`);
+      await this.showSuccessToast(
+        `${actionPastTense} request from ${userName}`,
+      );
 
       // Optimistic update: Remove from local list immediately
       // Real-time updates will handle the authoritative state, but this provides immediate feedback
       this.removePendingRequest(requestId);
-
     } catch (error) {
       console.error(`Error ${action}ing request:`, error);
-      
+
       // Handle concurrent modification specifically
-      if (error instanceof RequestProcessingException && 
-          error.errorCode === RequestProcessingError.CONCURRENT_MODIFICATION) {
-        
+      if (
+        error instanceof RequestProcessingException &&
+        error.errorCode === RequestProcessingError.CONCURRENT_MODIFICATION
+      ) {
         // Refresh the list to get current state after concurrent modification
         await this.loadPendingRequests();
-        await this.showErrorToast('Another instructor processed this request. The list has been refreshed.');
-        
+        await this.showErrorToast(
+          'Another instructor processed this request. The list has been refreshed.',
+        );
       } else {
         await this.handleRequestProcessingError(error, action, request);
       }
@@ -571,14 +619,16 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
   /**
    * Perform bulk operation on selected requests
    */
-  private async performBulkOperation(action: 'approve' | 'reject'): Promise<void> {
+  private async performBulkOperation(
+    action: 'approve' | 'reject',
+  ): Promise<void> {
     if (this.selectedRequests.size === 0) {
       await this.showErrorToast('No requests selected');
       return;
     }
 
     const selectedIds = Array.from(this.selectedRequests);
-    
+
     // Show confirmation dialog
     const alert = await this.alertController.create({
       header: `${action === 'approve' ? 'Approve' : 'Reject'} Requests`,
@@ -586,15 +636,15 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
       buttons: [
         {
           text: 'Cancel',
-          role: 'cancel'
+          role: 'cancel',
         },
         {
           text: action === 'approve' ? 'Approve All' : 'Reject All',
           handler: async () => {
             await this.executeBulkOperation(selectedIds, action);
-          }
-        }
-      ]
+          },
+        },
+      ],
     });
     await alert.present();
   }
@@ -602,13 +652,16 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
   /**
    * Execute the bulk operation with optimistic updates and concurrent handling
    */
-  private async executeBulkOperation(requestIds: string[], action: 'approve' | 'reject'): Promise<void> {
+  private async executeBulkOperation(
+    requestIds: string[],
+    action: 'approve' | 'reject',
+  ): Promise<void> {
     this.isBulkProcessing = true;
     this.bulkOperationProgress = 0;
 
     // Optimistic update: Mark all selected requests as processing
-    requestIds.forEach(id => {
-      const request = this.pendingRequests.find(req => req.id === id);
+    requestIds.forEach((id) => {
+      const request = this.pendingRequests.find((req) => req.id === id);
       if (request) {
         request.isProcessing = true;
       }
@@ -619,20 +672,27 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
 
     const loading = await this.loadingController.create({
       message: `${action === 'approve' ? 'Approving' : 'Rejecting'} ${requestIds.length} request(s)...`,
-      spinner: 'crescent'
+      spinner: 'crescent',
     });
     await loading.present();
 
     try {
       let result: BulkOperationResult;
-      
+
       this.updateBulkProgress(30);
-      
+
       // Use the service's bulk operations which handle concurrent modifications internally
       if (action === 'approve') {
-        result = await this.joinRequestService.bulkApproveRequests(requestIds, this.currentUserId || 'unknown');
+        result = await this.joinRequestService.bulkApproveRequests(
+          requestIds,
+          this.currentUserId || 'unknown',
+        );
       } else {
-        result = await this.joinRequestService.bulkRejectRequests(requestIds, this.currentUserId || 'unknown', undefined);
+        result = await this.joinRequestService.bulkRejectRequests(
+          requestIds,
+          this.currentUserId || 'unknown',
+          undefined,
+        );
       }
 
       this.updateBulkProgress(80);
@@ -640,16 +700,17 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
       // Handle results and concurrent modifications
       if (result.failedOperations === 0) {
         const actionPastTense = action === 'approve' ? 'approved' : 'rejected';
-        await this.showSuccessToast(`Successfully ${actionPastTense} ${result.successfulOperations} request(s)`);
-        
+        await this.showSuccessToast(
+          `Successfully ${actionPastTense} ${result.successfulOperations} request(s)`,
+        );
+
         // Optimistic update: Remove successfully processed requests
-        requestIds.forEach(id => this.removePendingRequest(id));
-        
+        requestIds.forEach((id) => this.removePendingRequest(id));
       } else {
         // Some operations failed - could be due to concurrent modifications
         const actionPastTense = action === 'approve' ? 'approved' : 'rejected';
         await this.showBulkOperationResults(result, actionPastTense);
-        
+
         // Refresh the list to get current state after any concurrent modifications
         await this.loadPendingRequests();
       }
@@ -658,32 +719,30 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
 
       // Clear selections
       this.clearAllSelections();
-
     } catch (error) {
       console.error(`Error in bulk ${action}:`, error);
-      
+
       // Reset processing state on error
-      requestIds.forEach(id => {
-        const request = this.pendingRequests.find(req => req.id === id);
+      requestIds.forEach((id) => {
+        const request = this.pendingRequests.find((req) => req.id === id);
         if (request) {
           request.isProcessing = false;
         }
       });
-      
+
       await this.handleBulkOperationError(error, action, requestIds);
-      
+
       // Refresh the list to ensure we have current state
       await this.loadPendingRequests();
-      
     } finally {
       // Reset processing states
-      requestIds.forEach(id => {
-        const request = this.pendingRequests.find(req => req.id === id);
+      requestIds.forEach((id) => {
+        const request = this.pendingRequests.find((req) => req.id === id);
         if (request) {
           request.isProcessing = false;
         }
       });
-      
+
       this.isBulkProcessing = false;
       this.bulkOperationProgress = 0;
       await loading.dismiss();
@@ -704,7 +763,7 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
     try {
       await this.modalController.dismiss({
         dismissed: true,
-        requestsProcessed: this.pendingRequests.length
+        requestsProcessed: this.pendingRequests.length,
       });
     } catch (error) {
       console.error('Error closing modal:', error);
@@ -722,7 +781,7 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     }).format(date);
   }
 
@@ -767,14 +826,20 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
    * Check if all requests are selected
    */
   get allSelected(): boolean {
-    return this.pendingRequests.length > 0 && this.selectedRequests.size === this.pendingRequests.length;
+    return (
+      this.pendingRequests.length > 0 &&
+      this.selectedRequests.size === this.pendingRequests.length
+    );
   }
 
   /**
    * Check if some (but not all) requests are selected
    */
   get someSelected(): boolean {
-    return this.selectedRequests.size > 0 && this.selectedRequests.size < this.pendingRequests.length;
+    return (
+      this.selectedRequests.size > 0 &&
+      this.selectedRequests.size < this.pendingRequests.length
+    );
   }
 
   /**
@@ -784,10 +849,10 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
     if (this.totalCount === 0) {
       return 'No requests';
     }
-    
+
     const startItem = (this.currentPage - 1) * this.pageSize + 1;
     const endItem = Math.min(this.currentPage * this.pageSize, this.totalCount);
-    
+
     return `${startItem}-${endItem} of ${this.totalCount}`;
   }
 
@@ -804,7 +869,7 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
   get pageNumbers(): number[] {
     const pages: number[] = [];
     const maxVisiblePages = 5;
-    
+
     if (this.totalPages <= maxVisiblePages) {
       // Show all pages if total is small
       for (let i = 1; i <= this.totalPages; i++) {
@@ -813,13 +878,16 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
     } else {
       // Show pages around current page
       const startPage = Math.max(1, this.currentPage - 2);
-      const endPage = Math.min(this.totalPages, startPage + maxVisiblePages - 1);
-      
+      const endPage = Math.min(
+        this.totalPages,
+        startPage + maxVisiblePages - 1,
+      );
+
       for (let i = startPage; i <= endPage; i++) {
         pages.push(i);
       }
     }
-    
+
     return pages;
   }
 
@@ -836,7 +904,11 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
   get connectionStatusInfo(): { color: string; icon: string; text: string } {
     switch (this.connectionState) {
       case 'connected':
-        return { color: 'success', icon: 'checkmark-circle', text: 'Connected' };
+        return {
+          color: 'success',
+          icon: 'checkmark-circle',
+          text: 'Connected',
+        };
       case 'reconnecting':
         return { color: 'warning', icon: 'refresh', text: 'Reconnecting...' };
       case 'disconnected':
@@ -849,13 +921,19 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
    * Check if real-time updates are working
    */
   get isRealTimeActive(): boolean {
-    return this.connectionState === 'connected' && this.config?.enableRealTimeUpdates === true;
+    return (
+      this.connectionState === 'connected' &&
+      this.config?.enableRealTimeUpdates === true
+    );
   }
 
   /**
    * Handle keyboard navigation for request items
    */
-  onRequestKeydown(event: KeyboardEvent, request: EnhancedStudioJoinRequest): void {
+  onRequestKeydown(
+    event: KeyboardEvent,
+    request: EnhancedStudioJoinRequest,
+  ): void {
     switch (event.key) {
       case 'Enter':
       case ' ':
@@ -924,7 +1002,8 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
         return;
       } else if (error.errorCode === SystemError.NETWORK_ERROR) {
         this.networkError = true;
-        this.error = 'Network connection error. Check your internet connection.';
+        this.error =
+          'Network connection error. Check your internet connection.';
         // Schedule automatic refresh for network errors
         await this.handleTransientFailure(error, 'load requests');
       } else if (error.errorCode === SystemError.DATABASE_ERROR) {
@@ -953,7 +1032,11 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
   /**
    * Handle errors when processing individual requests
    */
-  private async handleRequestProcessingError(error: any, action: 'approve' | 'reject', request: EnhancedStudioJoinRequest): Promise<void> {
+  private async handleRequestProcessingError(
+    error: any,
+    action: 'approve' | 'reject',
+    request: EnhancedStudioJoinRequest,
+  ): Promise<void> {
     let errorMessage = `Failed to ${action} request from ${request.userName}`;
     let showRetry = false;
 
@@ -1004,13 +1087,18 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
   /**
    * Handle errors in bulk operations
    */
-  private async handleBulkOperationError(error: any, action: 'approve' | 'reject', requestIds: string[]): Promise<void> {
+  private async handleBulkOperationError(
+    error: any,
+    action: 'approve' | 'reject',
+    requestIds: string[],
+  ): Promise<void> {
     let errorMessage = `Failed to ${action} requests`;
     let showRetry = false;
 
     if (error instanceof SystemException) {
       if (error.errorCode === SystemError.NETWORK_ERROR) {
-        errorMessage = 'Network error during bulk operation. Some requests may have been processed.';
+        errorMessage =
+          'Network error during bulk operation. Some requests may have been processed.';
         showRetry = true;
       } else if (error.errorCode === SystemError.AUTHENTICATION_ERROR) {
         errorMessage = 'Authentication error. Please log in again.';
@@ -1035,30 +1123,45 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
   /**
    * Show detailed results for bulk operations with partial failures
    */
-  private async showBulkOperationResults(result: BulkOperationResult, actionPastTense: string): Promise<void> {
+  private async showBulkOperationResults(
+    result: BulkOperationResult,
+    actionPastTense: string,
+  ): Promise<void> {
     const alert = await this.alertController.create({
       header: 'Bulk Operation Results',
       message: `
         <p><strong>Successfully ${actionPastTense}:</strong> ${result.successfulOperations} request(s)</p>
         <p><strong>Failed:</strong> ${result.failedOperations} request(s)</p>
-        ${result.errors.length > 0 ? '<p><strong>Errors:</strong></p><ul>' + 
-          result.errors.slice(0, 3).map(err => `<li>${err.requestName}: ${err.error}</li>`).join('') +
-          (result.errors.length > 3 ? `<li>... and ${result.errors.length - 3} more</li>` : '') +
-          '</ul>' : ''}
+        ${
+          result.errors.length > 0
+            ? '<p><strong>Errors:</strong></p><ul>' +
+              result.errors
+                .slice(0, 3)
+                .map((err) => `<li>${err.requestName}: ${err.error}</li>`)
+                .join('') +
+              (result.errors.length > 3
+                ? `<li>... and ${result.errors.length - 3} more</li>`
+                : '') +
+              '</ul>'
+            : ''
+        }
       `,
       buttons: [
         {
           text: 'Retry Failed',
           handler: async () => {
-            const failedIds = result.errors.map(err => err.requestId);
-            await this.showBulkRetryDialog(failedIds, actionPastTense === 'approved' ? 'approve' : 'reject');
-          }
+            const failedIds = result.errors.map((err) => err.requestId);
+            await this.showBulkRetryDialog(
+              failedIds,
+              actionPastTense === 'approved' ? 'approve' : 'reject',
+            );
+          },
         },
         {
           text: 'OK',
-          role: 'cancel'
-        }
-      ]
+          role: 'cancel',
+        },
+      ],
     });
     await alert.present();
   }
@@ -1069,21 +1172,22 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
   private async showAuthenticationErrorDialog(): Promise<void> {
     const alert = await this.alertController.create({
       header: 'Authentication Required',
-      message: 'Your session has expired. Please log in again to continue managing join requests.',
+      message:
+        'Your session has expired. Please log in again to continue managing join requests.',
       buttons: [
         {
           text: 'Close Modal',
           handler: () => {
             this.closeModal();
-          }
+          },
         },
         {
           text: 'Refresh',
           handler: async () => {
             await this.loadPendingRequests();
-          }
-        }
-      ]
+          },
+        },
+      ],
     });
     await alert.present();
   }
@@ -1094,15 +1198,16 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
   private async showPermissionErrorDialog(): Promise<void> {
     const alert = await this.alertController.create({
       header: 'Permission Error',
-      message: 'You do not have permission to manage join requests for this studio. Your instructor status may have changed.',
+      message:
+        'You do not have permission to manage join requests for this studio. Your instructor status may have changed.',
       buttons: [
         {
           text: 'Close Modal',
           handler: () => {
             this.closeModal();
-          }
-        }
-      ]
+          },
+        },
+      ],
     });
     await alert.present();
   }
@@ -1117,7 +1222,7 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
       buttons: [
         {
           text: 'Cancel',
-          role: 'cancel'
+          role: 'cancel',
         },
         {
           text: 'Retry',
@@ -1129,9 +1234,9 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
             } finally {
               this.isRetrying = false;
             }
-          }
-        }
-      ]
+          },
+        },
+      ],
     });
     await alert.present();
   }
@@ -1139,22 +1244,26 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
   /**
    * Show retry dialog for individual request processing
    */
-  private async showRequestRetryDialog(requestId: string, action: 'approve' | 'reject', userName: string): Promise<void> {
+  private async showRequestRetryDialog(
+    requestId: string,
+    action: 'approve' | 'reject',
+    userName: string,
+  ): Promise<void> {
     const alert = await this.alertController.create({
       header: 'Request Processing Failed',
       message: `Failed to ${action} request from ${userName}. Would you like to try again?`,
       buttons: [
         {
           text: 'Cancel',
-          role: 'cancel'
+          role: 'cancel',
         },
         {
           text: 'Retry',
           handler: async () => {
             await this.processRequest(requestId, action);
-          }
-        }
-      ]
+          },
+        },
+      ],
     });
     await alert.present();
   }
@@ -1162,22 +1271,25 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
   /**
    * Show retry dialog for bulk operations
    */
-  private async showBulkRetryDialog(requestIds: string[], action: 'approve' | 'reject'): Promise<void> {
+  private async showBulkRetryDialog(
+    requestIds: string[],
+    action: 'approve' | 'reject',
+  ): Promise<void> {
     const alert = await this.alertController.create({
       header: 'Bulk Operation Failed',
       message: `Failed to ${action} ${requestIds.length} request(s). Would you like to retry the failed requests?`,
       buttons: [
         {
           text: 'Cancel',
-          role: 'cancel'
+          role: 'cancel',
         },
         {
           text: 'Retry',
           handler: async () => {
             await this.executeBulkOperation(requestIds, action);
-          }
-        }
-      ]
+          },
+        },
+      ],
     });
     await alert.present();
   }
@@ -1187,13 +1299,17 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
    */
   private isRecoverableError(error: any): boolean {
     if (error instanceof SystemException) {
-      return error.errorCode === SystemError.NETWORK_ERROR || 
-             error.errorCode === SystemError.DATABASE_ERROR ||
-             error.errorCode === SystemError.RATE_LIMIT_EXCEEDED;
+      return (
+        error.errorCode === SystemError.NETWORK_ERROR ||
+        error.errorCode === SystemError.DATABASE_ERROR ||
+        error.errorCode === SystemError.RATE_LIMIT_EXCEEDED
+      );
     }
     if (error instanceof RequestProcessingException) {
-      return error.errorCode === RequestProcessingError.CONCURRENT_MODIFICATION ||
-             error.errorCode === RequestProcessingError.MEMBERSHIP_CREATION_FAILED;
+      return (
+        error.errorCode === RequestProcessingError.CONCURRENT_MODIFICATION ||
+        error.errorCode === RequestProcessingError.MEMBERSHIP_CREATION_FAILED
+      );
     }
     return false;
   }
@@ -1201,8 +1317,11 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
   /**
    * Perform optimistic update for better UX during request processing
    */
-  private performOptimisticUpdate(requestId: string, newStatus: 'processing' | 'approved' | 'rejected'): void {
-    const request = this.pendingRequests.find(req => req.id === requestId);
+  private performOptimisticUpdate(
+    requestId: string,
+    newStatus: 'processing' | 'approved' | 'rejected',
+  ): void {
+    const request = this.pendingRequests.find((req) => req.id === requestId);
     if (request) {
       if (newStatus === 'processing') {
         request.isProcessing = true;
@@ -1226,7 +1345,10 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
   /**
    * Enhanced automatic retry mechanism with concurrent modification handling
    */
-  private async autoRetryOperation(operation: () => Promise<void>, maxRetries: number = 3): Promise<void> {
+  private async autoRetryOperation(
+    operation: () => Promise<void>,
+    maxRetries: number = 3,
+  ): Promise<void> {
     let attempts = 0;
     let lastError: Error | null = null;
 
@@ -1237,16 +1359,17 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
       } catch (error) {
         attempts++;
         lastError = error instanceof Error ? error : new Error('Unknown error');
-        
+
         // Special handling for concurrent modifications
-        if (error instanceof RequestProcessingException && 
-            error.errorCode === RequestProcessingError.CONCURRENT_MODIFICATION) {
-          
+        if (
+          error instanceof RequestProcessingException &&
+          error.errorCode === RequestProcessingError.CONCURRENT_MODIFICATION
+        ) {
           if (attempts < maxRetries) {
             // Wait with exponential backoff before retrying concurrent modifications
             const delay = Math.min(1000 * Math.pow(2, attempts - 1), 3000);
-            await new Promise(resolve => setTimeout(resolve, delay));
-            
+            await new Promise((resolve) => setTimeout(resolve, delay));
+
             // Refresh data before retry to get current state
             await this.loadPendingRequests();
             continue;
@@ -1255,7 +1378,7 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
           if (attempts < maxRetries) {
             // Wait before retrying other recoverable errors
             const delay = Math.min(1000 * Math.pow(2, attempts - 1), 5000);
-            await new Promise(resolve => setTimeout(resolve, delay));
+            await new Promise((resolve) => setTimeout(resolve, delay));
           } else {
             break;
           }
@@ -1279,7 +1402,7 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
     this.networkError = false;
     this.authenticationError = false;
     this.retryCount = 0;
-    
+
     await this.loadPendingRequests(); // Don't reset pagination on manual refresh
   }
 
@@ -1287,10 +1410,15 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
    * Automatic refresh with exponential backoff for critical failures
    */
   private async scheduleAutoRefresh(delayMs: number = 5000): Promise<void> {
-    if (this.config?.enableRealTimeUpdates && this.retryCount < this.maxRetries) {
+    if (
+      this.config?.enableRealTimeUpdates &&
+      this.retryCount < this.maxRetries
+    ) {
       setTimeout(async () => {
         if (!this.isLoading && this.error) {
-          console.log(`Auto-refreshing after ${delayMs}ms delay (attempt ${this.retryCount + 1})`);
+          console.log(
+            `Auto-refreshing after ${delayMs}ms delay (attempt ${this.retryCount + 1})`,
+          );
           try {
             await this.refreshData();
           } catch (error) {
@@ -1307,28 +1435,37 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
   /**
    * Enhanced error recovery with automatic refresh for transient failures
    */
-  private async handleTransientFailure(error: any, context: string): Promise<void> {
+  private async handleTransientFailure(
+    error: any,
+    context: string,
+  ): Promise<void> {
     if (this.isRecoverableError(error)) {
-      console.log(`Handling transient failure in ${context}, scheduling auto-refresh`);
+      console.log(
+        `Handling transient failure in ${context}, scheduling auto-refresh`,
+      );
       await this.scheduleAutoRefresh();
     }
   }
 
   private removePendingRequest(requestId: string): void {
-    this.pendingRequests = this.pendingRequests.filter(req => req.id !== requestId);
+    this.pendingRequests = this.pendingRequests.filter(
+      (req) => req.id !== requestId,
+    );
     this.selectedRequests.delete(requestId);
   }
 
   private clearInvalidSelections(): void {
-    const validIds = new Set(this.pendingRequests.map(req => req.id));
-    const invalidSelections = Array.from(this.selectedRequests).filter(id => !validIds.has(id));
-    
-    invalidSelections.forEach(id => this.selectedRequests.delete(id));
+    const validIds = new Set(this.pendingRequests.map((req) => req.id));
+    const invalidSelections = Array.from(this.selectedRequests).filter(
+      (id) => !validIds.has(id),
+    );
+
+    invalidSelections.forEach((id) => this.selectedRequests.delete(id));
   }
 
   private handleError(error: any, defaultMessage: string): void {
     let errorMessage = defaultMessage;
-    
+
     if (error instanceof RequestProcessingException) {
       errorMessage = `Request processing error: ${error.message}`;
     } else if (error instanceof SystemException) {
@@ -1338,7 +1475,7 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
     } else if (error instanceof Error) {
       errorMessage = error.message;
     }
-    
+
     this.error = errorMessage;
     this.showErrorToast(errorMessage);
   }
@@ -1348,7 +1485,7 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
       message,
       duration: 3000,
       color: 'success',
-      position: 'top'
+      position: 'top',
     });
     await toast.present();
   }
@@ -1368,7 +1505,7 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
       message,
       duration: 4000,
       color: 'danger',
-      position: 'top'
+      position: 'top',
     });
     await toast.present();
   }

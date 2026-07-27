@@ -3,19 +3,22 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/dash/feed"></ion-back-button>
     </ion-buttons>
-    <ion-title>
-      {{ 'people.title' | translate }}
-    </ion-title>
+    <ion-title> {{ 'people.title' | translate }} </ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="navigateToMyProfile()" *ngIf="currentUser">
+      @if (currentUser) {
+      <ion-button (click)="navigateToMyProfile()">
         <ion-avatar class="profile-avatar">
-          <img [src]="currentUserProfile?.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'" 
-               [alt]="currentUserProfile?.handle || 'Profile'" />
+          <img
+            [src]="currentUserProfile?.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'"
+            [alt]="currentUserProfile?.handle || 'Profile'"
+          />
         </ion-avatar>
       </ion-button>
-      <ion-button (click)="navigateToMyProfile()" *ngIf="!currentUser">
+      } @if (!currentUser) {
+      <ion-button (click)="navigateToMyProfile()">
         <ion-icon name="person-circle"></ion-icon>
       </ion-button>
+      }
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -32,15 +35,19 @@
   </ion-refresher>
 
   <!-- Filter Indicator -->
-  <div *ngIf="isFiltered" class="filter-indicator">
+  @if (isFiltered) {
+  <div class="filter-indicator">
     <ion-chip color="primary" outline="true">
       <ion-icon name="person"></ion-icon>
-      <ion-label>{{ 'common.showing' | translate }}: {{ filteredEntityName }}</ion-label>
+      <ion-label
+        >{{ 'common.showing' | translate }}: {{ filteredEntityName }}</ion-label
+      >
       <ion-button fill="clear" size="small" (click)="clearFilter()">
         <ion-icon name="close" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-chip>
   </div>
+  }
 
   <!-- Search Bar -->
   <ion-searchbar
@@ -51,14 +58,16 @@
     show-clear-button="focus"
     debounce="300"
     class="search-bar"
-    [disabled]="isFiltered">
+    [disabled]="isFiltered"
+  >
   </ion-searchbar>
 
   <!-- Segment Control -->
-  <ion-segment 
-    [(ngModel)]="selectedSegment" 
+  <ion-segment
+    [(ngModel)]="selectedSegment"
     (ionChange)="onSegmentChange($event)"
-    class="segment-control">
+    class="segment-control"
+  >
     <ion-segment-button value="discover">
       <ion-label>{{ 'people.discover' | translate }}</ion-label>
     </ion-segment-button>
@@ -68,20 +77,31 @@
   </ion-segment>
 
   <!-- My Profile Section -->
-  <div class="my-profile-section" *ngIf="currentUser && selectedSegment === 'discover' && !isFiltered && !searchTerm.trim()">
+  @if (currentUser && selectedSegment === 'discover' && !isFiltered &&
+  !searchTerm.trim()) {
+  <div class="my-profile-section">
     <div class="section-header">
       <h3>{{ 'people.my_profile' | translate }}</h3>
     </div>
     <div class="my-profile-card" (click)="navigateToMyProfile()">
       <ion-avatar class="profile-avatar-large">
-        <img [src]="currentUserProfile?.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'" 
-             [alt]="currentUserProfile?.handle || 'My Profile'" />
+        <img
+          [src]="currentUserProfile?.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'"
+          [alt]="currentUserProfile?.handle || 'My Profile'"
+        />
       </ion-avatar>
       <div class="profile-info">
-        <h4>{{ currentUserProfile?.name || currentUserProfile?.handle || 'My Profile' }}</h4>
-        <p *ngIf="currentUserProfile?.handle" class="handle">@{{ currentUserProfile?.handle }}</p>
-        <p *ngIf="currentUserProfile?.rank">{{ currentUserProfile?.rank }}</p>
-        <p *ngIf="currentUserProfile?.location" class="location">{{ currentUserProfile?.location }}</p>
+        <h4>
+          {{ currentUserProfile?.name || currentUserProfile?.handle || 'My
+          Profile' }}
+        </h4>
+        @if (currentUserProfile?.handle) {
+        <p class="handle">@{{ currentUserProfile?.handle }}</p>
+        } @if (currentUserProfile?.rank) {
+        <p>{{ currentUserProfile?.rank }}</p>
+        } @if (currentUserProfile?.location) {
+        <p class="location">{{ currentUserProfile?.location }}</p>
+        }
         <ion-chip color="primary" outline="true">
           <ion-icon name="person-circle"></ion-icon>
           <ion-label>{{ 'people.view_my_profile' | translate }}</ion-label>
@@ -90,11 +110,12 @@
       <ion-icon name="chevron-forward" class="chevron"></ion-icon>
     </div>
   </div>
+  }
 
   <!-- People List -->
   <div class="people-container">
-    <app-person 
-      *ngFor="let person of displayedPeople; trackBy: trackByPersonId" 
+    @for (person of displayedPeople; track trackByPersonId($index, person)) {
+    <app-person
       [person]="person"
       [showFullBio]="false"
       [showStats]="true"
@@ -103,40 +124,55 @@
       [compact]="false"
       (followToggle)="onPersonFollow($event)"
       (messageClick)="onPersonMessage($event)"
-      (profileClick)="onPersonProfile($event)">
+      (profileClick)="onPersonProfile($event)"
+    >
     </app-person>
+    }
   </div>
 
   <!-- Infinite Scroll -->
   <ion-infinite-scroll threshold="100px" (ionInfinite)="loadMore($event)">
     <ion-infinite-scroll-content
       loadingSpinner="bubbles"
-      [loadingText]="'people.loading_more' | translate">
+      [loadingText]="'people.loading_more' | translate"
+    >
     </ion-infinite-scroll-content>
   </ion-infinite-scroll>
 
   <!-- Empty State -->
-  <div *ngIf="filteredPeople.length === 0" class="empty-state">
+  @if (filteredPeople.length === 0) {
+  <div class="empty-state">
     <ion-text color="medium">
-      <p *ngIf="searchTerm.trim() && selectedSegment === 'discover'">
-        {{ 'people.empty_discover_search' | translate: {searchTerm: searchTerm} }}
+      @if (searchTerm.trim() && selectedSegment === 'discover') {
+      <p>
+        {{ 'people.empty_discover_search' | translate: {searchTerm: searchTerm}
+        }}
       </p>
-      <p *ngIf="searchTerm.trim() && selectedSegment === 'following'">
-        {{ 'people.empty_following_search' | translate: {searchTerm: searchTerm} }}
+      } @if (searchTerm.trim() && selectedSegment === 'following') {
+      <p>
+        {{ 'people.empty_following_search' | translate: {searchTerm: searchTerm}
+        }}
       </p>
-      <p *ngIf="!searchTerm.trim() && selectedSegment === 'following'">
-        {{ 'people.empty_following' | translate }}
-      </p>
-      <p *ngIf="!searchTerm.trim() && selectedSegment === 'discover'">
-        {{ 'people.empty_discover' | translate }}
-      </p>
+      } @if (!searchTerm.trim() && selectedSegment === 'following') {
+      <p>{{ 'people.empty_following' | translate }}</p>
+      } @if (!searchTerm.trim() && selectedSegment === 'discover') {
+      <p>{{ 'people.empty_discover' | translate }}</p>
+      }
     </ion-text>
   </div>
+  }
 
   <!-- Floating Profile Button -->
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="currentUser && (isFiltered || searchTerm.trim() || selectedSegment === 'following')">
-    <ion-fab-button (click)="navigateToMyProfile()" color="primary" class="profile-fab">
+  @if (currentUser && (isFiltered || searchTerm.trim() || selectedSegment ===
+  'following')) {
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button
+      (click)="navigateToMyProfile()"
+      color="primary"
+      class="profile-fab"
+    >
       <ion-icon name="person-circle"></ion-icon>
     </ion-fab-button>
   </ion-fab>
+  }
 </ion-content>

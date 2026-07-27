@@ -1,18 +1,22 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { StudioComponent, StudioInfo, Instructor } from '../components/studio/studio.component';
+import {
+  StudioComponent,
+  StudioInfo,
+  Instructor,
+} from '../components/studio/studio.component';
 import { ChatMessagesComponent } from '../components/chat-messages/chat-messages.component';
 import { ChatMessage } from '../models/chat.models';
 import { StudiosService, Studio } from '../services/studios.service';
-import { 
-  IonContent, 
-  IonHeader, 
-  IonTitle, 
+import {
+  IonContent,
+  IonHeader,
+  IonTitle,
   IonToolbar,
   IonBackButton,
   IonButtons,
@@ -29,11 +33,20 @@ import {
   IonInfiniteScroll,
   IonInfiniteScrollContent,
   IonCard,
-  IonCardContent
+  IonCardContent,
 } from '@ionic/angular/standalone';
 import { TranslateModule } from '@ngx-translate/core';
 import { addIcons } from 'ionicons';
-import { home, close, add, list, location, checkmarkCircle, navigate, informationCircle } from 'ionicons/icons';
+import {
+  home,
+  close,
+  add,
+  list,
+  location,
+  checkmarkCircle,
+  navigate,
+  informationCircle,
+} from 'ionicons/icons';
 // Interfaces moved to StudioComponent
 
 // Interfaces now imported from StudioComponent
@@ -44,11 +57,10 @@ import { home, close, add, list, location, checkmarkCircle, navigate, informatio
   styleUrls: ['./studios.page.scss'],
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
-    IonContent, 
-    IonHeader, 
-    IonTitle, 
+    IonContent,
+    IonHeader,
+    IonTitle,
     IonToolbar,
     IonBackButton,
     IonButtons,
@@ -68,34 +80,39 @@ import { home, close, add, list, location, checkmarkCircle, navigate, informatio
     IonCardContent,
     StudioComponent,
     ChatMessagesComponent,
-    TranslateModule
-  ]
+    TranslateModule,
+  ],
 })
 export class StudiosPage implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
-  
+
   selectedSegment: string = 'my-studios';
   searchTerm: string = '';
   filterMode: 'all' | 'single' = 'all';
   filteredEntityId: string | null = null;
   filteredEntityName: string | null = null;
   viewMode: 'list' | 'map' = 'list';
-  
+
   studios: Studio[] = [];
   displayedStudios: Studio[] = [];
-  
+
   // Infinite scroll properties - separate state for each filter combination
   private pageSize = 6;
-  private scrollStates = new Map<string, { page: number; displayed: Studio[] }>();
+  private scrollStates = new Map<
+    string,
+    { page: number; displayed: Studio[] }
+  >();
   private currentFilterKey = '';
-  
+
   // Legacy single studio info for backward compatibility
   studioInfo: StudioInfo = {
     id: 'rising-sun-aikido',
     name: 'Rising Sun Aikido',
-    description: 'Rising Sun Aikido is Austin\'s premier traditional Aikido dojo, dedicated to preserving and teaching the authentic art of Aikido as developed by O-Sensei Morihei Ueshiba. Our dojo emphasizes the harmonious blending of physical technique with spiritual development. Whether you\'re a complete beginner or an experienced martial artist, our welcoming community provides a supportive environment for growth and learning. We focus on building confidence, improving fitness, and developing practical self-defense skills.',
+    description:
+      "Rising Sun Aikido is Austin's premier traditional Aikido dojo, dedicated to preserving and teaching the authentic art of Aikido as developed by O-Sensei Morihei Ueshiba. Our dojo emphasizes the harmonious blending of physical technique with spiritual development. Whether you're a complete beginner or an experienced martial artist, our welcoming community provides a supportive environment for growth and learning. We focus on building confidence, improving fitness, and developing practical self-defense skills.",
     tagline: 'Traditional Aikido Training in Austin, Texas',
-    heroImage: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&h=400&fit=crop',
+    heroImage:
+      'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&h=400&fit=crop',
     address: '1234 Harmony Way, Austin, TX 78704',
     phone: '(512) 555-1234',
     email: 'info@risingsunaikido.org',
@@ -104,23 +121,27 @@ export class StudiosPage implements OnInit, OnDestroy {
       {
         icon: 'fitness',
         title: 'Physical Fitness',
-        description: 'Improve flexibility, balance, and core strength through dynamic movement'
+        description:
+          'Improve flexibility, balance, and core strength through dynamic movement',
       },
       {
         icon: 'shield',
         title: 'Self Defense',
-        description: 'Learn practical techniques for personal protection and confidence'
+        description:
+          'Learn practical techniques for personal protection and confidence',
       },
       {
         icon: 'heart',
         title: 'Mental Wellness',
-        description: 'Reduce stress and develop mindfulness through focused practice'
+        description:
+          'Reduce stress and develop mindfulness through focused practice',
       },
       {
         icon: 'people',
         title: 'Community',
-        description: 'Join a supportive community of practitioners from all walks of life'
-      }
+        description:
+          'Join a supportive community of practitioners from all walks of life',
+      },
     ],
     instructors: [
       {
@@ -130,8 +151,9 @@ export class StudiosPage implements OnInit, OnDestroy {
         title: 'Chief Instructor',
         rank: '6th Dan',
         bio: 'Sensei Johnson has been practicing Aikido for over 25 years and teaching for 15 years. He emphasizes the philosophical aspects of Aikido alongside technical training.',
-        image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
-        experience: '25+ years'
+        image:
+          'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
+        experience: '25+ years',
       },
       {
         id: '6',
@@ -139,10 +161,11 @@ export class StudiosPage implements OnInit, OnDestroy {
         username: 'sensei_maria',
         title: 'Senior Instructor',
         rank: '4th Dan',
-        bio: 'Sensei Martinez specializes in youth instruction and has developed our comprehensive children\'s program. She brings energy and patience to every class.',
-        image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
-        experience: '18+ years'
-      }
+        bio: "Sensei Martinez specializes in youth instruction and has developed our comprehensive children's program. She brings energy and patience to every class.",
+        image:
+          'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
+        experience: '18+ years',
+      },
     ],
     schedule: [
       {
@@ -159,7 +182,7 @@ export class StudiosPage implements OnInit, OnDestroy {
         recurrencePattern: 'weekly',
         recurrenceEnd: '2024-12-31',
         color: '#3880ff',
-        location: 'Main Dojo'
+        location: 'Main Dojo',
       },
       {
         id: 'demo_2',
@@ -175,7 +198,7 @@ export class StudiosPage implements OnInit, OnDestroy {
         recurrencePattern: 'weekly',
         recurrenceEnd: '2024-12-31',
         color: '#f04141',
-        location: 'Main Dojo'
+        location: 'Main Dojo',
       },
       {
         id: 'demo_3',
@@ -191,7 +214,7 @@ export class StudiosPage implements OnInit, OnDestroy {
         recurrencePattern: 'weekly',
         recurrenceEnd: '2024-12-31',
         color: '#3880ff',
-        location: 'Main Dojo'
+        location: 'Main Dojo',
       },
       {
         id: 'demo_4',
@@ -207,7 +230,7 @@ export class StudiosPage implements OnInit, OnDestroy {
         recurrencePattern: 'weekly',
         recurrenceEnd: '2024-12-31',
         color: '#ffce00',
-        location: 'Weapons Room'
+        location: 'Weapons Room',
       },
       {
         id: 'demo_5',
@@ -223,7 +246,7 @@ export class StudiosPage implements OnInit, OnDestroy {
         recurrencePattern: 'weekly',
         recurrenceEnd: '2024-12-31',
         color: '#7044ff',
-        location: 'Youth Room'
+        location: 'Youth Room',
       },
       {
         id: 'demo_6',
@@ -239,8 +262,8 @@ export class StudiosPage implements OnInit, OnDestroy {
         recurrencePattern: 'weekly',
         recurrenceEnd: '2024-12-31',
         color: '#3880ff',
-        location: 'Main Dojo'
-      }
+        location: 'Main Dojo',
+      },
     ],
     pricing: [
       {
@@ -250,8 +273,8 @@ export class StudiosPage implements OnInit, OnDestroy {
         features: [
           'Perfect for trying us out',
           'No commitment',
-          'All levels welcome'
-        ]
+          'All levels welcome',
+        ],
       },
       {
         name: 'Monthly',
@@ -260,9 +283,9 @@ export class StudiosPage implements OnInit, OnDestroy {
         features: [
           'Best value for regular training',
           'Access to all classes',
-          'Community events included'
+          'Community events included',
         ],
-        featured: true
+        featured: true,
       },
       {
         name: 'Youth Program',
@@ -271,54 +294,67 @@ export class StudiosPage implements OnInit, OnDestroy {
         features: [
           'Age-appropriate curriculum',
           'Character development focus',
-          'Saturday classes'
-        ]
-      }
-    ]
+          'Saturday classes',
+        ],
+      },
+    ],
   };
 
   constructor(
-    private router: Router, 
+    private router: Router,
     private route: ActivatedRoute,
     private studiosService: StudiosService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
   ) {
-    addIcons({home,close,list,location,checkmarkCircle,navigate,informationCircle,add});
+    addIcons({
+      home,
+      close,
+      list,
+      location,
+      checkmarkCircle,
+      navigate,
+      informationCircle,
+      add,
+    });
     console.log('[Studios Page] Constructor called');
   }
 
   ngOnInit() {
     console.log('[Studios Page] Initializing...');
-    
+
     // Get studios directly from service (they're already emitted in constructor)
     this.studios = this.studiosService.getAllStudios();
     console.log('[Studios Page] Loaded studios:', this.studios.length);
-    
+
     // Subscribe to studios from service for updates
-    this.studiosService.studios$.pipe(takeUntil(this.destroy$)).subscribe(studios => {
-      console.log('[Studios Page] Received studios update:', studios.length);
-      this.studios = studios;
-      this.updateDisplayedStudios();
-    });
-    
+    this.studiosService.studios$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((studios) => {
+        console.log('[Studios Page] Received studios update:', studios.length);
+        this.studios = studios;
+        this.updateDisplayedStudios();
+      });
+
     // Check if we're filtering to a specific studio
-    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe(params => {
-      if (params['filter'] === 'single' && params['entityId']) {
-        this.filterMode = 'single';
-        this.filteredEntityId = params['entityId'];
-        this.filteredEntityName = params['entityName'] || null;
-        this.searchTerm = params['entityName'] || '';
-      } else {
-        this.filterMode = 'all';
-        this.filteredEntityId = null;
-        this.filteredEntityName = null;
-        if (params['search']) {
-          this.searchTerm = params['search'];
+    this.route.queryParams
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((params) => {
+        if (params['filter'] === 'single' && params['entityId']) {
+          this.filterMode = 'single';
+          this.filteredEntityId = params['entityId'];
+          this.filteredEntityName = params['entityName'] || null;
+          this.searchTerm = params['entityName'] || '';
+        } else {
+          this.filterMode = 'all';
+          this.filteredEntityId = null;
+          this.filteredEntityName = null;
+          if (params['search']) {
+            this.searchTerm = params['search'];
+          }
         }
-      }
-      this.updateDisplayedStudios();
-    });
-    
+        this.updateDisplayedStudios();
+      });
+
     // Initial display update
     this.updateDisplayedStudios();
   }
@@ -336,11 +372,11 @@ export class StudiosPage implements OnInit, OnDestroy {
   // Event handlers for studio component
   onInstructorClick(instructor: Instructor) {
     // Navigate to people page and scroll to the instructor
-    this.router.navigate(['/dash/people'], { 
-      queryParams: { 
+    this.router.navigate(['/dash/people'], {
+      queryParams: {
         instructor: instructor.username,
-        search: instructor.name 
-      } 
+        search: instructor.name,
+      },
     });
   }
 
@@ -394,11 +430,13 @@ export class StudiosPage implements OnInit, OnDestroy {
   get filteredStudios(): Studio[] {
     // If in single entity mode, filter to show only that entity
     if (this.filterMode === 'single' && this.filteredEntityId) {
-      return this.studios.filter(studio => studio.id === this.filteredEntityId);
+      return this.studios.filter(
+        (studio) => studio.id === this.filteredEntityId,
+      );
     }
 
     let filtered: Studio[] = [];
-    
+
     // Filter by segment
     switch (this.selectedSegment) {
       case 'my-studios':
@@ -413,11 +451,15 @@ export class StudiosPage implements OnInit, OnDestroy {
     // Filter by search term
     if (this.searchTerm.trim()) {
       const searchResults = this.studiosService.searchStudios(this.searchTerm);
-      
+
       // Apply segment filter to search results
       if (this.selectedSegment === 'my-studios') {
-        const userStudioIds = this.studiosService.getUserStudios().map(s => s.id);
-        filtered = searchResults.filter(studio => userStudioIds.includes(studio.id));
+        const userStudioIds = this.studiosService
+          .getUserStudios()
+          .map((s) => s.id);
+        filtered = searchResults.filter((studio) =>
+          userStudioIds.includes(studio.id),
+        );
       } else {
         filtered = searchResults;
       }
@@ -428,43 +470,49 @@ export class StudiosPage implements OnInit, OnDestroy {
 
   private updateDisplayedStudios() {
     const filtered = this.filteredStudios;
-    
+
     // In map mode, show all filtered studios
     if (this.viewMode === 'map') {
       this.displayedStudios = filtered;
       return;
     }
-    
+
     // Create unique key for this filter combination
     const filterKey = `${this.filterMode}:${this.filteredEntityId}:${this.selectedSegment}:${this.searchTerm}`;
-    
+
     // Check if filter changed
     if (filterKey !== this.currentFilterKey) {
       this.currentFilterKey = filterKey;
-      
+
       // Get or create state for this filter
       if (!this.scrollStates.has(filterKey)) {
         this.scrollStates.set(filterKey, { page: 0, displayed: [] });
       }
-      
+
       const state = this.scrollStates.get(filterKey)!;
-      
+
       // If state is empty, load initial items
       if (state.displayed.length === 0) {
         this.loadInitialStudios(state, filtered);
       }
-      
+
       this.displayedStudios = state.displayed;
     }
   }
 
-  private loadInitialStudios(state: { page: number; displayed: Studio[] }, source: Studio[]) {
+  private loadInitialStudios(
+    state: { page: number; displayed: Studio[] },
+    source: Studio[],
+  ) {
     state.page = 0;
     state.displayed = [];
     this.loadMoreStudiosForState(state, source);
   }
 
-  private loadMoreStudiosForState(state: { page: number; displayed: Studio[] }, source: Studio[]) {
+  private loadMoreStudiosForState(
+    state: { page: number; displayed: Studio[] },
+    source: Studio[],
+  ) {
     const startIndex = state.page * this.pageSize;
     const endIndex = startIndex + this.pageSize;
     const newStudios = source.slice(startIndex, endIndex);
@@ -480,9 +528,9 @@ export class StudiosPage implements OnInit, OnDestroy {
         this.loadMoreStudiosForState(state, filtered);
         this.displayedStudios = state.displayed;
       }
-      
+
       event.target.complete();
-      
+
       // Disable infinite scroll when all items are loaded
       if (this.displayedStudios.length >= filtered.length) {
         event.target.disabled = true;
@@ -524,7 +572,7 @@ export class StudiosPage implements OnInit, OnDestroy {
   // Convert Studio to StudioInfo for component compatibility
   convertToStudioInfo(studio: Studio): StudioInfo {
     const enrichedStudio = this.studiosService.enrichStudio(studio);
-    
+
     return {
       id: enrichedStudio.id,
       name: enrichedStudio.name,
@@ -536,7 +584,7 @@ export class StudiosPage implements OnInit, OnDestroy {
       email: enrichedStudio.email,
       website: enrichedStudio.website,
       benefits: enrichedStudio.benefits,
-      instructors: enrichedStudio.instructors.map(instructor => ({
+      instructors: enrichedStudio.instructors.map((instructor) => ({
         id: instructor.id,
         name: instructor.name,
         username: instructor.username,
@@ -549,43 +597,47 @@ export class StudiosPage implements OnInit, OnDestroy {
         phone: instructor.phone,
         specialties: instructor.specialties,
         certifications: instructor.certifications,
-        isActive: instructor.isActive
+        isActive: instructor.isActive,
       })),
-      headInstructor: enrichedStudio.headInstructor ? {
-        id: enrichedStudio.headInstructor.id,
-        name: enrichedStudio.headInstructor.name,
-        username: enrichedStudio.headInstructor.username,
-        title: enrichedStudio.headInstructor.title,
-        rank: enrichedStudio.headInstructor.rank,
-        bio: enrichedStudio.headInstructor.bio,
-        image: enrichedStudio.headInstructor.image,
-        experience: enrichedStudio.headInstructor.experience,
-        email: enrichedStudio.headInstructor.email,
-        phone: enrichedStudio.headInstructor.phone,
-        specialties: enrichedStudio.headInstructor.specialties,
-        certifications: enrichedStudio.headInstructor.certifications,
-        isActive: enrichedStudio.headInstructor.isActive
-      } : undefined,
-      studioChief: enrichedStudio.studioChief ? {
-        id: enrichedStudio.studioChief.id,
-        name: enrichedStudio.studioChief.name,
-        username: enrichedStudio.studioChief.username,
-        title: enrichedStudio.studioChief.title,
-        rank: enrichedStudio.studioChief.rank,
-        bio: enrichedStudio.studioChief.bio,
-        image: enrichedStudio.studioChief.image,
-        experience: enrichedStudio.studioChief.experience,
-        email: enrichedStudio.studioChief.email,
-        phone: enrichedStudio.studioChief.phone,
-        specialties: enrichedStudio.studioChief.specialties,
-        certifications: enrichedStudio.studioChief.certifications,
-        isActive: enrichedStudio.studioChief.isActive
-      } : undefined,
+      headInstructor: enrichedStudio.headInstructor
+        ? {
+            id: enrichedStudio.headInstructor.id,
+            name: enrichedStudio.headInstructor.name,
+            username: enrichedStudio.headInstructor.username,
+            title: enrichedStudio.headInstructor.title,
+            rank: enrichedStudio.headInstructor.rank,
+            bio: enrichedStudio.headInstructor.bio,
+            image: enrichedStudio.headInstructor.image,
+            experience: enrichedStudio.headInstructor.experience,
+            email: enrichedStudio.headInstructor.email,
+            phone: enrichedStudio.headInstructor.phone,
+            specialties: enrichedStudio.headInstructor.specialties,
+            certifications: enrichedStudio.headInstructor.certifications,
+            isActive: enrichedStudio.headInstructor.isActive,
+          }
+        : undefined,
+      studioChief: enrichedStudio.studioChief
+        ? {
+            id: enrichedStudio.studioChief.id,
+            name: enrichedStudio.studioChief.name,
+            username: enrichedStudio.studioChief.username,
+            title: enrichedStudio.studioChief.title,
+            rank: enrichedStudio.studioChief.rank,
+            bio: enrichedStudio.studioChief.bio,
+            image: enrichedStudio.studioChief.image,
+            experience: enrichedStudio.studioChief.experience,
+            email: enrichedStudio.studioChief.email,
+            phone: enrichedStudio.studioChief.phone,
+            specialties: enrichedStudio.studioChief.specialties,
+            certifications: enrichedStudio.studioChief.certifications,
+            isActive: enrichedStudio.studioChief.isActive,
+          }
+        : undefined,
       schedule: enrichedStudio.schedule,
       pricing: enrichedStudio.pricing,
       isMember: enrichedStudio.isMember,
       isInstructor: enrichedStudio.isInstructor,
-      isStudioChief: enrichedStudio.isStudioChief
+      isStudioChief: enrichedStudio.isStudioChief,
     };
   }
 
@@ -610,13 +662,16 @@ export class StudiosPage implements OnInit, OnDestroy {
 
   // Generate Google Maps embed URL with multiple studio locations
   getMapEmbedUrl(): SafeResourceUrl {
-    const studiosWithLocations = this.filteredStudios.filter(studio => studio.address);
-    
+    const studiosWithLocations = this.filteredStudios.filter(
+      (studio) => studio.address,
+    );
+
     let url: string;
-    
+
     if (studiosWithLocations.length === 0) {
       // Default to a general map if no studios have addresses
-      url = 'https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d3048.4!2d-97.7431!3d30.2672!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sus!4v1234567890123!5m2!1sen!2sus';
+      url =
+        'https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d3048.4!2d-97.7431!3d30.2672!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sus!4v1234567890123!5m2!1sen!2sus';
     } else if (studiosWithLocations.length === 1) {
       // Single studio - center map on it
       const studio = studiosWithLocations[0];
@@ -626,10 +681,12 @@ export class StudiosPage implements OnInit, OnDestroy {
     } else {
       // Multiple studios - show a general area map
       const centerLocation = this.getCenterLocation(studiosWithLocations);
-      const encodedLocation = encodeURIComponent(`aikido dojo ${centerLocation}`);
+      const encodedLocation = encodeURIComponent(
+        `aikido dojo ${centerLocation}`,
+      );
       url = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3048.4!2d-97.7431!3d30.2672!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzDCsDE2JzAyLjAiTiA5N8KwNDQnMzUuMiJX!5e0!3m2!1sen!2sus!4v1234567890123!5m2!1sen!2sus&q=${encodedLocation}`;
     }
-    
+
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
@@ -648,5 +705,4 @@ export class StudiosPage implements OnInit, OnDestroy {
     this.destroy$.complete();
     this.scrollStates.clear();
   }
-
 }

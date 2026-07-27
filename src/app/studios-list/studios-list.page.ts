@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { StudiosService, Studio } from '../services/studios.service';
-import { 
-  IonContent, 
-  IonHeader, 
-  IonTitle, 
+import {
+  IonContent,
+  IonHeader,
+  IonTitle,
   IonToolbar,
   IonCard,
   IonCardHeader,
@@ -25,7 +25,7 @@ import {
   IonFab,
   IonFabButton,
   IonButtons,
-  IonBackButton
+  IonBackButton,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { location, call, people, star, add } from 'ionicons/icons';
@@ -36,7 +36,6 @@ import { location, call, people, star, add } from 'ionicons/icons';
   styleUrls: ['./studios-list.page.scss'],
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     IonContent,
     IonHeader,
@@ -59,8 +58,8 @@ import { location, call, people, star, add } from 'ionicons/icons';
     IonFab,
     IonFabButton,
     IonButtons,
-    IonBackButton
-  ]
+    IonBackButton,
+  ],
 })
 export class StudiosListPage implements OnInit {
   studios: Studio[] = [];
@@ -68,21 +67,24 @@ export class StudiosListPage implements OnInit {
   displayedStudios: Studio[] = [];
   searchTerm: string = '';
   selectedSegment: string = 'my-studios';
-  
+
   private pageSize = 10;
   private currentPage = 0;
 
   constructor(
     private router: Router,
-    private studiosService: StudiosService
+    private studiosService: StudiosService,
   ) {
     addIcons({ location, call, people, star, add });
   }
 
   ngOnInit() {
     // Subscribe to studios$ observable for automatic updates
-    this.studiosService.studios$.subscribe(studios => {
-      console.log('[Studios List] Received studios from service:', studios.length);
+    this.studiosService.studios$.subscribe((studios) => {
+      console.log(
+        '[Studios List] Received studios from service:',
+        studios.length,
+      );
       this.studios = studios;
       this.filterBySegment();
     });
@@ -95,30 +97,42 @@ export class StudiosListPage implements OnInit {
 
   private filterBySegment() {
     let segmentStudios: Studio[] = [];
-    
+
     switch (this.selectedSegment) {
       case 'my-studios':
         // Get studios where user is a member, instructor, or studio chief
-        segmentStudios = this.studios.filter(studio => 
-          studio.isMember || studio.isInstructor || studio.isStudioChief
+        segmentStudios = this.studios.filter(
+          (studio) =>
+            studio.isMember || studio.isInstructor || studio.isStudioChief,
         );
-        console.log('[Studios List] My studios filtered:', segmentStudios.length, 'from', this.studios.length);
+        console.log(
+          '[Studios List] My studios filtered:',
+          segmentStudios.length,
+          'from',
+          this.studios.length,
+        );
         break;
       case 'favorites':
         // Get favorited studios (you can integrate with FavoritesService)
         // For now, showing verified studios as placeholder
-        segmentStudios = this.studios.filter(studio => studio.verified);
-        console.log('[Studios List] Favorites filtered:', segmentStudios.length);
+        segmentStudios = this.studios.filter((studio) => studio.verified);
+        console.log(
+          '[Studios List] Favorites filtered:',
+          segmentStudios.length,
+        );
         break;
       case 'nearby':
         // Get nearby studios (for now showing all, can add geolocation later)
         segmentStudios = this.studios;
-        console.log('[Studios List] Nearby showing all:', segmentStudios.length);
+        console.log(
+          '[Studios List] Nearby showing all:',
+          segmentStudios.length,
+        );
         break;
       default:
         segmentStudios = this.studios;
     }
-    
+
     this.filteredStudios = segmentStudios;
     this.loadInitialStudios();
   }
@@ -126,22 +140,26 @@ export class StudiosListPage implements OnInit {
   private loadInitialStudios() {
     this.currentPage = 0;
     this.displayedStudios = this.filteredStudios.slice(0, this.pageSize);
-    console.log('[Studios List] Displaying initial studios:', this.displayedStudios.length);
+    console.log(
+      '[Studios List] Displaying initial studios:',
+      this.displayedStudios.length,
+    );
   }
 
   onSearch(event: any) {
     const query = event.target.value.toLowerCase();
-    
+
     // First filter by segment
     let segmentStudios: Studio[] = [];
     switch (this.selectedSegment) {
       case 'my-studios':
-        segmentStudios = this.studios.filter(studio => 
-          studio.isMember || studio.isInstructor || studio.isStudioChief
+        segmentStudios = this.studios.filter(
+          (studio) =>
+            studio.isMember || studio.isInstructor || studio.isStudioChief,
         );
         break;
       case 'favorites':
-        segmentStudios = this.studios.filter(studio => studio.verified);
+        segmentStudios = this.studios.filter((studio) => studio.verified);
         break;
       case 'nearby':
         segmentStudios = this.studios;
@@ -149,11 +167,12 @@ export class StudiosListPage implements OnInit {
       default:
         segmentStudios = this.studios;
     }
-    
+
     // Then apply search filter
-    this.filteredStudios = segmentStudios.filter(studio =>
-      studio.name.toLowerCase().includes(query) ||
-      studio.location.toLowerCase().includes(query)
+    this.filteredStudios = segmentStudios.filter(
+      (studio) =>
+        studio.name.toLowerCase().includes(query) ||
+        studio.location.toLowerCase().includes(query),
     );
     this.loadInitialStudios();
   }

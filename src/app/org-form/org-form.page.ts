@@ -1,12 +1,29 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
+
+import {
+  FormBuilder,
+  FormGroup,
+  FormArray,
+  Validators,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { OrganizationsService, Organization, Statistic, Program, Dojo, OrganizationEvent, LineageFeature, SocialMedia, Leader, Achievement } from '../services/organizations.service';
-import { 
-  IonContent, 
-  IonHeader, 
-  IonTitle, 
+import {
+  OrganizationsService,
+  Organization,
+  Statistic,
+  Program,
+  Dojo,
+  OrganizationEvent,
+  LineageFeature,
+  SocialMedia,
+  Leader,
+  Achievement,
+} from '../services/organizations.service';
+import {
+  IonContent,
+  IonHeader,
+  IonTitle,
   IonToolbar,
   IonButton,
   IonItem,
@@ -24,7 +41,7 @@ import {
   IonAlert,
   IonToast,
   IonBackButton,
-  IonButtons
+  IonButtons,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { add, remove, save, arrowBack } from 'ionicons/icons';
@@ -35,11 +52,10 @@ import { add, remove, save, arrowBack } from 'ionicons/icons';
   styleUrls: ['./org-form.page.scss'],
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
-    IonContent, 
-    IonHeader, 
-    IonTitle, 
+    IonContent,
+    IonHeader,
+    IonTitle,
     IonToolbar,
     IonButton,
     IonItem,
@@ -57,8 +73,8 @@ import { add, remove, save, arrowBack } from 'ionicons/icons';
     IonAlert,
     IonToast,
     IonBackButton,
-    IonButtons
-  ]
+    IonButtons,
+  ],
 })
 export class OrgFormPage implements OnInit {
   orgForm: FormGroup;
@@ -75,25 +91,25 @@ export class OrgFormPage implements OnInit {
       role: 'cancel',
       handler: () => {
         this.onDeleteAlertDismiss();
-      }
+      },
     },
     {
       text: 'Delete',
       role: 'confirm',
       handler: () => {
         this.onDelete();
-      }
-    }
+      },
+    },
   ];
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
-    private organizationsService: OrganizationsService
+    private organizationsService: OrganizationsService,
   ) {
     addIcons({ add, remove, save, arrowBack });
-    
+
     this.orgForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
       tagline: [''],
@@ -113,7 +129,7 @@ export class OrgFormPage implements OnInit {
         quote: [''],
         attribution: [''],
         description: [''],
-        image: ['']
+        image: [''],
       }),
       statistics: this.fb.array([]),
       programs: this.fb.array([]),
@@ -122,12 +138,12 @@ export class OrgFormPage implements OnInit {
       lineageFeatures: this.fb.array([]),
       socialMedia: this.fb.array([]),
       leadership: this.fb.array([]),
-      achievements: this.fb.array([])
+      achievements: this.fb.array([]),
     });
   }
 
   ngOnInit() {
-    this.route.params.subscribe(params => {
+    this.route.params.subscribe((params) => {
       if (params['id'] && params['id'] !== 'new') {
         this.isEditMode = true;
         this.orgId = params['id'];
@@ -164,7 +180,7 @@ export class OrgFormPage implements OnInit {
       memberCount: org.memberCount,
       dojoCount: org.dojoCount,
       countryCount: org.countryCount,
-      philosophy: org.philosophy || {}
+      philosophy: org.philosophy || {},
     });
 
     // Populate form arrays
@@ -215,7 +231,7 @@ export class OrgFormPage implements OnInit {
   createStatisticForm(statistic?: Statistic): FormGroup {
     return this.fb.group({
       number: [statistic?.number || '', [Validators.required]],
-      label: [statistic?.label || '', [Validators.required]]
+      label: [statistic?.label || '', [Validators.required]],
     });
   }
 
@@ -228,7 +244,9 @@ export class OrgFormPage implements OnInit {
   }
 
   setStatistics(statistics: Statistic[]) {
-    const statisticFGs = statistics.map(stat => this.createStatisticForm(stat));
+    const statisticFGs = statistics.map((stat) =>
+      this.createStatisticForm(stat),
+    );
     const statisticFormArray = this.fb.array(statisticFGs);
     this.orgForm.setControl('statistics', statisticFormArray);
   }
@@ -240,7 +258,7 @@ export class OrgFormPage implements OnInit {
       description: [program?.description || '', [Validators.required]],
       level: [program?.level || ''],
       duration: [program?.duration || ''],
-      certification: [program?.certification || '']
+      certification: [program?.certification || ''],
     });
   }
 
@@ -253,7 +271,9 @@ export class OrgFormPage implements OnInit {
   }
 
   setPrograms(programs: Program[]) {
-    const programFGs = programs.map(program => this.createProgramForm(program));
+    const programFGs = programs.map((program) =>
+      this.createProgramForm(program),
+    );
     const programFormArray = this.fb.array(programFGs);
     this.orgForm.setControl('programs', programFormArray);
   }
@@ -268,7 +288,7 @@ export class OrgFormPage implements OnInit {
       rank: [dojo?.rank || ''],
       students: [dojo?.students || 0, [Validators.min(0)]],
       established: [dojo?.established || ''],
-      image: [dojo?.image || '']
+      image: [dojo?.image || ''],
     });
   }
 
@@ -281,7 +301,7 @@ export class OrgFormPage implements OnInit {
   }
 
   setMemberDojos(dojos: Dojo[]) {
-    const dojoFGs = dojos.map(dojo => this.createDojoForm(dojo));
+    const dojoFGs = dojos.map((dojo) => this.createDojoForm(dojo));
     const dojoFormArray = this.fb.array(dojoFGs);
     this.orgForm.setControl('memberDojos', dojoFormArray);
   }
@@ -295,7 +315,7 @@ export class OrgFormPage implements OnInit {
       location: [event?.location || '', [Validators.required]],
       type: [event?.type || 'seminar', [Validators.required]],
       instructor: [event?.instructor || ''],
-      cost: [event?.cost || '']
+      cost: [event?.cost || ''],
     });
   }
 
@@ -308,7 +328,7 @@ export class OrgFormPage implements OnInit {
   }
 
   setUpcomingEvents(events: OrganizationEvent[]) {
-    const eventFGs = events.map(event => this.createEventForm(event));
+    const eventFGs = events.map((event) => this.createEventForm(event));
     const eventFormArray = this.fb.array(eventFGs);
     this.orgForm.setControl('upcomingEvents', eventFormArray);
   }
@@ -318,7 +338,7 @@ export class OrgFormPage implements OnInit {
     return this.fb.group({
       icon: [feature?.icon || '', [Validators.required]],
       title: [feature?.title || '', [Validators.required]],
-      description: [feature?.description || '', [Validators.required]]
+      description: [feature?.description || '', [Validators.required]],
     });
   }
 
@@ -331,7 +351,9 @@ export class OrgFormPage implements OnInit {
   }
 
   setLineageFeatures(features: LineageFeature[]) {
-    const featureFGs = features.map(feature => this.createLineageFeatureForm(feature));
+    const featureFGs = features.map((feature) =>
+      this.createLineageFeatureForm(feature),
+    );
     const featureFormArray = this.fb.array(featureFGs);
     this.orgForm.setControl('lineageFeatures', featureFormArray);
   }
@@ -341,7 +363,7 @@ export class OrgFormPage implements OnInit {
     return this.fb.group({
       platform: [social?.platform || 'facebook', [Validators.required]],
       url: [social?.url || '', [Validators.required]],
-      username: [social?.username || '']
+      username: [social?.username || ''],
     });
   }
 
@@ -354,7 +376,9 @@ export class OrgFormPage implements OnInit {
   }
 
   setSocialMedia(socialMedia: SocialMedia[]) {
-    const socialFGs = socialMedia.map(social => this.createSocialMediaForm(social));
+    const socialFGs = socialMedia.map((social) =>
+      this.createSocialMediaForm(social),
+    );
     const socialFormArray = this.fb.array(socialFGs);
     this.orgForm.setControl('socialMedia', socialFormArray);
   }
@@ -368,7 +392,7 @@ export class OrgFormPage implements OnInit {
       rank: [leader?.rank || ''],
       bio: [leader?.bio || ''],
       image: [leader?.image || ''],
-      yearsWithOrg: [leader?.yearsWithOrg || 0, [Validators.min(0)]]
+      yearsWithOrg: [leader?.yearsWithOrg || 0, [Validators.min(0)]],
     });
   }
 
@@ -381,7 +405,7 @@ export class OrgFormPage implements OnInit {
   }
 
   setLeadership(leaders: Leader[]) {
-    const leaderFGs = leaders.map(leader => this.createLeaderForm(leader));
+    const leaderFGs = leaders.map((leader) => this.createLeaderForm(leader));
     const leaderFormArray = this.fb.array(leaderFGs);
     this.orgForm.setControl('leadership', leaderFormArray);
   }
@@ -394,7 +418,7 @@ export class OrgFormPage implements OnInit {
       description: [achievement?.description || '', [Validators.required]],
       date: [achievement?.date || '', [Validators.required]],
       type: [achievement?.type || 'milestone', [Validators.required]],
-      icon: [achievement?.icon || '']
+      icon: [achievement?.icon || ''],
     });
   }
 
@@ -407,7 +431,9 @@ export class OrgFormPage implements OnInit {
   }
 
   setAchievements(achievements: Achievement[]) {
-    const achievementFGs = achievements.map(achievement => this.createAchievementForm(achievement));
+    const achievementFGs = achievements.map((achievement) =>
+      this.createAchievementForm(achievement),
+    );
     const achievementFormArray = this.fb.array(achievementFGs);
     this.orgForm.setControl('achievements', achievementFormArray);
   }
@@ -427,25 +453,28 @@ export class OrgFormPage implements OnInit {
   async onSubmit() {
     if (this.orgForm.valid && !this.isSubmitting) {
       this.isSubmitting = true;
-      
+
       try {
         const formValue = this.orgForm.value;
-        
+
         // Ensure contact info is properly structured
         formValue.contact = {
           email: formValue.email || '',
           phone: formValue.phone || '',
-          website: formValue.website || ''
+          website: formValue.website || '',
         };
-        
+
         if (this.isEditMode && this.orgId) {
-          await this.organizationsService.updateOrganization(this.orgId, formValue);
+          await this.organizationsService.updateOrganization(
+            this.orgId,
+            formValue,
+          );
           this.showToastMessage('Organization updated successfully');
         } else {
           await this.organizationsService.createOrganization(formValue);
           this.showToastMessage('Organization created successfully');
         }
-        
+
         this.router.navigate(['/dash/orgs']);
       } catch (error) {
         console.error('Error saving organization:', error);
@@ -477,14 +506,14 @@ export class OrgFormPage implements OnInit {
   }
 
   private markFormGroupTouched(formGroup: FormGroup) {
-    Object.keys(formGroup.controls).forEach(key => {
+    Object.keys(formGroup.controls).forEach((key) => {
       const control = formGroup.get(key);
       control?.markAsTouched();
 
       if (control instanceof FormGroup) {
         this.markFormGroupTouched(control);
       } else if (control instanceof FormArray) {
-        control.controls.forEach(arrayControl => {
+        control.controls.forEach((arrayControl) => {
           if (arrayControl instanceof FormGroup) {
             this.markFormGroupTouched(arrayControl);
           } else {

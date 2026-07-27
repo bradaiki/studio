@@ -1,67 +1,75 @@
-<ion-card *ngIf="joinRequests.length > 0 || loading">
-  <ion-card-header>
-    <ion-card-title>
-      <ion-icon name="person"></ion-icon>
-      Join Requests
-      <ion-chip color="primary" *ngIf="joinRequests.length > 0">
-        {{ joinRequests.length }}
-      </ion-chip>
-    </ion-card-title>
-  </ion-card-header>
-
-  <ion-card-content>
-    <div *ngIf="loading" class="loading-container">
-      <ion-spinner></ion-spinner>
-      <p>Loading requests...</p>
-    </div>
-
-    <ion-list *ngIf="!loading && joinRequests.length > 0">
-      <ion-item *ngFor="let request of joinRequests" class="request-item">
-        <ion-avatar slot="start">
-          <div class="avatar-placeholder">
-            <ion-icon name="person"></ion-icon>
-          </div>
-        </ion-avatar>
-
-        <ion-label>
-          <h3>{{ request.userName }}</h3>
-          <p>{{ request.userEmail }}</p>
-          <p *ngIf="request.message" class="request-message">
-            "{{ request.message }}"
-          </p>
-          <p class="request-time">
-            <ion-icon name="time"></ion-icon>
-            {{ formatTime(request.requestedAt) }}
-          </p>
-        </ion-label>
-
-        <div slot="end" class="action-buttons">
-          <ion-button
-            fill="solid"
-            color="success"
-            size="small"
-            (click)="approveRequest(request)"
-            [disabled]="processingRequestId === request.id">
-            <ion-icon name="checkmark-circle" slot="start"></ion-icon>
-            Approve
-          </ion-button>
-
-          <ion-button
-            fill="outline"
-            color="danger"
-            size="small"
-            (click)="rejectRequest(request)"
-            [disabled]="processingRequestId === request.id">
-            <ion-icon name="close-circle" slot="start"></ion-icon>
-            Reject
-          </ion-button>
+@if (joinRequests.length > 0 || loading) {
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="person"></ion-icon>
+        Join Requests
+        @if (joinRequests.length > 0) {
+          <ion-chip color="primary">
+            {{ joinRequests.length }}
+          </ion-chip>
+        }
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      @if (loading) {
+        <div class="loading-container">
+          <ion-spinner></ion-spinner>
+          <p>Loading requests...</p>
         </div>
-      </ion-item>
-    </ion-list>
-
-    <div *ngIf="!loading && joinRequests.length === 0" class="empty-state">
-      <ion-icon name="checkmark-circle" color="success"></ion-icon>
-      <p>No pending join requests</p>
-    </div>
-  </ion-card-content>
-</ion-card>
+      }
+      @if (!loading && joinRequests.length > 0) {
+        <ion-list>
+          @for (request of joinRequests; track request) {
+            <ion-item class="request-item">
+              <ion-avatar slot="start">
+                <div class="avatar-placeholder">
+                  <ion-icon name="person"></ion-icon>
+                </div>
+              </ion-avatar>
+              <ion-label>
+                <h3>{{ request.userName }}</h3>
+                <p>{{ request.userEmail }}</p>
+                @if (request.message) {
+                  <p class="request-message">"{{ request.message }}"</p>
+                }
+                <p class="request-time">
+                  <ion-icon name="time"></ion-icon>
+                  {{ formatTime(request.requestedAt) }}
+                </p>
+              </ion-label>
+              <div slot="end" class="action-buttons">
+                <ion-button
+                  fill="solid"
+                  color="success"
+                  size="small"
+                  (click)="approveRequest(request)"
+                  [disabled]="processingRequestId === request.id"
+                >
+                  <ion-icon name="checkmark-circle" slot="start"></ion-icon>
+                  Approve
+                </ion-button>
+                <ion-button
+                  fill="outline"
+                  color="danger"
+                  size="small"
+                  (click)="rejectRequest(request)"
+                  [disabled]="processingRequestId === request.id"
+                >
+                  <ion-icon name="close-circle" slot="start"></ion-icon>
+                  Reject
+                </ion-button>
+              </div>
+            </ion-item>
+          }
+        </ion-list>
+      }
+      @if (!loading && joinRequests.length === 0) {
+        <div class="empty-state">
+          <ion-icon name="checkmark-circle" color="success"></ion-icon>
+          <p>No pending join requests</p>
+        </div>
+      }
+    </ion-card-content>
+  </ion-card>
+}

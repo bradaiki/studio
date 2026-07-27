@@ -1,20 +1,29 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule, Location } from '@angular/common';
+import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { OrganizationComponent, OrganizationInfo, Dojo, Event, SocialMedia } from '../components/organization/organization.component';
-import { OrganizationsService, Organization } from '../services/organizations.service';
+import {
+  OrganizationComponent,
+  OrganizationInfo,
+  Dojo,
+  Event,
+  SocialMedia,
+} from '../components/organization/organization.component';
+import {
+  OrganizationsService,
+  Organization,
+} from '../services/organizations.service';
 import { ChatMessagesComponent } from '../components/chat-messages/chat-messages.component';
 import { ChatMessage } from '../models/chat.models';
-import { 
-  IonHeader, 
-  IonToolbar, 
-  IonTitle, 
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
   IonContent,
   IonButton,
   IonIcon,
   IonButtons,
-  IonBackButton
+  IonBackButton,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { arrowBack, business } from 'ionicons/icons';
@@ -25,7 +34,6 @@ import { arrowBack, business } from 'ionicons/icons';
   styleUrls: ['./org.page.scss'],
   standalone: true,
   imports: [
-    CommonModule,
     TranslateModule,
     IonHeader,
     IonToolbar,
@@ -36,8 +44,8 @@ import { arrowBack, business } from 'ionicons/icons';
     IonButtons,
     IonBackButton,
     OrganizationComponent,
-    ChatMessagesComponent
-  ]
+    ChatMessagesComponent,
+  ],
 })
 export class OrgPage implements OnInit {
   organization: Organization | null = null;
@@ -47,17 +55,20 @@ export class OrgPage implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private location: Location,
-    private organizationsService: OrganizationsService
+    private organizationsService: OrganizationsService,
   ) {
-    addIcons({business,arrowBack});
+    addIcons({ business, arrowBack });
   }
 
   ngOnInit() {
     const orgId = this.route.snapshot.paramMap.get('id');
     if (orgId) {
-      this.organization = this.organizationsService.getOrganizationById(orgId) || null;
+      this.organization =
+        this.organizationsService.getOrganizationById(orgId) || null;
       if (this.organization) {
-        this.organizationInfo = this.convertToOrganizationInfo(this.organization);
+        this.organizationInfo = this.convertToOrganizationInfo(
+          this.organization,
+        );
       }
     }
   }
@@ -99,7 +110,9 @@ export class OrgPage implements OnInit {
   }
 
   // Convert Organization to OrganizationInfo for component compatibility
-  private convertToOrganizationInfo(organization: Organization): OrganizationInfo {
+  private convertToOrganizationInfo(
+    organization: Organization,
+  ): OrganizationInfo {
     return {
       id: organization.id,
       name: organization.name,
@@ -113,7 +126,7 @@ export class OrgPage implements OnInit {
       upcomingEvents: organization.upcomingEvents,
       lineageFeatures: organization.lineageFeatures,
       contact: organization.contact,
-      socialMedia: organization.socialMedia
+      socialMedia: organization.socialMedia,
     };
   }
 

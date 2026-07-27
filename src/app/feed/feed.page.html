@@ -1,16 +1,15 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>
-      {{ 'feed.title' | translate }}
-    </ion-title>
+    <ion-title> {{ 'feed.title' | translate }} </ion-title>
   </ion-toolbar>
-  
+
   <!-- Feed Selection Segment in Header -->
   <ion-toolbar>
-    <ion-segment 
-      [(ngModel)]="selectedFeed" 
+    <ion-segment
+      [(ngModel)]="selectedFeed"
       (ionChange)="onFeedChange($event)"
-      class="feed-segment">
+      class="feed-segment"
+    >
       <ion-segment-button value="clubs">
         <ion-label>{{ 'feed.clubs' | translate }}</ion-label>
       </ion-segment-button>
@@ -37,27 +36,30 @@
   </ion-refresher>
 
   <div class="feed-container">
-    <app-post 
-      *ngFor="let post of displayedPosts; trackBy: trackByPostId" 
-      [post]="post">
-    </app-post>
-    
+    @for (post of displayedPosts; track trackByPostId($index, post)) {
+    <app-post [post]="post"> </app-post>
+    }
+
     <!-- Empty State -->
-    <div *ngIf="displayedPosts.length === 0" class="empty-state">
+    @if (displayedPosts.length === 0) {
+    <div class="empty-state">
       <ion-icon name="newspaper-outline" color="medium"></ion-icon>
       <h3>{{ 'feed.no_posts' | translate }}</h3>
       <p>No posts available in this feed yet.</p>
     </div>
+    }
   </div>
 
   <!-- Infinite Scroll -->
-  <ion-infinite-scroll 
+  <ion-infinite-scroll
     #infiniteScroll
-    threshold="100px" 
-    (ionInfinite)="loadMore($event)">
+    threshold="100px"
+    (ionInfinite)="loadMore($event)"
+  >
     <ion-infinite-scroll-content
       loadingSpinner="bubbles"
-      [loadingText]="'feed.loading_more' | translate">
+      [loadingText]="'feed.loading_more' | translate"
+    >
     </ion-infinite-scroll-content>
   </ion-infinite-scroll>
 

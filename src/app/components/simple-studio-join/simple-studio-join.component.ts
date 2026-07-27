@@ -1,7 +1,12 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { 
+
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
+import {
   IonHeader,
   IonToolbar,
   IonTitle,
@@ -14,18 +19,12 @@ import {
   IonInput,
   IonTextarea,
   IonSpinner,
-  ToastController, 
+  ToastController,
   LoadingController,
-  ModalController 
+  ModalController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { 
-  person, 
-  mail, 
-  send,
-  close,
-  refresh
-} from 'ionicons/icons';
+import { person, mail, send, close, refresh } from 'ionicons/icons';
 import { Subscription } from 'rxjs';
 
 import { StudioMembershipService } from '../../services/studio-membership.service';
@@ -55,8 +54,7 @@ export interface ErrorMessageMapping {
   styleUrls: ['./simple-studio-join.component.scss'],
   standalone: true,
   imports: [
-    CommonModule, 
-    ReactiveFormsModule, 
+    ReactiveFormsModule,
     IonHeader,
     IonToolbar,
     IonTitle,
@@ -68,8 +66,8 @@ export interface ErrorMessageMapping {
     IonLabel,
     IonInput,
     IonTextarea,
-    IonSpinner
-  ]
+    IonSpinner,
+  ],
 })
 export class SimpleStudioJoinComponent implements OnInit, OnDestroy {
   @Input() studioId!: string;
@@ -89,19 +87,20 @@ export class SimpleStudioJoinComponent implements OnInit, OnDestroy {
 
   // Enhanced error message mapping for different error types
   private errorMessageMap: ErrorMessageMapping = {
-    'authentication': 'Please log in to send a join request.',
-    'session_expired': 'Your session has expired. Please log in again.',
-    'network': 'Network error. Please check your connection and try again.',
-    'already exists': 'You already have a pending join request for this studio.',
-    'validation': 'Please check your input and try again.',
-    'server': 'Server error. Please try again later.',
-    'timeout': 'Request timed out. Please try again.',
-    'permission': 'You do not have permission to perform this action.',
-    'studio_not_found': 'The requested studio could not be found.',
-    'user_not_found': 'User information could not be found.',
-    'rate_limit': 'Too many requests. Please wait a moment and try again.',
-    'maintenance': 'The service is temporarily unavailable for maintenance.',
-    'default': 'An unexpected error occurred. Please try again.'
+    authentication: 'Please log in to send a join request.',
+    session_expired: 'Your session has expired. Please log in again.',
+    network: 'Network error. Please check your connection and try again.',
+    'already exists':
+      'You already have a pending join request for this studio.',
+    validation: 'Please check your input and try again.',
+    server: 'Server error. Please try again later.',
+    timeout: 'Request timed out. Please try again.',
+    permission: 'You do not have permission to perform this action.',
+    studio_not_found: 'The requested studio could not be found.',
+    user_not_found: 'User information could not be found.',
+    rate_limit: 'Too many requests. Please wait a moment and try again.',
+    maintenance: 'The service is temporarily unavailable for maintenance.',
+    default: 'An unexpected error occurred. Please try again.',
   };
 
   constructor(
@@ -109,14 +108,14 @@ export class SimpleStudioJoinComponent implements OnInit, OnDestroy {
     private studioMembershipService: StudioMembershipService,
     private toastController: ToastController,
     private loadingController: LoadingController,
-    private modalController: ModalController
+    private modalController: ModalController,
   ) {
     addIcons({
       person,
       mail,
       send,
       close,
-      refresh
+      refresh,
     });
   }
 
@@ -125,7 +124,7 @@ export class SimpleStudioJoinComponent implements OnInit, OnDestroy {
    */
   private sanitizeUserInput(input: string): string {
     if (!input) return '';
-    
+
     // Remove potentially dangerous characters and normalize whitespace
     return input
       .trim()
@@ -141,15 +140,22 @@ export class SimpleStudioJoinComponent implements OnInit, OnDestroy {
     if (!studioId || typeof studioId !== 'string') {
       return false;
     }
-    
+
     // Studio IDs should be alphanumeric with hyphens/underscores only
     const studioIdPattern = /^[a-zA-Z0-9_-]+$/;
-    return studioIdPattern.test(studioId) && studioId.length >= 3 && studioId.length <= 50;
+    return (
+      studioIdPattern.test(studioId) &&
+      studioId.length >= 3 &&
+      studioId.length <= 50
+    );
   }
 
   ngOnInit() {
-    console.log('SimpleStudioJoinComponent initializing for studio:', this.studioId);
-    
+    console.log(
+      'SimpleStudioJoinComponent initializing for studio:',
+      this.studioId,
+    );
+
     if (!this.studioId) {
       console.error('No studioId provided to SimpleStudioJoinComponent');
       this.errors.general = 'Studio ID is required';
@@ -165,36 +171,36 @@ export class SimpleStudioJoinComponent implements OnInit, OnDestroy {
 
     // Initialize form immediately - this should be synchronous and fast
     this.initializeFormSync();
-    
+
     // Check modal context asynchronously
     this.checkModalContext();
-    
+
     console.log('SimpleStudioJoinComponent initialization complete');
   }
 
   ngOnDestroy() {
     console.log('SimpleStudioJoinComponent destroying');
-    
+
     // Clean up modal context timeout if still pending
     if (this.modalContextTimeout) {
       clearTimeout(this.modalContextTimeout);
       this.modalContextTimeout = undefined;
     }
-    
+
     // Clean up retry timeout if still pending
     if (this.retryTimeout) {
       clearTimeout(this.retryTimeout);
       this.retryTimeout = undefined;
     }
-    
+
     // Clean up all subscriptions to prevent memory leaks
-    this.subscriptions.forEach(subscription => {
+    this.subscriptions.forEach((subscription) => {
       if (subscription && !subscription.closed) {
         subscription.unsubscribe();
       }
     });
     this.subscriptions = [];
-    
+
     // Clear errors and reset state
     this.errors = {};
     this.isSubmitting = false;
@@ -232,8 +238,13 @@ export class SimpleStudioJoinComponent implements OnInit, OnDestroy {
 
   private validateUserNameRealTime() {
     const userNameControl = this.joinForm?.get('userName');
-    
-    if (userNameControl && (userNameControl.touched || userNameControl.dirty || userNameControl.value)) {
+
+    if (
+      userNameControl &&
+      (userNameControl.touched ||
+        userNameControl.dirty ||
+        userNameControl.value)
+    ) {
       if (userNameControl.errors) {
         if (userNameControl.errors['required']) {
           this.errors.userName = 'Name is required';
@@ -254,7 +265,7 @@ export class SimpleStudioJoinComponent implements OnInit, OnDestroy {
 
   private validateMessageRealTime() {
     const messageControl = this.joinForm?.get('message');
-    
+
     if (messageControl && (messageControl.touched || messageControl.dirty)) {
       if (messageControl.errors) {
         if (messageControl.errors['maxlength']) {
@@ -272,17 +283,18 @@ export class SimpleStudioJoinComponent implements OnInit, OnDestroy {
   private initializeFormSync() {
     try {
       console.log('Initializing form synchronously...');
-      
+
       this.joinForm = this.formBuilder.group({
-        userName: ['', [
-          Validators.required,
-          Validators.minLength(2),
-          Validators.maxLength(50),
-          this.noWhitespaceValidator
-        ]],
-        message: ['', [
-          Validators.maxLength(500)
-        ]]
+        userName: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(2),
+            Validators.maxLength(50),
+            this.noWhitespaceValidator,
+          ],
+        ],
+        message: ['', [Validators.maxLength(500)]],
       });
 
       // Set up value change subscriptions to clear field errors when input becomes valid
@@ -291,7 +303,8 @@ export class SimpleStudioJoinComponent implements OnInit, OnDestroy {
       console.log('Form initialized successfully');
     } catch (error) {
       console.error('Error initializing form:', error);
-      this.errors.general = 'Failed to initialize form. Please refresh the page.';
+      this.errors.general =
+        'Failed to initialize form. Please refresh the page.';
     }
   }
 
@@ -304,16 +317,20 @@ export class SimpleStudioJoinComponent implements OnInit, OnDestroy {
     }
 
     // Clear userName errors when field becomes valid
-    const userNameSubscription = this.joinForm.get('userName')?.valueChanges.subscribe(() => {
-      this.clearFieldError('userName');
-      this.clearGeneralErrorIfResolved();
-    });
+    const userNameSubscription = this.joinForm
+      .get('userName')
+      ?.valueChanges.subscribe(() => {
+        this.clearFieldError('userName');
+        this.clearGeneralErrorIfResolved();
+      });
 
     // Clear message errors when field becomes valid
-    const messageSubscription = this.joinForm.get('message')?.valueChanges.subscribe(() => {
-      this.clearFieldError('message');
-      this.clearGeneralErrorIfResolved();
-    });
+    const messageSubscription = this.joinForm
+      .get('message')
+      ?.valueChanges.subscribe(() => {
+        this.clearFieldError('message');
+        this.clearGeneralErrorIfResolved();
+      });
 
     // Track subscriptions for cleanup
     if (userNameSubscription) {
@@ -405,10 +422,10 @@ export class SimpleStudioJoinComponent implements OnInit, OnDestroy {
     if (!this.joinForm) {
       return false;
     }
-    
+
     const userNameControl = this.joinForm.get('userName');
     const messageControl = this.joinForm.get('message');
-    
+
     return !!(
       (userNameControl && (userNameControl.touched || userNameControl.dirty)) ||
       (messageControl && (messageControl.touched || messageControl.dirty))
@@ -432,7 +449,7 @@ export class SimpleStudioJoinComponent implements OnInit, OnDestroy {
     if (!this.joinForm) {
       return;
     }
-    
+
     if (disabled) {
       this.joinForm.disable();
     } else {
@@ -458,7 +475,12 @@ export class SimpleStudioJoinComponent implements OnInit, OnDestroy {
   private clearGeneralErrorIfResolved() {
     // Don't clear submission errors automatically - only clear validation errors
     // Only clear general errors if they are validation-related, not submission-related
-    if (this.errors.general && this.joinForm?.valid && !this.isSubmitting && !this.hasSubmissionError) {
+    if (
+      this.errors.general &&
+      this.joinForm?.valid &&
+      !this.isSubmitting &&
+      !this.hasSubmissionError
+    ) {
       delete this.errors.general;
       this.retryCount = 0; // Reset retry count when error is resolved
     }
@@ -483,7 +505,9 @@ export class SimpleStudioJoinComponent implements OnInit, OnDestroy {
         this.errors.general = 'Please log in to send a join request';
         this.hasSubmissionError = true;
         this.isSubmitting = false; // Reset on authentication failure
-        await this.showErrorToast('Authentication required. Please log in and try again.');
+        await this.showErrorToast(
+          'Authentication required. Please log in and try again.',
+        );
         return;
       }
     } catch (error) {
@@ -491,7 +515,9 @@ export class SimpleStudioJoinComponent implements OnInit, OnDestroy {
       this.errors.general = 'Authentication check failed. Please try again.';
       this.hasSubmissionError = true;
       this.isSubmitting = false; // Reset on authentication error
-      await this.showErrorToast('Authentication error. Please refresh the page and try again.');
+      await this.showErrorToast(
+        'Authentication error. Please refresh the page and try again.',
+      );
       return;
     }
 
@@ -504,36 +530,47 @@ export class SimpleStudioJoinComponent implements OnInit, OnDestroy {
   private async submitWithRetry(): Promise<void> {
     // isSubmitting is already set to true in onSubmit()
     this.setFormControlsDisabledState(true); // Disable form controls during submission
-    
+
     // Only clear errors on the first attempt, not on retries
     if (this.retryCount === 0) {
       this.clearAllErrors();
     }
 
     const loading = await this.loadingController.create({
-      message: this.retryCount > 0 ? `Retrying... (${this.retryCount}/${this.maxRetries})` : 'Sending join request...',
+      message:
+        this.retryCount > 0
+          ? `Retrying... (${this.retryCount}/${this.maxRetries})`
+          : 'Sending join request...',
       spinner: 'crescent',
-      translucent: true
+      translucent: true,
     });
     await loading.present();
 
     try {
-      const userName = this.sanitizeUserInput(this.joinForm?.get('userName')?.value || '');
-      const message = this.sanitizeUserInput(this.joinForm?.get('message')?.value || '');
+      const userName = this.sanitizeUserInput(
+        this.joinForm?.get('userName')?.value || '',
+      );
+      const message = this.sanitizeUserInput(
+        this.joinForm?.get('message')?.value || '',
+      );
 
-      console.log('[SimpleStudioJoin] Submitting join request:', { studioId: this.studioId, userName, message });
-      
+      console.log('[SimpleStudioJoin] Submitting join request:', {
+        studioId: this.studioId,
+        userName,
+        message,
+      });
+
       await this.studioMembershipService.requestToJoin({
         studioId: this.studioId,
-        message: message || undefined
+        message: message || undefined,
       });
 
       console.log('[SimpleStudioJoin] Join request submitted successfully');
       await loading.dismiss();
-      
+
       // Enhanced success feedback with more detailed message
       const successMessage = `Join request sent successfully! You will be notified when an instructor reviews your request for ${this.studioName || 'this studio'}.`;
-      
+
       await this.showSuccessToast(successMessage);
 
       // Reset retry count on success
@@ -545,54 +582,54 @@ export class SimpleStudioJoinComponent implements OnInit, OnDestroy {
         await this.modalController.dismiss({
           dismissed: true,
           membershipChanged: true, // Indicate that membership status may have changed
-          success: true
+          success: true,
         });
       } else {
         // If not in modal, just close normally
         await this.closeModal();
       }
-
     } catch (error) {
       await loading.dismiss();
-      
+
       console.error('Error submitting join request:', error);
-      
+
       const errorMessage = this.mapErrorToUserMessage(error);
       const isTransientError = this.isTransientError(error);
-      
+
       // Always set the general error for user feedback and mark as submission error
       this.errors.general = errorMessage;
       this.hasSubmissionError = true; // Mark that we have a submission error
-      
+
       if (isTransientError && this.retryCount < this.maxRetries) {
         // Attempt automatic retry for transient errors
         this.retryCount++;
-        
+
         const retryMessage = `Request failed. Retrying automatically in ${this.retryDelay / 1000} seconds... (${this.retryCount}/${this.maxRetries})`;
-        
+
         const retryToast = await this.toastController.create({
           message: retryMessage,
           duration: this.retryDelay,
           color: 'warning',
-          position: 'top'
+          position: 'top',
         });
         await retryToast.present();
-        
+
         // Wait before retrying with exponential backoff
         this.retryTimeout = window.setTimeout(async () => {
           this.retryDelay *= 2; // Exponential backoff
           await this.submitWithRetry();
         }, this.retryDelay);
-        
+
         return; // Don't set isSubmitting to false yet or re-enable form
       } else {
         // Show error toast for non-transient errors or max retries reached
-        const errorToastMessage = this.retryCount >= this.maxRetries 
-          ? `${errorMessage} Maximum retry attempts reached.`
-          : errorMessage;
-        
+        const errorToastMessage =
+          this.retryCount >= this.maxRetries
+            ? `${errorMessage} Maximum retry attempts reached.`
+            : errorMessage;
+
         await this.showErrorToast(errorToastMessage);
-        
+
         // Reset retry count after max attempts
         if (this.retryCount >= this.maxRetries) {
           this.retryCount = 0;
@@ -611,7 +648,7 @@ export class SimpleStudioJoinComponent implements OnInit, OnDestroy {
   private isTransientError(error: any): boolean {
     if (error instanceof Error) {
       const errorMessage = error.message.toLowerCase();
-      
+
       // Network-related errors that might be temporary
       const transientPatterns = [
         'network',
@@ -622,12 +659,14 @@ export class SimpleStudioJoinComponent implements OnInit, OnDestroy {
         '503',
         '504',
         'rate limit',
-        'too many requests'
+        'too many requests',
       ];
-      
-      return transientPatterns.some(pattern => errorMessage.includes(pattern));
+
+      return transientPatterns.some((pattern) =>
+        errorMessage.includes(pattern),
+      );
     }
-    
+
     return false;
   }
 
@@ -637,21 +676,24 @@ export class SimpleStudioJoinComponent implements OnInit, OnDestroy {
       if (this.isInModal) {
         await this.modalController.dismiss({
           dismissed: true,
-          membershipChanged: false // Could be set to true if join was successful
+          membershipChanged: false, // Could be set to true if join was successful
         });
         console.log('Modal dismissed successfully');
       } else {
         console.log('Not in modal context, no modal to dismiss');
       }
     } catch (error) {
-      console.log('Modal dismiss called but no modal to dismiss or error occurred:', error);
+      console.log(
+        'Modal dismiss called but no modal to dismiss or error occurred:',
+        error,
+      );
       // This is not necessarily an error - component might not be in a modal
     }
   }
 
   async onCancel() {
     console.log('Cancel button clicked');
-    
+
     // If form has been modified, could show confirmation dialog here
     // For now, just close the modal
     await this.closeModal();
@@ -664,7 +706,7 @@ export class SimpleStudioJoinComponent implements OnInit, OnDestroy {
     if (this.isSubmitting) {
       return;
     }
-    
+
     this.retryCount = 0; // Reset retry count for manual retry
     this.retryDelay = 1000; // Reset delay
     await this.onSubmit();
@@ -676,34 +718,58 @@ export class SimpleStudioJoinComponent implements OnInit, OnDestroy {
   private mapErrorToUserMessage(error: any): string {
     if (error instanceof Error) {
       const errorMessage = error.message.toLowerCase();
-      
+
       // Check for specific error patterns and map to user-friendly messages
-      for (const [errorType, userMessage] of Object.entries(this.errorMessageMap)) {
+      for (const [errorType, userMessage] of Object.entries(
+        this.errorMessageMap,
+      )) {
         if (errorMessage.includes(errorType)) {
           return userMessage;
         }
       }
-      
+
       // Handle HTTP status codes if present
-      if (errorMessage.includes('401') || errorMessage.includes('unauthorized')) {
+      if (
+        errorMessage.includes('401') ||
+        errorMessage.includes('unauthorized')
+      ) {
         return this.errorMessageMap['authentication'];
-      } else if (errorMessage.includes('session') && errorMessage.includes('expired')) {
+      } else if (
+        errorMessage.includes('session') &&
+        errorMessage.includes('expired')
+      ) {
         return this.errorMessageMap['session_expired'];
-      } else if (errorMessage.includes('403') || errorMessage.includes('forbidden')) {
+      } else if (
+        errorMessage.includes('403') ||
+        errorMessage.includes('forbidden')
+      ) {
         return this.errorMessageMap['permission'];
-      } else if (errorMessage.includes('404') || errorMessage.includes('not found')) {
+      } else if (
+        errorMessage.includes('404') ||
+        errorMessage.includes('not found')
+      ) {
         return this.errorMessageMap['studio_not_found'];
-      } else if (errorMessage.includes('429') || errorMessage.includes('rate limit')) {
+      } else if (
+        errorMessage.includes('429') ||
+        errorMessage.includes('rate limit')
+      ) {
         return this.errorMessageMap['rate_limit'];
-      } else if (errorMessage.includes('500') || errorMessage.includes('502') || errorMessage.includes('503')) {
+      } else if (
+        errorMessage.includes('500') ||
+        errorMessage.includes('502') ||
+        errorMessage.includes('503')
+      ) {
         return this.errorMessageMap['server'];
       } else if (errorMessage.includes('timeout')) {
         return this.errorMessageMap['timeout'];
-      } else if (errorMessage.includes('invalid') && errorMessage.includes('studio')) {
+      } else if (
+        errorMessage.includes('invalid') &&
+        errorMessage.includes('studio')
+      ) {
         return 'Invalid studio ID provided';
       }
     }
-    
+
     // Default fallback message
     return this.errorMessageMap['default'];
   }
@@ -720,9 +786,9 @@ export class SimpleStudioJoinComponent implements OnInit, OnDestroy {
       buttons: [
         {
           text: 'Great!',
-          role: 'cancel'
-        }
-      ]
+          role: 'cancel',
+        },
+      ],
     });
     await toast.present();
   }
@@ -739,9 +805,9 @@ export class SimpleStudioJoinComponent implements OnInit, OnDestroy {
       buttons: [
         {
           text: 'Dismiss',
-          role: 'cancel'
-        }
-      ]
+          role: 'cancel',
+        },
+      ],
     });
     await toast.present();
   }

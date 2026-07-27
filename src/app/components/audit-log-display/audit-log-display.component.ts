@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { IonicModule } from '@ionic/angular';
 import { RequestAuditEntry } from '../../models/instructor-join-review.models';
 import { RequestAuditService } from '../../services/request-audit.service';
@@ -14,7 +14,7 @@ import { RequestAuditService } from '../../services/request-audit.service';
   templateUrl: './audit-log-display.component.html',
   styleUrls: ['./audit-log-display.component.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule]
+  imports: [IonicModule],
 })
 export class AuditLogDisplayComponent implements OnInit {
   @Input() requestId?: string;
@@ -46,11 +46,15 @@ export class AuditLogDisplayComponent implements OnInit {
     try {
       if (this.requestId) {
         // Load audit trail for specific request
-        this.auditEntries = await this.auditService.getAuditTrailForRequest(this.requestId);
+        this.auditEntries = await this.auditService.getAuditTrailForRequest(
+          this.requestId,
+        );
         this.showRequestColumn = false; // Single request, no need for request column
       } else if (this.studioId) {
         // Load audit trail for entire studio
-        this.auditEntries = await this.auditService.getAuditTrailForStudio(this.studioId);
+        this.auditEntries = await this.auditService.getAuditTrailForStudio(
+          this.studioId,
+        );
         this.showRequestColumn = true; // Multiple requests, show request column
       }
     } catch (error) {
@@ -132,7 +136,7 @@ export class AuditLogDisplayComponent implements OnInit {
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
-      second: '2-digit'
+      second: '2-digit',
     }).format(date);
   }
 

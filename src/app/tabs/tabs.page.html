@@ -1,11 +1,15 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title [attr.aria-label]="'Application title: ' + ('app.title' | translate) + ', User: ' + userHandle">
-      {{ 'app.title' | translate }} - {{ userHandle }}
-      <ion-badge *ngIf="dataSourceService.isUsingMockData()" color="warning" class="mock-mode-badge">
+    <ion-title
+      [attr.aria-label]="'Application title: ' + ('app.title' | translate) + ', User: ' + userHandle"
+    >
+      {{ 'app.title' | translate }} - {{ userHandle }} @if
+      (dataSourceService.isUsingMockData()) {
+      <ion-badge color="warning" class="mock-mode-badge">
         <ion-icon name="phone-portrait"></ion-icon>
         MOCK MODE
       </ion-badge>
+      }
     </ion-title>
     <div slot="end" class="header-buttons">
       <ion-button fill="clear" (click)="openProfile()">
@@ -17,17 +21,13 @@
     </div>
   </ion-toolbar>
   <ion-toolbar class="ad-toolbar">
-    <app-ad-banner
-      [adClient]="adClient"
-      [adSlotId]="adSlot"
-      format="banner">
+    <app-ad-banner [adClient]="adClient" [adSlotId]="adSlot" format="banner">
     </app-ad-banner>
   </ion-toolbar>
 </ion-header>
 
 <ion-tabs>
   <ion-tab-bar slot="bottom">
-
     <ion-tab-button tab="arts">
       <i class="fas fa-yin-yang" aria-hidden="true"></i>
       <ion-label>{{ 'tabs.arts' | translate }}</ion-label>
@@ -36,13 +36,13 @@
     <ion-tab-button tab="studios">
       <i class="fas fa-home" aria-hidden="true"></i>
       <ion-label>{{ 'tabs.studios' | translate }}</ion-label>
-    </ion-tab-button>   
-    
+    </ion-tab-button>
+
     <ion-tab-button tab="feed">
       <i class="fas fa-feather-alt" aria-hidden="true"></i>
       <ion-label>{{ 'tabs.feed' | translate }}</ion-label>
-    </ion-tab-button>    
-    
+    </ion-tab-button>
+
     <ion-tab-button tab="people">
       <i class="fas fa-users" aria-hidden="true"></i>
       <ion-label>{{ 'tabs.people' | translate }}</ion-label>
@@ -57,6 +57,5 @@
       <i class="fas fa-glass-cheers" aria-hidden="true"></i>
       <ion-label>{{ 'tabs.events' | translate }}</ion-label>
     </ion-tab-button>
-
   </ion-tab-bar>
 </ion-tabs>

@@ -1,22 +1,36 @@
-import { Component, EnvironmentInjector, inject, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {
+  Component,
+  EnvironmentInjector,
+  inject,
+  OnInit,
+  OnDestroy,
+} from '@angular/core';
+
 import { Router } from '@angular/router';
-import { 
-  IonTabs, 
-  IonTabBar, 
-  IonTabButton, 
-  IonIcon, 
-  IonLabel, 
-  IonHeader, 
-  IonToolbar, 
-  IonTitle, 
+import {
+  IonTabs,
+  IonTabBar,
+  IonTabButton,
+  IonIcon,
+  IonLabel,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
   IonButton,
   IonBadge,
-  ToastController
+  ToastController,
 } from '@ionic/angular/standalone';
 import { TranslateModule } from '@ngx-translate/core';
 import { addIcons } from 'ionicons';
-import { triangle, ellipse, square, logOut, person, settingsOutline, phonePortrait } from 'ionicons/icons';
+import {
+  triangle,
+  ellipse,
+  square,
+  logOut,
+  person,
+  settingsOutline,
+  phonePortrait,
+} from 'ionicons/icons';
 import { Subscription } from 'rxjs';
 import { AuthStateService } from '../services/auth-state.service';
 import { TranslationService } from '../services/translation.service';
@@ -30,19 +44,18 @@ import { environment } from '../../environments/environment';
   templateUrl: 'tabs.page.html',
   styleUrls: ['tabs.page.scss'],
   imports: [
-    CommonModule,
-    IonTabs, 
-    IonTabBar, 
-    IonTabButton, 
-    IonIcon, 
-    IonLabel, 
-    IonHeader, 
-    IonToolbar, 
-    IonTitle, 
+    IonTabs,
+    IonTabBar,
+    IonTabButton,
+    IonIcon,
+    IonLabel,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
     IonButton,
     IonBadge,
     TranslateModule,
-    AdBannerComponent
+    AdBannerComponent,
   ],
 })
 export class TabsPage implements OnInit, OnDestroy {
@@ -59,9 +72,17 @@ export class TabsPage implements OnInit, OnDestroy {
     private toastController: ToastController,
     private translationService: TranslationService,
     private personProfileManager: PersonProfileManagerService,
-    public dataSourceService: DataSourceService
+    public dataSourceService: DataSourceService,
   ) {
-    addIcons({ triangle, ellipse, square, logOut, person, settingsOutline, phonePortrait });
+    addIcons({
+      triangle,
+      ellipse,
+      square,
+      logOut,
+      person,
+      settingsOutline,
+      phonePortrait,
+    });
     console.log('[Tabs Page] Initialized');
   }
 
@@ -77,23 +98,27 @@ export class TabsPage implements OnInit, OnDestroy {
   }
 
   private subscribeToAuthState() {
-    this.userSubscription = this.authStateService.currentUser$.subscribe(user => {
-      console.log('[Tabs Page] User changed, loading handle');
-      // Reload person handle when user changes
-      this.loadPersonHandle();
-    });
+    this.userSubscription = this.authStateService.currentUser$.subscribe(
+      (user) => {
+        console.log('[Tabs Page] User changed, loading handle');
+        // Reload person handle when user changes
+        this.loadPersonHandle();
+      },
+    );
   }
 
   private subscribeToProfileUpdates() {
-    this.profileUpdateSubscription = this.personProfileManager.onProfileUpdated$.subscribe(() => {
-      console.log('[Tabs Page] Profile updated, reloading handle');
-      this.loadPersonHandle();
-    });
+    this.profileUpdateSubscription =
+      this.personProfileManager.onProfileUpdated$.subscribe(() => {
+        console.log('[Tabs Page] Profile updated, reloading handle');
+        this.loadPersonHandle();
+      });
   }
 
   private async loadPersonHandle() {
     try {
-      const personProfile = await this.personProfileManager.getCurrentPersonProfile();
+      const personProfile =
+        await this.personProfileManager.getCurrentPersonProfile();
       if (personProfile && personProfile.handle) {
         this.userHandle = personProfile.handle;
         console.log('[Tabs Page] Handle loaded:', this.userHandle);
@@ -120,7 +145,7 @@ export class TabsPage implements OnInit, OnDestroy {
         message: message,
         duration: 2000,
         color: 'success',
-        position: 'top'
+        position: 'top',
       });
       toast.present();
       this.router.navigate(['/login']);
@@ -130,7 +155,7 @@ export class TabsPage implements OnInit, OnDestroy {
         message: message,
         duration: 2000,
         color: 'danger',
-        position: 'top'
+        position: 'top',
       });
       toast.present();
     }

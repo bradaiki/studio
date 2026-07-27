@@ -1,23 +1,23 @@
 import { Component, NgZone, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
-import { 
-  IonContent, 
-  IonHeader, 
-  IonTitle, 
-  IonToolbar, 
-  IonCard, 
-  IonCardHeader, 
-  IonCardTitle, 
-  IonCardContent, 
-  IonItem, 
-  IonLabel, 
-  IonInput, 
+import {
+  IonContent,
+  IonHeader,
+  IonTitle,
+  IonToolbar,
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardContent,
+  IonItem,
+  IonLabel,
+  IonInput,
   IonButton,
   IonText,
   IonSpinner,
-  ToastController
+  ToastController,
 } from '@ionic/angular/standalone';
 import { AmplifyService } from '../services/amplify.service';
 import { AuthStateService } from '../services/auth-state.service';
@@ -28,7 +28,6 @@ import { AuthStateService } from '../services/auth-state.service';
   styleUrls: ['./login.page.scss'],
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     IonContent,
     IonHeader,
@@ -43,8 +42,8 @@ import { AuthStateService } from '../services/auth-state.service';
     IonInput,
     IonButton,
     IonText,
-    IonSpinner
-  ]
+    IonSpinner,
+  ],
 })
 export class LoginPage {
   email: string = '';
@@ -61,7 +60,7 @@ export class LoginPage {
     private router: Router,
     private toastController: ToastController,
     private ngZone: NgZone,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {}
 
   async onSubmit() {
@@ -88,15 +87,22 @@ export class LoginPage {
   }
 
   private async signUp() {
-    const result = await this.amplifyService.signUp(this.email, this.password, this.email);
-    
+    const result = await this.amplifyService.signUp(
+      this.email,
+      this.password,
+      this.email,
+    );
+
     if (result.isSignUpComplete) {
       this.showToast('Sign up successful! You can now sign in.', 'success');
       this.isSignUp = false;
     } else {
       this.needsConfirmation = true;
       this.pendingUsername = this.email;
-      this.showToast('Please check your email for verification code', 'success');
+      this.showToast(
+        'Please check your email for verification code',
+        'success',
+      );
     }
   }
 
@@ -125,7 +131,10 @@ export class LoginPage {
     this.isLoading = true;
 
     try {
-      await this.amplifyService.confirmSignUp(this.pendingUsername, this.confirmationCode);
+      await this.amplifyService.confirmSignUp(
+        this.pendingUsername,
+        this.confirmationCode,
+      );
       this.showToast('Email confirmed! You can now sign in.', 'success');
       this.needsConfirmation = false;
       this.isSignUp = false;
@@ -155,7 +164,7 @@ export class LoginPage {
       message,
       duration: 3000,
       color,
-      position: 'top'
+      position: 'top',
     });
     toast.present();
   }

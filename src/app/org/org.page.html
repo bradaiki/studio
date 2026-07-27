@@ -1,24 +1,30 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/dash/orgs" (click)="onBack()"></ion-back-button>
+      <ion-back-button
+        defaultHref="/dash/orgs"
+        (click)="onBack()"
+      ></ion-back-button>
     </ion-buttons>
-    <ion-title>{{ organization?.name || ('org_detail.title' | translate) }}</ion-title>
+    <ion-title
+      >{{ organization?.name || ('org_detail.title' | translate) }}</ion-title
+    >
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">{{ organization?.name || ('org_detail.title' | translate) }}</ion-title>
+      <ion-title size="large"
+        >{{ organization?.name || ('org_detail.title' | translate) }}</ion-title
+      >
     </ion-toolbar>
   </ion-header>
 
-  <div *ngIf="organizationInfo" class="organization-container">
-    
+  @if (organizationInfo) {
+  <div class="organization-container">
     <!-- Content with Chat Layout -->
     <div class="content-with-chat">
-      
       <!-- Main Content Column -->
       <div class="main-content">
         <app-organization
@@ -39,10 +45,10 @@
           (websiteClick)="onWebsiteClick($event)"
           (emailClick)="onEmailClick($event)"
           (socialClick)="onSocialClick($event)"
-          (findDojoClick)="onFindDojoClick()">
+          (findDojoClick)="onFindDojoClick()"
+        >
         </app-organization>
       </div>
-
       <!-- Chat Column -->
       <div class="chat-sidebar">
         <app-chat-messages
@@ -57,15 +63,14 @@
           (sendMessage)="onSendChatMessage($event)"
           (leaveChat)="onLeaveChat($event)"
           (muteChat)="onMuteChat($event)"
-          (chatInfo)="onChatInfo($event)">
+          (chatInfo)="onChatInfo($event)"
+        >
         </app-chat-messages>
       </div>
-      
     </div>
-    
   </div>
-
-  <div *ngIf="!organizationInfo" class="error-state">
+  } @if (!organizationInfo) {
+  <div class="error-state">
     <ion-icon name="business" color="medium"></ion-icon>
     <h3>{{ 'org_detail.not_found' | translate }}</h3>
     <p>{{ 'org_detail.not_found_message' | translate }}</p>
@@ -74,5 +79,5 @@
       {{ 'org_detail.back_button' | translate }}
     </ion-button>
   </div>
-
+  }
 </ion-content>

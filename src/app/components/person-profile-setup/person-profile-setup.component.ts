@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import {
   IonModal,
@@ -15,10 +15,16 @@ import {
   IonText,
   IonIcon,
   ModalController,
-  IonSpinner
+  IonSpinner,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { personOutline, mailOutline, locationOutline, closeOutline, atOutline } from 'ionicons/icons';
+import {
+  personOutline,
+  mailOutline,
+  locationOutline,
+  closeOutline,
+  atOutline,
+} from 'ionicons/icons';
 import { PeopleService, Person } from '../../services/people.service';
 import { getCurrentUser } from 'aws-amplify/auth';
 
@@ -27,7 +33,6 @@ import { getCurrentUser } from 'aws-amplify/auth';
   templateUrl: './person-profile-setup.component.html',
   styleUrls: ['./person-profile-setup.component.scss'],
   imports: [
-    CommonModule,
     FormsModule,
     IonModal,
     IonHeader,
@@ -41,9 +46,9 @@ import { getCurrentUser } from 'aws-amplify/auth';
     IonLabel,
     IonText,
     IonIcon,
-    IonSpinner
+    IonSpinner,
   ],
-  standalone: true
+  standalone: true,
 })
 export class PersonProfileSetupComponent implements OnInit {
   @Input() existingPerson?: Person; // For edit mode
@@ -63,9 +68,15 @@ export class PersonProfileSetupComponent implements OnInit {
 
   constructor(
     private modalController: ModalController,
-    private peopleService: PeopleService
+    private peopleService: PeopleService,
   ) {
-    addIcons({ personOutline, mailOutline, locationOutline, closeOutline, atOutline });
+    addIcons({
+      personOutline,
+      mailOutline,
+      locationOutline,
+      closeOutline,
+      atOutline,
+    });
   }
 
   async ngOnInit() {
@@ -102,15 +113,15 @@ export class PersonProfileSetupComponent implements OnInit {
 
   onHandleInput(event: any) {
     let value = event.target.value;
-    
+
     // Ensure handle starts with @
     if (value && !value.startsWith('@')) {
       value = '@' + value;
     }
-    
+
     // Remove any spaces and special characters except underscore
     value = value.replace(/[^@a-zA-Z0-9_]/g, '');
-    
+
     this.handle = value;
   }
 
@@ -166,22 +177,27 @@ export class PersonProfileSetupComponent implements OnInit {
           bio: this.bio.trim() || 'New member of the martial arts community',
           location: this.location.trim(),
           rank: this.rank.trim() || undefined,
-          experience: this.experience.trim() || undefined
+          experience: this.experience.trim() || undefined,
         };
 
-        const success = this.peopleService.updatePerson(this.existingPerson.id, updates);
-        
+        const success = this.peopleService.updatePerson(
+          this.existingPerson.id,
+          updates,
+        );
+
         if (!success) {
           throw new Error('Failed to update profile');
         }
 
         // Get updated person
-        const updatedPerson = this.peopleService.getPersonById(this.existingPerson.id);
+        const updatedPerson = this.peopleService.getPersonById(
+          this.existingPerson.id,
+        );
 
         await this.modalController.dismiss({
           success: true,
           person: updatedPerson,
-          isEdit: true
+          isEdit: true,
         });
       } else {
         // Create new person profile
@@ -202,7 +218,7 @@ export class PersonProfileSetupComponent implements OnInit {
           isVerified: false,
           studioAffiliations: [],
           experience: this.experience.trim() || 'Beginner',
-          rank: this.rank.trim() || undefined
+          rank: this.rank.trim() || undefined,
         };
 
         // Add person to the service
@@ -212,12 +228,13 @@ export class PersonProfileSetupComponent implements OnInit {
         await this.modalController.dismiss({
           success: true,
           person: newPerson,
-          isEdit: false
+          isEdit: false,
         });
       }
     } catch (error: any) {
       console.error('Error saving person profile:', error);
-      this.errorMessage = error.message || 'Failed to save profile. Please try again.';
+      this.errorMessage =
+        error.message || 'Failed to save profile. Please try again.';
       this.isSubmitting = false;
     }
   }
@@ -227,7 +244,7 @@ export class PersonProfileSetupComponent implements OnInit {
     if (this.canDismiss) {
       await this.modalController.dismiss({
         success: false,
-        skipped: true
+        skipped: true,
       });
     }
   }
@@ -237,7 +254,7 @@ export class PersonProfileSetupComponent implements OnInit {
     if (this.canDismiss) {
       await this.modalController.dismiss({
         success: false,
-        cancelled: true
+        cancelled: true,
       });
     }
   }

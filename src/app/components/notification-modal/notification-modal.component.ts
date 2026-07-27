@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import {
   IonModal,
   IonHeader,
@@ -18,10 +18,20 @@ import {
   IonBadge,
   IonList,
   IonItem,
-  IonAvatar
+  IonAvatar,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { close, mail, checkmark, closeCircle, time, notifications, chatbubble, person, checkmarkCircle } from 'ionicons/icons';
+import {
+  close,
+  mail,
+  checkmark,
+  closeCircle,
+  time,
+  notifications,
+  chatbubble,
+  person,
+  checkmarkCircle,
+} from 'ionicons/icons';
 import { ChatInvitationService } from '../../services/chat-invitation.service';
 import { InAppNotificationService } from '../../services/in-app-notification.service';
 import { Router } from '@angular/router';
@@ -33,7 +43,6 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./notification-modal.component.scss'],
   standalone: true,
   imports: [
-    CommonModule,
     IonModal,
     IonHeader,
     IonToolbar,
@@ -51,8 +60,8 @@ import { Subscription } from 'rxjs';
     IonBadge,
     IonList,
     IonItem,
-    IonAvatar
-  ]
+    IonAvatar,
+  ],
 })
 export class NotificationModalComponent implements OnInit, OnDestroy {
   isOpen = false;
@@ -64,9 +73,19 @@ export class NotificationModalComponent implements OnInit, OnDestroy {
   constructor(
     private invitationService: ChatInvitationService,
     private notificationService: InAppNotificationService,
-    private router: Router
+    private router: Router,
   ) {
-    addIcons({ close, mail, checkmark, closeCircle, time, notifications, chatbubble, person, checkmarkCircle });
+    addIcons({
+      close,
+      mail,
+      checkmark,
+      closeCircle,
+      time,
+      notifications,
+      chatbubble,
+      person,
+      checkmarkCircle,
+    });
   }
 
   ngOnInit() {
@@ -79,10 +98,12 @@ export class NotificationModalComponent implements OnInit, OnDestroy {
     }, 30000);
 
     // Subscribe to notification changes
-    const notifSub = this.notificationService.getNotifications().subscribe(notifications => {
-      this.systemNotifications = notifications.filter(n => !n.read);
-      this.updateModalState();
-    });
+    const notifSub = this.notificationService
+      .getNotifications()
+      .subscribe((notifications) => {
+        this.systemNotifications = notifications.filter((n) => !n.read);
+        this.updateModalState();
+      });
     this.subscriptions.push(notifSub);
   }
 
@@ -90,7 +111,7 @@ export class NotificationModalComponent implements OnInit, OnDestroy {
     if (this.checkInterval) {
       clearInterval(this.checkInterval);
     }
-    this.subscriptions.forEach(sub => sub.unsubscribe());
+    this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 
   async checkForPendingItems() {
@@ -106,30 +127,54 @@ export class NotificationModalComponent implements OnInit, OnDestroy {
       }
 
       console.log('[NotificationModal] Checking for pending items...');
-      
+
       // Get pending invitations
       const invitations = await this.invitationService.getUserInvitations();
-      console.log('[NotificationModal] Found invitations:', invitations.length, invitations);
+      console.log(
+        '[NotificationModal] Found invitations:',
+        invitations.length,
+        invitations,
+      );
       this.pendingInvitations = invitations;
 
       // Get unread notifications
-      const notifSub = this.notificationService.getNotifications().subscribe(notifications => {
-        this.systemNotifications = notifications.filter(n => !n.read);
-        console.log('[NotificationModal] Found system notifications:', this.systemNotifications.length);
-        this.updateModalState();
-      });
+      const notifSub = this.notificationService
+        .getNotifications()
+        .subscribe((notifications) => {
+          this.systemNotifications = notifications.filter((n) => !n.read);
+          console.log(
+            '[NotificationModal] Found system notifications:',
+            this.systemNotifications.length,
+          );
+          this.updateModalState();
+        });
     } catch (error) {
-      console.error('[NotificationModal] Failed to check for pending items:', error);
+      console.error(
+        '[NotificationModal] Failed to check for pending items:',
+        error,
+      );
     }
   }
 
   updateModalState() {
-    const hasPendingItems = this.pendingInvitations.length > 0 || this.systemNotifications.length > 0;
-    console.log('[NotificationModal] Update modal state - hasPendingItems:', hasPendingItems, 'isOpen:', this.isOpen);
-    
+    const hasPendingItems =
+      this.pendingInvitations.length > 0 || this.systemNotifications.length > 0;
+    console.log(
+      '[NotificationModal] Update modal state - hasPendingItems:',
+      hasPendingItems,
+      'isOpen:',
+      this.isOpen,
+    );
+
     // Only auto-open if there are pending items and modal is not already open
     if (hasPendingItems && !this.isOpen) {
-      console.log('[NotificationModal] Opening modal with', this.pendingInvitations.length, 'invitations and', this.systemNotifications.length, 'notifications');
+      console.log(
+        '[NotificationModal] Opening modal with',
+        this.pendingInvitations.length,
+        'invitations and',
+        this.systemNotifications.length,
+        'notifications',
+      );
       this.isOpen = true;
     }
   }
@@ -141,10 +186,12 @@ export class NotificationModalComponent implements OnInit, OnDestroy {
   async acceptInvitation(invitationId: string) {
     try {
       await this.invitationService.acceptInvitation(invitationId);
-      
+
       // Remove from local list
-      this.pendingInvitations = this.pendingInvitations.filter(inv => inv.id !== invitationId);
-      
+      this.pendingInvitations = this.pendingInvitations.filter(
+        (inv) => inv.id !== invitationId,
+      );
+
       // Close modal if no more pending items
       if (this.totalPendingCount === 0) {
         this.closeModal();
@@ -157,10 +204,12 @@ export class NotificationModalComponent implements OnInit, OnDestroy {
   async declineInvitation(invitationId: string) {
     try {
       await this.invitationService.declineInvitation(invitationId);
-      
+
       // Remove from local list
-      this.pendingInvitations = this.pendingInvitations.filter(inv => inv.id !== invitationId);
-      
+      this.pendingInvitations = this.pendingInvitations.filter(
+        (inv) => inv.id !== invitationId,
+      );
+
       // Close modal if no more pending items
       if (this.totalPendingCount === 0) {
         this.closeModal();
@@ -172,8 +221,10 @@ export class NotificationModalComponent implements OnInit, OnDestroy {
 
   ignoreInvitation(invitationId: string) {
     // Just remove from display, don't decline
-    this.pendingInvitations = this.pendingInvitations.filter(inv => inv.id !== invitationId);
-    
+    this.pendingInvitations = this.pendingInvitations.filter(
+      (inv) => inv.id !== invitationId,
+    );
+
     // Close modal if no more pending items
     if (this.totalPendingCount === 0) {
       this.closeModal();
@@ -183,15 +234,17 @@ export class NotificationModalComponent implements OnInit, OnDestroy {
   async handleNotificationClick(notification: any) {
     // Mark as read
     this.notificationService.markAsRead(notification.id);
-    
+
     // Remove from local list
-    this.systemNotifications = this.systemNotifications.filter(n => n.id !== notification.id);
-    
+    this.systemNotifications = this.systemNotifications.filter(
+      (n) => n.id !== notification.id,
+    );
+
     // Navigate if there's an action URL
     if (notification.actionUrl) {
       this.router.navigateByUrl(notification.actionUrl);
     }
-    
+
     // Close modal if no more pending items
     if (this.totalPendingCount === 0) {
       this.closeModal();
@@ -200,13 +253,15 @@ export class NotificationModalComponent implements OnInit, OnDestroy {
 
   dismissNotification(notificationId: string, event: Event) {
     event.stopPropagation();
-    
+
     // Mark as read
     this.notificationService.markAsRead(notificationId);
-    
+
     // Remove from local list
-    this.systemNotifications = this.systemNotifications.filter(n => n.id !== notificationId);
-    
+    this.systemNotifications = this.systemNotifications.filter(
+      (n) => n.id !== notificationId,
+    );
+
     // Close modal if no more pending items
     if (this.totalPendingCount === 0) {
       this.closeModal();
@@ -228,7 +283,7 @@ export class NotificationModalComponent implements OnInit, OnDestroy {
     if (minutes < 60) return `${minutes}m ago`;
     if (hours < 24) return `${hours}h ago`;
     if (days < 7) return `${days}d ago`;
-    
+
     return new Date(timestamp).toLocaleDateString();
   }
 
@@ -250,10 +305,10 @@ export class NotificationModalComponent implements OnInit, OnDestroy {
     }
     return 'notifications';
   }
-  
+
   getNotificationClass(notification: any): string {
     const title = notification.title?.toLowerCase() || '';
-    
+
     if (title.includes('invitation') || title.includes('chat')) {
       return 'chat_invitation';
     }

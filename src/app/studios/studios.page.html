@@ -15,15 +15,19 @@
   </ion-header>
 
   <!-- Filter Indicator -->
-  <div *ngIf="isFiltered" class="filter-indicator">
+  @if (isFiltered) {
+  <div class="filter-indicator">
     <ion-chip color="primary" outline="true">
       <ion-icon name="home"></ion-icon>
-      <ion-label>{{ 'common.showing' | translate }}: {{ filteredEntityName }}</ion-label>
+      <ion-label
+        >{{ 'common.showing' | translate }}: {{ filteredEntityName }}</ion-label
+      >
       <ion-button fill="clear" size="small" (click)="clearFilter()">
         <ion-icon name="close" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-chip>
   </div>
+  }
 
   <!-- Search Bar -->
   <ion-searchbar
@@ -34,14 +38,16 @@
     show-clear-button="focus"
     debounce="300"
     class="search-bar"
-    [disabled]="isFiltered">
+    [disabled]="isFiltered"
+  >
   </ion-searchbar>
 
   <!-- Segment Control -->
-  <ion-segment 
-    [(ngModel)]="selectedSegment" 
+  <ion-segment
+    [(ngModel)]="selectedSegment"
     (ionChange)="onSegmentChange($event)"
-    class="segment-control">
+    class="segment-control"
+  >
     <ion-segment-button value="my-studios">
       <ion-label>{{ 'studios.my_studios' | translate }}</ion-label>
     </ion-segment-button>
@@ -52,10 +58,11 @@
 
   <!-- View Toggle -->
   <div class="view-toggle">
-    <ion-segment 
-      [(ngModel)]="viewMode" 
+    <ion-segment
+      [(ngModel)]="viewMode"
       (ionChange)="onViewModeChange($event)"
-      class="view-segment">
+      class="view-segment"
+    >
       <ion-segment-button value="list">
         <ion-icon name="list"></ion-icon>
         <ion-label>List</ion-label>
@@ -68,15 +75,17 @@
   </div>
 
   <!-- Studios List View -->
-  <div *ngIf="viewMode === 'list'" class="studios-container">
-    <div 
-      *ngFor="let studio of displayedStudios; trackBy: trackByStudioId"
+  @if (viewMode === 'list') {
+  <div class="studios-container">
+    @for (studio of displayedStudios; track trackByStudioId($index, studio)) {
+    <div
       class="studio-item"
       [class.clickable]="filteredStudios.length > 1"
-      (click)="onStudioClick(studio)">
-      
+      (click)="onStudioClick(studio)"
+    >
       <!-- Two-column layout for studio info and chat -->
-      <div class="studio-with-chat-layout" *ngIf="filteredStudios.length === 1; else compactStudio">
+      @if (filteredStudios.length === 1) {
+      <div class="studio-with-chat-layout">
         <div class="studio-info-column">
           <app-studio
             [studio]="convertToStudioInfo(studio)"
@@ -94,10 +103,10 @@
             (emailClick)="onEmailClick($event)"
             (directionsClick)="onDirectionsClick($event)"
             (trialClick)="onTrialClick()"
-            (editClick)="onEditStudio($event)">
+            (editClick)="onEditStudio($event)"
+          >
           </app-studio>
         </div>
-        
         <div class="chat-column">
           <app-chat-messages
             [studioId]="studio.id"
@@ -106,63 +115,67 @@
             [showHeader]="true"
             [compact]="false"
             (messageClick)="onChatMessageClick($event)"
-            (sendMessage)="onSendChatMessage($event)">
+            (sendMessage)="onSendChatMessage($event)"
+          >
           </app-chat-messages>
         </div>
       </div>
-
+      } @else {
+      <app-studio
+        [studio]="convertToStudioInfo(studio)"
+        [showHero]="true"
+        [showAbout]="true"
+        [showBenefits]="true"
+        [showInstructors]="true"
+        [showSchedule]="true"
+        [showPricing]="true"
+        [showContact]="true"
+        [compact]="true"
+        (instructorClick)="onInstructorClick($event)"
+        (contactClick)="onContactClick($event)"
+        (websiteClick)="onWebsiteClick($event)"
+        (emailClick)="onEmailClick($event)"
+        (directionsClick)="onDirectionsClick($event)"
+        (trialClick)="onTrialClick()"
+        (editClick)="onEditStudio($event)"
+      >
+      </app-studio>
+      }
       <!-- Compact studio view for multiple studios -->
-      <ng-template #compactStudio>
-        <app-studio
-          [studio]="convertToStudioInfo(studio)"
-          [showHero]="true"
-          [showAbout]="true"
-          [showBenefits]="true"
-          [showInstructors]="true"
-          [showSchedule]="true"
-          [showPricing]="true"
-          [showContact]="true"
-          [compact]="true"
-          (instructorClick)="onInstructorClick($event)"
-          (contactClick)="onContactClick($event)"
-          (websiteClick)="onWebsiteClick($event)"
-          (emailClick)="onEmailClick($event)"
-          (directionsClick)="onDirectionsClick($event)"
-          (trialClick)="onTrialClick()"
-          (editClick)="onEditStudio($event)">
-        </app-studio>
-      </ng-template>
     </div>
+    }
   </div>
+  }
 
   <!-- Studios Map View -->
-  <div *ngIf="viewMode === 'map'" class="studios-map-container">
+  @if (viewMode === 'map') {
+  <div class="studios-map-container">
     <div class="map-wrapper">
       <iframe
         [src]="getMapEmbedUrl()"
         width="100%"
         height="400"
-        style="border:0;"
+        style="border: 0"
         allowfullscreen=""
         loading="lazy"
-        referrerpolicy="no-referrer-when-downgrade">
+        referrerpolicy="no-referrer-when-downgrade"
+      >
       </iframe>
     </div>
-    
     <!-- Studio Cards Overlay -->
     <div class="map-studio-cards">
-      <ion-card 
-        *ngFor="let studio of filteredStudios; trackBy: trackByStudioId"
-        class="studio-map-card"
-        (click)="onStudioClick(studio)">
+      @for (studio of filteredStudios; track trackByStudioId($index, studio)) {
+      <ion-card class="studio-map-card" (click)="onStudioClick(studio)">
         <ion-card-content>
           <div class="studio-map-info">
             <div class="studio-map-header">
               <h3>{{ studio.name }}</h3>
-              <ion-chip *ngIf="studio.verified" color="success" size="small">
+              @if (studio.verified) {
+              <ion-chip color="success" size="small">
                 <ion-icon name="checkmark-circle"></ion-icon>
                 <ion-label>Verified</ion-label>
               </ion-chip>
+              }
             </div>
             <p class="studio-location">
               <ion-icon name="location"></ion-icon>
@@ -170,17 +183,19 @@
             </p>
             <p class="studio-address">{{ studio.address }}</p>
             <div class="studio-actions">
-              <ion-button 
-                fill="clear" 
-                size="small" 
-                (click)="onDirectionsClick(studio.address); $event.stopPropagation()">
+              <ion-button
+                fill="clear"
+                size="small"
+                (click)="onDirectionsClick(studio.address); $event.stopPropagation()"
+              >
                 <ion-icon name="navigate" slot="start"></ion-icon>
                 Directions
               </ion-button>
-              <ion-button 
-                fill="clear" 
-                size="small" 
-                (click)="onStudioClick(studio); $event.stopPropagation()">
+              <ion-button
+                fill="clear"
+                size="small"
+                (click)="onStudioClick(studio); $event.stopPropagation()"
+              >
                 <ion-icon name="information-circle" slot="start"></ion-icon>
                 Details
               </ion-button>
@@ -188,11 +203,14 @@
           </div>
         </ion-card-content>
       </ion-card>
+      }
     </div>
   </div>
+  }
 
   <!-- Legacy Single Studio (fallback) -->
-  <div *ngIf="showLegacyStudio" class="legacy-studio">
+  @if (showLegacyStudio) {
+  <div class="legacy-studio">
     <div class="studio-with-chat-layout">
       <div class="studio-info-column">
         <app-studio
@@ -210,10 +228,10 @@
           (websiteClick)="onWebsiteClick($event)"
           (emailClick)="onEmailClick($event)"
           (directionsClick)="onDirectionsClick($event)"
-          (trialClick)="onTrialClick()">
+          (trialClick)="onTrialClick()"
+        >
         </app-studio>
       </div>
-      
       <div class="chat-column">
         <app-chat-messages
           [studioId]="studioInfo.id"
@@ -222,47 +240,60 @@
           [showHeader]="true"
           [compact]="false"
           (messageClick)="onChatMessageClick($event)"
-          (sendMessage)="onSendChatMessage($event)">
+          (sendMessage)="onSendChatMessage($event)"
+        >
         </app-chat-messages>
       </div>
     </div>
   </div>
+  }
 
   <!-- Infinite Scroll (List View Only) -->
-  <ion-infinite-scroll threshold="100px" (ionInfinite)="loadMore($event)" *ngIf="!showLegacyStudio && viewMode === 'list'">
+  @if (!showLegacyStudio && viewMode === 'list') {
+  <ion-infinite-scroll threshold="100px" (ionInfinite)="loadMore($event)">
     <ion-infinite-scroll-content
       loadingSpinner="bubbles"
-      [loadingText]="'studios.loading_more' | translate">
+      [loadingText]="'studios.loading_more' | translate"
+    >
     </ion-infinite-scroll-content>
   </ion-infinite-scroll>
+  }
 
   <!-- Empty State -->
-  <div *ngIf="filteredStudios.length === 0 && !showLegacyStudio && viewMode === 'list'" class="empty-state">
+  @if (filteredStudios.length === 0 && !showLegacyStudio && viewMode === 'list')
+  {
+  <div class="empty-state">
     <ion-text color="medium">
-      <p *ngIf="searchTerm.trim() && selectedSegment === 'my-studios'">
-        {{ 'studios.empty_my_studios_search' | translate: {searchTerm: searchTerm} }}
+      @if (searchTerm.trim() && selectedSegment === 'my-studios') {
+      <p>
+        {{ 'studios.empty_my_studios_search' | translate: {searchTerm:
+        searchTerm} }}
       </p>
-      <p *ngIf="searchTerm.trim() && selectedSegment === 'discover'">
-        {{ 'studios.empty_discover_search' | translate: {searchTerm: searchTerm} }}
+      } @if (searchTerm.trim() && selectedSegment === 'discover') {
+      <p>
+        {{ 'studios.empty_discover_search' | translate: {searchTerm: searchTerm}
+        }}
       </p>
-      <p *ngIf="!searchTerm.trim() && selectedSegment === 'my-studios'">
-        {{ 'studios.empty_my_studios' | translate }}
-      </p>
-      <p *ngIf="!searchTerm.trim() && selectedSegment === 'discover'">
-        {{ 'studios.empty_discover' | translate }}
-      </p>
-      <p *ngIf="!searchTerm.trim() && isFiltered">
-        {{ 'studios.not_found' | translate }}
-      </p>
+      } @if (!searchTerm.trim() && selectedSegment === 'my-studios') {
+      <p>{{ 'studios.empty_my_studios' | translate }}</p>
+      } @if (!searchTerm.trim() && selectedSegment === 'discover') {
+      <p>{{ 'studios.empty_discover' | translate }}</p>
+      } @if (!searchTerm.trim() && isFiltered) {
+      <p>{{ 'studios.not_found' | translate }}</p>
+      }
     </ion-text>
   </div>
+  }
 
   <!-- Empty State for Map -->
-  <div *ngIf="filteredStudios.length === 0 && !showLegacyStudio && viewMode === 'map'" class="empty-state">
+  @if (filteredStudios.length === 0 && !showLegacyStudio && viewMode === 'map')
+  {
+  <div class="empty-state">
     <ion-text color="medium">
       <p>No studios with locations found to display on map.</p>
     </ion-text>
   </div>
+  }
 
   <!-- Floating Action Button -->
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
@@ -270,5 +301,4 @@
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>
-
 </ion-content>
