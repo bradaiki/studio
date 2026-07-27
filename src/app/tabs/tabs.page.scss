@@ -5,16 +5,6 @@ ion-header {
     --color: white;
   }
 
-  ion-toolbar.ad-toolbar {
-    --background: var(--ion-color-light, #f4f4f4);
-    --min-height: auto;
-    --padding-top: 0;
-    --padding-bottom: 0;
-    --padding-start: 0;
-    --padding-end: 0;
-    --border-width: 0;
-  }
-
   ion-title {
     font-weight: 600;
     font-size: 1.2rem;
@@ -136,4 +126,12 @@ ion-tab-button ion-icon {
 
 .header-buttons ion-button:active {
   transform: scale(0.95);
+}
+
+/* Ad banner in top tab bar */
+.ad-tab-bar {
+  --background: var(--ion-color-light, #f4f4f4);
+  --border: none;
+  height: auto;
+  contain: none;
 }

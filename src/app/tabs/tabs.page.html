@@ -20,13 +20,13 @@
       </ion-button>
     </div>
   </ion-toolbar>
-  <ion-toolbar class="ad-toolbar">
-    <app-ad-banner [adClient]="adClient" [adSlotId]="adSlot" format="banner">
-    </app-ad-banner>
-  </ion-toolbar>
 </ion-header>
 
 <ion-tabs>
+  <ion-tab-bar slot="top" class="ad-tab-bar">
+    <app-ad-banner [adClient]="adClient" [adSlotId]="adSlot" format="banner">
+    </app-ad-banner>
+  </ion-tab-bar>
   <ion-tab-bar slot="bottom">
     <ion-tab-button tab="arts">
       <i class="fas fa-yin-yang" aria-hidden="true"></i>
