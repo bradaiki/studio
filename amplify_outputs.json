@@ -1,9 +1,9 @@
 {
   "auth": {
-    "user_pool_id": "us-east-1_O8GeO1Kpx",
+    "user_pool_id": "us-east-1_PaVkPeY7f",
     "aws_region": "us-east-1",
-    "user_pool_client_id": "5b3rrcm6qq9ghkl90lfs6cndfn",
-    "identity_pool_id": "us-east-1:34f81117-b21b-409a-803c-461152ce28bc",
+    "user_pool_client_id": "79d2lq1dsavavo5cq9q3su0alq",
+    "identity_pool_id": "us-east-1:15dac9a6-08a6-445f-8a23-0f63d4d81e6f",
     "mfa_methods": [],
     "standard_required_attributes": [
       "email"
@@ -26,7 +26,7 @@
     "unauthenticated_identities_enabled": true
   },
   "data": {
-    "url": "https://z2uxzzlosbe23fryh3juk6w2wq.appsync-api.us-east-1.amazonaws.com/graphql",
+    "url": "https://77itohfstza4rgak6fdvtmuhde.appsync-api.us-east-1.amazonaws.com/graphql",
     "aws_region": "us-east-1",
     "default_authorization_type": "AMAZON_COGNITO_USER_POOLS",
     "authorization_types": [
@@ -1897,6 +1897,13 @@
               "isRequired": false,
               "attributes": []
             },
+            "isAdmin": {
+              "name": "isAdmin",
+              "isArray": false,
+              "type": "Boolean",
+              "isRequired": false,
+              "attributes": []
+            },
             "joinedDate": {
               "name": "joinedDate",
               "isArray": false,
@@ -2715,6 +2722,6 @@
     "apiMode": "graphql",
     "environment": "production",
     "dataStorage": "dynamodb",
-    "pushNotificationFunctionName": "amplify-studio-brad-sandb-sendpushnotificationlamb-JNaZ5bNQTTAo"
+    "pushNotificationFunctionName": "amplify-studio-brad-sandb-sendpushnotificationlamb-YXpOz7vYazLT"
   }
 }
