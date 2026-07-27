@@ -173,7 +173,7 @@ export function generateMockStudios(count: number = 107) {
     ]
   };
   
-  const studios = [];
+  const studios: any[] = [];
   for (let i = 0; i < count; i++) {
     const city = cities[i % cities.length];
     const type = studioTypes[i % studioTypes.length];
@@ -281,7 +281,7 @@ export function generateMockPosts(count: number = 153, people: any[] = []) {
     'The community here is amazing'
   ];
   
-  const posts = [];
+  const posts: any[] = [];
   const mockPeople = people.length > 0 ? people : generateMockPeople(154);
   
   for (let i = 0; i < count; i++) {
@@ -326,7 +326,7 @@ export function generateMockEvents(count: number = 23, studios: any[] = []) {
     'https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800&h=400&fit=crop&auto=format'
   ];
   
-  const events = [];
+  const events: any[] = [];
   const mockStudios = studios.length > 0 ? studios : generateMockStudios(107);
   
   for (let i = 0; i < count; i++) {

@@ -141,7 +141,7 @@ export async function createSampleJoinRequests(): Promise<SetupResult> {
       }
     ];
     
-    const results = [];
+    const results: any[] = [];
     let created = 0;
     let skipped = 0;
     

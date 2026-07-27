@@ -295,12 +295,12 @@ export class ChatMessagesComponent implements OnInit, OnDestroy, OnChanges {
         await new Promise(resolve => setTimeout(resolve, 100)); // Give time for chat list to load
         
         // Try to get the first recent chat
-        let firstRecentChat = null;
+        let firstRecentChat: any = null;
         try {
           const chatList = await this.chatService.getChatList().pipe(take(1)).toPromise();
           if (chatList && chatList.length > 0) {
             // Filter for studio chats or accessible chats
-            const accessibleChats = [];
+            const accessibleChats: any[] = [];
             for (const chatItem of chatList.slice(0, 5)) { // Check first 5 chats
               const canAccess = await this.chatAccessController.canUserAccessChat(chatItem.chat.id);
               if (canAccess) {
