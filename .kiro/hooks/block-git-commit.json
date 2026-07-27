@@ -1,0 +1,15 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Block git commit",
+      "trigger": "PreToolUse",
+      "description": "Prevents Kiro from running git commit commands",
+      "matcher": "execute_bash",
+      "action": {
+        "type": "command",
+        "command": "bash -c 'INPUT=$(cat); CMD=$(echo \"$INPUT\" | jq -r \".toolInput.command // empty\"); if echo \"$CMD\" | grep -qE \"git commit\"; then echo \"Blocked: git commit is not allowed\" >&2; exit 2; fi; exit 0'"
+      }
+    }
+  ]
+}
