@@ -1,7 +1,7 @@
 <div class="audit-log-container">
   <!-- Header -->
   <div class="audit-log-header">
-    <h3>Audit Trail</h3>
+    <h3>{{ 'audit_log.title' | translate }}</h3>
     <ion-button
       fill="clear"
       size="small"
@@ -16,7 +16,7 @@
   @if (isLoading()) {
     <div class="loading-container">
       <ion-spinner name="crescent"></ion-spinner>
-      <p>Loading audit trail...</p>
+      <p>{{ 'audit_log.loading' | translate }}</p>
     </div>
   }
 
@@ -38,8 +38,8 @@
       <ion-card-content>
         <div class="empty-state">
           <ion-icon name="document-text-outline" color="medium"></ion-icon>
-          <h4>No Audit Entries</h4>
-          <p>No audit trail entries found for this request.</p>
+          <h4>{{ 'audit_log.no_entries_title' | translate }}</h4>
+          <p>{{ 'audit_log.no_entries_message' | translate }}</p>
         </div>
       </ion-card-content>
     </ion-card>
@@ -72,13 +72,13 @@
                 <!-- Request ID (if showing multiple requests) -->
                 @if (shouldShowRequestColumn()) {
                   <div class="detail-row">
-                    <span class="detail-label">Request ID:</span>
+                    <span class="detail-label">{{ 'audit_log.request_id' | translate }}</span>
                     <span class="detail-value">{{ entry.requestId }}</span>
                   </div>
                 }
                 <!-- Performed By -->
                 <div class="detail-row">
-                  <span class="detail-label">Performed By:</span>
+                  <span class="detail-label">{{ 'audit_log.performed_by' | translate }}</span>
                   <span class="detail-value"
                     >{{ entry.performedByName }} ({{ entry.performedBy }})</span
                   >
@@ -86,7 +86,7 @@
                 <!-- Status Transition -->
                 @if (getStatusTransitionText(entry)) {
                   <div class="detail-row">
-                    <span class="detail-label">Status Change:</span>
+                    <span class="detail-label">{{ 'audit_log.status_change' | translate }}</span>
                     <span class="detail-value status-transition">{{
                       getStatusTransitionText(entry)
                     }}</span>
@@ -95,7 +95,7 @@
                 <!-- Additional Details -->
                 @if (hasDetails(entry)) {
                   <div class="detail-row">
-                    <span class="detail-label">Details:</span>
+                    <span class="detail-label">{{ 'audit_log.details' | translate }}</span>
                     <span class="detail-value details-text">{{
                       entry.details
                     }}</span>

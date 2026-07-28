@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/dash/feed"></ion-back-button>
     </ion-buttons>
-    <ion-title>Create Post</ion-title>
+    <ion-title>{{ 'post_form.title' | translate }}</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="onSubmit()" [disabled]="isSubmitting() || postForm.invalid">
         <ion-icon slot="icon-only" name="save"></ion-icon>
@@ -15,10 +15,10 @@
 <ion-content [fullscreen]="true">
   <form [formGroup]="postForm" (ngSubmit)="onSubmit()">
     <ion-item>
-      <ion-label position="stacked">Content *</ion-label>
+      <ion-label position="stacked">{{ 'post_form.content_label' | translate }}</ion-label>
       <ion-textarea
         formControlName="content"
-        placeholder="What's on your mind?"
+        [placeholder]="'post_form.content_placeholder' | translate"
         rows="6"
         [counter]="true"
         maxlength="500">
@@ -26,30 +26,30 @@
     </ion-item>
 
     <ion-item>
-      <ion-label position="stacked">Image URL</ion-label>
+      <ion-label position="stacked">{{ 'post_form.image_url' | translate }}</ion-label>
       <ion-input
         formControlName="image"
         type="url"
-        placeholder="https://example.com/image.jpg">
+        [placeholder]="'post_form.image_placeholder' | translate">
         <ion-icon slot="start" name="image"></ion-icon>
       </ion-input>
     </ion-item>
 
     <ion-item>
-      <ion-label position="stacked">Tags</ion-label>
+      <ion-label position="stacked">{{ 'post_form.tags_label' | translate }}</ion-label>
       <ion-input
         formControlName="tags"
-        placeholder="aikido, training, practice (comma separated)">
+        [placeholder]="'post_form.tags_placeholder' | translate">
         <ion-icon slot="start" name="pricetag"></ion-icon>
       </ion-input>
     </ion-item>
 
     <div class="ion-padding">
       <ion-button expand="block" type="submit" [disabled]="isSubmitting() || postForm.invalid">
-        {{ isSubmitting() ? 'Creating...' : 'Create Post' }}
+        {{ isSubmitting() ? ('post_form.creating' | translate) : ('post_form.create_post' | translate) }}
       </ion-button>
       <ion-button expand="block" fill="outline" (click)="onCancel()" [disabled]="isSubmitting()">
-        Cancel
+        {{ 'post_form.cancel' | translate }}
       </ion-button>
     </div>
   </form>

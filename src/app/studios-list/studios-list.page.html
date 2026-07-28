@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/dash/feed"></ion-back-button>
     </ion-buttons>
-    <ion-title>Studios</ion-title>
+    <ion-title>{{ 'studios_list.title' | translate }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -11,7 +11,7 @@
   <div class="studios-container">
     <!-- Search Bar -->
     <ion-searchbar
-      placeholder="Search studios..."
+      [placeholder]="'studios_list.search_placeholder' | translate"
       (ionInput)="onSearch($event)"
       [(ngModel)]="searchTerm"
     >
@@ -24,13 +24,13 @@
       class="segment-control"
     >
       <ion-segment-button value="my-studios">
-        <ion-label>My Studios</ion-label>
+        <ion-label>{{ 'studios_list.my_studios' | translate }}</ion-label>
       </ion-segment-button>
       <ion-segment-button value="favorites">
-        <ion-label>Favorites</ion-label>
+        <ion-label>{{ 'studios_list.favorites' | translate }}</ion-label>
       </ion-segment-button>
       <ion-segment-button value="nearby">
-        <ion-label>Nearby</ion-label>
+        <ion-label>{{ 'studios_list.nearby' | translate }}</ion-label>
       </ion-segment-button>
     </ion-segment>
 
@@ -56,7 +56,7 @@
           <div class="studio-meta">
             <ion-chip>
               <ion-icon name="people"></ion-icon>
-              <ion-label>{{ studio.memberCount }} members</ion-label>
+              <ion-label>{{ studio.memberCount }} {{ 'studios_list.members' | translate }}</ion-label>
             </ion-chip>
           </div>
           <div class="contact-info">
@@ -65,7 +65,7 @@
               <span>{{ studio.phone }}</span>
             </div>
           </div>
-          <ion-button expand="block" fill="outline"> View Details </ion-button>
+          <ion-button expand="block" fill="outline"> {{ 'studios_list.view_details' | translate }} </ion-button>
         </ion-card-content>
       </ion-card>
       }
@@ -75,7 +75,7 @@
     <ion-infinite-scroll (ionInfinite)="loadMore($event)">
       <ion-infinite-scroll-content
         loadingSpinner="bubbles"
-        loadingText="Loading more studios..."
+        [loadingText]="'studios_list.loading_more' | translate"
       >
       </ion-infinite-scroll-content>
     </ion-infinite-scroll>

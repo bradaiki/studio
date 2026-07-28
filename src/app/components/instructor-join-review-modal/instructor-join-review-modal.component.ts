@@ -1,4 +1,5 @@
 import { Component, input, OnInit, OnDestroy } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 
 import {
   IonHeader,
@@ -58,6 +59,7 @@ import {
   styleUrls: ['./instructor-join-review-modal.component.scss'],
   standalone: true,
   imports: [
+    TranslateModule,
     IonHeader,
     IonToolbar,
     IonTitle,

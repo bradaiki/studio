@@ -4,7 +4,7 @@
       <ion-back-button defaultHref="/dash/orgs"></ion-back-button>
     </ion-buttons>
     <ion-title
-      >{{ isEditMode() ? 'Edit Organization' : 'Create Organization' }}</ion-title
+      >{{ isEditMode() ? ('org_form.edit_title' | translate) : ('org_form.create_title' | translate) }}</ion-title
     >
     <ion-buttons slot="end">
       <ion-button (click)="onSubmit()" [disabled]="isSubmitting()">
@@ -19,32 +19,32 @@
     <!-- Basic Information -->
     <ion-card>
       <ion-card-header>
-        <ion-card-title>Basic Information</ion-card-title>
+        <ion-card-title>{{ 'org_form.basic_information' | translate }}</ion-card-title>
       </ion-card-header>
       <ion-card-content>
         <ion-item>
-          <ion-label position="stacked">Organization Name *</ion-label>
+          <ion-label position="stacked">{{ 'org_form.org_name' | translate }}</ion-label>
           <ion-input
             formControlName="name"
-            placeholder="Enter organization name"
+            [placeholder]="'org_form.org_name_placeholder' | translate"
             [class.ion-invalid]="orgForm.get('name')?.invalid && orgForm.get('name')?.touched"
           >
           </ion-input>
         </ion-item>
 
         <ion-item>
-          <ion-label position="stacked">Tagline</ion-label>
+          <ion-label position="stacked">{{ 'org_form.tagline' | translate }}</ion-label>
           <ion-input
             formControlName="tagline"
-            placeholder="Organization motto or tagline"
+            [placeholder]="'org_form.tagline_placeholder' | translate"
           ></ion-input>
         </ion-item>
 
         <ion-item>
-          <ion-label position="stacked">Mission *</ion-label>
+          <ion-label position="stacked">{{ 'org_form.mission' | translate }}</ion-label>
           <ion-textarea
             formControlName="mission"
-            placeholder="Organization mission statement"
+            [placeholder]="'org_form.mission_placeholder' | translate"
             rows="4"
             [class.ion-invalid]="orgForm.get('mission')?.invalid && orgForm.get('mission')?.touched"
           >
@@ -52,10 +52,10 @@
         </ion-item>
 
         <ion-item>
-          <ion-label position="stacked">Description *</ion-label>
+          <ion-label position="stacked">{{ 'org_form.description' | translate }}</ion-label>
           <ion-textarea
             formControlName="description"
-            placeholder="Detailed organization description"
+            [placeholder]="'org_form.description_placeholder' | translate"
             rows="4"
             [class.ion-invalid]="orgForm.get('description')?.invalid && orgForm.get('description')?.touched"
           >
@@ -63,7 +63,7 @@
         </ion-item>
 
         <ion-item>
-          <ion-label position="stacked">Hero Image URL</ion-label>
+          <ion-label position="stacked">{{ 'org_form.hero_image' | translate }}</ion-label>
           <ion-input
             formControlName="heroImage"
             placeholder="https://..."
@@ -71,47 +71,47 @@
         </ion-item>
 
         <ion-item>
-          <ion-label position="stacked">Founded Year</ion-label>
+          <ion-label position="stacked">{{ 'org_form.founded_year' | translate }}</ion-label>
           <ion-input formControlName="founded" placeholder="1975"></ion-input>
         </ion-item>
 
         <ion-item>
-          <ion-label position="stacked">Headquarters</ion-label>
+          <ion-label position="stacked">{{ 'org_form.headquarters' | translate }}</ion-label>
           <ion-input
             formControlName="headquarters"
-            placeholder="New York, NY, USA"
+            [placeholder]="'org_form.headquarters_placeholder' | translate"
           ></ion-input>
         </ion-item>
 
         <ion-item>
-          <ion-label position="stacked">Website</ion-label>
+          <ion-label position="stacked">{{ 'org_form.website' | translate }}</ion-label>
           <ion-input
             formControlName="website"
-            placeholder="organization.org"
+            [placeholder]="'org_form.website_placeholder' | translate"
           ></ion-input>
         </ion-item>
 
         <ion-item>
-          <ion-label position="stacked">Email</ion-label>
+          <ion-label position="stacked">{{ 'org_form.email' | translate }}</ion-label>
           <ion-input
             formControlName="email"
             type="email"
-            placeholder="info@organization.org"
+            [placeholder]="'org_form.email_placeholder' | translate"
             [class.ion-invalid]="orgForm.get('email')?.invalid && orgForm.get('email')?.touched"
           >
           </ion-input>
         </ion-item>
 
         <ion-item>
-          <ion-label position="stacked">Phone</ion-label>
+          <ion-label position="stacked">{{ 'org_form.phone' | translate }}</ion-label>
           <ion-input
             formControlName="phone"
-            placeholder="+1 (555) 123-4567"
+            [placeholder]="'org_form.phone_placeholder' | translate"
           ></ion-input>
         </ion-item>
 
         <ion-item>
-          <ion-label position="stacked">Member Count</ion-label>
+          <ion-label position="stacked">{{ 'org_form.member_count' | translate }}</ion-label>
           <ion-input
             formControlName="memberCount"
             type="number"
@@ -122,7 +122,7 @@
         </ion-item>
 
         <ion-item>
-          <ion-label position="stacked">Dojo Count</ion-label>
+          <ion-label position="stacked">{{ 'org_form.dojo_count' | translate }}</ion-label>
           <ion-input
             formControlName="dojoCount"
             type="number"
@@ -133,7 +133,7 @@
         </ion-item>
 
         <ion-item>
-          <ion-label position="stacked">Country Count</ion-label>
+          <ion-label position="stacked">{{ 'org_form.country_count' | translate }}</ion-label>
           <ion-input
             formControlName="countryCount"
             type="number"
@@ -145,7 +145,7 @@
 
         <ion-item>
           <ion-checkbox formControlName="verified"></ion-checkbox>
-          <ion-label>Verified Organization</ion-label>
+          <ion-label>{{ 'org_form.verified_org' | translate }}</ion-label>
         </ion-item>
       </ion-card-content>
     </ion-card>
@@ -153,33 +153,33 @@
     <!-- Philosophy -->
     <ion-card formGroupName="philosophy">
       <ion-card-header>
-        <ion-card-title>Philosophy</ion-card-title>
+        <ion-card-title>{{ 'org_form.philosophy' | translate }}</ion-card-title>
       </ion-card-header>
       <ion-card-content>
         <ion-item>
-          <ion-label position="stacked">Quote</ion-label>
+          <ion-label position="stacked">{{ 'org_form.quote' | translate }}</ion-label>
           <ion-textarea
             formControlName="quote"
-            placeholder="Inspirational quote"
+            [placeholder]="'org_form.quote_placeholder' | translate"
           ></ion-textarea>
         </ion-item>
         <ion-item>
-          <ion-label position="stacked">Attribution</ion-label>
+          <ion-label position="stacked">{{ 'org_form.attribution' | translate }}</ion-label>
           <ion-input
             formControlName="attribution"
-            placeholder="— Author Name"
+            [placeholder]="'org_form.attribution_placeholder' | translate"
           ></ion-input>
         </ion-item>
         <ion-item>
-          <ion-label position="stacked">Description</ion-label>
+          <ion-label position="stacked">{{ 'org_form.philosophy_description' | translate }}</ion-label>
           <ion-textarea
             formControlName="description"
-            placeholder="Philosophy description"
+            [placeholder]="'org_form.philosophy_desc_placeholder' | translate"
             rows="3"
           ></ion-textarea>
         </ion-item>
         <ion-item>
-          <ion-label position="stacked">Philosophy Image URL</ion-label>
+          <ion-label position="stacked">{{ 'org_form.philosophy_image' | translate }}</ion-label>
           <ion-input
             formControlName="image"
             placeholder="https://..."
@@ -192,7 +192,7 @@
     <ion-card>
       <ion-card-header>
         <ion-card-title>
-          Statistics
+          {{ 'org_form.statistics' | translate }}
           <ion-button fill="clear" size="small" (click)="addStatistic()">
             <ion-icon name="add"></ion-icon>
           </ion-button>
@@ -206,7 +206,7 @@
             <ion-card>
               <ion-card-header>
                 <ion-card-title>
-                  Statistic {{ i + 1 }}
+                  {{ 'org_form.statistic_n' | translate: { n: i + 1 } }}
                   <ion-button
                     fill="clear"
                     size="small"
@@ -219,17 +219,17 @@
               </ion-card-header>
               <ion-card-content>
                 <ion-item>
-                  <ion-label position="stacked">Number *</ion-label>
+                  <ion-label position="stacked">{{ 'org_form.number' | translate }}</ion-label>
                   <ion-input
                     formControlName="number"
-                    placeholder="150+"
+                    [placeholder]="'org_form.number_placeholder' | translate"
                   ></ion-input>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Label *</ion-label>
+                  <ion-label position="stacked">{{ 'org_form.label' | translate }}</ion-label>
                   <ion-input
                     formControlName="label"
-                    placeholder="Member Dojos"
+                    [placeholder]="'org_form.label_placeholder' | translate"
                   ></ion-input>
                 </ion-item>
               </ion-card-content>
@@ -244,7 +244,7 @@
     <ion-card>
       <ion-card-header>
         <ion-card-title>
-          Programs
+          {{ 'org_form.programs' | translate }}
           <ion-button fill="clear" size="small" (click)="addProgram()">
             <ion-icon name="add"></ion-icon>
           </ion-button>
@@ -257,7 +257,7 @@
             <ion-card>
               <ion-card-header>
                 <ion-card-title>
-                  Program {{ i + 1 }}
+                  {{ 'org_form.program_n' | translate: { n: i + 1 } }}
                   <ion-button
                     fill="clear"
                     size="small"
@@ -270,38 +270,38 @@
               </ion-card-header>
               <ion-card-content>
                 <ion-item>
-                  <ion-label position="stacked">Name *</ion-label>
+                  <ion-label position="stacked">{{ 'org_form.program_name' | translate }}</ion-label>
                   <ion-input
                     formControlName="name"
-                    placeholder="Traditional Aikido"
+                    [placeholder]="'org_form.program_name_placeholder' | translate"
                   ></ion-input>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Description *</ion-label>
+                  <ion-label position="stacked">{{ 'org_form.program_description' | translate }}</ion-label>
                   <ion-textarea
                     formControlName="description"
-                    placeholder="Program description"
+                    [placeholder]="'org_form.program_desc_placeholder' | translate"
                   ></ion-textarea>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Level</ion-label>
+                  <ion-label position="stacked">{{ 'org_form.level' | translate }}</ion-label>
                   <ion-input
                     formControlName="level"
-                    placeholder="All Levels"
+                    [placeholder]="'org_form.level_placeholder' | translate"
                   ></ion-input>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Duration</ion-label>
+                  <ion-label position="stacked">{{ 'org_form.duration' | translate }}</ion-label>
                   <ion-input
                     formControlName="duration"
-                    placeholder="Ongoing"
+                    [placeholder]="'org_form.duration_placeholder' | translate"
                   ></ion-input>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Certification</ion-label>
+                  <ion-label position="stacked">{{ 'org_form.certification' | translate }}</ion-label>
                   <ion-input
                     formControlName="certification"
-                    placeholder="Dan/Kyu Rankings"
+                    [placeholder]="'org_form.certification_placeholder' | translate"
                   ></ion-input>
                 </ion-item>
               </ion-card-content>
@@ -316,7 +316,7 @@
     <ion-card>
       <ion-card-header>
         <ion-card-title>
-          Member Dojos
+          {{ 'org_form.member_dojos' | translate }}
           <ion-button fill="clear" size="small" (click)="addDojo()">
             <ion-icon name="add"></ion-icon>
           </ion-button>
@@ -329,7 +329,7 @@
             <ion-card>
               <ion-card-header>
                 <ion-card-title>
-                  Dojo {{ i + 1 }}
+                  {{ 'org_form.dojo_n' | translate: { n: i + 1 } }}
                   <ion-button
                     fill="clear"
                     size="small"
@@ -342,35 +342,35 @@
               </ion-card-header>
               <ion-card-content>
                 <ion-item>
-                  <ion-label position="stacked">Name *</ion-label>
+                  <ion-label position="stacked">{{ 'org_form.dojo_name' | translate }}</ion-label>
                   <ion-input
                     formControlName="name"
-                    placeholder="Dojo name"
+                    [placeholder]="'org_form.dojo_name_placeholder' | translate"
                   ></ion-input>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Location *</ion-label>
+                  <ion-label position="stacked">{{ 'org_form.dojo_location' | translate }}</ion-label>
                   <ion-input
                     formControlName="location"
-                    placeholder="City, State"
+                    [placeholder]="'org_form.dojo_location_placeholder' | translate"
                   ></ion-input>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Instructor</ion-label>
+                  <ion-label position="stacked">{{ 'org_form.dojo_instructor' | translate }}</ion-label>
                   <ion-input
                     formControlName="instructor"
-                    placeholder="Instructor name"
+                    [placeholder]="'org_form.dojo_instructor_placeholder' | translate"
                   ></ion-input>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Rank</ion-label>
+                  <ion-label position="stacked">{{ 'org_form.rank' | translate }}</ion-label>
                   <ion-input
                     formControlName="rank"
-                    placeholder="6th Dan"
+                    [placeholder]="'org_form.rank_placeholder' | translate"
                   ></ion-input>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Students</ion-label>
+                  <ion-label position="stacked">{{ 'org_form.students' | translate }}</ion-label>
                   <ion-input
                     formControlName="students"
                     type="number"
@@ -378,14 +378,14 @@
                   ></ion-input>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Established</ion-label>
+                  <ion-label position="stacked">{{ 'org_form.established' | translate }}</ion-label>
                   <ion-input
                     formControlName="established"
                     placeholder="2010"
                   ></ion-input>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Image URL</ion-label>
+                  <ion-label position="stacked">{{ 'org_form.hero_image' | translate }}</ion-label>
                   <ion-input
                     formControlName="image"
                     placeholder="https://..."
@@ -403,7 +403,7 @@
     <ion-card>
       <ion-card-header>
         <ion-card-title>
-          Upcoming Events
+          {{ 'org_form.upcoming_events' | translate }}
           <ion-button fill="clear" size="small" (click)="addEvent()">
             <ion-icon name="add"></ion-icon>
           </ion-button>
@@ -416,7 +416,7 @@
             <ion-card>
               <ion-card-header>
                 <ion-card-title>
-                  Event {{ i + 1 }}
+                  {{ 'org_form.event_n' | translate: { n: i + 1 } }}
                   <ion-button
                     fill="clear"
                     size="small"
@@ -429,25 +429,25 @@
               </ion-card-header>
               <ion-card-content>
                 <ion-item>
-                  <ion-label position="stacked">Title *</ion-label>
+                  <ion-label position="stacked">{{ 'org_form.event_title' | translate }}</ion-label>
                   <ion-input
                     formControlName="title"
-                    placeholder="Event title"
+                    [placeholder]="'org_form.event_title_placeholder' | translate"
                   ></ion-input>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Date *</ion-label>
+                  <ion-label position="stacked">{{ 'org_form.event_date' | translate }}</ion-label>
                   <ion-input formControlName="date" type="date"></ion-input>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Location *</ion-label>
+                  <ion-label position="stacked">{{ 'org_form.event_location' | translate }}</ion-label>
                   <ion-input
                     formControlName="location"
-                    placeholder="City, State"
+                    [placeholder]="'org_form.event_location_placeholder' | translate"
                   ></ion-input>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Type *</ion-label>
+                  <ion-label position="stacked">{{ 'org_form.event_type' | translate }}</ion-label>
                   <ion-select formControlName="type">
                     <ion-select-option value="seminar"
                       >Seminar</ion-select-option
@@ -465,17 +465,17 @@
                   </ion-select>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Instructor</ion-label>
+                  <ion-label position="stacked">{{ 'org_form.event_instructor' | translate }}</ion-label>
                   <ion-input
                     formControlName="instructor"
-                    placeholder="Instructor name"
+                    [placeholder]="'org_form.event_instructor_placeholder' | translate"
                   ></ion-input>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Cost</ion-label>
+                  <ion-label position="stacked">{{ 'org_form.event_cost' | translate }}</ion-label>
                   <ion-input
                     formControlName="cost"
-                    placeholder="$150"
+                    [placeholder]="'org_form.event_cost_placeholder' | translate"
                   ></ion-input>
                 </ion-item>
               </ion-card-content>
@@ -490,7 +490,7 @@
     <ion-card>
       <ion-card-header>
         <ion-card-title>
-          Lineage Features
+          {{ 'org_form.lineage_features' | translate }}
           <ion-button fill="clear" size="small" (click)="addLineageFeature()">
             <ion-icon name="add"></ion-icon>
           </ion-button>
@@ -504,7 +504,7 @@
             <ion-card>
               <ion-card-header>
                 <ion-card-title>
-                  Feature {{ i + 1 }}
+                  {{ 'org_form.feature_n' | translate: { n: i + 1 } }}
                   <ion-button
                     fill="clear"
                     size="small"
@@ -517,24 +517,24 @@
               </ion-card-header>
               <ion-card-content>
                 <ion-item>
-                  <ion-label position="stacked">Icon *</ion-label>
+                  <ion-label position="stacked">{{ 'org_form.feature_icon' | translate }}</ion-label>
                   <ion-input
                     formControlName="icon"
-                    placeholder="book-outline"
+                    [placeholder]="'org_form.feature_icon_placeholder' | translate"
                   ></ion-input>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Title *</ion-label>
+                  <ion-label position="stacked">{{ 'org_form.feature_title' | translate }}</ion-label>
                   <ion-input
                     formControlName="title"
-                    placeholder="Feature title"
+                    [placeholder]="'org_form.feature_title_placeholder' | translate"
                   ></ion-input>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Description *</ion-label>
+                  <ion-label position="stacked">{{ 'org_form.feature_description' | translate }}</ion-label>
                   <ion-textarea
                     formControlName="description"
-                    placeholder="Feature description"
+                    [placeholder]="'org_form.feature_desc_placeholder' | translate"
                   ></ion-textarea>
                 </ion-item>
               </ion-card-content>
@@ -549,7 +549,7 @@
     <ion-card>
       <ion-card-header>
         <ion-card-title>
-          Social Media
+          {{ 'org_form.social_media' | translate }}
           <ion-button fill="clear" size="small" (click)="addSocialMedia()">
             <ion-icon name="add"></ion-icon>
           </ion-button>
@@ -562,7 +562,7 @@
             <ion-card>
               <ion-card-header>
                 <ion-card-title>
-                  Social Media {{ i + 1 }}
+                  {{ 'org_form.social_media_n' | translate: { n: i + 1 } }}
                   <ion-button
                     fill="clear"
                     size="small"
@@ -575,7 +575,7 @@
               </ion-card-header>
               <ion-card-content>
                 <ion-item>
-                  <ion-label position="stacked">Platform *</ion-label>
+                  <ion-label position="stacked">{{ 'org_form.platform' | translate }}</ion-label>
                   <ion-select formControlName="platform">
                     <ion-select-option value="facebook"
                       >Facebook</ion-select-option
@@ -595,17 +595,17 @@
                   </ion-select>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">URL *</ion-label>
+                  <ion-label position="stacked">{{ 'org_form.url' | translate }}</ion-label>
                   <ion-input
                     formControlName="url"
                     placeholder="https://..."
                   ></ion-input>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Username</ion-label>
+                  <ion-label position="stacked">{{ 'org_form.username' | translate }}</ion-label>
                   <ion-input
                     formControlName="username"
-                    placeholder="@username"
+                    [placeholder]="'org_form.username_placeholder' | translate"
                   ></ion-input>
                 </ion-item>
               </ion-card-content>
@@ -620,7 +620,7 @@
     <ion-card>
       <ion-card-header>
         <ion-card-title>
-          Leadership
+          {{ 'org_form.leadership' | translate }}
           <ion-button fill="clear" size="small" (click)="addLeader()">
             <ion-icon name="add"></ion-icon>
           </ion-button>
@@ -633,7 +633,7 @@
             <ion-card>
               <ion-card-header>
                 <ion-card-title>
-                  Leader {{ i + 1 }}
+                  {{ 'org_form.leader_n' | translate: { n: i + 1 } }}
                   <ion-button
                     fill="clear"
                     size="small"
@@ -646,44 +646,42 @@
               </ion-card-header>
               <ion-card-content>
                 <ion-item>
-                  <ion-label position="stacked">Name *</ion-label>
+                  <ion-label position="stacked">{{ 'org_form.leader_name' | translate }}</ion-label>
                   <ion-input
                     formControlName="name"
-                    placeholder="Leader name"
+                    [placeholder]="'org_form.leader_name_placeholder' | translate"
                   ></ion-input>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Title *</ion-label>
+                  <ion-label position="stacked">{{ 'org_form.leader_title' | translate }}</ion-label>
                   <ion-input
                     formControlName="title"
-                    placeholder="Chief Instructor"
+                    [placeholder]="'org_form.leader_title_placeholder' | translate"
                   ></ion-input>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Rank</ion-label>
+                  <ion-label position="stacked">{{ 'org_form.leader_rank' | translate }}</ion-label>
                   <ion-input
                     formControlName="rank"
-                    placeholder="8th Dan"
+                    [placeholder]="'org_form.leader_rank_placeholder' | translate"
                   ></ion-input>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Bio</ion-label>
+                  <ion-label position="stacked">{{ 'org_form.leader_bio' | translate }}</ion-label>
                   <ion-textarea
                     formControlName="bio"
-                    placeholder="Leader biography"
+                    [placeholder]="'org_form.leader_bio_placeholder' | translate"
                   ></ion-textarea>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Image URL</ion-label>
+                  <ion-label position="stacked">{{ 'org_form.leader_image' | translate }}</ion-label>
                   <ion-input
                     formControlName="image"
                     placeholder="https://..."
                   ></ion-input>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked"
-                    >Years with Organization</ion-label
-                  >
+                  <ion-label position="stacked">{{ 'org_form.years_with_org' | translate }}</ion-label>
                   <ion-input
                     formControlName="yearsWithOrg"
                     type="number"
@@ -702,7 +700,7 @@
     <ion-card>
       <ion-card-header>
         <ion-card-title>
-          Achievements
+          {{ 'org_form.achievements' | translate }}
           <ion-button fill="clear" size="small" (click)="addAchievement()">
             <ion-icon name="add"></ion-icon>
           </ion-button>
@@ -716,7 +714,7 @@
             <ion-card>
               <ion-card-header>
                 <ion-card-title>
-                  Achievement {{ i + 1 }}
+                  {{ 'org_form.achievement_n' | translate: { n: i + 1 } }}
                   <ion-button
                     fill="clear"
                     size="small"
@@ -729,25 +727,25 @@
               </ion-card-header>
               <ion-card-content>
                 <ion-item>
-                  <ion-label position="stacked">Title *</ion-label>
+                  <ion-label position="stacked">{{ 'org_form.achievement_title' | translate }}</ion-label>
                   <ion-input
                     formControlName="title"
-                    placeholder="Achievement title"
+                    [placeholder]="'org_form.achievement_title_placeholder' | translate"
                   ></ion-input>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Description *</ion-label>
+                  <ion-label position="stacked">{{ 'org_form.achievement_desc' | translate }}</ion-label>
                   <ion-textarea
                     formControlName="description"
-                    placeholder="Achievement description"
+                    [placeholder]="'org_form.achievement_desc_placeholder' | translate"
                   ></ion-textarea>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Date *</ion-label>
+                  <ion-label position="stacked">{{ 'org_form.achievement_date' | translate }}</ion-label>
                   <ion-input formControlName="date" type="date"></ion-input>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Type *</ion-label>
+                  <ion-label position="stacked">{{ 'org_form.achievement_type' | translate }}</ion-label>
                   <ion-select formControlName="type">
                     <ion-select-option value="recognition"
                       >Recognition</ion-select-option
@@ -764,10 +762,10 @@
                   </ion-select>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Icon</ion-label>
+                  <ion-label position="stacked">{{ 'org_form.achievement_icon' | translate }}</ion-label>
                   <ion-input
                     formControlName="icon"
-                    placeholder="trophy"
+                    [placeholder]="'org_form.achievement_icon_placeholder' | translate"
                   ></ion-input>
                 </ion-item>
               </ion-card-content>
@@ -782,12 +780,12 @@
     <ion-card>
       <ion-card-content>
         <ion-button expand="block" type="submit" [disabled]="isSubmitting()">
-          {{ isSubmitting() ? 'Saving...' : (isEditMode() ? 'Update Organization' :
-          'Create Organization') }}
+          {{ isSubmitting() ? ('org_form.saving' | translate) : (isEditMode() ? ('org_form.update_org' | translate) :
+          ('org_form.create_org' | translate)) }}
         </ion-button>
 
         <ion-button expand="block" fill="outline" (click)="onCancel()">
-          Cancel
+          {{ 'org_form.cancel' | translate }}
         </ion-button>
 
         @if (isEditMode()) {
@@ -797,7 +795,7 @@
           fill="outline"
           (click)="confirmDelete()"
         >
-          Delete Organization
+          {{ 'org_form.delete_org' | translate }}
         </ion-button>
         }
       </ion-card-content>
@@ -807,8 +805,8 @@
   <!-- Delete Confirmation Alert -->
   <ion-alert
     [isOpen]="showDeleteAlert()"
-    header="Confirm Delete"
-    message="Are you sure you want to delete this organization? This action cannot be undone."
+    [header]="'org_form.confirm_delete_header' | translate"
+    [message]="'org_form.confirm_delete_message' | translate"
     [buttons]="deleteAlertButtons"
   >
   </ion-alert>

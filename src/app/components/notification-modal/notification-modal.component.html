@@ -4,7 +4,7 @@
       <ion-toolbar color="primary">
         <ion-title>
           <ion-icon name="notifications"></ion-icon>
-          Notifications
+          {{ 'notification_modal.title' | translate }}
           @if (totalPendingCount > 0) {
             <ion-badge color="light">{{ totalPendingCount }}</ion-badge>
           }
@@ -23,7 +23,7 @@
         <div class="invitations-section">
           <h2 class="section-title">
             <ion-icon name="mail" color="primary"></ion-icon>
-            Chat Invitations ({{ pendingInvitations().length }})
+            {{ 'notification_modal.chat_invitations' | translate: { count: pendingInvitations().length } }}
           </h2>
 
           @for (invitation of pendingInvitations(); track invitation.id) {
@@ -31,13 +31,13 @@
               <ion-card-header>
                 <ion-card-title>
                   <ion-icon name="chatbubble" color="primary"></ion-icon>
-                  Private Chat Invitation
+                  {{ 'notification_modal.private_chat_invitation' | translate }}
                 </ion-card-title>
               </ion-card-header>
               <ion-card-content>
                 <div class="invitation-details">
                   <p class="invitation-main">
-                    <strong>You've been invited to join a private chat</strong>
+                    <strong>{{ 'notification_modal.invited_main' | translate }}</strong>
                   </p>
                   
                   @if (invitation.message) {
@@ -50,7 +50,7 @@
                   <div class="invitation-meta">
                     <ion-chip size="small" color="medium" outline="true">
                       <ion-icon name="person"></ion-icon>
-                      <ion-label>From: {{ invitation.invitedBy }}</ion-label>
+                      <ion-label>{{ 'notification_modal.from' | translate }} {{ invitation.invitedBy }}</ion-label>
                     </ion-chip>
 
                     <ion-chip size="small" color="primary" outline="true">
@@ -65,7 +65,7 @@
                         outline="true">
                         <ion-icon name="time"></ion-icon>
                         <ion-label>
-                          {{ isExpired(invitation) ? 'Expired' : 'Expires' }}: {{ formatTime(invitation.expiresAt) }}
+                          {{ isExpired(invitation) ? ('chat_invitation.expired' | translate) : ('notification_modal.expires' | translate) }}: {{ formatTime(invitation.expiresAt) }}
                         </ion-label>
                       </ion-chip>
                     }
@@ -79,7 +79,7 @@
                     (click)="acceptInvitation(invitation.id)"
                     [disabled]="isExpired(invitation)">
                     <ion-icon name="checkmark" slot="start"></ion-icon>
-                    Accept
+                    {{ 'notification_modal.accept' | translate }}
                   </ion-button>
 
                   <div class="secondary-actions">
@@ -89,7 +89,7 @@
                       size="small"
                       (click)="declineInvitation(invitation.id)">
                       <ion-icon name="close-circle" slot="start"></ion-icon>
-                      Decline
+                      {{ 'chat_messages.decline' | translate }}
                     </ion-button>
 
                     <ion-button 
@@ -97,7 +97,7 @@
                       color="medium"
                       size="small"
                       (click)="ignoreInvitation(invitation.id)">
-                      Ignore for now
+                      {{ 'notification_modal.ignore' | translate }}
                     </ion-button>
                   </div>
                 </div>
@@ -112,7 +112,7 @@
         <div class="notifications-section">
           <h2 class="section-title">
             <ion-icon name="notifications" color="primary"></ion-icon>
-            System Notifications ({{ systemNotifications().length }})
+            {{ 'notification_modal.system_notifications' | translate: { count: systemNotifications().length } }}
           </h2>
 
           <ion-list>
@@ -154,10 +154,10 @@
       @if (totalPendingCount === 0) {
         <div class="empty-state">
           <ion-icon name="checkmark-circle" color="success"></ion-icon>
-          <h3>All caught up!</h3>
-          <p>You have no pending notifications</p>
+          <h3>{{ 'notification_modal.all_caught_up' | translate }}</h3>
+          <p>{{ 'notification_modal.no_pending' | translate }}</p>
           <ion-button fill="outline" (click)="closeModal()">
-            Close
+            {{ 'app.close' | translate }}
           </ion-button>
         </div>
       }

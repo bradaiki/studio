@@ -5,9 +5,9 @@
       <div class="invitation-header">
         <ion-icon name="mail-outline" class="invitation-icon"></ion-icon>
         <div class="header-content">
-          <ion-card-title>Chat Invitation</ion-card-title>
+          <ion-card-title>{{ 'chat_invitation.chat_invitation_title' | translate }}</ion-card-title>
           <ion-card-subtitle>
-            From {{ getInviterDisplayName() }}
+            {{ 'chat_invitation.from' | translate }} {{ getInviterDisplayName() }}
           </ion-card-subtitle>
         </div>
         <ion-chip [color]="getStatusColor()" class="status-chip">
@@ -22,7 +22,7 @@
       <!-- Invitation Message -->
       <div class="invitation-message">
         <p class="main-message">
-          <strong>{{ getInviterDisplayName() }}</strong> has invited you to join
+          <strong>{{ getInviterDisplayName() }}</strong> {{ 'chat_invitation.invited_to_join' | translate }}
           <strong>{{ getChatDisplayName() }}</strong>
         </p>
 
@@ -39,13 +39,13 @@
       <div class="invitation-details">
         <div class="detail-item">
           <ion-icon name="calendar-outline"></ion-icon>
-          <span>Invited: {{ getFormattedInvitationDate() }}</span>
+          <span>{{ 'chat_invitation.invited_label' | translate }} {{ getFormattedInvitationDate() }}</span>
         </div>
 
         @if (invitation().expiresAt) {
           <div class="detail-item">
             <ion-icon name="time-outline"></ion-icon>
-            <span>Expires: {{ getFormattedExpirationDate() }}</span>
+            <span>{{ 'chat_invitation.expires_label' | translate }} {{ getFormattedExpirationDate() }}</span>
           </div>
         }
       </div>
@@ -54,7 +54,7 @@
       @if (isExpired()) {
         <div class="expired-notice">
           <ion-icon name="warning-outline"></ion-icon>
-          <p>This invitation has expired and can no longer be accepted.</p>
+          <p>{{ 'chat_invitation.expired_notice' | translate }}</p>
         </div>
       }
 
@@ -63,13 +63,13 @@
         <div class="processed-notice">
           <ion-icon [name]="getStatusIcon()"></ion-icon>
           @if (invitation().status === "accepted") {
-            <p>You have already accepted this invitation.</p>
+            <p>{{ 'chat_invitation.already_accepted' | translate }}</p>
           }
           @if (invitation().status === "declined") {
-            <p>You have declined this invitation.</p>
+            <p>{{ 'chat_invitation.already_declined' | translate }}</p>
           }
           @if (invitation().status === "revoked") {
-            <p>This invitation has been revoked.</p>
+            <p>{{ 'chat_invitation.invitation_revoked' | translate }}</p>
           }
         </div>
       }
@@ -84,7 +84,7 @@
             [disabled]="isProcessing()"
           >
             <ion-icon name="close-outline" slot="start"></ion-icon>
-            Decline
+            {{ 'chat_messages.decline' | translate }}
           </ion-button>
           <ion-button
             fill="solid"
@@ -98,7 +98,7 @@
             @if (!isProcessing()) {
               <ion-icon name="checkmark-outline" slot="start"></ion-icon>
             }
-            {{ isProcessing() ? "Joining..." : "Accept" }}
+            {{ isProcessing() ? ('chat_invitation.joining' | translate) : ('chat_messages.accept' | translate) }}
           </ion-button>
         </div>
       }

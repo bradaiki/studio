@@ -1,4 +1,5 @@
 import { Component, input, OnInit, OnDestroy } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 
 import {
   ReactiveFormsModule,
@@ -55,6 +56,7 @@ export interface ErrorMessageMapping {
   standalone: true,
   imports: [
     ReactiveFormsModule,
+    TranslateModule,
     IonHeader,
     IonToolbar,
     IonTitle,

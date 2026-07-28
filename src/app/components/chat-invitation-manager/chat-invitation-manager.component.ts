@@ -1,6 +1,7 @@
 import { Component, input, output, signal, OnInit } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import {
   IonModal,
   IonHeader,
@@ -48,6 +49,7 @@ import type { Schema } from '../../../../amplify/data/resource';
   standalone: true,
   imports: [
     FormsModule,
+    TranslateModule,
     IonModal,
     IonHeader,
     IonToolbar,

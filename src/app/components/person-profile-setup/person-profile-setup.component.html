@@ -2,7 +2,7 @@
   <ng-template>
     <ion-header>
       <ion-toolbar>
-        <ion-title>{{ isEditMode() ? 'Edit Your Profile' : 'Complete Your Profile' }}</ion-title>
+        <ion-title>{{ isEditMode() ? ('person_setup.edit_title' | translate) : ('person_setup.create_title' | translate) }}</ion-title>
         @if (canDismiss()) {
           <ion-button slot="end" fill="clear" (click)="onClose()">
             <ion-icon name="close-outline"></ion-icon>
@@ -15,27 +15,27 @@
       <div class="profile-setup-container">
         @if (!isEditMode()) {
           <div class="welcome-message">
-            <h2>Welcome to the Martial Arts Community!</h2>
-            <p>Let's set up your profile so others can connect with you.</p>
+            <h2>{{ 'person_setup.welcome_title' | translate }}</h2>
+            <p>{{ 'person_setup.welcome_message' | translate }}</p>
           </div>
         }
 
         @if (isEditMode()) {
           <div class="welcome-message">
-            <h2>Update Your Profile</h2>
-            <p>Keep your information current so the community can stay connected.</p>
+            <h2>{{ 'person_setup.update_title' | translate }}</h2>
+            <p>{{ 'person_setup.update_message' | translate }}</p>
           </div>
         }
 
         <form (ngSubmit)="onSubmit()">
           <!-- Name -->
           <ion-item>
-            <ion-label position="stacked">Full Name *</ion-label>
+            <ion-label position="stacked">{{ 'person_setup.full_name' | translate }}</ion-label>
             <ion-input
               [(ngModel)]="name"
               name="name"
               type="text"
-              placeholder="Enter your full name"
+              [placeholder]="'person_setup.full_name_placeholder' | translate"
               required
               [disabled]="isSubmitting()"
               >
@@ -45,12 +45,12 @@
 
           <!-- Handle -->
           <ion-item>
-            <ion-label position="stacked">Handle *</ion-label>
+            <ion-label position="stacked">{{ 'person_setup.handle' | translate }}</ion-label>
             <ion-input
               [(ngModel)]="handle"
               name="handle"
               type="text"
-              placeholder="@yourhandle"
+              [placeholder]="'person_setup.handle_placeholder' | translate"
               required
               [disabled]="isSubmitting()"
               (ionInput)="onHandleInput($event)"
@@ -58,18 +58,18 @@
               <ion-icon name="at-outline" slot="start"></ion-icon>
             </ion-input>
             <ion-text color="medium" slot="helper">
-              <small>This will be displayed in the title bar (e.g., @john_aikido)</small>
+              <small>{{ 'person_setup.handle_helper' | translate }}</small>
             </ion-text>
           </ion-item>
 
           <!-- Username -->
           <ion-item>
-            <ion-label position="stacked">Username *</ion-label>
+            <ion-label position="stacked">{{ 'person_setup.username' | translate }}</ion-label>
             <ion-input
               [(ngModel)]="username"
               name="username"
               type="text"
-              placeholder="Choose a unique username"
+              [placeholder]="'person_setup.username_placeholder' | translate"
               required
               [disabled]="isSubmitting()"
               >
@@ -80,7 +80,7 @@
           <!-- Email (read-only, only shown in create mode) -->
           @if (!isEditMode() && email) {
             <ion-item>
-              <ion-label position="stacked">Email</ion-label>
+              <ion-label position="stacked">{{ 'person_setup.email' | translate }}</ion-label>
               <ion-input
                 [(ngModel)]="email"
                 name="email"
@@ -95,12 +95,12 @@
 
           <!-- Location -->
           <ion-item>
-            <ion-label position="stacked">Location *</ion-label>
+            <ion-label position="stacked">{{ 'person_setup.location' | translate }}</ion-label>
             <ion-input
               [(ngModel)]="location"
               name="location"
               type="text"
-              placeholder="City, State/Country"
+              [placeholder]="'person_setup.location_placeholder' | translate"
               required
               [disabled]="isSubmitting()"
               >
@@ -110,12 +110,12 @@
 
           <!-- Rank (Optional) -->
           <ion-item>
-            <ion-label position="stacked">Rank (Optional)</ion-label>
+            <ion-label position="stacked">{{ 'person_setup.rank' | translate }}</ion-label>
             <ion-input
               [(ngModel)]="rank"
               name="rank"
               type="text"
-              placeholder="e.g., 2nd Kyu, Black Belt"
+              [placeholder]="'person_setup.rank_placeholder' | translate"
               [disabled]="isSubmitting()"
               >
             </ion-input>
@@ -123,12 +123,12 @@
 
           <!-- Experience (Optional) -->
           <ion-item>
-            <ion-label position="stacked">Experience (Optional)</ion-label>
+            <ion-label position="stacked">{{ 'person_setup.experience' | translate }}</ion-label>
             <ion-input
               [(ngModel)]="experience"
               name="experience"
               type="text"
-              placeholder="e.g., 3 years, Beginner"
+              [placeholder]="'person_setup.experience_placeholder' | translate"
               [disabled]="isSubmitting()"
               >
             </ion-input>
@@ -136,12 +136,12 @@
 
           <!-- Bio -->
           <ion-item>
-            <ion-label position="stacked">Bio (Optional)</ion-label>
+            <ion-label position="stacked">{{ 'person_setup.bio' | translate }}</ion-label>
             <ion-textarea
               [(ngModel)]="bio"
               name="bio"
               rows="4"
-              placeholder="Tell us about yourself and your martial arts journey..."
+              [placeholder]="'person_setup.bio_placeholder' | translate"
               [disabled]="isSubmitting()"
             ></ion-textarea>
           </ion-item>
@@ -164,7 +164,7 @@
                 <ion-spinner name="crescent"></ion-spinner>
               }
               @if (!isSubmitting()) {
-                <span>{{ isEditMode() ? 'Save Changes' : 'Create Profile' }}</span>
+                <span>{{ isEditMode() ? ('person_setup.save_changes' | translate) : ('person_setup.create_profile' | translate) }}</span>
               }
             </ion-button>
 
@@ -175,16 +175,16 @@
                 (click)="onSkip()"
                 [disabled]="isSubmitting()"
                 >
-                {{ isEditMode() ? 'Cancel' : 'Skip for Now' }}
+                {{ isEditMode() ? ('person_setup.cancel' | translate) : ('person_setup.skip_for_now' | translate) }}
               </ion-button>
             }
           </div>
 
           <div class="info-text">
             <ion-text color="medium">
-              <p>* Required fields</p>
+              <p>{{ 'person_setup.required_fields' | translate }}</p>
               @if (!isEditMode()) {
-                <p>You can update your profile anytime from the Profile page.</p>
+                <p>{{ 'person_setup.update_anytime' | translate }}</p>
               }
             </ion-text>
           </div>

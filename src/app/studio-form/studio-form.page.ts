@@ -7,6 +7,7 @@ import {
   Validators,
   ReactiveFormsModule,
 } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
   StudiosService,
@@ -51,6 +52,7 @@ import { add, remove, save, arrowBack } from 'ionicons/icons';
   standalone: true,
   imports: [
     ReactiveFormsModule,
+    TranslateModule,
     IonContent,
     IonHeader,
     IonTitle,

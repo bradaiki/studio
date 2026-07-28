@@ -1,5 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 import { ActivatedRoute } from '@angular/router';
 import { ActivitiesService, Activity } from '../services/activities.service';
 import { ChatMessagesComponent } from '../components/chat-messages/chat-messages.component';
@@ -52,6 +53,7 @@ import {
   standalone: true,
   imports: [
     CommonModule,
+    TranslateModule,
     IonHeader,
     IonToolbar,
     IonTitle,

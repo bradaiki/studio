@@ -2,6 +2,7 @@ import { Component, NgZone, ChangeDetectorRef, signal } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import {
   IonContent,
   IonHeader,
@@ -29,6 +30,7 @@ import { AuthStateService } from '../services/auth-state.service';
   standalone: true,
   imports: [
     FormsModule,
+    TranslateModule,
     IonContent,
     IonHeader,
     IonTitle,

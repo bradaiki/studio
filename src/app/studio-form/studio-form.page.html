@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/dash/studios"></ion-back-button>
     </ion-buttons>
-    <ion-title>{{ isEditMode() ? 'Edit Studio' : 'Create Studio' }}</ion-title>
+    <ion-title>{{ isEditMode() ? ('studio_form.edit_title' | translate) : ('studio_form.create_title' | translate) }}</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="onSubmit()" [disabled]="isSubmitting()">
         <ion-icon name="save"></ion-icon>
@@ -17,79 +17,79 @@
     <!-- Basic Information -->
     <ion-card>
       <ion-card-header>
-        <ion-card-title>Basic Information</ion-card-title>
+        <ion-card-title>{{ 'studio_form.basic_information' | translate }}</ion-card-title>
       </ion-card-header>
       <ion-card-content>
         <ion-item>
-          <ion-label position="stacked">Studio Name *</ion-label>
+          <ion-label position="stacked">{{ 'studio_form.studio_name' | translate }}</ion-label>
           <ion-input
             formControlName="name"
-            placeholder="Enter studio name"
+            [placeholder]="'studio_form.studio_name_placeholder' | translate"
             [class.ion-invalid]="studioForm.get('name')?.invalid && studioForm.get('name')?.touched"
           >
           </ion-input>
         </ion-item>
 
         <ion-item>
-          <ion-label position="stacked">Location *</ion-label>
+          <ion-label position="stacked">{{ 'studio_form.location' | translate }}</ion-label>
           <ion-input
             formControlName="location"
-            placeholder="City, State"
+            [placeholder]="'studio_form.location_placeholder' | translate"
             [class.ion-invalid]="studioForm.get('location')?.invalid && studioForm.get('location')?.touched"
           >
           </ion-input>
         </ion-item>
 
         <ion-item>
-          <ion-label position="stacked">Address *</ion-label>
+          <ion-label position="stacked">{{ 'studio_form.address' | translate }}</ion-label>
           <ion-textarea
             formControlName="address"
-            placeholder="Full address"
+            [placeholder]="'studio_form.address_placeholder' | translate"
             [class.ion-invalid]="studioForm.get('address')?.invalid && studioForm.get('address')?.touched"
           >
           </ion-textarea>
         </ion-item>
 
         <ion-item>
-          <ion-label position="stacked">Phone</ion-label>
+          <ion-label position="stacked">{{ 'studio_form.phone' | translate }}</ion-label>
           <ion-input
             formControlName="phone"
-            placeholder="(555) 123-4567"
+            [placeholder]="'studio_form.phone_placeholder' | translate"
           ></ion-input>
         </ion-item>
 
         <ion-item>
-          <ion-label position="stacked">Email</ion-label>
+          <ion-label position="stacked">{{ 'studio_form.email' | translate }}</ion-label>
           <ion-input
             formControlName="email"
             type="email"
-            placeholder="info@studio.com"
+            [placeholder]="'studio_form.email_placeholder' | translate"
             [class.ion-invalid]="studioForm.get('email')?.invalid && studioForm.get('email')?.touched"
           >
           </ion-input>
         </ion-item>
 
         <ion-item>
-          <ion-label position="stacked">Website</ion-label>
+          <ion-label position="stacked">{{ 'studio_form.website' | translate }}</ion-label>
           <ion-input
             formControlName="website"
-            placeholder="studio.com"
+            [placeholder]="'studio_form.website_placeholder' | translate"
           ></ion-input>
         </ion-item>
 
         <ion-item>
-          <ion-label position="stacked">Tagline</ion-label>
+          <ion-label position="stacked">{{ 'studio_form.tagline' | translate }}</ion-label>
           <ion-input
             formControlName="tagline"
-            placeholder="Brief studio motto"
+            [placeholder]="'studio_form.tagline_placeholder' | translate"
           ></ion-input>
         </ion-item>
 
         <ion-item>
-          <ion-label position="stacked">Description *</ion-label>
+          <ion-label position="stacked">{{ 'studio_form.description' | translate }}</ion-label>
           <ion-textarea
             formControlName="description"
-            placeholder="Detailed studio description"
+            [placeholder]="'studio_form.description_placeholder' | translate"
             rows="4"
             [class.ion-invalid]="studioForm.get('description')?.invalid && studioForm.get('description')?.touched"
           >
@@ -97,7 +97,7 @@
         </ion-item>
 
         <ion-item>
-          <ion-label position="stacked">Hero Image URL</ion-label>
+          <ion-label position="stacked">{{ 'studio_form.hero_image' | translate }}</ion-label>
           <ion-input
             formControlName="heroImage"
             placeholder="https://..."
@@ -105,7 +105,7 @@
         </ion-item>
 
         <ion-item>
-          <ion-label position="stacked">Established Year</ion-label>
+          <ion-label position="stacked">{{ 'studio_form.established_year' | translate }}</ion-label>
           <ion-input
             formControlName="established"
             placeholder="2010"
@@ -113,7 +113,7 @@
         </ion-item>
 
         <ion-item>
-          <ion-label position="stacked">Member Count</ion-label>
+          <ion-label position="stacked">{{ 'studio_form.member_count' | translate }}</ion-label>
           <ion-input
             formControlName="memberCount"
             type="number"
@@ -125,17 +125,17 @@
 
         <ion-item>
           <ion-checkbox formControlName="verified"></ion-checkbox>
-          <ion-label>Verified Studio</ion-label>
+          <ion-label>{{ 'studio_form.verified_studio' | translate }}</ion-label>
         </ion-item>
 
         <ion-item>
           <ion-checkbox formControlName="isMember"></ion-checkbox>
-          <ion-label>I am a member</ion-label>
+          <ion-label>{{ 'studio_form.i_am_member' | translate }}</ion-label>
         </ion-item>
 
         <ion-item>
           <ion-checkbox formControlName="isInstructor"></ion-checkbox>
-          <ion-label>I am an instructor</ion-label>
+          <ion-label>{{ 'studio_form.i_am_instructor' | translate }}</ion-label>
         </ion-item>
       </ion-card-content>
     </ion-card>
@@ -143,16 +143,16 @@
     <!-- Leadership Selection -->
     <ion-card>
       <ion-card-header>
-        <ion-card-title>Studio Leadership</ion-card-title>
+        <ion-card-title>{{ 'studio_form.studio_leadership' | translate }}</ion-card-title>
       </ion-card-header>
       <ion-card-content>
         <ion-item>
-          <ion-label position="stacked">Head Instructor</ion-label>
+          <ion-label position="stacked">{{ 'studio_form.head_instructor' | translate }}</ion-label>
           <ion-select
             formControlName="headInstructorId"
-            placeholder="Select Head Instructor"
+            [placeholder]="'studio_form.head_instructor_placeholder' | translate"
           >
-            <ion-select-option value="">None Selected</ion-select-option>
+            <ion-select-option value="">{{ 'studio_form.none_selected' | translate }}</ion-select-option>
             @for (instructor of instructors.controls; track instructor; let i =
             $index) {
             <ion-select-option [value]="instructor.get('id')?.value">
@@ -164,12 +164,12 @@
         </ion-item>
 
         <ion-item>
-          <ion-label position="stacked">Studio Chief</ion-label>
+          <ion-label position="stacked">{{ 'studio_form.studio_chief' | translate }}</ion-label>
           <ion-select
             formControlName="studioChiefId"
-            placeholder="Select Studio Chief"
+            [placeholder]="'studio_form.studio_chief_placeholder' | translate"
           >
-            <ion-select-option value="">None Selected</ion-select-option>
+            <ion-select-option value="">{{ 'studio_form.none_selected' | translate }}</ion-select-option>
             @for (instructor of instructors.controls; track instructor; let i =
             $index) {
             <ion-select-option [value]="instructor.get('id')?.value">
@@ -186,7 +186,7 @@
     <ion-card>
       <ion-card-header>
         <ion-card-title>
-          Instructors
+          {{ 'studio_form.instructors' | translate }}
           <ion-button fill="clear" size="small" (click)="addInstructor()">
             <ion-icon name="add"></ion-icon>
           </ion-button>
@@ -200,7 +200,7 @@
             <ion-card>
               <ion-card-header>
                 <ion-card-title>
-                  Instructor {{ i + 1 }}
+                  {{ 'studio_form.instructors' | translate }} {{ i + 1 }}
                   <ion-button
                     fill="clear"
                     size="small"
@@ -213,83 +213,83 @@
               </ion-card-header>
               <ion-card-content>
                 <ion-item>
-                  <ion-label position="stacked">Name *</ion-label>
+                  <ion-label position="stacked">{{ 'studio_form.instructor_name' | translate }}</ion-label>
                   <ion-input
                     formControlName="name"
-                    placeholder="Instructor name"
+                    [placeholder]="'studio_form.instructor_name_placeholder' | translate"
                   ></ion-input>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Username *</ion-label>
+                  <ion-label position="stacked">{{ 'studio_form.instructor_username' | translate }}</ion-label>
                   <ion-input
                     formControlName="username"
-                    placeholder="username"
+                    [placeholder]="'studio_form.instructor_username_placeholder' | translate"
                   ></ion-input>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Title</ion-label>
+                  <ion-label position="stacked">{{ 'studio_form.instructor_title' | translate }}</ion-label>
                   <ion-input
                     formControlName="title"
-                    placeholder="Chief Instructor"
+                    [placeholder]="'studio_form.instructor_title_placeholder' | translate"
                   ></ion-input>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Rank</ion-label>
+                  <ion-label position="stacked">{{ 'studio_form.instructor_rank' | translate }}</ion-label>
                   <ion-input
                     formControlName="rank"
-                    placeholder="6th Dan"
+                    [placeholder]="'studio_form.instructor_rank_placeholder' | translate"
                   ></ion-input>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Bio</ion-label>
+                  <ion-label position="stacked">{{ 'studio_form.instructor_bio' | translate }}</ion-label>
                   <ion-textarea
                     formControlName="bio"
-                    placeholder="Instructor biography"
+                    [placeholder]="'studio_form.instructor_bio_placeholder' | translate"
                   ></ion-textarea>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Image URL</ion-label>
+                  <ion-label position="stacked">{{ 'studio_form.instructor_image' | translate }}</ion-label>
                   <ion-input
                     formControlName="image"
                     placeholder="https://..."
                   ></ion-input>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Experience</ion-label>
+                  <ion-label position="stacked">{{ 'studio_form.instructor_experience' | translate }}</ion-label>
                   <ion-input
                     formControlName="experience"
-                    placeholder="20+ years"
+                    [placeholder]="'studio_form.instructor_experience_placeholder' | translate"
                   ></ion-input>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Email</ion-label>
+                  <ion-label position="stacked">{{ 'studio_form.instructor_email' | translate }}</ion-label>
                   <ion-input
                     formControlName="email"
                     type="email"
-                    placeholder="instructor@studio.com"
+                    [placeholder]="'studio_form.instructor_email_placeholder' | translate"
                   ></ion-input>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Phone</ion-label>
+                  <ion-label position="stacked">{{ 'studio_form.instructor_phone' | translate }}</ion-label>
                   <ion-input
                     formControlName="phone"
-                    placeholder="(555) 123-4567"
+                    [placeholder]="'studio_form.instructor_phone_placeholder' | translate"
                   ></ion-input>
                 </ion-item>
                 <ion-item>
                   <ion-checkbox formControlName="isActive"></ion-checkbox>
-                  <ion-label>Active Instructor</ion-label>
+                  <ion-label>{{ 'studio_form.active_instructor' | translate }}</ion-label>
                 </ion-item>
                 <!-- Specialties -->
                 <div formArrayName="specialties">
-                  <ion-label>Specialties:</ion-label>
+                  <ion-label>{{ 'studio_form.specialties_label' | translate }}</ion-label>
                   @for (specialty of getInstructorSpecialties(i).controls; track
                   specialty; let j = $index) {
                   <div>
                     <ion-item>
                       <ion-input
                         [formControlName]="j"
-                        placeholder="Specialty (e.g., Youth Programs)"
+                        [placeholder]="'studio_form.specialty_placeholder' | translate"
                       ></ion-input>
                       <ion-button
                         fill="clear"
@@ -308,12 +308,12 @@
                     (click)="addInstructorSpecialty(i)"
                   >
                     <ion-icon name="add"></ion-icon>
-                    Add Specialty
+                    {{ 'studio_form.add_specialty' | translate }}
                   </ion-button>
                 </div>
                 <!-- Certifications -->
                 <div formArrayName="certifications">
-                  <ion-label>Certifications:</ion-label>
+                  <ion-label>{{ 'studio_form.certifications_label' | translate }}</ion-label>
                   @for (certification of
                   getInstructorCertifications(i).controls; track certification;
                   let j = $index) {
@@ -321,7 +321,7 @@
                     <ion-item>
                       <ion-input
                         [formControlName]="j"
-                        placeholder="Certification (e.g., Aikikai Foundation)"
+                        [placeholder]="'studio_form.certification_placeholder' | translate"
                       ></ion-input>
                       <ion-button
                         fill="clear"
@@ -340,7 +340,7 @@
                     (click)="addInstructorCertification(i)"
                   >
                     <ion-icon name="add"></ion-icon>
-                    Add Certification
+                    {{ 'studio_form.add_certification' | translate }}
                   </ion-button>
                 </div>
               </ion-card-content>
@@ -355,7 +355,7 @@
     <ion-card>
       <ion-card-header>
         <ion-card-title>
-          Class Schedule
+          {{ 'studio_form.class_schedule' | translate }}
           <ion-button fill="clear" size="small" (click)="addScheduleItem()">
             <ion-icon name="add"></ion-icon>
           </ion-button>
@@ -395,53 +395,49 @@
               </ion-card-header>
               <ion-card-content>
                 <ion-item>
-                  <ion-label position="stacked">Class Title *</ion-label>
+                  <ion-label position="stacked">{{ 'studio_form.class_title' | translate }}</ion-label>
                   <ion-input
                     formControlName="title"
-                    placeholder="Adult Aikido"
+                    [placeholder]="'studio_form.class_title_placeholder' | translate"
                   ></ion-input>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Start Date *</ion-label>
+                  <ion-label position="stacked">{{ 'studio_form.start_date' | translate }}</ion-label>
                   <ion-datetime
                     formControlName="startDate"
                     presentation="date"
-                    placeholder="Select start date"
                   >
                   </ion-datetime>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">End Date</ion-label>
+                  <ion-label position="stacked">{{ 'studio_form.end_date' | translate }}</ion-label>
                   <ion-datetime
                     formControlName="endDate"
                     presentation="date"
-                    placeholder="Select end date (optional)"
                   >
                   </ion-datetime>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Start Time *</ion-label>
+                  <ion-label position="stacked">{{ 'studio_form.start_time' | translate }}</ion-label>
                   <ion-datetime
                     formControlName="startTime"
                     presentation="time"
-                    placeholder="Select start time"
                   >
                   </ion-datetime>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">End Time *</ion-label>
+                  <ion-label position="stacked">{{ 'studio_form.end_time' | translate }}</ion-label>
                   <ion-datetime
                     formControlName="endTime"
                     presentation="time"
-                    placeholder="Select end time"
                   >
                   </ion-datetime>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Instructor *</ion-label>
+                  <ion-label position="stacked">{{ 'studio_form.class_instructor' | translate }}</ion-label>
                   <ion-select
                     formControlName="instructor"
-                    placeholder="Select instructor"
+                    [placeholder]="'studio_form.class_instructor_placeholder' | translate"
                   >
                     @for (instructor of instructors.controls; track instructor;
                     let j = $index) {
@@ -456,10 +452,10 @@
                   </ion-select>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Level *</ion-label>
+                  <ion-label position="stacked">{{ 'studio_form.class_level' | translate }}</ion-label>
                   <ion-select
                     formControlName="level"
-                    placeholder="Select level"
+                    [placeholder]="'studio_form.class_level_placeholder' | translate"
                   >
                     <ion-select-option value="Beginner"
                       >Beginner</ion-select-option
@@ -485,30 +481,30 @@
                   </ion-select>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Description</ion-label>
+                  <ion-label position="stacked">{{ 'studio_form.class_description' | translate }}</ion-label>
                   <ion-textarea
                     formControlName="description"
-                    placeholder="Class description"
+                    [placeholder]="'studio_form.class_desc_placeholder' | translate"
                   ></ion-textarea>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Location</ion-label>
+                  <ion-label position="stacked">{{ 'studio_form.class_location' | translate }}</ion-label>
                   <ion-input
                     formControlName="location"
-                    placeholder="Main Dojo, Room 2, etc."
+                    [placeholder]="'studio_form.class_location_placeholder' | translate"
                   ></ion-input>
                 </ion-item>
                 <ion-item>
                   <ion-checkbox formControlName="isRecurring"></ion-checkbox>
-                  <ion-label>Recurring Class</ion-label>
+                  <ion-label>{{ 'studio_form.recurring_class' | translate }}</ion-label>
                 </ion-item>
                 @if (scheduleItem.get('isRecurring')?.value) {
                 <div>
                   <ion-item>
-                    <ion-label position="stacked">Recurrence Pattern</ion-label>
+                    <ion-label position="stacked">{{ 'studio_form.recurrence_pattern' | translate }}</ion-label>
                     <ion-select
                       formControlName="recurrencePattern"
-                      placeholder="Select pattern"
+                      [placeholder]="'studio_form.recurrence_pattern_placeholder' | translate"
                     >
                       <ion-select-option value="weekly"
                         >Weekly</ion-select-option
@@ -521,22 +517,21 @@
                   </ion-item>
                   <ion-item>
                     <ion-label position="stacked"
-                      >Recurrence End Date</ion-label
+                      >{{ 'studio_form.recurrence_end' | translate }}</ion-label
                     >
                     <ion-datetime
                       formControlName="recurrenceEnd"
                       presentation="date"
-                      placeholder="Select end date for recurrence"
                     >
                     </ion-datetime>
                   </ion-item>
                 </div>
                 }
                 <ion-item>
-                  <ion-label position="stacked">Calendar Color</ion-label>
+                  <ion-label position="stacked">{{ 'studio_form.calendar_color' | translate }}</ion-label>
                   <ion-select
                     formControlName="color"
-                    placeholder="Select color"
+                    [placeholder]="'studio_form.calendar_color_placeholder' | translate"
                   >
                     <ion-select-option value="#3880ff">Blue</ion-select-option>
                     <ion-select-option value="#10dc60">Green</ion-select-option>
@@ -564,7 +559,7 @@
     <ion-card>
       <ion-card-header>
         <ion-card-title>
-          Pricing Options
+          {{ 'studio_form.pricing_options' | translate }}
           <ion-button fill="clear" size="small" (click)="addPricingOption()">
             <ion-icon name="add"></ion-icon>
           </ion-button>
@@ -578,7 +573,7 @@
             <ion-card>
               <ion-card-header>
                 <ion-card-title>
-                  Pricing Option {{ i + 1 }}
+                  {{ 'studio_form.pricing_options' | translate }} {{ i + 1 }}
                   <ion-button
                     fill="clear"
                     size="small"
@@ -591,40 +586,40 @@
               </ion-card-header>
               <ion-card-content>
                 <ion-item>
-                  <ion-label position="stacked">Name *</ion-label>
+                  <ion-label position="stacked">{{ 'studio_form.pricing_name' | translate }}</ion-label>
                   <ion-input
                     formControlName="name"
-                    placeholder="Monthly"
+                    [placeholder]="'studio_form.pricing_name_placeholder' | translate"
                   ></ion-input>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Price *</ion-label>
+                  <ion-label position="stacked">{{ 'studio_form.pricing_price' | translate }}</ion-label>
                   <ion-input
                     formControlName="price"
-                    placeholder="$120"
+                    [placeholder]="'studio_form.pricing_price_placeholder' | translate"
                   ></ion-input>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Description</ion-label>
+                  <ion-label position="stacked">{{ 'studio_form.pricing_desc' | translate }}</ion-label>
                   <ion-input
                     formControlName="description"
-                    placeholder="Unlimited classes"
+                    [placeholder]="'studio_form.pricing_desc_placeholder' | translate"
                   ></ion-input>
                 </ion-item>
                 <ion-item>
                   <ion-checkbox formControlName="featured"></ion-checkbox>
-                  <ion-label>Featured Option</ion-label>
+                  <ion-label>{{ 'studio_form.featured_option' | translate }}</ion-label>
                 </ion-item>
                 <!-- Features -->
                 <div formArrayName="features">
-                  <ion-label>Features:</ion-label>
+                  <ion-label>{{ 'studio_form.features_label' | translate }}</ion-label>
                   @for (feature of getPricingFeatures(i).controls; track
                   feature; let j = $index) {
                   <div>
                     <ion-item>
                       <ion-input
                         [formControlName]="j"
-                        placeholder="Feature description"
+                        [placeholder]="'studio_form.feature_placeholder' | translate"
                       ></ion-input>
                       <ion-button
                         fill="clear"
@@ -643,7 +638,7 @@
                     (click)="addPricingFeature(i)"
                   >
                     <ion-icon name="add"></ion-icon>
-                    Add Feature
+                    {{ 'studio_form.add_feature' | translate }}
                   </ion-button>
                 </div>
               </ion-card-content>
@@ -658,7 +653,7 @@
     <ion-card>
       <ion-card-header>
         <ion-card-title>
-          Studio Benefits
+          {{ 'studio_form.studio_benefits' | translate }}
           <ion-button fill="clear" size="small" (click)="addBenefit()">
             <ion-icon name="add"></ion-icon>
           </ion-button>
@@ -671,7 +666,7 @@
             <ion-card>
               <ion-card-header>
                 <ion-card-title>
-                  Benefit {{ i + 1 }}
+                  {{ 'studio_form.studio_benefits' | translate }} {{ i + 1 }}
                   <ion-button
                     fill="clear"
                     size="small"
@@ -684,24 +679,24 @@
               </ion-card-header>
               <ion-card-content>
                 <ion-item>
-                  <ion-label position="stacked">Icon *</ion-label>
+                  <ion-label position="stacked">{{ 'studio_form.benefit_icon' | translate }}</ion-label>
                   <ion-input
                     formControlName="icon"
-                    placeholder="fitness"
+                    [placeholder]="'studio_form.benefit_icon_placeholder' | translate"
                   ></ion-input>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Title *</ion-label>
+                  <ion-label position="stacked">{{ 'studio_form.benefit_title' | translate }}</ion-label>
                   <ion-input
                     formControlName="title"
-                    placeholder="Physical Fitness"
+                    [placeholder]="'studio_form.benefit_title_placeholder' | translate"
                   ></ion-input>
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Description *</ion-label>
+                  <ion-label position="stacked">{{ 'studio_form.benefit_desc' | translate }}</ion-label>
                   <ion-textarea
                     formControlName="description"
-                    placeholder="Benefit description"
+                    [placeholder]="'studio_form.benefit_desc_placeholder' | translate"
                   ></ion-textarea>
                 </ion-item>
               </ion-card-content>
@@ -716,12 +711,12 @@
     <ion-card>
       <ion-card-content>
         <ion-button expand="block" type="submit" [disabled]="isSubmitting()">
-          {{ isSubmitting() ? 'Saving...' : (isEditMode() ? 'Update Studio' :
-          'Create Studio') }}
+          {{ isSubmitting() ? ('studio_form.saving' | translate) : (isEditMode() ? ('studio_form.update_studio' | translate) :
+          ('studio_form.create_studio' | translate)) }}
         </ion-button>
 
         <ion-button expand="block" fill="outline" (click)="onCancel()">
-          Cancel
+          {{ 'studio_form.cancel' | translate }}
         </ion-button>
 
         @if (isEditMode()) {
@@ -731,7 +726,7 @@
           fill="outline"
           (click)="confirmDelete()"
         >
-          Delete Studio
+          {{ 'studio_form.delete_studio' | translate }}
         </ion-button>
         }
       </ion-card-content>
@@ -741,8 +736,8 @@
   <!-- Delete Confirmation Alert -->
   <ion-alert
     [isOpen]="showDeleteAlert()"
-    header="Confirm Delete"
-    message="Are you sure you want to delete this studio? This action cannot be undone."
+    [header]="'studio_form.confirm_delete_header' | translate"
+    [message]="'studio_form.confirm_delete_message' | translate"
     [buttons]="deleteAlertButtons"
   >
   </ion-alert>

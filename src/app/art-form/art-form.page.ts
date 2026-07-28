@@ -8,6 +8,7 @@ import {
   Validators,
   FormArray,
 } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location as AngularLocation } from '@angular/common';
 import { ArtsService, Art } from '../services/arts.service';
@@ -58,6 +59,7 @@ import {
   imports: [
     FormsModule,
     ReactiveFormsModule,
+    TranslateModule,
     IonContent,
     IonHeader,
     IonTitle,

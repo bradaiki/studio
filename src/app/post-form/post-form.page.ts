@@ -7,6 +7,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import {
@@ -35,6 +36,7 @@ import { save, image, pricetag } from 'ionicons/icons';
   imports: [
     FormsModule,
     ReactiveFormsModule,
+    TranslateModule,
     IonContent,
     IonHeader,
     IonTitle,

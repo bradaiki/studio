@@ -2,6 +2,7 @@ import { Component, input, output, effect, OnInit, OnDestroy, ChangeDetectorRef,
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../../../../amplify/data/resource';
 import {
@@ -55,6 +56,7 @@ import { ChatInvitationManagerComponent } from '../chat-invitation-manager/chat-
     CommonModule,
     FormsModule,
     RouterLink,
+    TranslateModule,
     IonCard,
     IonCardContent,
     IonCardHeader,

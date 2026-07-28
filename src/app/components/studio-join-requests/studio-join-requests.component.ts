@@ -16,6 +16,7 @@ import {
   IonSpinner,
   ToastController,
 } from '@ionic/angular/standalone';
+import { TranslateModule } from '@ngx-translate/core';
 import { addIcons } from 'ionicons';
 import { checkmarkCircle, closeCircle, time, person } from 'ionicons/icons';
 import { StudioMembershipService } from '../../services/studio-membership.service';
@@ -27,6 +28,7 @@ import { StudioJoinRequest } from '../../models/studio-membership.models';
   styleUrls: ['./studio-join-requests.component.scss'],
   standalone: true,
   imports: [
+    TranslateModule,
     IonCard,
     IonCardHeader,
     IonCardTitle,

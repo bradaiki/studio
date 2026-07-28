@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy, signal } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 
 import {
   IonModal,
@@ -43,6 +44,7 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./notification-modal.component.scss'],
   standalone: true,
   imports: [
+    TranslateModule,
     IonModal,
     IonHeader,
     IonToolbar,

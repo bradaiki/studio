@@ -1,6 +1,7 @@
 import { Component, input, output, signal, OnInit } from '@angular/core';
 
 import { IonicModule, ToastController } from '@ionic/angular';
+import { TranslateModule } from '@ngx-translate/core';
 
 import {
   AccessControlService,
@@ -13,7 +14,7 @@ import { Chat } from '../../models/chat.models';
   templateUrl: './chat-invitation-notification.component.html',
   styleUrls: ['./chat-invitation-notification.component.scss'],
   standalone: true,
-  imports: [IonicModule],
+  imports: [IonicModule, TranslateModule],
 })
 export class ChatInvitationNotificationComponent implements OnInit {
   invitation = input.required<ChatInvitation>();

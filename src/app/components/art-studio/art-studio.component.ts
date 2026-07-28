@@ -1,5 +1,6 @@
 import { Component, input, output, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 import { 
   IonCard, 
   IonCardContent, 
@@ -70,6 +71,7 @@ export interface ArtStudio {
   standalone: true,
   imports: [
     CommonModule,
+    TranslateModule,
     IonCard,
     IonCardContent,
     IonButton,

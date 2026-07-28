@@ -12,6 +12,7 @@ import {
   IonRow,
   IonCol,
 } from '@ionic/angular/standalone';
+import { TranslateModule } from '@ngx-translate/core';
 import { addIcons } from 'ionicons';
 import {
   personAdd,
@@ -46,6 +47,7 @@ export interface UserProfile {
   styleUrls: ['./user-profile.component.scss'],
   standalone: true,
   imports: [
+    TranslateModule,
     IonCard,
     IonCardHeader,
     IonAvatar,

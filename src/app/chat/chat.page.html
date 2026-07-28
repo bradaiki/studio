@@ -9,7 +9,7 @@
       <ion-back-button defaultHref="/dash/feed"></ion-back-button>
       }
     </ion-buttons>
-    <ion-title>{{ activeChat() ? activeChat()!.name : 'Chats' }}</ion-title>
+    <ion-title>{{ activeChat() ? activeChat()!.name : ('chat.title' | translate) }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -28,7 +28,7 @@
   <div class="new-chat-bar ion-padding">
     <ion-input
       [(ngModel)]="newChatName"
-      placeholder="Conversation name..."
+      [placeholder]="'chat.placeholder_name' | translate"
       (keyup.enter)="createNewChat()"
     >
     </ion-input>
@@ -36,10 +36,10 @@
       size="small"
       (click)="createNewChat()"
       [disabled]="!newChatName.trim()"
-      >Create</ion-button
+      >{{ 'chat.create' | translate }}</ion-button
     >
     <ion-button size="small" fill="clear" (click)="cancelNewChat()"
-      >Cancel</ion-button
+      >{{ 'chat.cancel' | translate }}</ion-button
     >
   </div>
   }
@@ -51,11 +51,10 @@
       class="empty-icon"
       color="medium"
     ></ion-icon>
-    <p>No conversations yet</p>
+    <p>{{ 'chat.no_conversations' | translate }}</p>
     @if (targetPerson()) {
     <p class="hint">
-      Tap + to start chatting with {{ targetPerson()!.name || targetPerson()!.handle
-      }}
+      {{ 'chat.hint_tap_plus' | translate }} {{ targetPerson()!.name || targetPerson()!.handle }}
     </p>
     }
   </div>
@@ -114,7 +113,7 @@
         class="empty-icon"
         color="medium"
       ></ion-icon>
-      <p>No messages yet. Say hello!</p>
+      <p>{{ 'chat.no_messages' | translate }}</p>
     </div>
     } @for (msg of messages(); track trackByMsg($index, msg)) {
     <div class="message-row" [class.own]="msg.isOwn" [class.other]="!msg.isOwn">
@@ -138,7 +137,7 @@
     <div class="message-input-row">
       <ion-textarea
         [(ngModel)]="newMessage"
-        placeholder="Type a message..."
+        [placeholder]="'chat.placeholder_message' | translate"
         rows="1"
         autoGrow="true"
         (keydown)="onKeyDown($event)"

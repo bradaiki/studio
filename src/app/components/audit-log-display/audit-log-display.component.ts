@@ -1,6 +1,7 @@
 import { Component, OnInit, input, signal } from '@angular/core';
 
 import { IonicModule } from '@ionic/angular';
+import { TranslateModule } from '@ngx-translate/core';
 import { RequestAuditEntry } from '../../models/instructor-join-review.models';
 import { RequestAuditService } from '../../services/request-audit.service';
 
@@ -14,7 +15,7 @@ import { RequestAuditService } from '../../services/request-audit.service';
   templateUrl: './audit-log-display.component.html',
   styleUrls: ['./audit-log-display.component.scss'],
   standalone: true,
-  imports: [IonicModule],
+  imports: [IonicModule, TranslateModule],
 })
 export class AuditLogDisplayComponent implements OnInit {
   requestId = input<string | undefined>(undefined);

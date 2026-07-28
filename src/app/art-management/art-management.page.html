@@ -6,7 +6,7 @@
         defaultHref="/dash/arts"
       ></ion-back-button>
     </ion-buttons>
-    <ion-title>Manage {{ art()?.name || 'Art' }}</ion-title>
+    <ion-title>{{ 'art_management.manage_title' | translate: { name: art()?.name || 'Art' } }}</ion-title>
     <ion-buttons slot="end">
       <ion-button
         (click)="saveChanges()"
@@ -15,7 +15,7 @@
         color="primary"
       >
         <ion-icon name="save" slot="start"></ion-icon>
-        Save
+        {{ 'art_management.save' | translate }}
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -30,7 +30,7 @@
       <ion-card-content>
         <div class="banner-content">
           <ion-icon name="information-circle"></ion-icon>
-          <span>You have unsaved changes</span>
+          <span>{{ 'art_management.unsaved_changes' | translate }}</span>
         </div>
       </ion-card-content>
     </ion-card>
@@ -42,16 +42,16 @@
       class="segment-control"
     >
       <ion-segment-button value="basic">
-        <ion-label>Basic Info</ion-label>
+        <ion-label>{{ 'art_management.basic_info' | translate }}</ion-label>
       </ion-segment-button>
       <ion-segment-button value="details">
-        <ion-label>Details</ion-label>
+        <ion-label>{{ 'art_management.details' | translate }}</ion-label>
       </ion-segment-button>
       <ion-segment-button value="content">
-        <ion-label>Content</ion-label>
+        <ion-label>{{ 'art_management.content' | translate }}</ion-label>
       </ion-segment-button>
       <ion-segment-button value="settings">
-        <ion-label>Settings</ion-label>
+        <ion-label>{{ 'art_management.settings' | translate }}</ion-label>
       </ion-segment-button>
     </ion-segment>
     <!-- Basic Info Section -->
@@ -59,48 +59,48 @@
     <div>
       <ion-card>
         <ion-card-header>
-          <ion-card-title>Basic Information</ion-card-title>
+          <ion-card-title>{{ 'art_management.basic_information' | translate }}</ion-card-title>
         </ion-card-header>
         <ion-card-content>
           <ion-list>
             <ion-item>
-              <ion-label position="stacked">Art Name *</ion-label>
+              <ion-label position="stacked">{{ 'art_management.art_name' | translate }}</ion-label>
               <ion-input
                 [(ngModel)]="editedArt.name"
                 (ionInput)="onFieldChange()"
-                placeholder="Enter art name"
+                [placeholder]="'art_management.art_name_placeholder' | translate"
                 maxlength="100"
               >
               </ion-input>
             </ion-item>
             <ion-item>
-              <ion-label position="stacked">Short Description *</ion-label>
+              <ion-label position="stacked">{{ 'art_management.short_description' | translate }}</ion-label>
               <ion-textarea
                 [(ngModel)]="editedArt.shortDescription"
                 (ionInput)="onFieldChange()"
-                placeholder="Brief description (1-2 sentences)"
+                [placeholder]="'art_management.short_description_placeholder' | translate"
                 rows="2"
                 maxlength="200"
               >
               </ion-textarea>
             </ion-item>
             <ion-item>
-              <ion-label position="stacked">Full Description *</ion-label>
+              <ion-label position="stacked">{{ 'art_management.full_description' | translate }}</ion-label>
               <ion-textarea
                 [(ngModel)]="editedArt.description"
                 (ionInput)="onFieldChange()"
-                placeholder="Detailed description of the art"
+                [placeholder]="'art_management.full_description_placeholder' | translate"
                 rows="6"
                 maxlength="2000"
               >
               </ion-textarea>
             </ion-item>
             <ion-item>
-              <ion-label position="stacked">Category *</ion-label>
+              <ion-label position="stacked">{{ 'art_management.category' | translate }}</ion-label>
               <ion-select
                 [(ngModel)]="editedArt.category"
                 (ionChange)="onFieldChange()"
-                placeholder="Select category"
+                [placeholder]="'art_management.category_placeholder' | translate"
               >
                 @for (cat of categories; track cat) {
                 <ion-select-option [value]="cat.value">
@@ -110,11 +110,11 @@
               </ion-select>
             </ion-item>
             <ion-item>
-              <ion-label position="stacked">Image URL</ion-label>
+              <ion-label position="stacked">{{ 'art_management.image_url' | translate }}</ion-label>
               <ion-input
                 [(ngModel)]="editedArt.image"
                 (ionInput)="onFieldChange()"
-                placeholder="https://example.com/image.jpg"
+                [placeholder]="'art_management.image_url_placeholder' | translate"
                 type="url"
               >
               </ion-input>
@@ -136,37 +136,37 @@
     <div>
       <ion-card>
         <ion-card-header>
-          <ion-card-title>Art Details</ion-card-title>
+          <ion-card-title>{{ 'art_management.art_details' | translate }}</ion-card-title>
         </ion-card-header>
         <ion-card-content>
           <ion-list>
             <ion-item>
-              <ion-label position="stacked">Origin</ion-label>
+              <ion-label position="stacked">{{ 'art_management.origin' | translate }}</ion-label>
               <ion-input
                 [(ngModel)]="editedArt.origin"
                 (ionInput)="onFieldChange()"
-                placeholder="e.g., Japan (1920s)"
+                [placeholder]="'art_management.origin_placeholder' | translate"
                 maxlength="100"
               >
               </ion-input>
             </ion-item>
             <ion-item>
-              <ion-label position="stacked">Philosophy</ion-label>
+              <ion-label position="stacked">{{ 'art_management.philosophy' | translate }}</ion-label>
               <ion-textarea
                 [(ngModel)]="editedArt.philosophy"
                 (ionInput)="onFieldChange()"
-                placeholder="Core philosophy and principles"
+                [placeholder]="'art_management.philosophy_placeholder' | translate"
                 rows="4"
                 maxlength="500"
               >
               </ion-textarea>
             </ion-item>
             <ion-item>
-              <ion-label position="stacked">Difficulty Level *</ion-label>
+              <ion-label position="stacked">{{ 'art_management.difficulty_level' | translate }}</ion-label>
               <ion-select
                 [(ngModel)]="editedArt.difficulty"
                 (ionChange)="onFieldChange()"
-                placeholder="Select difficulty"
+                [placeholder]="'art_management.difficulty_placeholder' | translate"
               >
                 @for (diff of difficulties; track diff) {
                 <ion-select-option [value]="diff.value">
@@ -176,11 +176,11 @@
               </ion-select>
             </ion-item>
             <ion-item>
-              <ion-label position="stacked">Physical Demands *</ion-label>
+              <ion-label position="stacked">{{ 'art_management.physical_demands' | translate }}</ion-label>
               <ion-select
                 [(ngModel)]="editedArt.physicalDemands"
                 (ionChange)="onFieldChange()"
-                placeholder="Select physical demands"
+                [placeholder]="'art_management.physical_demands_placeholder' | translate"
               >
                 @for (level of physicalDemandLevels; track level) {
                 <ion-select-option [value]="level.value">
@@ -200,13 +200,13 @@
       <!-- Benefits -->
       <ion-card>
         <ion-card-header>
-          <ion-card-title>Benefits</ion-card-title>
+          <ion-card-title>{{ 'art_management.benefits' | translate }}</ion-card-title>
         </ion-card-header>
         <ion-card-content>
           <div class="array-input-container">
             <ion-input
               [(ngModel)]="newBenefit"
-              placeholder="Add a benefit"
+              [placeholder]="'art_management.add_benefit' | translate"
               (keyup.enter)="addBenefit()"
             >
             </ion-input>
@@ -234,13 +234,13 @@
       <!-- Techniques -->
       <ion-card>
         <ion-card-header>
-          <ion-card-title>Techniques</ion-card-title>
+          <ion-card-title>{{ 'art_management.techniques' | translate }}</ion-card-title>
         </ion-card-header>
         <ion-card-content>
           <div class="array-input-container">
             <ion-input
               [(ngModel)]="newTechnique"
-              placeholder="Add a technique"
+              [placeholder]="'art_management.add_technique' | translate"
               (keyup.enter)="addTechnique()"
             >
             </ion-input>
@@ -268,13 +268,13 @@
       <!-- Equipment -->
       <ion-card>
         <ion-card-header>
-          <ion-card-title>Equipment</ion-card-title>
+          <ion-card-title>{{ 'art_management.equipment' | translate }}</ion-card-title>
         </ion-card-header>
         <ion-card-content>
           <div class="array-input-container">
             <ion-input
               [(ngModel)]="newEquipment"
-              placeholder="Add equipment"
+              [placeholder]="'art_management.add_equipment' | translate"
               (keyup.enter)="addEquipment()"
             >
             </ion-input>
@@ -301,13 +301,13 @@
       <!-- Mental Aspects -->
       <ion-card>
         <ion-card-header>
-          <ion-card-title>Mental Aspects</ion-card-title>
+          <ion-card-title>{{ 'art_management.mental_aspects' | translate }}</ion-card-title>
         </ion-card-header>
         <ion-card-content>
           <div class="array-input-container">
             <ion-input
               [(ngModel)]="newMentalAspect"
-              placeholder="Add mental aspect"
+              [placeholder]="'art_management.add_mental_aspect' | translate"
               (keyup.enter)="addMentalAspect()"
             >
             </ion-input>
@@ -339,14 +339,14 @@
     <div>
       <ion-card>
         <ion-card-header>
-          <ion-card-title>Visibility Settings</ion-card-title>
+          <ion-card-title>{{ 'art_management.visibility_settings' | translate }}</ion-card-title>
         </ion-card-header>
         <ion-card-content>
           <ion-list>
             <ion-item>
               <ion-label>
-                <h3>Public Visibility</h3>
-                <p>Make this art visible to all users</p>
+                <h3>{{ 'art_management.public_visibility' | translate }}</h3>
+                <p>{{ 'art_management.public_visibility_desc' | translate }}</p>
               </ion-label>
               <ion-checkbox
                 slot="end"
@@ -360,28 +360,28 @@
       </ion-card>
       <ion-card>
         <ion-card-header>
-          <ion-card-title>Metadata</ion-card-title>
+          <ion-card-title>{{ 'art_management.metadata' | translate }}</ion-card-title>
         </ion-card-header>
         <ion-card-content>
           <ion-list lines="none">
             <ion-item>
               <ion-label>
                 <p>
-                  <strong>Created:</strong> {{ art()!.createdAt | date:'medium' }}
+                  <strong>{{ 'art_management.created' | translate }}</strong> {{ art()!.createdAt | date:'medium' }}
                 </p>
               </ion-label>
             </ion-item>
             <ion-item>
               <ion-label>
                 <p>
-                  <strong>Last Updated:</strong> {{ art()!.updatedAt |
+                  <strong>{{ 'art_management.last_updated' | translate }}</strong> {{ art()!.updatedAt |
                   date:'medium' }}
                 </p>
               </ion-label>
             </ion-item>
             <ion-item>
               <ion-label>
-                <p><strong>Owner ID:</strong> {{ art()!.ownerId }}</p>
+                <p><strong>{{ 'art_management.owner_id' | translate }}</strong> {{ art()!.ownerId }}</p>
               </ion-label>
             </ion-item>
           </ion-list>
@@ -401,7 +401,7 @@
     size="large"
   >
     <ion-icon name="save" slot="start"></ion-icon>
-    Save Changes
+    {{ 'art_management.save_changes' | translate }}
   </ion-button>
   }
 </ion-content>

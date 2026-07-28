@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Join Studio</ion-title>
+    <ion-title>{{ 'simple_studio_join.title' | translate }}</ion-title>
     <ion-buttons slot="end">
       <ion-button fill="clear" (click)="onCancel()" [disabled]="isSubmitting">
         <ion-icon name="close"></ion-icon>
@@ -13,7 +13,7 @@
   @if (studioName()) {
     <div class="studio-info">
       <h2>{{ studioName() }}</h2>
-      <p>Request to join this studio</p>
+      <p>{{ 'simple_studio_join.request_to_join' | translate }}</p>
     </div>
   }
 
@@ -29,10 +29,10 @@
       }
       <!-- Name Field -->
       <ion-item>
-        <ion-label position="stacked">Your Name *</ion-label>
+        <ion-label position="stacked">{{ 'simple_studio_join.your_name' | translate }}</ion-label>
         <ion-input
           formControlName="userName"
-          placeholder="Enter your full name"
+          [placeholder]="'simple_studio_join.name_placeholder' | translate"
           type="text"
           [class.ion-invalid]="errors.userName"
           [class.ion-valid]="
@@ -63,16 +63,16 @@
       ) {
         <ion-item lines="none" class="success-item">
           <ion-label color="success">
-            <p>✓ Name looks good</p>
+            <p>✓ {{ 'simple_studio_join.name_valid' | translate }}</p>
           </ion-label>
         </ion-item>
       }
       <!-- Message Field -->
       <ion-item>
-        <ion-label position="stacked">Message to Instructors</ion-label>
+        <ion-label position="stacked">{{ 'simple_studio_join.message_label' | translate }}</ion-label>
         <ion-textarea
           formControlName="message"
-          placeholder="Optional message about your interest in joining..."
+          [placeholder]="'simple_studio_join.message_placeholder' | translate"
           rows="4"
           [class.ion-invalid]="errors.message"
           [class.ion-valid]="
@@ -98,7 +98,7 @@
         <ion-item lines="none" class="info-item">
           <ion-label [color]="getCharacterCountColor()">
             <p>
-              {{ joinForm.get("message")?.value?.length || 0 }}/500 characters
+              {{ joinForm.get("message")?.value?.length || 0 }}/500 {{ 'simple_studio_join.characters' | translate }}
             </p>
           </ion-label>
         </ion-item>
@@ -108,10 +108,10 @@
         <ion-item lines="none" class="validation-status-item">
           <ion-label [color]="isFormValid ? 'success' : 'medium'">
             @if (isFormValid) {
-              <p>✓ Ready to submit</p>
+              <p>✓ {{ 'simple_studio_join.ready_to_submit' | translate }}</p>
             }
             @if (!isFormValid && hasFormInteraction()) {
-              <p>Please complete required fields</p>
+              <p>{{ 'simple_studio_join.complete_fields' | translate }}</p>
             }
           </ion-label>
         </ion-item>
@@ -136,7 +136,7 @@
           }
           <!-- Dynamic Button Text -->
           @if (!isSubmitting) {
-            <span>Send Join Request</span>
+            <span>{{ 'simple_studio_join.send_request' | translate }}</span>
           }
           @if (isSubmitting) {
             <span>{{ getSubmissionStatusText() }}</span>
@@ -152,7 +152,7 @@
             class="retry-button"
           >
             <ion-icon name="refresh" slot="start"></ion-icon>
-            Try Again
+            {{ 'simple_studio_join.try_again' | translate }}
           </ion-button>
         }
       </div>
@@ -166,10 +166,10 @@
         >
           <ion-icon name="close" slot="start"></ion-icon>
           @if (!isSubmitting) {
-            <span>Cancel</span>
+            <span>{{ 'app.cancel' | translate }}</span>
           }
           @if (isSubmitting) {
-            <span>Please wait...</span>
+            <span>{{ 'simple_studio_join.please_wait' | translate }}</span>
           }
         </ion-button>
       </div>
@@ -178,7 +178,7 @@
         <div class="form-loading-overlay">
           <ion-item lines="none">
             <ion-label color="medium">
-              <p>Processing your request...</p>
+              <p>{{ 'simple_studio_join.processing' | translate }}</p>
             </ion-label>
             <ion-spinner name="dots" slot="end"></ion-spinner>
           </ion-item>
@@ -190,11 +190,9 @@
       <ion-item lines="none">
         <ion-spinner name="crescent" slot="start"></ion-spinner>
         <ion-label>
-          <p>Initializing form...</p>
+          <p>{{ 'simple_studio_join.initializing' | translate }}</p>
         </ion-label>
       </ion-item>
     </div>
   }
-
-  <!-- Loading template (should rarely be seen since form initializes immediately) -->
 </ion-content>

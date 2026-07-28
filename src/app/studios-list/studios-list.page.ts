@@ -1,6 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { StudiosService, Studio } from '../services/studios.service';
 import {
@@ -37,6 +38,7 @@ import { location, call, people, star, add } from 'ionicons/icons';
   standalone: true,
   imports: [
     FormsModule,
+    TranslateModule,
     IonContent,
     IonHeader,
     IonTitle,

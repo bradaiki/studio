@@ -9,7 +9,7 @@
     <div class="featured-badge">
       <ion-badge color="warning">
         <ion-icon name="star"></ion-icon>
-        Featured
+        {{ 'art_studio.featured' | translate }}
       </ion-badge>
     </div>
   }
@@ -57,7 +57,7 @@
         </div>
         <div class="review-count">
           <ion-text color="medium">
-            ({{ studio().reviewCount }} reviews)
+            ({{ studio().reviewCount }} {{ 'art_studio.reviews' | translate }})
           </ion-text>
         </div>
       </div>
@@ -87,7 +87,7 @@
       </div>
       @if (!compact()) {
         <div class="instructor-experience">
-          <ion-text color="medium">{{ studio().experience }} experience</ion-text>
+          <ion-text color="medium">{{ studio().experience }} {{ 'art_studio.experience_suffix' | translate }}</ion-text>
         </div>
       }
     </div>
@@ -96,7 +96,7 @@
     @if (studio().specialties.length > 0) {
       <div class="specialties-section">
         @if (!compact()) {
-          <h4>Specialties</h4>
+          <h4>{{ 'art_studio.specialties' | translate }}</h4>
         }
         <div class="specialties-chips">
           @for (specialty of displaySpecialties(); track specialty) {
@@ -116,7 +116,7 @@
               class="more-chip"
               [class.small]="compact()"
             >
-              +{{ extraSpecialtiesCount() }} more
+              +{{ extraSpecialtiesCount() }} {{ 'art_studio.more' | translate }}
             </ion-chip>
           }
         </div>
@@ -126,7 +126,7 @@
     <!-- Class Types -->
     @if (!compact() && studio().classTypes.length > 0) {
       <div class="class-types-section">
-        <h4>Classes Offered</h4>
+        <h4>{{ 'art_studio.classes_offered' | translate }}</h4>
         <div class="class-types">
           <ion-text color="medium">
             {{ displayClassTypes() }}
@@ -163,7 +163,7 @@
         (click)="onStudioClick(); $event.stopPropagation()"
       >
         <ion-icon name="information-circle-outline" slot="start"></ion-icon>
-        {{ compact() ? "Details" : "View Details" }}
+        {{ compact() ? ("art_studio.details" | translate) : ("art_studio.view_details" | translate) }}
       </ion-button>
 
       @if (!compact()) {

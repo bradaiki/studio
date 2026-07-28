@@ -2,7 +2,7 @@
   <ng-template>
     <ion-header>
       <ion-toolbar>
-        <ion-title>Invite to {{ chatName() }}</ion-title>
+        <ion-title>{{ 'chat_invitation.invite_to' | translate: { name: chatName() } }}</ion-title>
         <ion-buttons slot="end">
           <ion-button (click)="closeModal()">
             <ion-icon name="close" slot="icon-only"></ion-icon>
@@ -17,7 +17,7 @@
         <ion-card-header>
           <ion-card-title>
             <ion-icon name="person-add" color="primary"></ion-icon>
-            Send Invitation
+            {{ 'chat_invitation.send_invitation' | translate }}
           </ion-card-title>
         </ion-card-header>
         <ion-card-content>
@@ -25,12 +25,12 @@
           <ion-item>
             <ion-label position="stacked">
               <ion-icon name="at-outline"></ion-icon>
-              Search by Handle or Name
+              {{ 'chat_invitation.search_label' | translate }}
             </ion-label>
             <ion-searchbar
               [(ngModel)]="searchTerm"
               (ionInput)="searchUsers()"
-              placeholder="Search by @handle or name"
+              [placeholder]="'chat_invitation.search_placeholder' | translate"
               debounce="300">
             </ion-searchbar>
           </ion-item>
@@ -63,11 +63,11 @@
           <ion-item>
             <ion-label position="stacked">
               <ion-icon name="at-outline"></ion-icon>
-              User Handle *
+              {{ 'chat_invitation.user_handle' | translate }}
             </ion-label>
             <ion-input
               [(ngModel)]="inviteeHandle"
-              placeholder="Enter @handle"
+              [placeholder]="'chat_invitation.handle_placeholder' | translate"
               type="text">
             </ion-input>
           </ion-item>
@@ -86,17 +86,17 @@
           }
 
           <ion-item>
-            <ion-label position="stacked">Personal Message (Optional)</ion-label>
+            <ion-label position="stacked">{{ 'chat_invitation.personal_message' | translate }}</ion-label>
             <ion-textarea
               [(ngModel)]="invitationMessage"
-              placeholder="Add a personal message to your invitation"
+              [placeholder]="'chat_invitation.message_placeholder' | translate"
               rows="3"
               maxlength="200">
             </ion-textarea>
           </ion-item>
 
           <ion-item>
-            <ion-label position="stacked">Expires In</ion-label>
+            <ion-label position="stacked">{{ 'chat_invitation.expires_in' | translate }}</ion-label>
             <ion-input
               [(ngModel)]="expirationDays"
               type="number"
@@ -104,7 +104,7 @@
               max="30"
               placeholder="7">
             </ion-input>
-            <ion-label slot="end">days</ion-label>
+            <ion-label slot="end">{{ 'chat_invitation.days' | translate }}</ion-label>
           </ion-item>
 
           <ion-button
@@ -113,7 +113,7 @@
             [disabled]="!inviteeHandle.trim() && !selectedUser"
             class="send-button">
             <ion-icon name="send" slot="start"></ion-icon>
-            Send Invitation
+            {{ 'chat_invitation.send_invitation_button' | translate }}
           </ion-button>
         </ion-card-content>
       </ion-card>
@@ -124,7 +124,7 @@
           <ion-card-header>
             <ion-card-title>
               <ion-icon name="mail" color="primary"></ion-icon>
-              Pending Invitations ({{ pendingInvitations().length }})
+              {{ 'chat_invitation.pending_invitations' | translate: { count: pendingInvitations().length } }}
             </ion-card-title>
           </ion-card-header>
           <ion-card-content>
@@ -140,12 +140,12 @@
                       <ion-chip size="small" [color]="isExpired(invitation) ? 'danger' : 'medium'">
                         <ion-icon name="time"></ion-icon>
                         <ion-label>
-                          {{ isExpired(invitation) ? 'Expired' : 'Expires' }}:
+                          {{ isExpired(invitation) ? ('chat_invitation.expired' | translate) : ('chat_invitation.expires' | translate) }}:
                           {{ formatTime(invitation.expiresAt!) }}
                         </ion-label>
                       </ion-chip>
                       <ion-chip size="small" color="primary">
-                        <ion-label>Sent: {{ formatTime(invitation.invitedAt) }}</ion-label>
+                        <ion-label>{{ 'chat_invitation.sent' | translate }} {{ formatTime(invitation.invitedAt) }}</ion-label>
                       </ion-chip>
                     </p>
                   </ion-label>
@@ -168,7 +168,7 @@
       @if (pendingInvitations().length === 0) {
         <div class="empty-state">
           <ion-icon name="mail" color="medium"></ion-icon>
-          <p>No pending invitations</p>
+          <p>{{ 'chat_invitation.no_pending' | translate }}</p>
         </div>
       }
     </ion-content>

@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
-    <ion-title>{{ activity()?.title || 'Activity Details' }}</ion-title>
+    <ion-title>{{ activity()?.title || ('activity.title' | translate) }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -31,12 +31,12 @@
               @if (activity()!.isRecurring) {
               <ion-chip color="success" outline="true">
                 <ion-icon name="repeat"></ion-icon>
-                <ion-label>Recurring</ion-label>
+                <ion-label>{{ 'activity.recurring' | translate }}</ion-label>
               </ion-chip>
               } @if (activity()!.featured) {
               <ion-chip color="warning">
                 <ion-icon name="star"></ion-icon>
-                <ion-label>Featured</ion-label>
+                <ion-label>{{ 'activity.featured' | translate }}</ion-label>
               </ion-chip>
               }
             </div>
@@ -51,7 +51,7 @@
                   <div class="info-item">
                     <ion-icon name="time" color="primary"></ion-icon>
                     <div>
-                      <strong>Time</strong>
+                      <strong>{{ 'activity.time' | translate }}</strong>
                       <p>
                         {{ formatTime(activity()!.startTime) }} - {{
                         formatTime(activity()!.endTime) }}
@@ -63,7 +63,7 @@
                   <div class="info-item">
                     <ion-icon name="location" color="primary"></ion-icon>
                     <div>
-                      <strong>Location</strong>
+                      <strong>{{ 'activity.location' | translate }}</strong>
                       <p>{{ activity()!.location }}</p>
                     </div>
                   </div>
@@ -72,7 +72,7 @@
                   <div class="info-item">
                     <ion-icon name="person-outline" color="primary"></ion-icon>
                     <div>
-                      <strong>Instructor</strong>
+                      <strong>{{ 'activity.instructor' | translate }}</strong>
                       <p>
                         {{ activity()!.instructor }} @if (activity()!.instructorRank)
                         {
@@ -86,7 +86,7 @@
                   <div class="info-item">
                     <ion-icon name="school" color="primary"></ion-icon>
                     <div>
-                      <strong>Level</strong>
+                      <strong>{{ 'activity.level' | translate }}</strong>
                       <ion-chip
                         [color]="getLevelColor(activity()!.level)"
                         size="small"
@@ -103,22 +103,22 @@
         <!-- Schedule Information -->
         <ion-card>
           <ion-card-content>
-            <h2>Schedule</h2>
+            <h2>{{ 'activity.schedule' | translate }}</h2>
             @if (activity()!.isRecurring) {
             <div>
               <div class="info-item">
                 <ion-icon name="repeat" color="success"></ion-icon>
                 <div>
                   <strong
-                    >Recurring {{ activity()!.recurrencePattern | titlecase
+                    >{{ 'activity.recurring_pattern' | translate }} {{ activity()!.recurrencePattern | titlecase
                     }}</strong
                   >
                   @if (activity()!.recurrenceDays) {
                   <p>{{ getRecurringDaysText(activity()!.recurrenceDays!) }}</p>
                   } @if (activity()!.recurrenceStart) {
-                  <p>Starts: {{ formatDate(activity()!.recurrenceStart!) }}</p>
+                  <p>{{ 'activity.starts' | translate }} {{ formatDate(activity()!.recurrenceStart!) }}</p>
                   } @if (activity()!.recurrenceEnd) {
-                  <p>Ends: {{ formatDate(activity()!.recurrenceEnd!) }}</p>
+                  <p>{{ 'activity.ends' | translate }} {{ formatDate(activity()!.recurrenceEnd!) }}</p>
                   }
                 </div>
               </div>
@@ -128,11 +128,11 @@
               <div class="info-item">
                 <ion-icon name="calendar" color="primary"></ion-icon>
                 <div>
-                  <strong>Date</strong>
+                  <strong>{{ 'activity.date' | translate }}</strong>
                   <p>{{ formatDate(activity()!.startDate!) }}</p>
                   @if (activity()!.endDate && activity()!.endDate !==
                   activity()!.startDate) {
-                  <p>Ends: {{ formatDate(activity()!.endDate!) }}</p>
+                  <p>{{ 'activity.ends' | translate }} {{ formatDate(activity()!.endDate!) }}</p>
                   }
                 </div>
               </div>
@@ -144,7 +144,7 @@
         @if (activity()!.description) {
         <ion-card>
           <ion-card-content>
-            <h2>About This {{ activity()!.type | titlecase }}</h2>
+            <h2>{{ 'activity.about_this' | translate }} {{ activity()!.type | titlecase }}</h2>
             <p>{{ activity()!.description }}</p>
           </ion-card-content>
         </ion-card>
@@ -152,16 +152,16 @@
         <!-- Participation & Cost -->
         <ion-card>
           <ion-card-content>
-            <h2>Participation</h2>
+            <h2>{{ 'activity.participation' | translate }}</h2>
             <div class="info-item">
               <ion-icon name="people" color="primary"></ion-icon>
               <div>
-                <strong>Availability</strong>
+                <strong>{{ 'activity.availability' | translate }}</strong>
                 <p>{{ getAvailabilityText() }}</p>
                 @if (activity()!.maxParticipants) {
                 <p>
                   {{ activity()!.currentParticipants }} / {{
-                  activity()!.maxParticipants }} participants
+                  activity()!.maxParticipants }} {{ 'activity.participants' | translate }}
                 </p>
                 }
               </div>
@@ -170,7 +170,7 @@
             <div class="info-item">
               <ion-icon name="cash-outline" color="primary"></ion-icon>
               <div>
-                <strong>Cost</strong>
+                <strong>{{ 'activity.cost' | translate }}</strong>
                 <p>{{ activity()!.cost }}</p>
               </div>
             </div>
@@ -181,10 +181,10 @@
         @if (activity()!.requirements || activity()!.whatToBring) {
         <ion-card>
           <ion-card-content>
-            <h2>Requirements & Preparation</h2>
+            <h2>{{ 'activity.requirements_preparation' | translate }}</h2>
             @if (activity()!.requirements) {
             <div class="requirements-section">
-              <h3>Requirements</h3>
+              <h3>{{ 'activity.requirements' | translate }}</h3>
               <ul>
                 @for (requirement of activity()!.requirements; track requirement) {
                 <li>
@@ -196,7 +196,7 @@
             </div>
             } @if (activity()!.whatToBring) {
             <div class="bring-section">
-              <h3>What to Bring</h3>
+              <h3>{{ 'activity.what_to_bring' | translate }}</h3>
               <ul>
                 @for (item of activity()!.whatToBring; track item) {
                 <li>
@@ -214,7 +214,7 @@
         @if (activity()!.tags && activity()!.tags.length > 0) {
         <ion-card>
           <ion-card-content>
-            <h2>Tags</h2>
+            <h2>{{ 'activity.tags' | translate }}</h2>
             <div class="tags-container">
               @for (tag of activity()!.tags; track tag) {
               <ion-chip outline="true">
@@ -230,12 +230,12 @@
         activity()!.contactPhone) {
         <ion-card>
           <ion-card-content>
-            <h2>Contact Information</h2>
+            <h2>{{ 'activity.contact_information' | translate }}</h2>
             @if (activity()!.organizer) {
             <div class="info-item">
               <ion-icon name="person-outline" color="primary"></ion-icon>
               <div>
-                <strong>Organizer</strong>
+                <strong>{{ 'activity.organizer' | translate }}</strong>
                 <p>{{ activity()!.organizer }}</p>
               </div>
             </div>
@@ -243,7 +243,7 @@
             <div class="info-item">
               <ion-icon name="mail" color="primary"></ion-icon>
               <div>
-                <strong>Email</strong>
+                <strong>{{ 'activity.email' | translate }}</strong>
                 <p>{{ activity()!.contactEmail }}</p>
               </div>
             </div>
@@ -251,7 +251,7 @@
             <div class="info-item">
               <ion-icon name="call-outline" color="primary"></ion-icon>
               <div>
-                <strong>Phone</strong>
+                <strong>{{ 'activity.phone' | translate }}</strong>
                 <p>{{ activity()!.contactPhone }}</p>
               </div>
             </div>
@@ -271,7 +271,7 @@
                     (click)="registerForActivity()"
                   >
                     <ion-icon name="checkmark-circle" slot="start"></ion-icon>
-                    {{ isActivityFull() ? 'Full' : 'Register' }}
+                    {{ isActivityFull() ? ('activity.full' | translate) : ('activity.register' | translate) }}
                   </ion-button>
                 </ion-col>
                 <ion-col size="12" size-md="6">
@@ -281,7 +281,7 @@
                     (click)="shareActivity()"
                   >
                     <ion-icon name="share-outline" slot="start"></ion-icon>
-                    Share
+                    {{ 'activity.share' | translate }}
                   </ion-button>
                 </ion-col>
                 @if (activity()!.contactEmail) {
@@ -292,7 +292,7 @@
                     (click)="contactInstructor()"
                   >
                     <ion-icon name="mail" slot="start"></ion-icon>
-                    Contact Instructor
+                    {{ 'activity.contact_instructor' | translate }}
                   </ion-button>
                 </ion-col>
                 } @if (activity()!.address) {
@@ -303,7 +303,7 @@
                     (click)="getDirections()"
                   >
                     <ion-icon name="map-outline" slot="start"></ion-icon>
-                    Get Directions
+                    {{ 'activity.get_directions' | translate }}
                   </ion-button>
                 </ion-col>
                 }
@@ -337,11 +337,11 @@
 <ion-content>
   <div class="empty-state">
     <ion-icon name="information-circle-outline" size="large"></ion-icon>
-    <h2>Activity Not Found</h2>
-    <p>The requested activity could not be found.</p>
+    <h2>{{ 'activity.not_found' | translate }}</h2>
+    <p>{{ 'activity.not_found_message' | translate }}</p>
     <ion-button fill="outline" (click)="onBack()">
       <ion-icon name="arrow-back" slot="start"></ion-icon>
-      Go Back
+      {{ 'activity.go_back' | translate }}
     </ion-button>
   </div>
 </ion-content>

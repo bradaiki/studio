@@ -1,11 +1,15 @@
 import { Component, input, signal, computed, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
+import { IonSpinner, IonProgressBar, IonIcon } from '@ionic/angular/standalone';
 import { ChatLoadingStateService, LoadingState } from '../../services/chat-loading-state.service';
 
 @Component({
   selector: 'app-chat-loading-indicator',
   templateUrl: './chat-loading-indicator.component.html',
-  styleUrls: ['./chat-loading-indicator.component.scss']
+  styleUrls: ['./chat-loading-indicator.component.scss'],
+  standalone: true,
+  imports: [TranslateModule, IonSpinner, IonProgressBar, IonIcon]
 })
 export class ChatLoadingIndicatorComponent implements OnInit, OnDestroy {
   operationKey = input<string>();

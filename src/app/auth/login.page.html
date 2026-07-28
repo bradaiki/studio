@@ -1,8 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      {{ needsConfirmation() ? 'Confirm Email' : (isSignUp() ? 'Sign Up' : 'Sign
-      In') }}
+      {{ needsConfirmation() ? ('auth.confirm_email' | translate) : (isSignUp() ? ('auth.signup' | translate) : ('auth.sign_in' | translate)) }}
     </ion-title>
   </ion-toolbar>
 </ion-header>
@@ -12,8 +11,7 @@
     <ion-card>
       <ion-card-header>
         <ion-card-title class="ion-text-center">
-          {{ needsConfirmation() ? 'Enter Confirmation Code' : (isSignUp() ? 'Create
-          Account' : 'Welcome Back') }}
+          {{ needsConfirmation() ? ('auth.enter_confirmation_code' | translate) : (isSignUp() ? ('auth.create_account' | translate) : ('auth.welcome_back' | translate)) }}
         </ion-card-title>
       </ion-card-header>
 
@@ -22,14 +20,14 @@
         @if (needsConfirmation()) {
         <form (ngSubmit)="confirmSignUp()" #confirmForm="ngForm">
           <ion-item>
-            <ion-label position="stacked">Confirmation Code</ion-label>
+            <ion-label position="stacked">{{ 'auth.confirmation_code' | translate }}</ion-label>
             <ion-input
               type="text"
               [(ngModel)]="confirmationCode"
               name="confirmationCode"
               required
               [disabled]="isLoading()"
-              placeholder="Enter 6-digit code"
+              [placeholder]="'auth.placeholder_code' | translate"
             >
             </ion-input>
           </ion-item>
@@ -42,7 +40,7 @@
               @if (isLoading()) {
               <ion-spinner name="crescent"></ion-spinner>
               } @if (!isLoading()) {
-              <span>Confirm Email</span>
+              <span>{{ 'auth.confirm_email_button' | translate }}</span>
               }
             </ion-button>
           </div>
@@ -53,7 +51,7 @@
         @if (!needsConfirmation()) {
         <form (ngSubmit)="onSubmit()" #authForm="ngForm">
           <ion-item>
-            <ion-label position="stacked">Email</ion-label>
+            <ion-label position="stacked">{{ 'auth.email' | translate }}</ion-label>
             <ion-input
               type="email"
               [(ngModel)]="email"
@@ -64,7 +62,7 @@
             </ion-input>
           </ion-item>
           <ion-item>
-            <ion-label position="stacked">Password</ion-label>
+            <ion-label position="stacked">{{ 'auth.password' | translate }}</ion-label>
             <ion-input
               type="password"
               [(ngModel)]="password"
@@ -83,7 +81,7 @@
               @if (isLoading()) {
               <ion-spinner name="crescent"></ion-spinner>
               } @if (!isLoading()) {
-              <span>{{ isSignUp() ? 'Sign Up' : 'Sign In' }}</span>
+              <span>{{ isSignUp() ? ('auth.signup' | translate) : ('auth.sign_in' | translate) }}</span>
               }
             </ion-button>
           </div>
@@ -91,15 +89,14 @@
         } @if (!needsConfirmation()) {
         <div class="ion-text-center ion-margin-top">
           <ion-text color="medium">
-            {{ isSignUp() ? 'Already have an account?' : "Don't have an account?"
-            }}
+            {{ isSignUp() ? ('auth.have_account' | translate) : ('auth.no_account' | translate) }}
           </ion-text>
           <ion-button
             fill="clear"
             (click)="toggleMode()"
             [disabled]="isLoading()"
           >
-            {{ isSignUp() ? 'Sign In' : 'Sign Up' }}
+            {{ isSignUp() ? ('auth.sign_in' | translate) : ('auth.signup' | translate) }}
           </ion-button>
         </div>
         } @if (!needsConfirmation()) {
@@ -110,7 +107,7 @@
             (click)="continueAsGuest()"
             [disabled]="isLoading()"
           >
-            Continue as Guest
+            {{ 'auth.continue_as_guest' | translate }}
           </ion-button>
         </div>
         }

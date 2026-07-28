@@ -1,6 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ArtsService, Art } from '../services/arts.service';
 import { 
@@ -53,6 +54,7 @@ import {
   imports: [
     CommonModule,
     FormsModule,
+    TranslateModule,
     IonContent,
     IonHeader,
     IonTitle,

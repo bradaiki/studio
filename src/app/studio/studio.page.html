@@ -6,7 +6,7 @@
         defaultHref="/tabs/studios"
       ></ion-back-button>
     </ion-buttons>
-    <ion-title>{{ studio.name || 'Studio Details' }}</ion-title>
+    <ion-title>{{ studio.name || ('studio_page.studio_details' | translate) }}</ion-title>
 
     <!-- Review Requests Button for Instructors -->
     @if (canReviewRequests() && !isLoadingPermissions()) {
@@ -18,7 +18,7 @@
         [disabled]="!canReviewRequests()"
       >
         <ion-icon name="checkmark-circle" slot="start"></ion-icon>
-        <ion-label>Review Requests</ion-label>
+        <ion-label>{{ 'studio_page.review_requests' | translate }}</ion-label>
         @if (pendingRequestCount() > 0) {
         <ion-badge color="warning" class="request-count-badge">
           {{ pendingRequestCount() }}
@@ -52,7 +52,7 @@
               class="join-studio-btn"
             >
               <ion-icon name="person-add" slot="start"></ion-icon>
-              Join Studio
+              {{ 'studio_page.join_studio' | translate }}
             </ion-button>
           </div>
         </div>
@@ -61,7 +61,7 @@
       <!-- Info Card -->
       <ion-card>
         <ion-card-header>
-          <ion-card-title>About Our Studio</ion-card-title>
+          <ion-card-title>{{ 'studio_page.about_studio' | translate }}</ion-card-title>
         </ion-card-header>
         <ion-card-content>
           <p>{{ studio.description }}</p>
@@ -72,7 +72,7 @@
       @if (studio.benefits && studio.benefits.length > 0) {
       <ion-card>
         <ion-card-header>
-          <ion-card-title>Benefits</ion-card-title>
+          <ion-card-title>{{ 'studio_page.benefits' | translate }}</ion-card-title>
         </ion-card-header>
         <ion-card-content>
           @for (benefit of studio.benefits; track benefit) {
@@ -93,18 +93,18 @@
         <ion-card-header>
           <ion-card-title>
             <div class="schedule-header-controls">
-              <span>Class Schedule</span>
+              <span>{{ 'studio_page.class_schedule' | translate }}</span>
               <ion-segment
                 [(ngModel)]="scheduleView"
                 (ionChange)="changeScheduleView($event)"
               >
                 <ion-segment-button value="calendar">
                   <ion-icon name="grid"></ion-icon>
-                  <ion-label>Calendar</ion-label>
+                  <ion-label>{{ 'studio_page.calendar' | translate }}</ion-label>
                 </ion-segment-button>
                 <ion-segment-button value="list">
                   <ion-icon name="list"></ion-icon>
-                  <ion-label>List</ion-label>
+                  <ion-label>{{ 'studio_page.list' | translate }}</ion-label>
                 </ion-segment-button>
               </ion-segment>
             </div>
@@ -129,7 +129,7 @@
                     @if (activity.isRecurring) {
                     <ion-chip color="success" outline="true">
                       <ion-icon name="repeat"></ion-icon>
-                      <ion-label>Recurring</ion-label>
+                      <ion-label>{{ 'studio_page.recurring' | translate }}</ion-label>
                     </ion-chip>
                     }
                   </div>
@@ -189,8 +189,8 @@
             @if (!studioActivities() || studioActivities().length === 0) {
             <div class="empty-schedule">
               <ion-icon name="calendar" size="large"></ion-icon>
-              <h3>No Classes Scheduled</h3>
-              <p>Check back later for updated class schedules.</p>
+              <h3>{{ 'studio_page.no_classes' | translate }}</h3>
+              <p>{{ 'studio_page.no_classes_message' | translate }}</p>
             </div>
             }
           </div>
@@ -217,7 +217,7 @@
               (click)="goToToday()"
               class="today-button"
             >
-              Today
+              {{ 'studio_page.today' | translate }}
             </ion-button>
             <!-- Hourly Time Grid Calendar -->
             <div class="time-grid-calendar">
@@ -280,8 +280,8 @@
             @if (!studioActivities() || studioActivities().length === 0) {
             <div class="empty-schedule">
               <ion-icon name="calendar" size="large"></ion-icon>
-              <h3>No Classes Scheduled</h3>
-              <p>Check back later for updated class schedules.</p>
+              <h3>{{ 'studio_page.no_classes' | translate }}</h3>
+              <p>{{ 'studio_page.no_classes_message' | translate }}</p>
             </div>
             }
           </div>
@@ -295,11 +295,11 @@
         <ion-card-header>
           <ion-card-title>
             <div class="section-header">
-              <span>Instructors ({{ studio.instructors.length }})</span>
+              <span>{{ 'studio_page.instructors' | translate }} ({{ studio.instructors.length }})</span>
               @if (hasMoreInstructors()) {
               <ion-chip color="primary" outline="true" size="small">
                 <ion-label
-                  >Showing 20 of {{ studio.instructors.length }}</ion-label
+                  >{{ 'studio_page.showing_of' | translate }} {{ studio.instructors.length }}</ion-label
                 >
               </ion-chip>
               }
@@ -336,7 +336,7 @@
                 <div class="instructor-details">
                   @if (instructor.experience) {
                   <p class="instructor-experience">
-                    {{ instructor.experience }} experience
+                    {{ instructor.experience }} {{ 'studio_page.experience' | translate }}
                   </p>
                   } @if (instructor.bio) {
                   <p class="instructor-bio">{{ instructor.bio }}</p>
@@ -350,7 +350,7 @@
                     </ion-chip>
                     } @if (instructor.specialties.length > 2) {
                     <span class="more-specialties">
-                      +{{ instructor.specialties.length - 2 }} more
+                      +{{ instructor.specialties.length - 2 }} {{ 'studio_page.more' | translate }}
                     </span>
                     }
                   </div>
@@ -368,12 +368,12 @@
       @if (!studio.instructors || studio.instructors.length === 0) {
       <ion-card>
         <ion-card-header>
-          <ion-card-title>Instructors</ion-card-title>
+          <ion-card-title>{{ 'studio_page.instructors' | translate }}</ion-card-title>
         </ion-card-header>
         <ion-card-content>
           <div class="empty-state">
             <ion-icon name="people" size="large"></ion-icon>
-            <p>No instructors listed yet.</p>
+            <p>{{ 'studio_page.no_instructors' | translate }}</p>
           </div>
         </ion-card-content>
       </ion-card>
@@ -385,10 +385,10 @@
         <ion-card-header>
           <ion-card-title>
             <div class="section-header">
-              <span>Students ({{ studioStudents().length }})</span>
+              <span>{{ 'studio_page.students' | translate }} ({{ studioStudents().length }})</span>
               @if (hasMoreStudents()) {
               <ion-chip color="primary" outline="true" size="small">
-                <ion-label>Showing 20 of {{ studioStudents().length }}</ion-label>
+                <ion-label>{{ 'studio_page.showing_of' | translate }} {{ studioStudents().length }}</ion-label>
               </ion-chip>
               }
             </div>
@@ -432,7 +432,7 @@
                       </ion-chip>
                       } @if (student.specialties.length > 2) {
                       <span class="more-specialties">
-                        +{{ student.specialties.length - 2 }} more
+                        +{{ student.specialties.length - 2 }} {{ 'studio_page.more' | translate }}
                       </span>
                       }
                     </div>
@@ -451,12 +451,12 @@
       @if (currentUserId && (!studioStudents || studioStudents().length === 0)) {
       <ion-card>
         <ion-card-header>
-          <ion-card-title>Students</ion-card-title>
+          <ion-card-title>{{ 'studio_page.students' | translate }}</ion-card-title>
         </ion-card-header>
         <ion-card-content>
           <div class="empty-state">
             <ion-icon name="people" size="large"></ion-icon>
-            <p>No students listed yet.</p>
+            <p>{{ 'studio_page.no_students' | translate }}</p>
           </div>
         </ion-card-content>
       </ion-card>
@@ -465,7 +465,7 @@
       <!-- Contact Info -->
       <ion-card>
         <ion-card-header>
-          <ion-card-title>Contact Information</ion-card-title>
+          <ion-card-title>{{ 'studio_page.contact_info' | translate }}</ion-card-title>
         </ion-card-header>
         <ion-card-content>
           <div class="contact-item">
@@ -491,7 +491,7 @@
       @if (studio.address) {
       <ion-card>
         <ion-card-header>
-          <ion-card-title>Location</ion-card-title>
+          <ion-card-title>{{ 'studio_page.location' | translate }}</ion-card-title>
         </ion-card-header>
         <ion-card-content>
           <div class="location-map">
@@ -512,11 +512,11 @@
                 (click)="openDirections()"
               >
                 <ion-icon name="navigate" slot="start"></ion-icon>
-                Get Directions
+                {{ 'studio_page.get_directions' | translate }}
               </ion-button>
               <ion-button fill="outline" size="small" (click)="openInMaps()">
                 <ion-icon name="map" slot="start"></ion-icon>
-                Open in Maps
+                {{ 'studio_page.open_in_maps' | translate }}
               </ion-button>
             </div>
           </div>
@@ -529,7 +529,7 @@
       @if (studio.isInstructor || studio.isStudioChief) {
       <ion-card>
         <ion-card-header>
-          <ion-card-title>Studio Management</ion-card-title>
+          <ion-card-title>{{ 'studio_page.studio_management' | translate }}</ion-card-title>
         </ion-card-header>
         <ion-card-content>
           <ion-button
@@ -538,7 +538,7 @@
             [routerLink]="['/dash/studio', studio.id, 'manage']"
           >
             <ion-icon name="settings" slot="start"></ion-icon>
-            Manage Studio
+            {{ 'studio_page.manage_studio' | translate }}
           </ion-button>
         </ion-card-content>
       </ion-card>

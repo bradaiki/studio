@@ -24,7 +24,7 @@
           }
           <div class="detail-item">
             <ion-icon name="calendar" color="medium"></ion-icon>
-            <span>Joined {{ formatJoinDate(profile().joinDate) }}</span>
+            <span>{{ 'user_profile.joined' | translate }} {{ formatJoinDate(profile().joinDate) }}</span>
           </div>
         </div>
 
@@ -34,19 +34,19 @@
             <ion-col size="4" class="stat-col">
               <div class="stat">
                 <strong>{{ formatNumber(profile().postsCount) }}</strong>
-                <span>Posts</span>
+                <span>{{ 'user_profile.posts' | translate }}</span>
               </div>
             </ion-col>
             <ion-col size="4" class="stat-col">
               <div class="stat">
                 <strong>{{ formatNumber(profile().followers) }}</strong>
-                <span>Followers</span>
+                <span>{{ 'user_profile.followers' | translate }}</span>
               </div>
             </ion-col>
             <ion-col size="4" class="stat-col">
               <div class="stat">
                 <strong>{{ formatNumber(profile().following) }}</strong>
-                <span>Following</span>
+                <span>{{ 'user_profile.following' | translate }}</span>
               </div>
             </ion-col>
           </ion-row>
@@ -75,12 +75,12 @@
           [name]="profile().isFollowing ? 'person-remove' : 'person-add'"
           slot="start">
         </ion-icon>
-        {{ profile().isFollowing ? 'Unfollow' : 'Follow' }}
+        {{ profile().isFollowing ? ('user_profile.unfollow' | translate) : ('user_profile.follow' | translate) }}
       </ion-button>
 
       <ion-button fill="outline" color="medium" (click)="onMessage()">
         <ion-icon name="chatbubble" slot="start"></ion-icon>
-        Message
+        {{ 'user_profile.message' | translate }}
       </ion-button>
 
       <ion-button fill="clear" color="medium" (click)="onEmail()">
@@ -93,7 +93,7 @@
 <!-- Posts Section -->
 @if (showPosts() && profile().posts.length > 0) {
   <div class="posts-section">
-    <h3 class="section-title">Posts by {{ profile().name }}</h3>
+    <h3 class="section-title">{{ 'user_profile.posts_by' | translate }} {{ profile().name }}</h3>
     @for (post of profile().posts; track trackByPostId($index, post)) {
       <app-post
         [post]="post">
@@ -106,7 +106,7 @@
 @if (showPosts() && profile().posts.length === 0) {
   <div class="no-posts">
     <ion-text color="medium">
-      <p>{{ profile().name }} hasn't posted anything yet.</p>
+      <p>{{ profile().name }} {{ 'user_profile.no_posts' | translate }}</p>
     </ion-text>
   </div>
 }

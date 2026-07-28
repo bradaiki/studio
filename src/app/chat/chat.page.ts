@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewChild, signal } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   IonHeader,
@@ -50,6 +51,7 @@ interface ChatGroup {
   standalone: true,
   imports: [
     FormsModule,
+    TranslateModule,
     IonHeader,
     IonToolbar,
     IonTitle,

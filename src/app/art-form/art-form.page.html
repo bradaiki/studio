@@ -6,7 +6,7 @@
         [defaultHref]="isEditMode() ? '/art/' + artId() : '/tabs/arts'"
       ></ion-back-button>
     </ion-buttons>
-    <ion-title>{{ pageTitle() }}</ion-title>
+    <ion-title>{{ isEditMode() ? ('art_form.edit_title' | translate) : ('art_form.create_title' | translate) }}</ion-title>
     <ion-buttons slot="end">
       <ion-button
         (click)="onSave()"
@@ -15,7 +15,7 @@
         color="primary"
       >
         <ion-icon name="save" slot="start"></ion-icon>
-        Save
+        {{ 'art_form.save' | translate }}
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -26,22 +26,22 @@
     <!-- Basic Information -->
     <ion-card>
       <ion-card-header>
-        <ion-card-title>Basic Information</ion-card-title>
+        <ion-card-title>{{ 'art_form.basic_information' | translate }}</ion-card-title>
       </ion-card-header>
       <ion-card-content>
         <ion-item>
-          <ion-label position="stacked">Art Name *</ion-label>
+          <ion-label position="stacked">{{ 'art_form.art_name' | translate }}</ion-label>
           <ion-input
             formControlName="name"
-            placeholder="Enter the name of the art"
+            [placeholder]="'art_form.art_name_placeholder' | translate"
             [class.ion-invalid]="artForm.get('name')?.invalid && artForm.get('name')?.touched"
           >
           </ion-input>
         </ion-item>
 
         <ion-item>
-          <ion-label position="stacked">Type *</ion-label>
-          <ion-select formControlName="type" placeholder="Select art type">
+          <ion-label position="stacked">{{ 'art_form.type' | translate }}</ion-label>
+          <ion-select formControlName="type" [placeholder]="'art_form.type_placeholder' | translate">
             @for (type of artTypes; track type) {
             <ion-select-option [value]="type.value">
               {{ type.label }}
@@ -51,8 +51,8 @@
         </ion-item>
 
         <ion-item>
-          <ion-label position="stacked">Category *</ion-label>
-          <ion-select formControlName="category" placeholder="Select category">
+          <ion-label position="stacked">{{ 'art_form.category' | translate }}</ion-label>
+          <ion-select formControlName="category" [placeholder]="'art_form.category_placeholder' | translate">
             @for (category of categories; track category) {
             <ion-select-option [value]="category.value">
               {{ category.label }}
@@ -62,10 +62,10 @@
         </ion-item>
 
         <ion-item>
-          <ion-label position="stacked">Short Description *</ion-label>
+          <ion-label position="stacked">{{ 'art_form.short_description' | translate }}</ion-label>
           <ion-textarea
             formControlName="shortDescription"
-            placeholder="Brief description (max 200 characters)"
+            [placeholder]="'art_form.short_description_placeholder' | translate"
             rows="2"
             maxlength="200"
             [class.ion-invalid]="artForm.get('shortDescription')?.invalid && artForm.get('shortDescription')?.touched"
@@ -74,10 +74,10 @@
         </ion-item>
 
         <ion-item>
-          <ion-label position="stacked">Full Description *</ion-label>
+          <ion-label position="stacked">{{ 'art_form.full_description' | translate }}</ion-label>
           <ion-textarea
             formControlName="description"
-            placeholder="Detailed description of the art (minimum 50 characters)"
+            [placeholder]="'art_form.full_description_placeholder' | translate"
             rows="4"
             [class.ion-invalid]="artForm.get('description')?.invalid && artForm.get('description')?.touched"
           >
@@ -85,10 +85,10 @@
         </ion-item>
 
         <ion-item>
-          <ion-label position="stacked">Image URL</ion-label>
+          <ion-label position="stacked">{{ 'art_form.image_url' | translate }}</ion-label>
           <ion-input
             formControlName="image"
-            placeholder="https://example.com/image.jpg"
+            [placeholder]="'art_form.image_url_placeholder' | translate"
           >
           </ion-input>
         </ion-item>
@@ -98,30 +98,30 @@
     <!-- Additional Details -->
     <ion-card>
       <ion-card-header>
-        <ion-card-title>Additional Details</ion-card-title>
+        <ion-card-title>{{ 'art_form.additional_details' | translate }}</ion-card-title>
       </ion-card-header>
       <ion-card-content>
         <ion-item>
-          <ion-label position="stacked">Origin</ion-label>
+          <ion-label position="stacked">{{ 'art_form.origin' | translate }}</ion-label>
           <ion-input
             formControlName="origin"
-            placeholder="e.g., Ancient Japan, Modern USA"
+            [placeholder]="'art_form.origin_placeholder' | translate"
           >
           </ion-input>
         </ion-item>
 
         <ion-item>
-          <ion-label position="stacked">Philosophy</ion-label>
+          <ion-label position="stacked">{{ 'art_form.philosophy' | translate }}</ion-label>
           <ion-textarea
             formControlName="philosophy"
-            placeholder="Core philosophy or principles"
+            [placeholder]="'art_form.philosophy_placeholder' | translate"
             rows="3"
           >
           </ion-textarea>
         </ion-item>
 
         <ion-item>
-          <ion-label position="stacked">Difficulty Level *</ion-label>
+          <ion-label position="stacked">{{ 'art_form.difficulty_level' | translate }}</ion-label>
           <ion-select formControlName="difficulty">
             @for (difficulty of difficulties; track difficulty) {
             <ion-select-option [value]="difficulty.value">
@@ -132,7 +132,7 @@
         </ion-item>
 
         <ion-item>
-          <ion-label position="stacked">Physical Demands *</ion-label>
+          <ion-label position="stacked">{{ 'art_form.physical_demands' | translate }}</ion-label>
           <ion-select formControlName="physicalDemands">
             @for (demand of physicalDemands; track demand) {
             <ion-select-option [value]="demand.value">
@@ -144,9 +144,7 @@
 
         <ion-item>
           <ion-checkbox formControlName="isPublic"></ion-checkbox>
-          <ion-label class="ion-margin-start"
-            >Make this art publicly visible</ion-label
-          >
+          <ion-label class="ion-margin-start">{{ 'art_form.make_public' | translate }}</ion-label>
         </ion-item>
       </ion-card-content>
     </ion-card>
@@ -155,7 +153,7 @@
     <ion-card>
       <ion-card-header>
         <ion-card-title>
-          Benefits
+          {{ 'art_form.benefits' | translate }}
           <ion-button
             fill="clear"
             size="small"
@@ -173,7 +171,7 @@
             <ion-item>
               <ion-input
                 [formControl]="$any(benefit)"
-                placeholder="Enter a benefit"
+                [placeholder]="'art_form.enter_benefit' | translate"
               >
               </ion-input>
               <ion-button
@@ -198,7 +196,7 @@
     <ion-card>
       <ion-card-header>
         <ion-card-title>
-          Techniques
+          {{ 'art_form.techniques' | translate }}
           <ion-button
             fill="clear"
             size="small"
@@ -216,7 +214,7 @@
             <ion-item>
               <ion-input
                 [formControl]="$any(technique)"
-                placeholder="Enter a technique"
+                [placeholder]="'art_form.enter_technique' | translate"
               >
               </ion-input>
               <ion-button
@@ -241,7 +239,7 @@
     <ion-card>
       <ion-card-header>
         <ion-card-title>
-          Equipment & Materials
+          {{ 'art_form.equipment_materials' | translate }}
           <ion-button
             fill="clear"
             size="small"
@@ -259,7 +257,7 @@
             <ion-item>
               <ion-input
                 [formControl]="$any(item)"
-                placeholder="Enter equipment or material"
+                [placeholder]="'art_form.enter_equipment' | translate"
               >
               </ion-input>
               <ion-button
@@ -284,7 +282,7 @@
     <ion-card>
       <ion-card-header>
         <ion-card-title>
-          Mental Aspects
+          {{ 'art_form.mental_aspects' | translate }}
           <ion-button
             fill="clear"
             size="small"
@@ -302,7 +300,7 @@
             <ion-item>
               <ion-input
                 [formControl]="$any(aspect)"
-                placeholder="Enter mental aspect"
+                [placeholder]="'art_form.enter_mental_aspect' | translate"
               >
               </ion-input>
               <ion-button
@@ -334,7 +332,7 @@
           (click)="onDelete()"
         >
           <ion-icon name="trash" slot="start"></ion-icon>
-          Delete Art
+          {{ 'art_form.delete_art' | translate }}
         </ion-button>
       </ion-card-content>
     </ion-card>

@@ -3,7 +3,7 @@
     <ion-card-header>
       <ion-card-title>
         <ion-icon name="person"></ion-icon>
-        Join Requests
+        {{ 'studio_join.title' | translate }}
         @if (joinRequests().length > 0) {
           <ion-chip color="primary">
             {{ joinRequests().length }}
@@ -15,7 +15,7 @@
       @if (loading()) {
         <div class="loading-container">
           <ion-spinner></ion-spinner>
-          <p>Loading requests...</p>
+          <p>{{ 'studio_join.loading' | translate }}</p>
         </div>
       }
       @if (!loading() && joinRequests().length > 0) {
@@ -47,7 +47,7 @@
                   [disabled]="processingRequestId() === request.id"
                 >
                   <ion-icon name="checkmark-circle" slot="start"></ion-icon>
-                  Approve
+                  {{ 'studio_join.approve' | translate }}
                 </ion-button>
                 <ion-button
                   fill="outline"
@@ -57,7 +57,7 @@
                   [disabled]="processingRequestId() === request.id"
                 >
                   <ion-icon name="close-circle" slot="start"></ion-icon>
-                  Reject
+                  {{ 'studio_join.reject' | translate }}
                 </ion-button>
               </div>
             </ion-item>
@@ -67,7 +67,7 @@
       @if (!loading() && joinRequests().length === 0) {
         <div class="empty-state">
           <ion-icon name="checkmark-circle" color="success"></ion-icon>
-          <p>No pending join requests</p>
+          <p>{{ 'studio_join.no_pending' | translate }}</p>
         </div>
       }
     </ion-card-content>

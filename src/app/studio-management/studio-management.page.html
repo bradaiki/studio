@@ -5,7 +5,7 @@
         [defaultHref]="'/dash/studio/' + studio?.id"
       ></ion-back-button>
     </ion-buttons>
-    <ion-title>Manage Studio</ion-title>
+    <ion-title>{{ 'studio_management.title' | translate }}</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="studioSettings()">
         <ion-icon name="settings"></ion-icon>
@@ -26,12 +26,12 @@
           <div class="studio-stats">
             <ion-chip color="primary">
               <ion-icon name="people"></ion-icon>
-              <ion-label>{{ studio.memberCount }} members</ion-label>
+              <ion-label>{{ studio.memberCount }} {{ 'studio_management.members' | translate }}</ion-label>
             </ion-chip>
             @if (studio.verified) {
             <ion-chip color="secondary">
               <ion-icon name="checkmark-circle"></ion-icon>
-              <ion-label>Verified</ion-label>
+              <ion-label>{{ 'studio_management.verified' | translate }}</ion-label>
             </ion-chip>
             }
           </div>
@@ -45,23 +45,23 @@
     >
       <ion-segment-button value="join-requests">
         <ion-icon name="person-add"></ion-icon>
-        <ion-label>Join Requests</ion-label>
+        <ion-label>{{ 'studio_management.join_requests' | translate }}</ion-label>
       </ion-segment-button>
       <ion-segment-button value="instructors">
         <ion-icon name="people"></ion-icon>
-        <ion-label>Instructors</ion-label>
+        <ion-label>{{ 'studio_management.instructors' | translate }}</ion-label>
       </ion-segment-button>
       <ion-segment-button value="activities">
         <ion-icon name="calendar"></ion-icon>
-        <ion-label>Activities</ion-label>
+        <ion-label>{{ 'studio_management.activities' | translate }}</ion-label>
       </ion-segment-button>
       <ion-segment-button value="schedule">
         <ion-icon name="calendar"></ion-icon>
-        <ion-label>Schedule</ion-label>
+        <ion-label>{{ 'studio_management.schedule' | translate }}</ion-label>
       </ion-segment-button>
       <ion-segment-button value="overview">
         <ion-icon name="school"></ion-icon>
-        <ion-label>Overview</ion-label>
+        <ion-label>{{ 'studio_management.overview' | translate }}</ion-label>
       </ion-segment-button>
     </ion-segment>
     <!-- Join Requests Management -->
@@ -75,8 +75,8 @@
         <ion-card-content>
           <div class="empty-state">
             <ion-icon name="person-add" size="large"></ion-icon>
-            <h3>Join Requests</h3>
-            <p>Manage student requests to join your studio.</p>
+            <h3>{{ 'studio_management.join_requests' | translate }}</h3>
+            <p>{{ 'studio_management.manage_join_requests' | translate }}</p>
           </div>
         </ion-card-content>
       </ion-card>
@@ -90,7 +90,7 @@
         <ion-card-header>
           <ion-card-title>
             <div class="section-header">
-              <span>Instructors ({{ studio.instructors.length || 0 }})</span>
+              <span>{{ 'studio_management.instructors' | translate }} ({{ studio.instructors.length || 0 }})</span>
               <ion-button fill="clear" (click)="addInstructor()">
                 <ion-icon name="person-add"></ion-icon>
               </ion-button>
@@ -116,12 +116,12 @@
                   } @if (isHeadInstructor(instructor)) {
                   <ion-chip color="warning">
                     <ion-icon name="star"></ion-icon>
-                    <ion-label>Head</ion-label>
+                    <ion-label>{{ 'studio_management.head' | translate }}</ion-label>
                   </ion-chip>
                   } @if (isStudioChief(instructor)) {
                   <ion-chip color="success">
                     <ion-icon name="school"></ion-icon>
-                    <ion-label>Chief</ion-label>
+                    <ion-label>{{ 'studio_management.chief' | translate }}</ion-label>
                   </ion-chip>
                   }
                   <ion-chip
@@ -132,7 +132,7 @@
                       [name]="instructor.isActive ? 'checkmark-circle' : 'close-circle'"
                     ></ion-icon>
                     <ion-label
-                      >{{ instructor.isActive ? 'Active' : 'Inactive'
+                      >{{ instructor.isActive ? ('studio_management.active' | translate) : ('studio_management.inactive' | translate)
                       }}</ion-label
                     >
                   </ion-chip>
@@ -179,11 +179,11 @@
           } @else {
           <div class="empty-state">
             <ion-icon name="people" size="large"></ion-icon>
-            <h3>No Instructors</h3>
-            <p>Add instructors to your studio to get started.</p>
+            <h3>{{ 'studio_management.no_instructors' | translate }}</h3>
+            <p>{{ 'studio_management.no_instructors_message' | translate }}</p>
             <ion-button (click)="addInstructor()">
               <ion-icon name="person-add" slot="start"></ion-icon>
-              Add Instructor
+              {{ 'studio_management.add_instructor' | translate }}
             </ion-button>
           </div>
           }
@@ -198,12 +198,12 @@
         <ion-card-header>
           <ion-card-title>
             <div class="section-header">
-              <span>Activities & Classes ({{ studioActivities().length }})</span>
+              <span>{{ 'studio_management.activities_classes' | translate }} ({{ studioActivities().length }})</span>
               <div class="header-actions">
                 @if (hasMoreActivities()) {
                 <ion-chip color="primary" outline="true" size="small">
                   <ion-label
-                    >Showing 20 of {{ studioActivities().length }}</ion-label
+                    >{{ 'studio_management.showing_of' | translate }} {{ studioActivities().length }}</ion-label
                   >
                 </ion-chip>
                 }
@@ -251,8 +251,8 @@
                               [name]="activity.isRecurring ? 'repeat' : 'calendar'"
                             ></ion-icon>
                             <ion-label
-                              >{{ activity.isRecurring ? 'Recurring' :
-                              'One-time' }}</ion-label
+                              >{{ activity.isRecurring ? ('studio_management.recurring' | translate) :
+                              ('studio_management.one_time' | translate) }}</ion-label
                             >
                           </ion-chip>
                         </div>
@@ -320,11 +320,11 @@
           } @else {
           <div class="empty-state">
             <ion-icon name="calendar" size="large"></ion-icon>
-            <h3>No Activities</h3>
-            <p>Create classes and events for your studio.</p>
+            <h3>{{ 'studio_management.no_activities' | translate }}</h3>
+            <p>{{ 'studio_management.no_activities_message' | translate }}</p>
             <ion-button (click)="openClassModal()">
               <ion-icon name="add" slot="start"></ion-icon>
-              Add Activity
+              {{ 'studio_management.add_activity' | translate }}
             </ion-button>
           </div>
           }
@@ -345,13 +345,13 @@
                 (ionChange)="changeScheduleView($event.detail.value)"
               >
                 <ion-segment-button value="week">
-                  <ion-label>Week</ion-label>
+                  <ion-label>{{ 'studio_management.week' | translate }}</ion-label>
                 </ion-segment-button>
                 <ion-segment-button value="month">
-                  <ion-label>Month</ion-label>
+                  <ion-label>{{ 'studio_management.month' | translate }}</ion-label>
                 </ion-segment-button>
                 <ion-segment-button value="year">
-                  <ion-label>Year</ion-label>
+                  <ion-label>{{ 'studio_management.year' | translate }}</ion-label>
                 </ion-segment-button>
               </ion-segment>
             </div>
@@ -360,7 +360,7 @@
                 <ion-icon name="chevron-back"></ion-icon>
               </ion-button>
               <ion-button fill="clear" (click)="goToToday()">
-                <ion-label>Today</ion-label>
+                <ion-label>{{ 'studio_management.today' | translate }}</ion-label>
               </ion-button>
               <ion-button fill="clear" (click)="navigateDate('next')">
                 <ion-icon name="chevron-forward"></ion-icon>
@@ -368,7 +368,7 @@
             </div>
             <ion-button (click)="openClassModal()" color="primary">
               <ion-icon name="add" slot="start"></ion-icon>
-              Add Class
+              {{ 'studio_management.add_class' | translate }}
             </ion-button>
           </div>
           <div class="current-period">
@@ -488,7 +488,7 @@
                   <!-- Simplified month display for year view -->
                   <div class="month-stats">
                     <ion-badge color="primary">
-                      {{ getMonthScheduleCount(i) }} classes
+                      {{ getMonthScheduleCount(i) }} {{ 'studio_management.classes' | translate }}
                     </ion-badge>
                   </div>
                 </div>
@@ -504,11 +504,11 @@
         <ion-card-header>
           <ion-card-title>
             <div class="section-header">
-              <span>All Classes ({{ studioActivities().length }})</span>
+              <span>{{ 'studio_management.all_classes' | translate }} ({{ studioActivities().length }})</span>
               @if (hasMoreActivities()) {
               <ion-chip color="primary" outline="true" size="small">
                 <ion-label
-                  >Showing 20 of {{ studioActivities().length }}</ion-label
+                  >{{ 'studio_management.showing_of' | translate }} {{ studioActivities().length }}</ion-label
                 >
               </ion-chip>
               }
@@ -588,11 +588,11 @@
           } @else {
           <div class="empty-state">
             <ion-icon name="calendar" size="large"></ion-icon>
-            <h3>No Classes Scheduled</h3>
-            <p>Create your first class schedule.</p>
+            <h3>{{ 'studio_management.no_classes' | translate }}</h3>
+            <p>{{ 'studio_management.no_classes_message' | translate }}</p>
             <ion-button (click)="openClassModal()">
               <ion-icon name="add" slot="start"></ion-icon>
-              Add Class
+              {{ 'studio_management.add_class' | translate }}
             </ion-button>
           </div>
           }
@@ -608,28 +608,28 @@
           <ion-col size="12" size-md="6">
             <ion-card>
               <ion-card-header>
-                <ion-card-title>Studio Statistics</ion-card-title>
+                <ion-card-title>{{ 'studio_management.studio_statistics' | translate }}</ion-card-title>
               </ion-card-header>
               <ion-card-content>
                 <div class="stat-item">
                   <ion-icon name="people"></ion-icon>
                   <div>
                     <h3>{{ studio.memberCount }}</h3>
-                    <p>Total Members</p>
+                    <p>{{ 'studio_management.total_members' | translate }}</p>
                   </div>
                 </div>
                 <div class="stat-item">
                   <ion-icon name="school"></ion-icon>
                   <div>
                     <h3>{{ studio.instructors.length || 0 }}</h3>
-                    <p>Instructors</p>
+                    <p>{{ 'studio_management.instructors_stat' | translate }}</p>
                   </div>
                 </div>
                 <div class="stat-item">
                   <ion-icon name="calendar"></ion-icon>
                   <div>
                     <h3>{{ studioActivities().length || 0 }}</h3>
-                    <p>Activities</p>
+                    <p>{{ 'studio_management.activities_stat' | translate }}</p>
                   </div>
                 </div>
               </ion-card-content>
@@ -638,7 +638,7 @@
           <ion-col size="12" size-md="6">
             <ion-card>
               <ion-card-header>
-                <ion-card-title>Quick Actions</ion-card-title>
+                <ion-card-title>{{ 'studio_management.quick_actions' | translate }}</ion-card-title>
               </ion-card-header>
               <ion-card-content>
                 <ion-button
@@ -647,7 +647,7 @@
                   (click)="addInstructor()"
                 >
                   <ion-icon name="person-add" slot="start"></ion-icon>
-                  Add Instructor
+                  {{ 'studio_management.add_instructor' | translate }}
                 </ion-button>
                 <ion-button
                   expand="block"
@@ -655,7 +655,7 @@
                   (click)="manageSchedule()"
                 >
                   <ion-icon name="calendar" slot="start"></ion-icon>
-                  Manage Schedule
+                  {{ 'studio_management.manage_schedule' | translate }}
                 </ion-button>
                 <ion-button
                   expand="block"
@@ -663,7 +663,7 @@
                   (click)="studioSettings()"
                 >
                   <ion-icon name="settings" slot="start"></ion-icon>
-                  Studio Settings
+                  {{ 'studio_management.studio_settings' | translate }}
                 </ion-button>
               </ion-card-content>
             </ion-card>
@@ -680,7 +680,7 @@
   <div class="loading-state">
     <ion-card>
       <ion-card-content>
-        <p>Loading studio information...</p>
+        <p>{{ 'studio_management.loading' | translate }}</p>
       </ion-card-content>
     </ion-card>
   </div>
@@ -689,8 +689,8 @@
   <!-- Alert for confirmations -->
   <ion-alert
     [isOpen]="isAlertOpen()"
-    header="Confirm Action"
-    message="Are you sure you want to remove this instructor?"
+    [header]="'studio_management.confirm_action' | translate"
+    [message]="'studio_management.confirm_remove_instructor' | translate"
     [buttons]="alertButtons"
     (didDismiss)="isAlertOpen.set(false)"
   >
@@ -714,7 +714,7 @@
       <ion-header>
         <ion-toolbar>
           <ion-title
-            >{{ isEditingInstructor() ? 'Edit Instructor' : 'Add New Instructor'
+            >{{ isEditingInstructor() ? ('studio_management.edit_instructor' | translate) : ('studio_management.add_new_instructor' | translate)
             }}</ion-title
           >
           <ion-buttons slot="end">
@@ -729,20 +729,20 @@
         <form (ngSubmit)="saveInstructor()">
           <!-- Basic Information -->
           <div class="form-section">
-            <h3>Basic Information</h3>
+            <h3>{{ 'studio_management.basic_information' | translate }}</h3>
 
             <ion-item>
-              <ion-label position="stacked">Full Name *</ion-label>
+              <ion-label position="stacked">{{ 'studio_management.full_name' | translate }}</ion-label>
               <ion-input
                 [(ngModel)]="newInstructor.name"
                 name="name"
-                placeholder="e.g., John Smith"
+                [placeholder]="'studio_management.full_name_placeholder' | translate"
                 required
               ></ion-input>
             </ion-item>
 
             <ion-item>
-              <ion-label position="stacked">Title</ion-label>
+              <ion-label position="stacked">{{ 'studio_management.title' | translate }}</ion-label>
               <ion-select [(ngModel)]="newInstructor.title" name="title">
                 @for (title of instructorTitles; track title) {
                 <ion-select-option [value]="title">
@@ -753,11 +753,11 @@
             </ion-item>
 
             <ion-item>
-              <ion-label position="stacked">Rank</ion-label>
+              <ion-label position="stacked">{{ 'studio_management.rank' | translate }}</ion-label>
               <ion-select
                 [(ngModel)]="newInstructor.rank"
                 name="rank"
-                placeholder="Select rank"
+                [placeholder]="'studio_management.rank_placeholder' | translate"
               >
                 @for (rank of ranks; track rank) {
                 <ion-select-option [value]="rank">
@@ -768,64 +768,64 @@
             </ion-item>
 
             <ion-item>
-              <ion-label position="stacked">Experience</ion-label>
+              <ion-label position="stacked">{{ 'studio_management.experience' | translate }}</ion-label>
               <ion-input
                 [(ngModel)]="newInstructor.experience"
                 name="experience"
-                placeholder="e.g., 15+ years"
+                [placeholder]="'studio_management.experience_placeholder' | translate"
               ></ion-input>
             </ion-item>
           </div>
 
           <!-- Contact Information -->
           <div class="form-section">
-            <h3>Contact Information</h3>
+            <h3>{{ 'studio_management.contact_information' | translate }}</h3>
 
             <ion-item>
-              <ion-label position="stacked">Email</ion-label>
+              <ion-label position="stacked">{{ 'studio_management.email' | translate }}</ion-label>
               <ion-input
                 [(ngModel)]="newInstructor.email"
                 name="email"
                 type="email"
-                placeholder="instructor@example.com"
+                [placeholder]="'studio_management.email_placeholder' | translate"
               ></ion-input>
             </ion-item>
 
             <ion-item>
-              <ion-label position="stacked">Phone</ion-label>
+              <ion-label position="stacked">{{ 'studio_management.phone' | translate }}</ion-label>
               <ion-input
                 [(ngModel)]="newInstructor.phone"
                 name="phone"
                 type="tel"
-                placeholder="(555) 123-4567"
+                [placeholder]="'studio_management.phone_placeholder' | translate"
               ></ion-input>
             </ion-item>
           </div>
 
           <!-- Bio -->
           <div class="form-section">
-            <h3>Biography</h3>
+            <h3>{{ 'studio_management.biography' | translate }}</h3>
 
             <ion-item>
-              <ion-label position="stacked">Bio</ion-label>
+              <ion-label position="stacked">{{ 'studio_management.bio' | translate }}</ion-label>
               <ion-textarea
                 [(ngModel)]="newInstructor.bio"
                 name="bio"
                 rows="4"
-                placeholder="Brief biography and background..."
+                [placeholder]="'studio_management.bio_placeholder' | translate"
               ></ion-textarea>
             </ion-item>
           </div>
 
           <!-- Specialties -->
           <div class="form-section">
-            <h3>Specialties</h3>
+            <h3>{{ 'studio_management.specialties' | translate }}</h3>
 
             <ion-item>
-              <ion-label position="stacked">Add Specialty</ion-label>
+              <ion-label position="stacked">{{ 'studio_management.add_specialty' | translate }}</ion-label>
               <ion-select
                 (ionChange)="onSpecialtyChange($event)"
-                placeholder="Select specialties"
+                [placeholder]="'studio_management.add_specialty_placeholder' | translate"
               >
                 @for (specialty of commonSpecialties; track specialty) {
                 <ion-select-option [value]="specialty">
@@ -853,13 +853,13 @@
 
           <!-- Certifications -->
           <div class="form-section">
-            <h3>Certifications</h3>
+            <h3>{{ 'studio_management.certifications' | translate }}</h3>
 
             <ion-item>
-              <ion-label position="stacked">Add Certification</ion-label>
+              <ion-label position="stacked">{{ 'studio_management.add_certification' | translate }}</ion-label>
               <ion-select
                 (ionChange)="onCertificationChange($event)"
-                placeholder="Select certifications"
+                [placeholder]="'studio_management.add_certification_placeholder' | translate"
               >
                 @for (cert of commonCertifications; track cert) {
                 <ion-select-option [value]="cert">
@@ -892,21 +892,21 @@
                 [(ngModel)]="newInstructor.isActive"
                 name="isActive"
               ></ion-checkbox>
-              <ion-label class="ion-margin-start">Active Instructor</ion-label>
+              <ion-label class="ion-margin-start">{{ 'studio_management.active_instructor' | translate }}</ion-label>
             </ion-item>
           </div>
 
           <!-- Action Buttons -->
           <div class="modal-actions">
             <ion-button expand="block" type="submit" color="primary">
-              {{ isEditingInstructor() ? 'Update Instructor' : 'Add Instructor' }}
+              {{ isEditingInstructor() ? ('studio_management.update_instructor' | translate) : ('studio_management.add_instructor' | translate) }}
             </ion-button>
             <ion-button
               expand="block"
               fill="outline"
               (click)="closeInstructorModal()"
             >
-              Cancel
+              {{ 'studio_management.cancel' | translate }}
             </ion-button>
           </div>
         </form>
@@ -920,7 +920,7 @@
       <ion-header>
         <ion-toolbar>
           <ion-title
-            >{{ isEditingClass() ? 'Edit Class' : 'Add New Class' }}</ion-title
+            >{{ isEditingClass() ? ('studio_management.edit_class' | translate) : ('studio_management.add_new_class' | translate) }}</ion-title
           >
           <ion-buttons slot="end">
             <ion-button (click)="closeClassModal()">
@@ -934,21 +934,21 @@
         <form (ngSubmit)="saveClass()">
           <!-- Basic Information -->
           <ion-item>
-            <ion-label position="stacked">Class Title *</ion-label>
+            <ion-label position="stacked">{{ 'studio_management.class_title' | translate }}</ion-label>
             <ion-input
               [(ngModel)]="newClass.title"
               name="title"
-              placeholder="e.g., Adult Aikido"
+              [placeholder]="'studio_management.class_title_placeholder' | translate"
               required
             ></ion-input>
           </ion-item>
 
           <ion-item>
-            <ion-label position="stacked">Instructor *</ion-label>
+            <ion-label position="stacked">{{ 'studio_management.instructor' | translate }}</ion-label>
             <ion-select
               [(ngModel)]="newClass.instructor"
               name="instructor"
-              placeholder="Select Instructor"
+              [placeholder]="'studio_management.instructor_placeholder' | translate"
             >
               @for (instructor of studio?.instructors; track instructor) {
               <ion-select-option [value]="instructor.name">
@@ -959,11 +959,11 @@
           </ion-item>
 
           <ion-item>
-            <ion-label position="stacked">Location</ion-label>
+            <ion-label position="stacked">{{ 'studio_management.class_location' | translate }}</ion-label>
             <ion-input
               [(ngModel)]="newClass.location"
               name="location"
-              placeholder="e.g., Main Dojo"
+              [placeholder]="'studio_management.class_location_placeholder' | translate"
             ></ion-input>
           </ion-item>
 
@@ -972,7 +972,7 @@
             <ion-row>
               <ion-col size="6">
                 <ion-item>
-                  <ion-label position="stacked">Start Time *</ion-label>
+                  <ion-label position="stacked">{{ 'studio_management.start_time' | translate }}</ion-label>
                   <ion-input
                     [(ngModel)]="newClass.startTime"
                     name="startTime"
@@ -983,7 +983,7 @@
               </ion-col>
               <ion-col size="6">
                 <ion-item>
-                  <ion-label position="stacked">End Time *</ion-label>
+                  <ion-label position="stacked">{{ 'studio_management.end_time' | translate }}</ion-label>
                   <ion-input
                     [(ngModel)]="newClass.endTime"
                     name="endTime"
@@ -1001,14 +1001,14 @@
               [(ngModel)]="newClass.isRecurring"
               name="isRecurring"
             ></ion-checkbox>
-            <ion-label class="ion-margin-start">Recurring Class</ion-label>
+            <ion-label class="ion-margin-start">{{ 'studio_management.recurring_class' | translate }}</ion-label>
           </ion-item>
 
           <!-- One-time date -->
           @if (!newClass.isRecurring) {
           <div>
             <ion-item>
-              <ion-label position="stacked">Date *</ion-label>
+              <ion-label position="stacked">{{ 'studio_management.date' | translate }}</ion-label>
               <ion-input
                 [(ngModel)]="newClass.date"
                 name="date"
@@ -1023,7 +1023,7 @@
           @if (newClass.isRecurring) {
           <div class="days-selection">
             <ion-item>
-              <ion-label position="stacked">Days of Week *</ion-label>
+              <ion-label position="stacked">{{ 'studio_management.days_of_week' | translate }}</ion-label>
             </ion-item>
             <div class="days-grid">
               <div class="day-buttons">
@@ -1045,26 +1045,26 @@
 
           <!-- Description -->
           <ion-item>
-            <ion-label position="stacked">Description</ion-label>
+            <ion-label position="stacked">{{ 'studio_management.class_description' | translate }}</ion-label>
             <ion-textarea
               [(ngModel)]="newClass.description"
               name="description"
               rows="3"
-              placeholder="Class description..."
+              [placeholder]="'studio_management.class_desc_placeholder' | translate"
             ></ion-textarea>
           </ion-item>
 
           <!-- Action Buttons -->
           <div class="modal-actions">
             <ion-button expand="block" type="submit" color="primary">
-              {{ isEditingClass() ? 'Update Class' : 'Add Class' }}
+              {{ isEditingClass() ? ('studio_management.update_class' | translate) : ('studio_management.add_class' | translate) }}
             </ion-button>
             <ion-button
               expand="block"
               fill="outline"
               (click)="closeClassModal()"
             >
-              Cancel
+              {{ 'studio_management.cancel' | translate }}
             </ion-button>
           </div>
         </form>

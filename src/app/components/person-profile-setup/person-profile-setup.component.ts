@@ -1,6 +1,7 @@
 import { Component, OnInit, input, signal } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import {
   IonModal,
   IonHeader,
@@ -34,6 +35,7 @@ import { getCurrentUser } from 'aws-amplify/auth';
   styleUrls: ['./person-profile-setup.component.scss'],
   imports: [
     FormsModule,
+    TranslateModule,
     IonModal,
     IonHeader,
     IonToolbar,
