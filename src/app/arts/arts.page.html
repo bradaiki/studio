@@ -51,8 +51,8 @@
     <div class="results-info">
       <ion-text color="medium">
         <p>
-          {{ (filteredArts.length === 1 ? 'arts.results' :
-          'arts.results_plural') | translate: {count: filteredArts.length} }}
+          {{ (filteredArts().length === 1 ? 'arts.results' :
+          'arts.results_plural') | translate: {count: filteredArts().length} }}
         </p>
       </ion-text>
     </div>
@@ -60,7 +60,7 @@
     <!-- Arts Grid -->
     <ion-grid class="arts-grid">
       <ion-row>
-        @for (art of displayedArts; track trackByArtId($index, art)) {
+        @for (art of displayedArts(); track trackByArtId($index, art)) {
         <ion-col size="12" size-md="6" size-lg="4">
           <ion-card class="art-card" (click)="onArtClick(art)">
             <div class="art-image">
@@ -146,7 +146,7 @@
     </ion-infinite-scroll>
 
     <!-- Empty State -->
-    @if (filteredArts.length === 0) {
+    @if (filteredArts().length === 0) {
     <div class="empty-state">
       <ion-icon name="search" color="medium"></ion-icon>
       <h3>

@@ -1,5 +1,5 @@
 <!-- Hidden Post Placeholder -->
-@if (post.isHidden) {
+@if (post().isHidden) {
   <ion-card class="hidden-post">
     <ion-card-content>
       <div class="hidden-content">
@@ -13,10 +13,10 @@
 }
 
 <!-- Normal Post (when not hidden) -->
-@if (!post.isHidden) {
-  <ion-card [class.reported-post]="post.isReported">
+@if (!post().isHidden) {
+  <ion-card [class.reported-post]="post().isReported">
     <!-- Moderation Warning (if reported) -->
-    @if (post.isReported) {
+    @if (post().isReported) {
       <div class="moderation-warning">
         <ion-icon name="flag" color="warning"></ion-icon>
         <ion-text color="warning">
@@ -28,13 +28,13 @@
     <ion-card-header>
       <ion-item lines="none" class="post-header">
         <ion-avatar slot="start" (click)="onProfileClick($event)" class="clickable-avatar">
-          <img [src]="post.author.avatar" [alt]="post.author.name" />
+          <img [src]="post().author.avatar" [alt]="post().author.name" />
         </ion-avatar>
         <ion-label>
           <div class="author-info">
             <h3 (click)="onProfileClick($event)" class="clickable-name">
-              {{ post.author.name }}
-              @if (post.author.verified) {
+              {{ post().author.name }}
+              @if (post().author.verified) {
                 <ion-icon
                   name="checkmark-circle"
                   color="primary"
@@ -56,11 +56,11 @@
                   {{ 'post_component.studio_mate' | translate }}
                 </ion-badge>
               }
-              <span class="username">@{{ post.author.username }}</span>
-              <span class="timestamp">{{ getTimeAgo(post.timestamp) }}</span>
+              <span class="username">@{{ post().author.username }}</span>
+              <span class="timestamp">{{ getTimeAgo(post().timestamp) }}</span>
             </div>
-            @if (post.author.location) {
-              <p class="location">{{ post.author.location }}</p>
+            @if (post().author.location) {
+              <p class="location">{{ post().author.location }}</p>
             }
           </div>
         </ion-label>
@@ -72,34 +72,34 @@
     <!-- Post Content -->
     <ion-card-content>
       <ion-text>
-        <p class="post-content">{{ post.content }}</p>
+        <p class="post-content">{{ post().content }}</p>
       </ion-text>
       <!-- Post Image (if exists) -->
-      @if (post.image) {
+      @if (post().image) {
         <div class="post-image">
-          <img [src]="post.image" [alt]="'Post by ' + post.author.name" />
+          <img [src]="post().image" [alt]="'Post by ' + post().author.name" />
         </div>
       }
       <!-- Post Type Badge -->
-      @if (post.postType) {
+      @if (post().postType) {
         <div class="post-type">
           <ion-chip [color]="getPostTypeColor()" outline="true" class="post-type-chip">
-            {{ post.postType | titlecase }}
+            {{ post().postType | titlecase }}
           </ion-chip>
         </div>
       }
       <!-- Related Entity -->
-      @if (post.relatedEntity) {
+      @if (post().relatedEntity) {
         <div class="related-entity">
           <ion-text color="medium">
-            <small>Related to: {{ post.relatedEntity.name }}</small>
+            <small>Related to: {{ post().relatedEntity!.name }}</small>
           </ion-text>
         </div>
       }
       <!-- Tags -->
-      @if (post.tags && post.tags.length > 0) {
+      @if (post().tags && post().tags!.length > 0) {
         <div class="post-tags">
-          @for (tag of post.tags; track tag) {
+          @for (tag of post().tags; track tag) {
             <ion-chip color="primary" outline="true">
               #{{ tag }}
             </ion-chip>
@@ -111,17 +111,17 @@
         <ion-button
           fill="clear"
           size="small"
-          [color]="post.isLiked ? 'danger' : 'medium'"
+          [color]="post().isLiked ? 'danger' : 'medium'"
           (click)="onLike()">
           <ion-icon
-            [name]="post.isLiked ? 'heart' : 'heart-outline'"
+            [name]="post().isLiked ? 'heart' : 'heart-outline'"
             slot="start">
           </ion-icon>
-          {{ post.likes }}
+          {{ post().likes }}
         </ion-button>
         <ion-button fill="clear" size="small" color="medium" (click)="onComment()">
           <ion-icon name="chatbubble-outline" slot="start"></ion-icon>
-          {{ post.comments }}
+          {{ post().comments }}
         </ion-button>
         <ion-button fill="clear" size="small" color="medium" (click)="onShare()">
           <ion-icon name="share-outline" slot="start"></ion-icon>

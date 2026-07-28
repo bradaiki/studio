@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, input, OnInit, OnDestroy } from '@angular/core';
 
 import {
   ReactiveFormsModule,
@@ -70,8 +70,8 @@ export interface ErrorMessageMapping {
   ],
 })
 export class SimpleStudioJoinComponent implements OnInit, OnDestroy {
-  @Input() studioId!: string;
-  @Input() studioName?: string;
+  studioId = input.required<string>();
+  studioName = input<string>();
 
   joinForm!: FormGroup;
   isSubmitting = false;
@@ -153,18 +153,18 @@ export class SimpleStudioJoinComponent implements OnInit, OnDestroy {
   ngOnInit() {
     console.log(
       'SimpleStudioJoinComponent initializing for studio:',
-      this.studioId,
+      this.studioId(),
     );
 
-    if (!this.studioId) {
+    if (!this.studioId()) {
       console.error('No studioId provided to SimpleStudioJoinComponent');
       this.errors.general = 'Studio ID is required';
       return;
     }
 
     // Validate studio ID format for security
-    if (!this.validateStudioIdFormat(this.studioId)) {
-      console.error('Invalid studio ID format provided:', this.studioId);
+    if (!this.validateStudioIdFormat(this.studioId())) {
+      console.error('Invalid studio ID format provided:', this.studioId());
       this.errors.general = 'Invalid studio ID format';
       return;
     }
@@ -555,13 +555,13 @@ export class SimpleStudioJoinComponent implements OnInit, OnDestroy {
       );
 
       console.log('[SimpleStudioJoin] Submitting join request:', {
-        studioId: this.studioId,
+        studioId: this.studioId(),
         userName,
         message,
       });
 
       await this.studioMembershipService.requestToJoin({
-        studioId: this.studioId,
+        studioId: this.studioId(),
         message: message || undefined,
       });
 
@@ -569,7 +569,7 @@ export class SimpleStudioJoinComponent implements OnInit, OnDestroy {
       await loading.dismiss();
 
       // Enhanced success feedback with more detailed message
-      const successMessage = `Join request sent successfully! You will be notified when an instructor reviews your request for ${this.studioName || 'this studio'}.`;
+      const successMessage = `Join request sent successfully! You will be notified when an instructor reviews your request for ${this.studioName() || 'this studio'}.`;
 
       await this.showSuccessToast(successMessage);
 

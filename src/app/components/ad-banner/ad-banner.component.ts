@@ -1,6 +1,7 @@
 import {
   Component,
-  Input,
+  input,
+  signal,
   OnInit,
   OnDestroy,
   AfterViewInit,
@@ -17,34 +18,34 @@ import { environment } from '../../../environments/environment';
   standalone: true,
   imports: [CommonModule],
   template: `
-    @if (showAds) {
-      <div class="ad-container" [ngClass]="'ad-' + format">
+    @if (showAds()) {
+      <div class="ad-container" [ngClass]="'ad-' + format()">
         <div class="ad-label">Advertisement</div>
         <div class="ad-slot" #adContainer>
           <!-- Real AdSense ad (only rendered in production with valid config) -->
-          @if (isProduction && hasValidConfig) {
+          @if (isProduction && hasValidConfig()) {
             <ins
               class="adsbygoogle"
               [style.display]="'block'"
               [style.width]="'100%'"
-              [style.height]="format === 'banner' ? '90px' : '250px'"
-              [attr.data-ad-client]="adClient"
-              [attr.data-ad-slot]="adSlotId"
+              [style.height]="format() === 'banner' ? '90px' : '250px'"
+              [attr.data-ad-client]="adClient()"
+              [attr.data-ad-slot]="adSlotId()"
               [attr.data-ad-format]="
-                format === 'banner' ? 'horizontal' : 'auto'
+                format() === 'banner' ? 'horizontal' : 'auto'
               "
               [attr.data-full-width-responsive]="'true'"
             >
             </ins>
           }
           <!-- Placeholder shown in development or when AdSense isn't configured -->
-          @if (!isProduction || !hasValidConfig) {
+          @if (!isProduction || !hasValidConfig()) {
             <div class="ad-placeholder">
               <div class="placeholder-icon">📢</div>
               <div class="placeholder-text">Ad Space</div>
               <div class="placeholder-subtext">
                 {{
-                  format === 'banner' ? '320×50 Banner' : '300×250 Rectangle'
+                  format() === 'banner' ? '320×50 Banner' : '300×250 Rectangle'
                 }}
               </div>
             </div>
@@ -125,37 +126,37 @@ export class AdBannerComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('adContainer') adContainer!: ElementRef;
 
   /** Your AdSense publisher ID (ca-pub-XXXXXXXXXXXXXXXX) */
-  @Input() adClient = '';
+  adClient = input('');
 
   /** The ad unit slot ID */
-  @Input() adSlotId = '';
+  adSlotId = input('');
 
   /** Ad format: 'banner' for thin horizontal, 'rectangle' for in-feed */
-  @Input() format: 'banner' | 'rectangle' = 'banner';
+  format = input<'banner' | 'rectangle'>('banner');
 
-  showAds = true;
+  showAds = signal(true);
   isProduction = environment.production;
-  hasValidConfig = false;
+  hasValidConfig = signal(false);
   private subscription?: Subscription;
 
   constructor(private subscriptionService: SubscriptionService) {}
 
   ngOnInit(): void {
-    this.showAds = this.subscriptionService.shouldShowAds();
-    this.hasValidConfig = !!(
-      this.adClient &&
-      this.adSlotId &&
-      !this.adClient.includes('XXXX') &&
-      this.adSlotId !== '1234567890'
-    );
+    this.showAds.set(this.subscriptionService.shouldShowAds());
+    this.hasValidConfig.set(!!(
+      this.adClient() &&
+      this.adSlotId() &&
+      !this.adClient().includes('XXXX') &&
+      this.adSlotId() !== '1234567890'
+    ));
 
     this.subscription = this.subscriptionService.status$.subscribe(() => {
-      this.showAds = this.subscriptionService.shouldShowAds();
+      this.showAds.set(this.subscriptionService.shouldShowAds());
     });
   }
 
   ngAfterViewInit(): void {
-    if (this.showAds && this.isProduction && this.hasValidConfig) {
+    if (this.showAds() && this.isProduction && this.hasValidConfig()) {
       this.loadAd();
     }
   }

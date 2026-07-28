@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -78,12 +78,12 @@ import {
   ]
 })
 export class ArtManagementPage implements OnInit {
-  art: Art | null = null;
+  art = signal<Art | null>(null);
   editedArt: Partial<Art> = {};
   selectedSegment: string = 'basic';
   isToastOpen = false;
   toastMessage = '';
-  hasUnsavedChanges = false;
+  hasUnsavedChanges = signal(false);
 
   // Form options
   categories = [
@@ -146,7 +146,7 @@ export class ArtManagementPage implements OnInit {
     if (foundArt) {
       // Check if current user is authorized to manage this art
       if (this.artsService.canUserEditArt(foundArt)) {
-        this.art = foundArt;
+        this.art.set(foundArt);
         this.initializeEditedArt();
       } else {
         this.showToast('You are not authorized to manage this art. Only the owner can edit.');
@@ -159,23 +159,24 @@ export class ArtManagementPage implements OnInit {
   }
 
   private initializeEditedArt() {
-    if (!this.art) return;
+    const currentArt = this.art();
+    if (!currentArt) return;
     
     this.editedArt = {
-      name: this.art.name,
-      description: this.art.description,
-      shortDescription: this.art.shortDescription,
-      image: this.art.image,
-      category: this.art.category,
-      origin: this.art.origin,
-      philosophy: this.art.philosophy,
-      benefits: [...(this.art.benefits || [])],
-      techniques: [...(this.art.techniques || [])],
-      equipment: [...(this.art.equipment || [])],
-      difficulty: this.art.difficulty,
-      physicalDemands: this.art.physicalDemands,
-      mentalAspects: [...(this.art.mentalAspects || [])],
-      isPublic: this.art.isPublic !== undefined ? this.art.isPublic : false // Default to false if undefined
+      name: currentArt.name,
+      description: currentArt.description,
+      shortDescription: currentArt.shortDescription,
+      image: currentArt.image,
+      category: currentArt.category,
+      origin: currentArt.origin,
+      philosophy: currentArt.philosophy,
+      benefits: [...(currentArt.benefits || [])],
+      techniques: [...(currentArt.techniques || [])],
+      equipment: [...(currentArt.equipment || [])],
+      difficulty: currentArt.difficulty,
+      physicalDemands: currentArt.physicalDemands,
+      mentalAspects: [...(currentArt.mentalAspects || [])],
+      isPublic: currentArt.isPublic !== undefined ? currentArt.isPublic : false // Default to false if undefined
     };
   }
 
@@ -184,7 +185,7 @@ export class ArtManagementPage implements OnInit {
   }
 
   onFieldChange() {
-    this.hasUnsavedChanges = true;
+    this.hasUnsavedChanges.set(true);
   }
 
   // Array management methods
@@ -193,14 +194,14 @@ export class ArtManagementPage implements OnInit {
       if (!this.editedArt.benefits) this.editedArt.benefits = [];
       this.editedArt.benefits.push(this.newBenefit.trim());
       this.newBenefit = '';
-      this.hasUnsavedChanges = true;
+      this.hasUnsavedChanges.set(true);
     }
   }
 
   removeBenefit(index: number) {
     if (this.editedArt.benefits) {
       this.editedArt.benefits.splice(index, 1);
-      this.hasUnsavedChanges = true;
+      this.hasUnsavedChanges.set(true);
     }
   }
 
@@ -209,14 +210,14 @@ export class ArtManagementPage implements OnInit {
       if (!this.editedArt.techniques) this.editedArt.techniques = [];
       this.editedArt.techniques.push(this.newTechnique.trim());
       this.newTechnique = '';
-      this.hasUnsavedChanges = true;
+      this.hasUnsavedChanges.set(true);
     }
   }
 
   removeTechnique(index: number) {
     if (this.editedArt.techniques) {
       this.editedArt.techniques.splice(index, 1);
-      this.hasUnsavedChanges = true;
+      this.hasUnsavedChanges.set(true);
     }
   }
 
@@ -225,14 +226,14 @@ export class ArtManagementPage implements OnInit {
       if (!this.editedArt.equipment) this.editedArt.equipment = [];
       this.editedArt.equipment.push(this.newEquipment.trim());
       this.newEquipment = '';
-      this.hasUnsavedChanges = true;
+      this.hasUnsavedChanges.set(true);
     }
   }
 
   removeEquipment(index: number) {
     if (this.editedArt.equipment) {
       this.editedArt.equipment.splice(index, 1);
-      this.hasUnsavedChanges = true;
+      this.hasUnsavedChanges.set(true);
     }
   }
 
@@ -241,29 +242,29 @@ export class ArtManagementPage implements OnInit {
       if (!this.editedArt.mentalAspects) this.editedArt.mentalAspects = [];
       this.editedArt.mentalAspects.push(this.newMentalAspect.trim());
       this.newMentalAspect = '';
-      this.hasUnsavedChanges = true;
+      this.hasUnsavedChanges.set(true);
     }
   }
 
   removeMentalAspect(index: number) {
     if (this.editedArt.mentalAspects) {
       this.editedArt.mentalAspects.splice(index, 1);
-      this.hasUnsavedChanges = true;
+      this.hasUnsavedChanges.set(true);
     }
   }
 
   async saveChanges() {
-    if (!this.art || !this.validateForm()) {
+    if (!this.art() || !this.validateForm()) {
       return;
     }
 
     try {
       // Update the art with edited values
-      const updatedArt = await this.artsService.updateArt(this.art.id, this.editedArt);
+      const updatedArt = await this.artsService.updateArt(this.art()!.id, this.editedArt);
       
       if (updatedArt) {
-        this.art = updatedArt;
-        this.hasUnsavedChanges = false;
+        this.art.set(updatedArt);
+        this.hasUnsavedChanges.set(false);
         this.showToast('Changes saved successfully');
       } else {
         throw new Error('Update returned null');
@@ -275,7 +276,7 @@ export class ArtManagementPage implements OnInit {
   }
 
   async discardChanges() {
-    if (!this.hasUnsavedChanges) {
+    if (!this.hasUnsavedChanges()) {
       this.goBack();
       return;
     }
@@ -293,7 +294,7 @@ export class ArtManagementPage implements OnInit {
           role: 'destructive',
           handler: () => {
             this.initializeEditedArt();
-            this.hasUnsavedChanges = false;
+            this.hasUnsavedChanges.set(false);
             this.goBack();
           }
         }
@@ -332,8 +333,8 @@ export class ArtManagementPage implements OnInit {
   }
 
   goBack() {
-    if (this.art) {
-      this.router.navigate(['/dash/art', this.art.id]);
+    if (this.art()) {
+      this.router.navigate(['/dash/art', this.art()!.id]);
     } else {
       this.router.navigate(['/dash/arts']);
     }

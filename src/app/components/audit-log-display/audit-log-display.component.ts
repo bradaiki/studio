@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit, input, signal } from '@angular/core';
 
 import { IonicModule } from '@ionic/angular';
 import { RequestAuditEntry } from '../../models/instructor-join-review.models';
@@ -17,13 +17,14 @@ import { RequestAuditService } from '../../services/request-audit.service';
   imports: [IonicModule],
 })
 export class AuditLogDisplayComponent implements OnInit {
-  @Input() requestId?: string;
-  @Input() studioId?: string;
-  @Input() showRequestColumn: boolean = false;
+  requestId = input<string | undefined>(undefined);
+  studioId = input<string | undefined>(undefined);
+  showRequestColumn = input(false);
 
-  auditEntries: RequestAuditEntry[] = [];
-  isLoading: boolean = false;
-  error: string | null = null;
+  auditEntries = signal<RequestAuditEntry[]>([]);
+  isLoading = signal(false);
+  error = signal<string | null>(null);
+  showRequestColumnOverride = signal<boolean | null>(null);
 
   constructor(private auditService: RequestAuditService) {}
 
@@ -35,34 +36,42 @@ export class AuditLogDisplayComponent implements OnInit {
    * Load audit entries based on input parameters
    */
   async loadAuditEntries(): Promise<void> {
-    if (!this.requestId && !this.studioId) {
-      this.error = 'Either requestId or studioId must be provided';
+    if (!this.requestId() && !this.studioId()) {
+      this.error.set('Either requestId or studioId must be provided');
       return;
     }
 
-    this.isLoading = true;
-    this.error = null;
+    this.isLoading.set(true);
+    this.error.set(null);
 
     try {
-      if (this.requestId) {
+      if (this.requestId()) {
         // Load audit trail for specific request
-        this.auditEntries = await this.auditService.getAuditTrailForRequest(
-          this.requestId,
-        );
-        this.showRequestColumn = false; // Single request, no need for request column
-      } else if (this.studioId) {
+        this.auditEntries.set(await this.auditService.getAuditTrailForRequest(
+          this.requestId()!,
+        ));
+        this.showRequestColumnOverride.set(false); // Single request, no need for request column
+      } else if (this.studioId()) {
         // Load audit trail for entire studio
-        this.auditEntries = await this.auditService.getAuditTrailForStudio(
-          this.studioId,
-        );
-        this.showRequestColumn = true; // Multiple requests, show request column
+        this.auditEntries.set(await this.auditService.getAuditTrailForStudio(
+          this.studioId()!,
+        ));
+        this.showRequestColumnOverride.set(true); // Multiple requests, show request column
       }
     } catch (error) {
       console.error('Error loading audit entries:', error);
-      this.error = 'Failed to load audit trail. Please try again.';
+      this.error.set('Failed to load audit trail. Please try again.');
     } finally {
-      this.isLoading = false;
+      this.isLoading.set(false);
     }
+  }
+
+  /**
+   * Determine whether to show the request column
+   */
+  shouldShowRequestColumn(): boolean {
+    const override = this.showRequestColumnOverride();
+    return override !== null ? override : this.showRequestColumn();
   }
 
   /**

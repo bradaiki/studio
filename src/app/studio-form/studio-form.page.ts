@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 
 import {
   FormBuilder,
@@ -77,12 +77,12 @@ import { add, remove, save, arrowBack } from 'ionicons/icons';
 })
 export class StudioFormPage implements OnInit {
   studioForm: FormGroup;
-  isEditMode = false;
-  studioId: string | null = null;
-  isSubmitting = false;
-  showDeleteAlert = false;
-  showToast = false;
-  toastMessage = '';
+  isEditMode = signal(false);
+  studioId = signal<string | null>(null);
+  isSubmitting = signal(false);
+  showDeleteAlert = signal(false);
+  showToast = signal(false);
+  toastMessage = signal('');
 
   deleteAlertButtons = [
     {
@@ -136,8 +136,8 @@ export class StudioFormPage implements OnInit {
   ngOnInit() {
     this.route.params.subscribe((params) => {
       if (params['id'] && params['id'] !== 'new') {
-        this.isEditMode = true;
-        this.studioId = params['id'];
+        this.isEditMode.set(true);
+        this.studioId.set(params['id']);
         this.loadStudio(params['id']);
       } else {
         this.addDefaultFormArrayItems();
@@ -383,14 +383,14 @@ export class StudioFormPage implements OnInit {
   }
 
   async onSubmit() {
-    if (this.studioForm.valid && !this.isSubmitting) {
-      this.isSubmitting = true;
+    if (this.studioForm.valid && !this.isSubmitting()) {
+      this.isSubmitting.set(true);
 
       try {
         const formValue = this.studioForm.value;
 
-        if (this.isEditMode && this.studioId) {
-          await this.studiosService.updateStudio(this.studioId, formValue);
+        if (this.isEditMode() && this.studioId()) {
+          await this.studiosService.updateStudio(this.studioId()!, formValue);
           this.showToastMessage('Studio updated successfully');
         } else {
           await this.studiosService.createStudio(formValue);
@@ -402,7 +402,7 @@ export class StudioFormPage implements OnInit {
         console.error('Error saving studio:', error);
         this.showToastMessage('Error saving studio. Please try again.');
       } finally {
-        this.isSubmitting = false;
+        this.isSubmitting.set(false);
       }
     } else {
       this.markFormGroupTouched(this.studioForm);
@@ -411,9 +411,9 @@ export class StudioFormPage implements OnInit {
   }
 
   async onDelete() {
-    if (this.isEditMode && this.studioId) {
+    if (this.isEditMode() && this.studioId()) {
       try {
-        await this.studiosService.removeStudio(this.studioId);
+        await this.studiosService.removeStudio(this.studioId()!);
         this.showToastMessage('Studio deleted successfully');
         this.router.navigate(['/dash/studios']);
       } catch (error) {
@@ -473,19 +473,19 @@ export class StudioFormPage implements OnInit {
   }
 
   private showToastMessage(message: string) {
-    this.toastMessage = message;
-    this.showToast = true;
+    this.toastMessage.set(message);
+    this.showToast.set(true);
   }
 
   onToastDismiss() {
-    this.showToast = false;
+    this.showToast.set(false);
   }
 
   onDeleteAlertDismiss() {
-    this.showDeleteAlert = false;
+    this.showDeleteAlert.set(false);
   }
 
   confirmDelete() {
-    this.showDeleteAlert = true;
+    this.showDeleteAlert.set(true);
   }
 }

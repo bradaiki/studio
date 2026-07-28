@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal } from '@angular/core';
 
 import {
   IonModal,
@@ -64,9 +64,9 @@ import { Subscription } from 'rxjs';
   ],
 })
 export class NotificationModalComponent implements OnInit, OnDestroy {
-  isOpen = false;
-  pendingInvitations: any[] = [];
-  systemNotifications: any[] = [];
+  isOpen = signal(false);
+  pendingInvitations = signal<any[]>([]);
+  systemNotifications = signal<any[]>([]);
   private subscriptions: Subscription[] = [];
   private checkInterval: any;
 
@@ -101,7 +101,7 @@ export class NotificationModalComponent implements OnInit, OnDestroy {
     const notifSub = this.notificationService
       .getNotifications()
       .subscribe((notifications) => {
-        this.systemNotifications = notifications.filter((n) => !n.read);
+        this.systemNotifications.set(notifications.filter((n) => !n.read));
         this.updateModalState();
       });
     this.subscriptions.push(notifSub);
@@ -135,16 +135,16 @@ export class NotificationModalComponent implements OnInit, OnDestroy {
         invitations.length,
         invitations,
       );
-      this.pendingInvitations = invitations;
+      this.pendingInvitations.set(invitations);
 
       // Get unread notifications
       const notifSub = this.notificationService
         .getNotifications()
         .subscribe((notifications) => {
-          this.systemNotifications = notifications.filter((n) => !n.read);
+          this.systemNotifications.set(notifications.filter((n) => !n.read));
           console.log(
             '[NotificationModal] Found system notifications:',
-            this.systemNotifications.length,
+            this.systemNotifications().length,
           );
           this.updateModalState();
         });
@@ -158,29 +158,29 @@ export class NotificationModalComponent implements OnInit, OnDestroy {
 
   updateModalState() {
     const hasPendingItems =
-      this.pendingInvitations.length > 0 || this.systemNotifications.length > 0;
+      this.pendingInvitations().length > 0 || this.systemNotifications().length > 0;
     console.log(
       '[NotificationModal] Update modal state - hasPendingItems:',
       hasPendingItems,
       'isOpen:',
-      this.isOpen,
+      this.isOpen(),
     );
 
     // Only auto-open if there are pending items and modal is not already open
-    if (hasPendingItems && !this.isOpen) {
+    if (hasPendingItems && !this.isOpen()) {
       console.log(
         '[NotificationModal] Opening modal with',
-        this.pendingInvitations.length,
+        this.pendingInvitations().length,
         'invitations and',
-        this.systemNotifications.length,
+        this.systemNotifications().length,
         'notifications',
       );
-      this.isOpen = true;
+      this.isOpen.set(true);
     }
   }
 
   get totalPendingCount(): number {
-    return this.pendingInvitations.length + this.systemNotifications.length;
+    return this.pendingInvitations().length + this.systemNotifications().length;
   }
 
   async acceptInvitation(invitationId: string) {
@@ -188,9 +188,9 @@ export class NotificationModalComponent implements OnInit, OnDestroy {
       await this.invitationService.acceptInvitation(invitationId);
 
       // Remove from local list
-      this.pendingInvitations = this.pendingInvitations.filter(
+      this.pendingInvitations.update(list => list.filter(
         (inv) => inv.id !== invitationId,
-      );
+      ));
 
       // Close modal if no more pending items
       if (this.totalPendingCount === 0) {
@@ -206,9 +206,9 @@ export class NotificationModalComponent implements OnInit, OnDestroy {
       await this.invitationService.declineInvitation(invitationId);
 
       // Remove from local list
-      this.pendingInvitations = this.pendingInvitations.filter(
+      this.pendingInvitations.update(list => list.filter(
         (inv) => inv.id !== invitationId,
-      );
+      ));
 
       // Close modal if no more pending items
       if (this.totalPendingCount === 0) {
@@ -221,9 +221,9 @@ export class NotificationModalComponent implements OnInit, OnDestroy {
 
   ignoreInvitation(invitationId: string) {
     // Just remove from display, don't decline
-    this.pendingInvitations = this.pendingInvitations.filter(
+    this.pendingInvitations.update(list => list.filter(
       (inv) => inv.id !== invitationId,
-    );
+    ));
 
     // Close modal if no more pending items
     if (this.totalPendingCount === 0) {
@@ -236,9 +236,9 @@ export class NotificationModalComponent implements OnInit, OnDestroy {
     this.notificationService.markAsRead(notification.id);
 
     // Remove from local list
-    this.systemNotifications = this.systemNotifications.filter(
+    this.systemNotifications.update(list => list.filter(
       (n) => n.id !== notification.id,
-    );
+    ));
 
     // Navigate if there's an action URL
     if (notification.actionUrl) {
@@ -258,9 +258,9 @@ export class NotificationModalComponent implements OnInit, OnDestroy {
     this.notificationService.markAsRead(notificationId);
 
     // Remove from local list
-    this.systemNotifications = this.systemNotifications.filter(
+    this.systemNotifications.update(list => list.filter(
       (n) => n.id !== notificationId,
-    );
+    ));
 
     // Close modal if no more pending items
     if (this.totalPendingCount === 0) {
@@ -269,7 +269,7 @@ export class NotificationModalComponent implements OnInit, OnDestroy {
   }
 
   closeModal() {
-    this.isOpen = false;
+    this.isOpen.set(false);
   }
 
   formatTime(timestamp: Date): string {

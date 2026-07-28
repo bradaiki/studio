@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -73,20 +73,21 @@ import { search, leafOutline, shieldOutline, constructOutline, checkmarkCircle, 
   ],
 })
 export class ArtsPage implements OnInit {
+  // Keep as regular properties - used with [(ngModel)]
   searchTerm: string = '';
   selectedCategory: string = 'my-arts';
   
-  arts: Art[] = [];
-  filteredArts: Art[] = [];
-  displayedArts: Art[] = [];
+  // Convert to signals
+  arts = signal<Art[]>([]);
+  filteredArts = signal<Art[]>([]);
+  displayedArts = signal<Art[]>([]);
+  isAuthenticated = signal(false);
   
   // Infinite scroll properties - separate state for each filter combination
   private pageSize = 12;
   private scrollStates = new Map<string, { page: number; displayed: Art[] }>();
   private currentFilterKey = '';
   private hasLoadedInitially = false;
-  
-  isAuthenticated = false;
 
   constructor(
     private router: Router,
@@ -99,36 +100,27 @@ export class ArtsPage implements OnInit {
 
   ngOnInit() {
     this.checkAuthentication();
-    this.loadArts(true); // Initial load from database
+    this.loadArts(true);
     
-    // Subscribe to data source changes and reload arts
     this.dataSourceService.dataSource$.subscribe(async (source) => {
       console.log('[Arts Page] Data source changed to:', source);
-      // Reload arts from the new data source
-      this.hasLoadedInitially = false; // Reset flag to force reload
+      this.hasLoadedInitially = false;
       await this.loadArts(true);
     });
   }
 
   async ionViewWillEnter() {
-    // Use the already-updated local state from the service
-    // Only refresh from database on initial load
     await this.loadArts(false);
   }
 
   private async loadArts(refreshFromDatabase: boolean = false) {
-    // Only refresh from database on initial load or when explicitly requested
     if (refreshFromDatabase && !this.hasLoadedInitially) {
       await this.artsService.refreshArtsFromAPI();
       this.hasLoadedInitially = true;
     }
     
-    // Use async method to get visibility-filtered arts from local state
-    // The local state is already up-to-date from toggleUserPracticing()
-    this.arts = await this.artsService.getAllArtsAsync();
-    // Clear scroll states to force refresh
+    this.arts.set(await this.artsService.getAllArtsAsync());
     this.scrollStates.clear();
-    // Filter and display
     await this.filterArts();
   }
 
@@ -143,18 +135,15 @@ export class ArtsPage implements OnInit {
   }
 
   async filterArts() {
-    let filtered = [...this.arts];
+    let filtered = [...this.arts()];
 
-    // Apply search filter
     if (this.searchTerm) {
       filtered = await this.artsService.searchArtsAsync(this.searchTerm);
     }
 
-    // Apply category filter
     if (this.selectedCategory !== 'all') {
       filtered = await this.artsService.getArtsByCategoryAsync(this.selectedCategory);
       
-      // If we have both search and category, combine them
       if (this.searchTerm) {
         const searchResults = await this.artsService.searchArtsAsync(this.searchTerm);
         const categoryResults = await this.artsService.getArtsByCategoryAsync(this.selectedCategory);
@@ -164,22 +153,17 @@ export class ArtsPage implements OnInit {
       }
     }
 
-    this.filteredArts = filtered;
+    this.filteredArts.set(filtered);
     
-    // Create unique key for this filter combination
     const filterKey = `${this.selectedCategory}:${this.searchTerm}`;
     
-    // Always reset state when filter changes or when we have new data
-    const filterChanged = filterKey !== this.currentFilterKey;
     this.currentFilterKey = filterKey;
     
-    // Reset or create state for this filter
-    const state = { page: 0, displayed: [] };
+    const state = { page: 0, displayed: [] as Art[] };
     this.scrollStates.set(filterKey, state);
     
-    // Load initial items
     this.loadInitialArts(state);
-    this.displayedArts = state.displayed;
+    this.displayedArts.set(state.displayed);
   }
 
   private loadInitialArts(state: { page: number; displayed: Art[] }) {
@@ -191,7 +175,7 @@ export class ArtsPage implements OnInit {
   private loadMoreArtsForState(state: { page: number; displayed: Art[] }) {
     const startIndex = state.page * this.pageSize;
     const endIndex = startIndex + this.pageSize;
-    const newArts = this.filteredArts.slice(startIndex, endIndex);
+    const newArts = this.filteredArts().slice(startIndex, endIndex);
     state.displayed = [...state.displayed, ...newArts];
     state.page++;
   }
@@ -201,19 +185,17 @@ export class ArtsPage implements OnInit {
       const state = this.scrollStates.get(this.currentFilterKey);
       if (state) {
         this.loadMoreArtsForState(state);
-        this.displayedArts = state.displayed;
+        this.displayedArts.set(state.displayed);
       }
       
       event.target.complete();
       
-      // Disable infinite scroll when all items are loaded
-      if (this.displayedArts.length >= this.filteredArts.length) {
+      if (this.displayedArts().length >= this.filteredArts().length) {
         event.target.disabled = true;
       }
     }, 500);
   }
 
-  // Event handlers for art cards
   onArtClick(art: Art) {
     console.log('Art clicked:', art.name);
     this.router.navigate(['/art', art.id]);
@@ -267,9 +249,9 @@ export class ArtsPage implements OnInit {
   private async checkAuthentication() {
     try {
       const session = await fetchAuthSession();
-      this.isAuthenticated = !!session.tokens;
+      this.isAuthenticated.set(!!session.tokens);
     } catch {
-      this.isAuthenticated = false;
+      this.isAuthenticated.set(false);
     }
   }
 
@@ -286,7 +268,6 @@ export class ArtsPage implements OnInit {
     });
     await toast.present();
     
-    // Reload arts with new data source
     await this.loadArts(true);
   }
 }

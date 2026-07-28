@@ -20,7 +20,7 @@
     <ion-chip color="primary" outline="true">
       <ion-icon name="home"></ion-icon>
       <ion-label
-        >{{ 'common.showing' | translate }}: {{ filteredEntityName }}</ion-label
+        >{{ 'common.showing' | translate }}: {{ filteredEntityName() }}</ion-label
       >
       <ion-button fill="clear" size="small" (click)="clearFilter()">
         <ion-icon name="close" slot="icon-only"></ion-icon>
@@ -77,13 +77,12 @@
   <!-- Studios List View -->
   @if (viewMode === 'list') {
   <div class="studios-container">
-    @for (studio of displayedStudios; track trackByStudioId($index, studio)) {
+    @for (studio of displayedStudios(); track trackByStudioId($index, studio)) {
     <div
       class="studio-item"
       [class.clickable]="filteredStudios.length > 1"
       (click)="onStudioClick(studio)"
     >
-      <!-- Two-column layout for studio info and chat -->
       @if (filteredStudios.length === 1) {
       <div class="studio-with-chat-layout">
         <div class="studio-info-column">
@@ -141,7 +140,6 @@
       >
       </app-studio>
       }
-      <!-- Compact studio view for multiple studios -->
     </div>
     }
   </div>

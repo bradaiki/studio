@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, input, signal, OnInit } from '@angular/core';
 
 import {
   IonCard,
@@ -43,11 +43,11 @@ import { StudioJoinRequest } from '../../models/studio-membership.models';
   ],
 })
 export class StudioJoinRequestsComponent implements OnInit {
-  @Input() studioId!: string;
+  studioId = input.required<string>();
 
-  joinRequests: StudioJoinRequest[] = [];
-  loading = false;
-  processingRequestId: string | null = null;
+  joinRequests = signal<StudioJoinRequest[]>([]);
+  loading = signal(false);
+  processingRequestId = signal<string | null>(null);
 
   constructor(
     private membershipService: StudioMembershipService,
@@ -61,31 +61,32 @@ export class StudioJoinRequestsComponent implements OnInit {
   }
 
   async loadJoinRequests() {
-    this.loading = true;
+    this.loading.set(true);
     try {
       console.log(
         '[StudioJoinRequests] Loading requests for studio:',
-        this.studioId,
+        this.studioId(),
       );
-      this.joinRequests = await this.membershipService.getStudioJoinRequests(
-        this.studioId,
+      const requests = await this.membershipService.getStudioJoinRequests(
+        this.studioId(),
       );
+      this.joinRequests.set(requests);
       console.log(
         '[StudioJoinRequests] Loaded',
-        this.joinRequests.length,
+        requests.length,
         'requests:',
-        this.joinRequests,
+        requests,
       );
     } catch (error) {
       console.error('[StudioJoinRequests] Failed to load requests:', error);
       await this.showToast('Failed to load join requests', 'danger');
     } finally {
-      this.loading = false;
+      this.loading.set(false);
     }
   }
 
   async approveRequest(request: StudioJoinRequest) {
-    this.processingRequestId = request.id;
+    this.processingRequestId.set(request.id);
     try {
       await this.membershipService.approveJoinRequest(request.id);
       await this.showToast(
@@ -97,12 +98,12 @@ export class StudioJoinRequestsComponent implements OnInit {
       console.error('[StudioJoinRequests] Failed to approve request:', error);
       await this.showToast('Failed to approve request', 'danger');
     } finally {
-      this.processingRequestId = null;
+      this.processingRequestId.set(null);
     }
   }
 
   async rejectRequest(request: StudioJoinRequest) {
-    this.processingRequestId = request.id;
+    this.processingRequestId.set(request.id);
     try {
       await this.membershipService.rejectJoinRequest(request.id);
       await this.showToast('Request rejected', 'warning');
@@ -111,7 +112,7 @@ export class StudioJoinRequestsComponent implements OnInit {
       console.error('[StudioJoinRequests] Failed to reject request:', error);
       await this.showToast('Failed to reject request', 'danger');
     } finally {
-      this.processingRequestId = null;
+      this.processingRequestId.set(null);
     }
   }
 

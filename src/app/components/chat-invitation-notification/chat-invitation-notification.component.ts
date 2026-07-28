@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, input, output, signal, OnInit } from '@angular/core';
 
 import { IonicModule, ToastController } from '@ionic/angular';
 
@@ -16,15 +16,15 @@ import { Chat } from '../../models/chat.models';
   imports: [IonicModule],
 })
 export class ChatInvitationNotificationComponent implements OnInit {
-  @Input() invitation!: ChatInvitation;
-  @Input() chatName?: string;
-  @Input() inviterName?: string;
-  @Output() invitationAccepted = new EventEmitter<ChatInvitation>();
-  @Output() invitationDeclined = new EventEmitter<ChatInvitation>();
+  invitation = input.required<ChatInvitation>();
+  chatName = input<string>();
+  inviterName = input<string>();
+  invitationAccepted = output<ChatInvitation>();
+  invitationDeclined = output<ChatInvitation>();
 
   // Component state
-  isProcessing = false;
-  isExpired = false;
+  isProcessing = signal(false);
+  isExpired = signal(false);
 
   constructor(
     private accessControlService: AccessControlService,
@@ -39,8 +39,8 @@ export class ChatInvitationNotificationComponent implements OnInit {
    * Check if invitation has expired
    */
   private checkExpiration() {
-    if (this.invitation.expiresAt) {
-      this.isExpired = this.invitation.expiresAt < new Date();
+    if (this.invitation().expiresAt) {
+      this.isExpired.set(this.invitation().expiresAt! < new Date());
     }
   }
 
@@ -49,27 +49,27 @@ export class ChatInvitationNotificationComponent implements OnInit {
    */
   async acceptInvitation() {
     if (
-      this.isProcessing ||
-      this.isExpired ||
-      this.invitation.status !== 'pending'
+      this.isProcessing() ||
+      this.isExpired() ||
+      this.invitation().status !== 'pending'
     ) {
       return;
     }
 
     try {
-      this.isProcessing = true;
+      this.isProcessing.set(true);
 
-      await this.accessControlService.acceptChatInvitation(this.invitation.id);
+      await this.accessControlService.acceptChatInvitation(this.invitation().id);
 
       // Update local state
-      this.invitation.status = 'accepted';
+      this.invitation().status = 'accepted';
 
       await this.showSuccessToast(
-        `Joined ${this.chatName || 'chat'} successfully!`,
+        `Joined ${this.chatName() || 'chat'} successfully!`,
       );
 
       // Emit event
-      this.invitationAccepted.emit(this.invitation);
+      this.invitationAccepted.emit(this.invitation());
     } catch (error: any) {
       console.error('Error accepting invitation:', error);
 
@@ -80,7 +80,7 @@ export class ChatInvitationNotificationComponent implements OnInit {
 
       await this.showErrorToast(errorMessage);
     } finally {
-      this.isProcessing = false;
+      this.isProcessing.set(false);
     }
   }
 
@@ -88,26 +88,26 @@ export class ChatInvitationNotificationComponent implements OnInit {
    * Decline the chat invitation
    */
   async declineInvitation() {
-    if (this.isProcessing || this.invitation.status !== 'pending') {
+    if (this.isProcessing() || this.invitation().status !== 'pending') {
       return;
     }
 
     try {
-      this.isProcessing = true;
+      this.isProcessing.set(true);
 
       // Note: In a full implementation, we'd have a declineInvitation method
       // For now, we'll just update the local state and emit the event
-      this.invitation.status = 'declined';
+      this.invitation().status = 'declined';
 
       await this.showSuccessToast('Invitation declined');
 
       // Emit event
-      this.invitationDeclined.emit(this.invitation);
+      this.invitationDeclined.emit(this.invitation());
     } catch (error: any) {
       console.error('Error declining invitation:', error);
       await this.showErrorToast('Failed to decline invitation');
     } finally {
-      this.isProcessing = false;
+      this.isProcessing.set(false);
     }
   }
 
@@ -115,31 +115,31 @@ export class ChatInvitationNotificationComponent implements OnInit {
    * Get the display name for the inviter
    */
   getInviterDisplayName(): string {
-    return this.inviterName || this.invitation.invitedBy || 'Someone';
+    return this.inviterName() || this.invitation().invitedBy || 'Someone';
   }
 
   /**
    * Get the display name for the chat
    */
   getChatDisplayName(): string {
-    return this.chatName || 'a chat';
+    return this.chatName() || 'a chat';
   }
 
   /**
    * Get the formatted invitation date
    */
   getFormattedInvitationDate(): string {
-    return this.invitation.invitedAt.toLocaleDateString();
+    return this.invitation().invitedAt.toLocaleDateString();
   }
 
   /**
    * Get the formatted expiration date
    */
   getFormattedExpirationDate(): string {
-    if (!this.invitation.expiresAt) {
+    if (!this.invitation().expiresAt) {
       return 'No expiration';
     }
-    return this.invitation.expiresAt.toLocaleDateString();
+    return this.invitation().expiresAt!.toLocaleDateString();
   }
 
   /**
@@ -147,9 +147,9 @@ export class ChatInvitationNotificationComponent implements OnInit {
    */
   canActOnInvitation(): boolean {
     return (
-      this.invitation.status === 'pending' &&
-      !this.isExpired &&
-      !this.isProcessing
+      this.invitation().status === 'pending' &&
+      !this.isExpired() &&
+      !this.isProcessing()
     );
   }
 
@@ -157,9 +157,9 @@ export class ChatInvitationNotificationComponent implements OnInit {
    * Get status color for the invitation
    */
   getStatusColor(): string {
-    if (this.isExpired) return 'medium';
+    if (this.isExpired()) return 'medium';
 
-    switch (this.invitation.status) {
+    switch (this.invitation().status) {
       case 'pending':
         return 'warning';
       case 'accepted':
@@ -177,9 +177,9 @@ export class ChatInvitationNotificationComponent implements OnInit {
    * Get status text for the invitation
    */
   getStatusText(): string {
-    if (this.isExpired) return 'Expired';
+    if (this.isExpired()) return 'Expired';
 
-    switch (this.invitation.status) {
+    switch (this.invitation().status) {
       case 'pending':
         return 'Pending';
       case 'accepted':
@@ -197,9 +197,9 @@ export class ChatInvitationNotificationComponent implements OnInit {
    * Get icon for the invitation status
    */
   getStatusIcon(): string {
-    if (this.isExpired) return 'time-outline';
+    if (this.isExpired()) return 'time-outline';
 
-    switch (this.invitation.status) {
+    switch (this.invitation().status) {
       case 'pending':
         return 'hourglass-outline';
       case 'accepted':

@@ -4,6 +4,7 @@ import {
   inject,
   OnInit,
   OnDestroy,
+  signal,
 } from '@angular/core';
 
 import { Router } from '@angular/router';
@@ -60,9 +61,9 @@ import { environment } from '../../environments/environment';
 })
 export class TabsPage implements OnInit, OnDestroy {
   public environmentInjector = inject(EnvironmentInjector);
-  userHandle: string = '@guest';
-  adClient = environment.adSense?.publisherId || '';
-  adSlot = environment.adSense?.bannerSlotId || '';
+  userHandle = signal('@guest');
+  adClient = signal(environment.adSense?.publisherId || '');
+  adSlot = signal(environment.adSense?.bannerSlotId || '');
   private userSubscription?: Subscription;
   private profileUpdateSubscription?: Subscription;
 
@@ -120,16 +121,16 @@ export class TabsPage implements OnInit, OnDestroy {
       const personProfile =
         await this.personProfileManager.getCurrentPersonProfile();
       if (personProfile && personProfile.handle) {
-        this.userHandle = personProfile.handle;
-        console.log('[Tabs Page] Handle loaded:', this.userHandle);
+        this.userHandle.set(personProfile.handle);
+        console.log('[Tabs Page] Handle loaded:', this.userHandle());
       } else {
         // Fallback to @guest if no handle exists
-        this.userHandle = '@guest';
+        this.userHandle.set('@guest');
         console.log('[Tabs Page] No handle found, using default');
       }
     } catch (error) {
       console.error('[Tabs Page] Error loading person handle:', error);
-      this.userHandle = '@guest';
+      this.userHandle.set('@guest');
     }
   }
 

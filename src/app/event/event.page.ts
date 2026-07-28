@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -70,7 +70,7 @@ import {
   ]
 })
 export class EventPage implements OnInit {
-  event: Event | null = null;
+  event = signal<Event | null>(null);
 
   constructor(
     private route: ActivatedRoute,
@@ -84,7 +84,7 @@ export class EventPage implements OnInit {
   ngOnInit() {
     const eventId = this.route.snapshot.paramMap.get('id');
     if (eventId) {
-      this.event = this.eventsService.getEventById(eventId) || null;
+      this.event.set(this.eventsService.getEventById(eventId) || null);
     }
   }
 
@@ -137,66 +137,57 @@ export class EventPage implements OnInit {
   }
 
   isEventSoldOut(): boolean {
-    return this.event ? this.eventsService.isEventSoldOut(this.event.id) : false;
+    return this.event() ? this.eventsService.isEventSoldOut(this.event()!.id) : false;
   }
 
   getAvailabilityText(): string {
-    return this.event ? this.eventsService.getAvailabilityText(this.event.id) : '';
+    return this.event() ? this.eventsService.getAvailabilityText(this.event()!.id) : '';
   }
 
   registerForEvent() {
-    if (this.event && this.eventsService.registerForEvent(this.event.id)) {
-      console.log('Successfully registered for event:', this.event.title);
-      // In real app, would show success message and handle payment
+    if (this.event() && this.eventsService.registerForEvent(this.event()!.id)) {
+      console.log('Successfully registered for event:', this.event()!.title);
     } else {
       console.log('Failed to register for event');
-      // In real app, would show error message
     }
   }
 
   shareEvent() {
-    if (this.event) {
-      console.log('Share event:', this.event.title);
-      // In real app, would open share dialog
+    if (this.event()) {
+      console.log('Share event:', this.event()!.title);
     }
   }
 
   contactOrganizer() {
-    if (this.event) {
-      window.open(`mailto:${this.event.contactEmail}?subject=Inquiry about ${this.event.title}`, '_self');
+    if (this.event()) {
+      window.open(`mailto:${this.event()!.contactEmail}?subject=Inquiry about ${this.event()!.title}`, '_self');
     }
   }
 
   getDirections() {
-    if (this.event) {
-      const encodedAddress = encodeURIComponent(this.event.address);
+    if (this.event()) {
+      const encodedAddress = encodeURIComponent(this.event()!.address);
       window.open(`https://maps.google.com?q=${encodedAddress}`, '_blank');
     }
   }
 
-  // Chat message handlers
   onChatMessageClick(message: ChatMessage) {
     console.log('Chat message clicked:', message);
-    // In a real app, this might open a detailed message view or mark as read
   }
 
   onSendChatMessage(message: string) {
     console.log('Sending chat message:', message);
-    // In a real app, this would send the message to a backend service
   }
 
   onLeaveChat(chatId: string) {
     console.log('Leaving chat:', chatId);
-    // In a real app, this would call a service to leave the chat
   }
 
   onMuteChat(event: { chatId: string; isMuted: boolean }) {
     console.log('Chat mute status changed:', event);
-    // In a real app, this would update the user's notification preferences
   }
 
   onChatInfo(chatId: string) {
     console.log('Show chat info for:', chatId);
-    // In a real app, this might open a modal with event chat details
   }
 }

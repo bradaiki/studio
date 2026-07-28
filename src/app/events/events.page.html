@@ -20,7 +20,7 @@
     <div class="filter-indicator">
       <ion-chip color="primary">
         <ion-icon name="home"></ion-icon>
-        <ion-label>{{ filteredEntityName }}</ion-label>
+        <ion-label>{{ filteredEntityName() }}</ion-label>
         <ion-icon name="close" (click)="clearFilter()"></ion-icon>
       </ion-chip>
     </div>
@@ -68,17 +68,17 @@
     <!-- Results Count -->
     <div class="results-info">
       <ion-text color="medium">
-        @if (filteredEvents.length === 1) {
+        @if (filteredEvents().length === 1) {
         <p>1 event found</p>
-        } @if (filteredEvents.length !== 1) {
-        <p>{{ filteredEvents.length }} events found</p>
+        } @if (filteredEvents().length !== 1) {
+        <p>{{ filteredEvents().length }} events found</p>
         }
       </ion-text>
     </div>
 
     <!-- Events List -->
     <div class="events-list">
-      @for (event of displayedEvents; track event) {
+      @for (event of displayedEvents(); track event) {
       <ion-card
         class="event-card"
         [class.featured]="event.featured"
@@ -295,7 +295,7 @@
     </ion-infinite-scroll>
 
     <!-- Empty State -->
-    @if (filteredEvents.length === 0) {
+    @if (filteredEvents().length === 0) {
     <div class="empty-state">
       <ion-icon name="calendar" color="medium"></ion-icon>
       <h3>{{ 'events.no_events_found' | translate }}</h3>

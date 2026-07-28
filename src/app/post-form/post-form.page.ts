@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 
 import {
   FormsModule,
@@ -51,7 +51,7 @@ import { save, image, pricetag } from 'ionicons/icons';
 })
 export class PostFormPage implements OnInit {
   postForm: FormGroup;
-  isSubmitting = false;
+  isSubmitting = signal(false);
 
   constructor(
     private fb: FormBuilder,
@@ -71,8 +71,8 @@ export class PostFormPage implements OnInit {
   ngOnInit() {}
 
   async onSubmit() {
-    if (this.postForm.valid && !this.isSubmitting) {
-      this.isSubmitting = true;
+    if (this.postForm.valid && !this.isSubmitting()) {
+      this.isSubmitting.set(true);
 
       try {
         const formValue = this.postForm.value;
@@ -89,7 +89,7 @@ export class PostFormPage implements OnInit {
           'danger',
         );
       } finally {
-        this.isSubmitting = false;
+        this.isSubmitting.set(false);
       }
     } else {
       await this.showToast('Please fill in the required fields', 'warning');

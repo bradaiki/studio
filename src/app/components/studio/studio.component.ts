@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, input, output, signal, OnInit } from '@angular/core';
 
 import { TranslateModule } from '@ngx-translate/core';
 import { FavoritesService } from '../../services/favorites.service';
@@ -134,25 +134,25 @@ export interface PricingOption {
   ],
 })
 export class StudioComponent implements OnInit {
-  @Input() studio!: StudioInfo;
-  @Input() showHero: boolean = true;
-  @Input() showAbout: boolean = true;
-  @Input() showBenefits: boolean = true;
-  @Input() showInstructors: boolean = true;
-  @Input() showSchedule: boolean = true;
-  @Input() showPricing: boolean = true;
-  @Input() showContact: boolean = true;
-  @Input() compact: boolean = false;
+  studio = input.required<StudioInfo>();
+  showHero = input<boolean>(true);
+  showAbout = input<boolean>(true);
+  showBenefits = input<boolean>(true);
+  showInstructors = input<boolean>(true);
+  showSchedule = input<boolean>(true);
+  showPricing = input<boolean>(true);
+  showContact = input<boolean>(true);
+  compact = input<boolean>(false);
 
-  @Output() instructorClick = new EventEmitter<Instructor>();
-  @Output() contactClick = new EventEmitter<string>();
-  @Output() websiteClick = new EventEmitter<string>();
-  @Output() emailClick = new EventEmitter<string>();
-  @Output() directionsClick = new EventEmitter<string>();
-  @Output() trialClick = new EventEmitter<void>();
-  @Output() editClick = new EventEmitter<string>();
+  instructorClick = output<Instructor>();
+  contactClick = output<string>();
+  websiteClick = output<string>();
+  emailClick = output<string>();
+  directionsClick = output<string>();
+  trialClick = output<void>();
+  editClick = output<string>();
 
-  isFavorited: boolean = false;
+  isFavorited = signal<boolean>(false);
 
   constructor(private favoritesService: FavoritesService) {
     addIcons({
@@ -178,15 +178,15 @@ export class StudioComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.isFavorited = this.favoritesService.isFavorite(this.studio.id);
+    this.isFavorited.set(this.favoritesService.isFavorite(this.studio().id));
     this.favoritesService.favorites$.subscribe(() => {
-      this.isFavorited = this.favoritesService.isFavorite(this.studio.id);
+      this.isFavorited.set(this.favoritesService.isFavorite(this.studio().id));
     });
   }
 
   async toggleFavorite(event: MouseEvent) {
     event.stopPropagation();
-    await this.favoritesService.toggleFavorite(this.studio.id, 'studio');
+    await this.favoritesService.toggleFavorite(this.studio().id, 'studio');
   }
 
   onInstructorClick(instructor: Instructor) {
@@ -194,19 +194,19 @@ export class StudioComponent implements OnInit {
   }
 
   onContactClick() {
-    this.contactClick.emit(this.studio.phone);
+    this.contactClick.emit(this.studio().phone);
   }
 
   onWebsiteClick() {
-    this.websiteClick.emit(this.studio.website);
+    this.websiteClick.emit(this.studio().website);
   }
 
   onEmailClick() {
-    this.emailClick.emit(this.studio.email);
+    this.emailClick.emit(this.studio().email);
   }
 
   onDirectionsClick() {
-    this.directionsClick.emit(this.studio.address);
+    this.directionsClick.emit(this.studio().address);
   }
 
   onTrialClick() {
@@ -214,25 +214,25 @@ export class StudioComponent implements OnInit {
   }
 
   getDisplayBenefits(): Benefit[] {
-    return this.compact
-      ? this.studio.benefits.slice(0, 2)
-      : this.studio.benefits;
+    return this.compact()
+      ? this.studio().benefits.slice(0, 2)
+      : this.studio().benefits;
   }
 
   getDisplayInstructors(): Instructor[] {
-    return this.compact
-      ? this.studio.instructors.slice(0, 1)
-      : this.studio.instructors;
+    return this.compact()
+      ? this.studio().instructors.slice(0, 1)
+      : this.studio().instructors;
   }
 
   getDisplaySchedule(): ClassSchedule[] {
-    return this.compact
-      ? this.studio.schedule.slice(0, 3)
-      : this.studio.schedule;
+    return this.compact()
+      ? this.studio().schedule.slice(0, 3)
+      : this.studio().schedule;
   }
 
   getDisplayPricing(): PricingOption[] {
-    return this.compact ? this.studio.pricing.slice(0, 2) : this.studio.pricing;
+    return this.compact() ? this.studio().pricing.slice(0, 2) : this.studio().pricing;
   }
 
   formatScheduleTime(scheduleItem: ClassSchedule): string {
@@ -281,6 +281,6 @@ export class StudioComponent implements OnInit {
 
   onEditClick(event: MouseEvent) {
     event.stopPropagation();
-    this.editClick.emit(this.studio.id);
+    this.editClick.emit(this.studio().id);
   }
 }

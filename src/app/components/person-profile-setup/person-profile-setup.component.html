@@ -1,9 +1,9 @@
-<ion-modal [isOpen]="true" [backdropDismiss]="canDismiss">
+<ion-modal [isOpen]="true" [backdropDismiss]="canDismiss()">
   <ng-template>
     <ion-header>
       <ion-toolbar>
-        <ion-title>{{ isEditMode ? 'Edit Your Profile' : 'Complete Your Profile' }}</ion-title>
-        @if (canDismiss) {
+        <ion-title>{{ isEditMode() ? 'Edit Your Profile' : 'Complete Your Profile' }}</ion-title>
+        @if (canDismiss()) {
           <ion-button slot="end" fill="clear" (click)="onClose()">
             <ion-icon name="close-outline"></ion-icon>
           </ion-button>
@@ -13,14 +13,14 @@
 
     <ion-content class="ion-padding">
       <div class="profile-setup-container">
-        @if (!isEditMode) {
+        @if (!isEditMode()) {
           <div class="welcome-message">
             <h2>Welcome to the Martial Arts Community!</h2>
             <p>Let's set up your profile so others can connect with you.</p>
           </div>
         }
 
-        @if (isEditMode) {
+        @if (isEditMode()) {
           <div class="welcome-message">
             <h2>Update Your Profile</h2>
             <p>Keep your information current so the community can stay connected.</p>
@@ -37,7 +37,7 @@
               type="text"
               placeholder="Enter your full name"
               required
-              [disabled]="isSubmitting"
+              [disabled]="isSubmitting()"
               >
               <ion-icon name="person-outline" slot="start"></ion-icon>
             </ion-input>
@@ -52,7 +52,7 @@
               type="text"
               placeholder="@yourhandle"
               required
-              [disabled]="isSubmitting"
+              [disabled]="isSubmitting()"
               (ionInput)="onHandleInput($event)"
               >
               <ion-icon name="at-outline" slot="start"></ion-icon>
@@ -71,14 +71,14 @@
               type="text"
               placeholder="Choose a unique username"
               required
-              [disabled]="isSubmitting"
+              [disabled]="isSubmitting()"
               >
               <ion-icon name="person-outline" slot="start"></ion-icon>
             </ion-input>
           </ion-item>
 
           <!-- Email (read-only, only shown in create mode) -->
-          @if (!isEditMode && email) {
+          @if (!isEditMode() && email) {
             <ion-item>
               <ion-label position="stacked">Email</ion-label>
               <ion-input
@@ -102,7 +102,7 @@
               type="text"
               placeholder="City, State/Country"
               required
-              [disabled]="isSubmitting"
+              [disabled]="isSubmitting()"
               >
               <ion-icon name="location-outline" slot="start"></ion-icon>
             </ion-input>
@@ -116,7 +116,7 @@
               name="rank"
               type="text"
               placeholder="e.g., 2nd Kyu, Black Belt"
-              [disabled]="isSubmitting"
+              [disabled]="isSubmitting()"
               >
             </ion-input>
           </ion-item>
@@ -129,7 +129,7 @@
               name="experience"
               type="text"
               placeholder="e.g., 3 years, Beginner"
-              [disabled]="isSubmitting"
+              [disabled]="isSubmitting()"
               >
             </ion-input>
           </ion-item>
@@ -142,14 +142,14 @@
               name="bio"
               rows="4"
               placeholder="Tell us about yourself and your martial arts journey..."
-              [disabled]="isSubmitting"
+              [disabled]="isSubmitting()"
             ></ion-textarea>
           </ion-item>
 
           <!-- Error Message -->
-          @if (errorMessage) {
+          @if (errorMessage()) {
             <ion-text color="danger">
-              <p class="error-message">{{ errorMessage }}</p>
+              <p class="error-message">{{ errorMessage() }}</p>
             </ion-text>
           }
 
@@ -158,24 +158,24 @@
             <ion-button
               expand="block"
               type="submit"
-              [disabled]="isSubmitting || !name || !username || !handle || !location"
+              [disabled]="isSubmitting() || !name || !username || !handle || !location"
               >
-              @if (isSubmitting) {
+              @if (isSubmitting()) {
                 <ion-spinner name="crescent"></ion-spinner>
               }
-              @if (!isSubmitting) {
-                <span>{{ isEditMode ? 'Save Changes' : 'Create Profile' }}</span>
+              @if (!isSubmitting()) {
+                <span>{{ isEditMode() ? 'Save Changes' : 'Create Profile' }}</span>
               }
             </ion-button>
 
-            @if (canDismiss) {
+            @if (canDismiss()) {
               <ion-button
                 expand="block"
                 fill="outline"
                 (click)="onSkip()"
-                [disabled]="isSubmitting"
+                [disabled]="isSubmitting()"
                 >
-                {{ isEditMode ? 'Cancel' : 'Skip for Now' }}
+                {{ isEditMode() ? 'Cancel' : 'Skip for Now' }}
               </ion-button>
             }
           </div>
@@ -183,7 +183,7 @@
           <div class="info-text">
             <ion-text color="medium">
               <p>* Required fields</p>
-              @if (!isEditMode) {
+              @if (!isEditMode()) {
                 <p>You can update your profile anytime from the Profile page.</p>
               }
             </ion-text>

@@ -1,6 +1,6 @@
-<ion-card class="chat-messages-card" [class.compact]="compact" [class.muted]="isMuted">
+<ion-card class="chat-messages-card" [class.compact]="compact()" [class.muted]="isMuted">
   <!-- Search Bar and Recent Chats -->
-  @if (!compact) {
+  @if (!compact()) {
     <div class="chat-navigation">
       <!-- Current Chat Title (above everything) -->
       @if (chatId && currentChatName) {
@@ -92,7 +92,7 @@
         class="chat-search">
       </ion-searchbar>
       <!-- Recent Chat Tabs -->
-      @if (currentChatList.length > 0 || !compact) {
+      @if (currentChatList.length > 0 || !compact()) {
         <div class="recent-chats-tabs">
           <!-- Create Chat Button (only show for recent/studio chats) -->
           @if (!showingFavorites) {
@@ -189,12 +189,12 @@
     </div>
   }
 
-  @if (showHeader) {
+  @if (showHeader()) {
     <ion-card-header>
       <ion-card-title class="chat-header">
         <div class="header-content">
           <div class="chat-title-section">
-            <span>{{ currentChatName || studioName + ' Chat' }}</span>
+            <span>{{ currentChatName || studioName() + ' Chat' }}</span>
             @if (isMuted) {
               <ion-icon name="notifications-off" color="medium" class="muted-indicator"></ion-icon>
             }
@@ -322,9 +322,9 @@
       </div>
     }
 
-    <div class="messages-container" #messagesContainer [style.max-height]="maxHeight">
+    <div class="messages-container" #messagesContainer [style.max-height]="maxHeight()">>
       <!-- Infinite Scroll for loading older messages -->
-      @if (!compact && hasReadAccess) {
+      @if (!compact() && hasReadAccess) {
         <ion-infinite-scroll
           threshold="100px"
           position="top"
@@ -375,7 +375,7 @@
             </div>
           }
           <!-- Show more indicator in compact mode -->
-          @if (compact && displayedMessages.length > 3) {
+          @if (compact() && displayedMessages.length > 3) {
             <div class="more-messages">
               <ion-chip color="medium" outline="true">
                 <ion-label>{{ displayedMessages.length - 3 }} more messages</ion-label>
@@ -428,7 +428,7 @@
     }
 
     <!-- Chat status messages -->
-    @if (!chatId && studioId) {
+    @if (!chatId && studioId()) {
       <div class="chat-status-messages">
         <!-- Pending Invitations UI -->
         @if (showInvitationUI && pendingInvitations.length > 0) {
@@ -629,7 +629,7 @@
           </ion-item>
         }
 
-        @if (canMute) {
+        @if (canMute()) {
           <ion-item button (click)="onMuteToggle()">
             <ion-icon
               [name]="isMuted ? 'notifications' : 'notifications-off'"
@@ -640,7 +640,7 @@
           </ion-item>
         }
 
-        @if (canLeave) {
+        @if (canLeave()) {
           <ion-item button (click)="onLeaveChat()" class="leave-chat-item">
             <ion-icon name="exit" slot="start" color="danger"></ion-icon>
             <ion-label color="danger">Leave Chat</ion-label>

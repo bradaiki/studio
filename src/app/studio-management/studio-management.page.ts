@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -109,9 +109,9 @@ import {
 export class StudioManagementPage implements OnInit {
   studio: Studio | null = null;
   selectedSegment: string = 'join-requests';
-  isAlertOpen = false;
-  isToastOpen = false;
-  toastMessage = '';
+  isAlertOpen = signal(false);
+  isToastOpen = signal(false);
+  toastMessage = signal('');
   alertButtons: any[] = ['OK'];
 
   // Schedule Management Properties
@@ -119,15 +119,15 @@ export class StudioManagementPage implements OnInit {
   currentDate: Date = new Date();
   
   // Simple class modal properties
-  isClassModalOpen = false;
-  isEditingClass = false;
+  isClassModalOpen = signal(false);
+  isEditingClass = signal(false);
 
   // Activities Management Properties
-  studioActivities: Activity[] = [];
+  studioActivities = signal<Activity[]>([]);
 
   // Instructor Management Properties
-  isInstructorModalOpen = false;
-  isEditingInstructor = false;
+  isInstructorModalOpen = signal(false);
+  isEditingInstructor = signal(false);
   selectedInstructor: Instructor | null = null;
 
   // New Instructor Form
@@ -230,34 +230,34 @@ export class StudioManagementPage implements OnInit {
   }
 
   private loadStudioActivities(studioId: string) {
-    this.studioActivities = this.activitiesService.getActivitiesByStudio(studioId);
+    this.studioActivities.set(this.activitiesService.getActivitiesByStudio(studioId));
   }
 
   onSegmentChange(event: any) {
     this.selectedSegment = event.detail.value;
     
     // Ensure activities are loaded when switching to schedule view
-    if (this.selectedSegment === 'schedule' && this.studio && this.studioActivities.length === 0) {
+    if (this.selectedSegment === 'schedule' && this.studio && this.studioActivities().length === 0) {
       this.loadStudioActivities(this.studio.id);
     }
   }
 
   addInstructor() {
-    this.isEditingInstructor = false;
+    this.isEditingInstructor.set(false);
     this.selectedInstructor = null;
     this.resetInstructorForm();
-    this.isInstructorModalOpen = true;
+    this.isInstructorModalOpen.set(true);
   }
 
   editInstructor(instructor: Instructor) {
-    this.isEditingInstructor = true;
+    this.isEditingInstructor.set(true);
     this.selectedInstructor = instructor;
     this.newInstructor = { ...instructor };
-    this.isInstructorModalOpen = true;
+    this.isInstructorModalOpen.set(true);
   }
 
   removeInstructor(instructor: Instructor) {
-    this.isAlertOpen = true;
+    this.isAlertOpen.set(true);
     this.alertButtons = [
       {
         text: 'Cancel',
@@ -298,7 +298,7 @@ export class StudioManagementPage implements OnInit {
       this.scheduleView = view;
       
       // Ensure activities are loaded when changing view
-      if (this.studio && this.studioActivities.length === 0) {
+      if (this.studio && this.studioActivities().length === 0) {
         this.loadStudioActivities(this.studio.id);
       }
     }
@@ -449,8 +449,8 @@ export class StudioManagementPage implements OnInit {
   }
 
   private showToast(message: string) {
-    this.toastMessage = message;
-    this.isToastOpen = true;
+    this.toastMessage.set(message);
+    this.isToastOpen.set(true);
   }
 
   getInstructorRole(instructor: Instructor): string {
@@ -475,7 +475,7 @@ export class StudioManagementPage implements OnInit {
     if (!this.studio) return 0;
     
     const year = this.currentDate.getFullYear();
-    return this.studioActivities.filter(activity => {
+    return this.studioActivities().filter(activity => {
       if (activity.isRecurring) {
         // For recurring activities, check if they're active during this month
         const recurrenceStart = activity.recurrenceStart ? new Date(activity.recurrenceStart) : new Date();
@@ -496,13 +496,13 @@ export class StudioManagementPage implements OnInit {
 
   // Simple class management methods
   openClassModal() {
-    this.isEditingClass = false;
+    this.isEditingClass.set(false);
     this.resetClassForm();
-    this.isClassModalOpen = true;
+    this.isClassModalOpen.set(true);
   }
 
   closeClassModal() {
-    this.isClassModalOpen = false;
+    this.isClassModalOpen.set(false);
     this.resetClassForm();
   }
 
@@ -652,18 +652,18 @@ export class StudioManagementPage implements OnInit {
 
   // Get limited activities for display (max 20)
   getDisplayedActivities() {
-    return this.studioActivities.slice(0, 20);
+    return this.studioActivities().slice(0, 20);
   }
 
   // Check if there are more activities than displayed
   hasMoreActivities(): boolean {
-    return this.studioActivities.length > 20;
+    return this.studioActivities().length > 20;
   }
 
   // Get activities for calendar display
   getActivitiesForDate(date: Date): Activity[] {
     // Use the already loaded studio activities instead of calling service again
-    return this.studioActivities.filter(activity => {
+    return this.studioActivities().filter(activity => {
       if (!activity.isActive) return false;
       
       if (activity.isRecurring) {
@@ -718,7 +718,7 @@ export class StudioManagementPage implements OnInit {
 
   // Instructor Management Methods
   closeInstructorModal() {
-    this.isInstructorModalOpen = false;
+    this.isInstructorModalOpen.set(false);
     this.resetInstructorForm();
   }
 
@@ -748,7 +748,7 @@ export class StudioManagementPage implements OnInit {
 
     if (!this.studio) return;
 
-    if (this.isEditingInstructor && this.selectedInstructor) {
+    if (this.isEditingInstructor() && this.selectedInstructor) {
       // Update existing instructor
       const index = this.studio.instructors.findIndex(i => i.id === this.selectedInstructor!.id);
       if (index !== -1) {
@@ -897,7 +897,7 @@ export class StudioManagementPage implements OnInit {
   // Get upcoming activities for list view
   getUpcomingActivities(): Activity[] {
     const now = new Date();
-    return this.studioActivities
+    return this.studioActivities()
       .filter(activity => {
         if (activity.isRecurring) {
           // For recurring activities, check if they're still active

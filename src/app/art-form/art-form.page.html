@@ -3,14 +3,14 @@
     <ion-buttons slot="start">
       <ion-back-button
         (click)="onBack()"
-        [defaultHref]="isEditMode ? '/art/' + artId : '/tabs/arts'"
+        [defaultHref]="isEditMode() ? '/art/' + artId() : '/tabs/arts'"
       ></ion-back-button>
     </ion-buttons>
-    <ion-title>{{ pageTitle }}</ion-title>
+    <ion-title>{{ pageTitle() }}</ion-title>
     <ion-buttons slot="end">
       <ion-button
         (click)="onSave()"
-        [disabled]="loading || artForm.invalid"
+        [disabled]="loading() || artForm.invalid"
         fill="solid"
         color="primary"
       >
@@ -324,7 +324,7 @@
     </ion-card>
 
     <!-- Action Buttons -->
-    @if (isEditMode) {
+    @if (isEditMode()) {
     <ion-card>
       <ion-card-content>
         <ion-button
@@ -345,7 +345,7 @@
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
     <ion-fab-button
       (click)="onSave()"
-      [disabled]="loading || artForm.invalid"
+      [disabled]="loading() || artForm.invalid"
       color="primary"
     >
       <ion-icon name="save"></ion-icon>

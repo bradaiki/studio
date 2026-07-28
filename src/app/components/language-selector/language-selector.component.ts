@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 
 import {
   IonButton,
@@ -24,20 +24,20 @@ import {
   imports: [IonButton, IonIcon, TranslateModule],
 })
 export class LanguageSelectorComponent {
-  availableLanguages: Language[];
-  currentLanguage: string;
+  availableLanguages = signal<Language[]>([]);
+  currentLanguage = signal('');
 
   constructor(
     private translationService: TranslationService,
     private popoverController: PopoverController,
   ) {
     addIcons({ languageOutline, checkmark });
-    this.availableLanguages = this.translationService.availableLanguages;
-    this.currentLanguage = this.translationService.getCurrentLanguage();
+    this.availableLanguages.set(this.translationService.availableLanguages);
+    this.currentLanguage.set(this.translationService.getCurrentLanguage());
 
     // Subscribe to language changes
     this.translationService.onLanguageChange().subscribe(() => {
-      this.currentLanguage = this.translationService.getCurrentLanguage();
+      this.currentLanguage.set(this.translationService.getCurrentLanguage());
     });
   }
 
@@ -47,8 +47,8 @@ export class LanguageSelectorComponent {
       event: event,
       translucent: true,
       componentProps: {
-        languages: this.availableLanguages,
-        currentLanguage: this.currentLanguage,
+        languages: this.availableLanguages(),
+        currentLanguage: this.currentLanguage(),
         onLanguageSelect: (languageCode: string) => {
           this.selectLanguage(languageCode);
           popover.dismiss();
@@ -61,7 +61,7 @@ export class LanguageSelectorComponent {
 
   selectLanguage(languageCode: string) {
     this.translationService.setLanguage(languageCode);
-    this.currentLanguage = languageCode;
+    this.currentLanguage.set(languageCode);
   }
 
   getCurrentLanguageInfo(): Language | undefined {

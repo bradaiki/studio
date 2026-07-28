@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 
 import {
   IonCard,
@@ -60,24 +60,25 @@ export interface UserProfile {
   ],
 })
 export class UserProfileComponent {
-  @Input() profile!: UserProfile;
-  @Input() showPosts: boolean = true;
+  profile = input.required<UserProfile>();
+  showPosts = input<boolean>(true);
 
   constructor() {
     addIcons({ personAdd, personRemove, chatbubble, mail, location, calendar });
   }
 
   onFollow() {
-    this.profile.isFollowing = !this.profile.isFollowing;
-    this.profile.followers += this.profile.isFollowing ? 1 : -1;
+    const p = this.profile();
+    p.isFollowing = !p.isFollowing;
+    p.followers += p.isFollowing ? 1 : -1;
   }
 
   onMessage() {
-    console.log('Message user:', this.profile.username);
+    console.log('Message user:', this.profile().username);
   }
 
   onEmail() {
-    console.log('Email user:', this.profile.username);
+    console.log('Email user:', this.profile().username);
   }
 
   formatJoinDate(dateString: string): string {

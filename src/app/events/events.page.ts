@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -89,15 +89,17 @@ import {
   ],
 })
 export class EventsPage implements OnInit {
+  // Keep as regular properties - used with [(ngModel)]
   searchTerm: string = '';
   selectedFilter: string = 'all';
-  filterMode: 'all' | 'single' = 'all';
-  filteredEntityId: string | null = null;
-  filteredEntityName: string | null = null;
-  
-  allEvents: Event[] = [];
-  filteredEvents: Event[] = [];
-  displayedEvents: Event[] = [];
+
+  // Convert to signals
+  filterMode = signal<'all' | 'single'>('all');
+  filteredEntityId = signal<string | null>(null);
+  filteredEntityName = signal<string | null>(null);
+  allEvents = signal<Event[]>([]);
+  filteredEvents = signal<Event[]>([]);
+  displayedEvents = signal<Event[]>([]);
   
   // Infinite scroll properties - separate state for each filter combination
   private pageSize = 8;
@@ -134,23 +136,21 @@ export class EventsPage implements OnInit {
   }
 
   ngOnInit() {
-    // Subscribe to events from service
     this.eventsService.events$.subscribe(events => {
-      this.allEvents = events;
+      this.allEvents.set(events);
       this.filterEvents();
     });
     
-    // Check if we're filtering to a specific event
     this.route.queryParams.subscribe(params => {
       if (params['filter'] === 'single' && params['eventId']) {
-        this.filterMode = 'single';
-        this.filteredEntityId = params['eventId'];
-        this.filteredEntityName = params['eventName'] || null;
+        this.filterMode.set('single');
+        this.filteredEntityId.set(params['eventId']);
+        this.filteredEntityName.set(params['eventName'] || null);
         this.searchTerm = params['eventName'] || '';
       } else {
-        this.filterMode = 'all';
-        this.filteredEntityId = null;
-        this.filteredEntityName = null;
+        this.filterMode.set('all');
+        this.filteredEntityId.set(null);
+        this.filteredEntityName.set(null);
         if (params['search']) {
           this.searchTerm = params['search'];
         }
@@ -170,18 +170,15 @@ export class EventsPage implements OnInit {
   }
 
   filterEvents() {
-    let filtered = [...this.allEvents];
+    let filtered = [...this.allEvents()];
 
-    // If in single entity mode, filter to show only that entity
-    if (this.filterMode === 'single' && this.filteredEntityId) {
-      filtered = filtered.filter(event => event.id === this.filteredEntityId);
+    if (this.filterMode() === 'single' && this.filteredEntityId()) {
+      filtered = filtered.filter(event => event.id === this.filteredEntityId());
     } else {
-      // Apply search filter
       if (this.searchTerm) {
         filtered = this.eventsService.searchEvents(this.searchTerm);
       }
 
-      // Apply type filter
       if (this.selectedFilter !== 'all') {
         if (this.selectedFilter === 'featured') {
           filtered = filtered.filter(event => event.featured);
@@ -191,20 +188,17 @@ export class EventsPage implements OnInit {
       }
     }
 
-    // Sort by date (upcoming first)
     filtered.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
-    this.filteredEvents = filtered;
+    this.filteredEvents.set(filtered);
     this.updateDisplayedEvents();
   }
 
   private updateDisplayedEvents() {
-    const filtered = this.filteredEvents;
+    const filtered = this.filteredEvents();
     
-    // Create unique key for this filter combination
-    const filterKey = `${this.filterMode}:${this.filteredEntityId}:${this.selectedFilter}:${this.searchTerm}`;
+    const filterKey = `${this.filterMode()}:${this.filteredEntityId()}:${this.selectedFilter}:${this.searchTerm}`;
     
-    // Check if filter changed OR if we need to reload data
     const filterChanged = filterKey !== this.currentFilterKey;
     const state = this.scrollStates.get(filterKey);
     const needsReload = !state || state.displayed.length === 0;
@@ -212,19 +206,17 @@ export class EventsPage implements OnInit {
     if (filterChanged || needsReload) {
       this.currentFilterKey = filterKey;
       
-      // Get or create state for this filter
       if (!this.scrollStates.has(filterKey)) {
         this.scrollStates.set(filterKey, { page: 0, displayed: [] });
       }
       
       const currentState = this.scrollStates.get(filterKey)!;
       
-      // If state is empty or data changed, load initial items
       if (currentState.displayed.length === 0 || needsReload) {
         this.loadInitialEvents(currentState, filtered);
       }
       
-      this.displayedEvents = currentState.displayed;
+      this.displayedEvents.set(currentState.displayed);
     }
   }
 
@@ -244,33 +236,31 @@ export class EventsPage implements OnInit {
 
   loadMore(event: any) {
     setTimeout(() => {
-      const filtered = this.filteredEvents;
+      const filtered = this.filteredEvents();
       const state = this.scrollStates.get(this.currentFilterKey);
       if (state) {
         this.loadMoreEventsForState(state, filtered);
-        this.displayedEvents = state.displayed;
+        this.displayedEvents.set(state.displayed);
       }
       
       event.target.complete();
       
-      // Disable infinite scroll when all items are loaded
-      if (this.displayedEvents.length >= filtered.length) {
+      if (this.displayedEvents().length >= filtered.length) {
         event.target.disabled = true;
       }
     }, 500);
   }
 
   get isFiltered(): boolean {
-    return this.filterMode === 'single';
+    return this.filterMode() === 'single';
   }
 
   clearFilter() {
-    this.filterMode = 'all';
-    this.filteredEntityId = null;
-    this.filteredEntityName = null;
+    this.filterMode.set('all');
+    this.filteredEntityId.set(null);
+    this.filteredEntityName.set(null);
     this.searchTerm = '';
     this.selectedFilter = 'all';
-    // Update URL to remove query parameters
     this.router.navigate(['/dash/events']);
     this.filterEvents();
   }
@@ -330,21 +320,17 @@ export class EventsPage implements OnInit {
   registerForEvent(event: Event) {
     if (this.eventsService.registerForEvent(event.id)) {
       console.log('Successfully registered for event:', event.title);
-      // In real app, would show success message and handle payment
     } else {
       console.log('Failed to register for event:', event.title);
-      // In real app, would show error message
     }
   }
 
   onEventClick(event: Event) {
-    // Navigate to individual event page
     this.router.navigate(['/dash/event', event.id]);
   }
 
   shareEvent(event: Event) {
     console.log('Share event:', event.title);
-    // In real app, would open share dialog
   }
 
   contactOrganizer(event: Event) {

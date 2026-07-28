@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, OnChanges, SimpleChanges, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
+import { Component, input, output, effect, OnInit, OnDestroy, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -86,23 +86,23 @@ import { ChatInvitationManagerComponent } from '../chat-invitation-manager/chat-
     ChatInvitationManagerComponent
   ]
 })
-export class ChatMessagesComponent implements OnInit, OnDestroy, OnChanges {
+export class ChatMessagesComponent implements OnInit, OnDestroy {
   @ViewChild('messagesContainer', { read: ElementRef }) messagesContainer?: ElementRef;
   
-  @Input() studioId: string = '';
-  @Input() studioName: string = '';
-  @Input() maxHeight: string = '400px';
-  @Input() showHeader: boolean = true;
-  @Input() compact: boolean = false;
-  @Input() canLeave: boolean = true; // Whether user can leave the chat
-  @Input() canMute: boolean = true; // Whether user can mute the chat
+  studioId = input<string>('');
+  studioName = input<string>('');
+  maxHeight = input<string>('400px');
+  showHeader = input<boolean>(true);
+  compact = input<boolean>(false);
+  canLeave = input<boolean>(true); // Whether user can leave the chat
+  canMute = input<boolean>(true); // Whether user can mute the chat
 
-  @Output() messageClick = new EventEmitter<ChatMessage>();
-  @Output() sendMessage = new EventEmitter<string>();
-  @Output() leaveChat = new EventEmitter<string>();
-  @Output() muteChat = new EventEmitter<{ chatId: string; isMuted: boolean }>();
-  @Output() chatInfo = new EventEmitter<string>();
-  @Output() chatSwitch = new EventEmitter<{ chatId: string; chatName: string }>();
+  messageClick = output<ChatMessage>();
+  sendMessage = output<string>();
+  leaveChat = output<string>();
+  muteChat = output<{ chatId: string; isMuted: boolean }>();
+  chatInfo = output<string>();
+  chatSwitch = output<{ chatId: string; chatName: string }>();
 
   displayedMessages: ChatMessage[] = [];
   newMessage: string = '';
@@ -196,12 +196,28 @@ export class ChatMessagesComponent implements OnInit, OnDestroy, OnChanges {
     private invitationService: ChatInvitationService
   ) {
     addIcons({pin,mail,people,add,heart,trash,notificationsOff,checkmarkDone,ellipsisVertical,checkmark,close,notifications,eye,lockClosed,refresh,send,informationCircle,exit,atOutline,addCircle,personAdd,personRemove,heartOutline,radioButtonOn,person,time,pinOutline});
+    
+    // React to studioId changes (replaces ngOnChanges)
+    let isFirstRun = true;
+    effect(() => {
+      const currentStudioId = this.studioId();
+      if (!isFirstRun && currentStudioId) {
+        console.log('Studio ID changed:', currentStudioId);
+        this.initializeChat().catch(error => {
+          console.error('Chat initialization failed after studioId change:', error);
+          this.chatId = '';
+          this.currentChatName = 'Chat Unavailable';
+          this.displayedMessages = [];
+        });
+      }
+      isFirstRun = false;
+    });
   }
 
   ngOnInit() {
     // Initialize chat if studioId is already set
-    if (this.studioId && this.studioId.trim() !== '') {
-      console.log('Studio ID already set on init:', this.studioId);
+    if (this.studioId() && this.studioId().trim() !== '') {
+      console.log('Studio ID already set on init:', this.studioId());
       this.initializeChat().catch(error => {
         console.error('Chat initialization failed:', error);
         // Show error state instead of fallback
@@ -216,20 +232,6 @@ export class ChatMessagesComponent implements OnInit, OnDestroy, OnChanges {
     
     // Load recent chats
     this.loadRecentChats();
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    // Initialize or reinitialize chat when studioId changes
-    if (changes['studioId'] && changes['studioId'].currentValue) {
-      console.log('Studio ID changed:', changes['studioId'].currentValue);
-      this.initializeChat().catch(error => {
-        console.error('Chat initialization failed after studioId change:', error);
-        // Show error state instead of fallback
-        this.chatId = '';
-        this.currentChatName = 'Chat Unavailable';
-        this.displayedMessages = [];
-      });
-    }
   }
 
   ngOnDestroy() {
@@ -271,13 +273,13 @@ export class ChatMessagesComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private async initializeChat() {
-    console.log('Initializing chat for studio:', this.studioId, this.studioName);
+    console.log('Initializing chat for studio:', this.studioId(), this.studioName());
     
     // Clear previous subscriptions if reinitializing
     this.subscriptions.forEach(sub => sub.unsubscribe());
     this.subscriptions = [];
     
-    if (this.studioId && this.studioId.trim() !== '') {
+    if (this.studioId() && this.studioId().trim() !== '') {
       try {
         // Check if chat service is ready (user authenticated)
         if (!this.chatService.isServiceReady()) {
@@ -325,7 +327,7 @@ export class ChatMessagesComponent implements OnInit, OnDestroy, OnChanges {
         } else {
           // Fallback to studio chat logic
           // Get accessible studio chats using access controller
-          const organizedChats = await this.chatAccessController.getStudioChatsForUser(this.studioId);
+          const organizedChats = await this.chatAccessController.getStudioChatsForUser(this.studioId());
           const accessibleChats = [...organizedChats.publicChats, ...organizedChats.privateChats];
           console.log('Found accessible studio chats:', accessibleChats.length);
           
@@ -346,7 +348,7 @@ export class ChatMessagesComponent implements OnInit, OnDestroy, OnChanges {
             }
             
             // Try to find existing chats for this studio (fallback)
-            let studioChats = await this.chatService.getChatsByStudioId(this.studioId);
+            let studioChats = await this.chatService.getChatsByStudioId(this.studioId());
             console.log('Found existing studio chats (fallback):', studioChats.length);
             
             if (studioChats.length > 0) {
@@ -936,7 +938,7 @@ export class ChatMessagesComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   get recentMessages(): ChatMessage[] {
-    if (this.compact) {
+    if (this.compact()) {
       return this.displayedMessages.slice(-3); // Show only last 3 messages in compact mode
     }
     return this.displayedMessages;
@@ -954,8 +956,8 @@ export class ChatMessagesComponent implements OnInit, OnDestroy, OnChanges {
   // Debug information
   get debugInfo(): any {
     return {
-      studioId: this.studioId,
-      studioName: this.studioName,
+      studioId: this.studioId(),
+      studioName: this.studioName(),
       chatId: this.chatId,
       messagesCount: this.displayedMessages.length,
       hasMessages: this.displayedMessages.length > 0,
@@ -988,7 +990,7 @@ export class ChatMessagesComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   onChatInfo() {
-    const chat = this.chatService.getChatById(this.chatId || this.studioId);
+    const chat = this.chatService.getChatById(this.chatId || this.studioId());
     if (chat) {
       // Subscribe to participants observable to get current participants
       this.chatService.participants$.pipe(take(1)).subscribe(participantsMap => {
@@ -1016,7 +1018,7 @@ export class ChatMessagesComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   confirmLeaveChat() {
-    this.leaveChat.emit(this.chatId || this.studioId);
+    this.leaveChat.emit(this.chatId || this.studioId());
     this.showLeaveAlert = false;
   }
 
@@ -1072,11 +1074,11 @@ export class ChatMessagesComponent implements OnInit, OnDestroy, OnChanges {
 
   // Load studio chats for browsing
   async loadStudioChats() {
-    if (!this.studioId) return;
+    if (!this.studioId()) return;
     
     try {
       const studioChatList = await this.chatService.getStudioChats({
-        studioId: this.studioId,
+        studioId: this.studioId(),
         pageSize: 20,
         sortBy: 'recent'
       });
@@ -1506,7 +1508,7 @@ export class ChatMessagesComponent implements OnInit, OnDestroy, OnChanges {
       const memberUserIds = this.newChatInitialMembers.map(m => m.userId);
       
       const newChat = await this.chatService.createCustomChat(
-        this.studioId,
+        this.studioId(),
         this.newChatName.trim(),
         this.newChatDescription.trim() || undefined,
         isPrivate,
@@ -1757,8 +1759,8 @@ export class ChatMessagesComponent implements OnInit, OnDestroy, OnChanges {
     console.log('Component State:', {
       chatId: this.chatId,
       currentChatName: this.currentChatName,
-      studioId: this.studioId,
-      studioName: this.studioName,
+      studioId: this.studioId(),
+      studioName: this.studioName(),
       messagesCount: this.displayedMessages.length
     });
     console.log('=== END DEBUG STATUS ===');

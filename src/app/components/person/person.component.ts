@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -42,16 +42,16 @@ import {
   ],
 })
 export class PersonComponent {
-  @Input() person!: Person;
-  @Input() showFullBio: boolean = false;
-  @Input() showStats: boolean = true;
-  @Input() showTags: boolean = true;
-  @Input() showActions: boolean = true;
-  @Input() compact: boolean = false;
+  person = input.required<Person>();
+  showFullBio = input(false);
+  showStats = input(true);
+  showTags = input(true);
+  showActions = input(true);
+  compact = input(false);
 
-  @Output() followToggle = new EventEmitter<Person>();
-  @Output() messageClick = new EventEmitter<Person>();
-  @Output() profileClick = new EventEmitter<Person>();
+  followToggle = output<Person>();
+  messageClick = output<Person>();
+  profileClick = output<Person>();
 
   constructor(private router: Router) {
     addIcons({
@@ -68,21 +68,22 @@ export class PersonComponent {
   }
 
   onFollow() {
-    this.person.isFollowing = !this.person.isFollowing;
-    this.person.followers += this.person.isFollowing ? 1 : -1;
-    this.followToggle.emit(this.person);
+    const p = this.person();
+    p.isFollowing = !p.isFollowing;
+    p.followers += p.isFollowing ? 1 : -1;
+    this.followToggle.emit(p);
   }
 
   onMessage() {
-    this.messageClick.emit(this.person);
+    this.messageClick.emit(this.person());
   }
 
   onProfileClick() {
-    this.profileClick.emit(this.person);
+    this.profileClick.emit(this.person());
   }
 
   onMoreOptions() {
-    console.log('More options for:', this.person.username);
+    console.log('More options for:', this.person().username);
     // In a real app, this would open an action sheet with more options
   }
 
@@ -105,25 +106,26 @@ export class PersonComponent {
   }
 
   getDisplayBio(): string {
-    if (this.showFullBio || this.person.bio.length <= 100) {
-      return this.person.bio;
+    const p = this.person();
+    if (this.showFullBio() || p.bio.length <= 100) {
+      return p.bio;
     }
-    return this.person.bio.substring(0, 100) + '...';
+    return p.bio.substring(0, 100) + '...';
   }
 
   getFollowButtonText(): string {
-    return this.person.isFollowing ? 'Following' : 'Follow';
+    return this.person().isFollowing ? 'Following' : 'Follow';
   }
 
   getFollowButtonColor(): string {
-    return this.person.isFollowing ? 'medium' : 'primary';
+    return this.person().isFollowing ? 'medium' : 'primary';
   }
 
   getFollowButtonFill(): string {
-    return this.person.isFollowing ? 'outline' : 'solid';
+    return this.person().isFollowing ? 'outline' : 'solid';
   }
 
   getFollowIcon(): string {
-    return this.person.isFollowing ? 'person-remove' : 'person-add';
+    return this.person().isFollowing ? 'person-remove' : 'person-add';
   }
 }

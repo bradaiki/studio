@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -62,13 +62,15 @@ import { home, close } from 'ionicons/icons';
   ],
 })
 export class OrgsPage implements OnInit {
+  // Keep as regular property - used with [(ngModel)]
   searchTerm: string = '';
-  filterMode: 'all' | 'single' = 'all';
-  filteredEntityId: string | null = null;
-  filteredEntityName: string | null = null;
 
-  organizations: Organization[] = [];
-  displayedOrganizations: Organization[] = [];
+  // Convert to signals
+  filterMode = signal<'all' | 'single'>('all');
+  filteredEntityId = signal<string | null>(null);
+  filteredEntityName = signal<string | null>(null);
+  organizations = signal<Organization[]>([]);
+  displayedOrganizations = signal<Organization[]>([]);
 
   // Infinite scroll properties - separate state for each filter combination
   private pageSize = 6;
@@ -258,27 +260,25 @@ export class OrgsPage implements OnInit {
   }
 
   ngOnInit() {
-    // Subscribe to organizations$ observable for automatic updates
     this.organizationsService.organizations$.subscribe((organizations) => {
       console.log(
         '[Orgs Page] Received organizations from service:',
         organizations.length,
       );
-      this.organizations = organizations;
+      this.organizations.set(organizations);
       this.updateDisplayedOrganizations();
     });
 
-    // Check if we're filtering to a specific organization
     this.route.queryParams.subscribe((params) => {
       if (params['filter'] === 'single' && params['entityId']) {
-        this.filterMode = 'single';
-        this.filteredEntityId = params['entityId'];
-        this.filteredEntityName = params['entityName'] || null;
+        this.filterMode.set('single');
+        this.filteredEntityId.set(params['entityId']);
+        this.filteredEntityName.set(params['entityName'] || null);
         this.searchTerm = params['entityName'] || '';
       } else {
-        this.filterMode = 'all';
-        this.filteredEntityId = null;
-        this.filteredEntityName = null;
+        this.filterMode.set('all');
+        this.filteredEntityId.set(null);
+        this.filteredEntityName.set(null);
         if (params['search']) {
           this.searchTerm = params['search'];
         }
@@ -295,7 +295,6 @@ export class OrgsPage implements OnInit {
 
   onEventClick(event: Event) {
     console.log('Event clicked:', event.title);
-    // In real app, would open registration form or external link
   }
 
   onContactClick(phone: string) {
@@ -319,20 +318,17 @@ export class OrgsPage implements OnInit {
     this.router.navigate(['/dash/studios']);
   }
 
-  // New methods for handling multiple organizations
   get filteredOrganizations(): Organization[] {
     let filtered: Organization[];
 
-    // If in single entity mode, filter to show only that entity
-    if (this.filterMode === 'single' && this.filteredEntityId) {
-      filtered = this.organizations.filter(
-        (org) => org.id === this.filteredEntityId,
+    if (this.filterMode() === 'single' && this.filteredEntityId()) {
+      filtered = this.organizations().filter(
+        (org) => org.id === this.filteredEntityId(),
       );
     } else if (this.searchTerm.trim()) {
-      // Filter by search term
       filtered = this.organizationsService.searchOrganizations(this.searchTerm);
     } else {
-      filtered = this.organizations;
+      filtered = this.organizations();
     }
 
     return filtered;
@@ -342,10 +338,8 @@ export class OrgsPage implements OnInit {
     const filtered = this.filteredOrganizations;
     console.log('[Orgs Page] Filtered organizations:', filtered.length);
 
-    // Create unique key for this filter combination
-    const filterKey = `${this.filterMode}:${this.filteredEntityId}:${this.searchTerm}`;
+    const filterKey = `${this.filterMode()}:${this.filteredEntityId()}:${this.searchTerm}`;
 
-    // Check if filter changed OR if we need to reload data
     const filterChanged = filterKey !== this.currentFilterKey;
     const state = this.scrollStates.get(filterKey);
     const needsReload = !state || state.displayed.length === 0;
@@ -353,22 +347,20 @@ export class OrgsPage implements OnInit {
     if (filterChanged || needsReload) {
       this.currentFilterKey = filterKey;
 
-      // Get or create state for this filter
       if (!this.scrollStates.has(filterKey)) {
         this.scrollStates.set(filterKey, { page: 0, displayed: [] });
       }
 
       const currentState = this.scrollStates.get(filterKey)!;
 
-      // If state is empty or data changed, load initial items
       if (currentState.displayed.length === 0 || needsReload) {
         this.loadInitialOrganizations(currentState, filtered);
       }
 
-      this.displayedOrganizations = currentState.displayed;
+      this.displayedOrganizations.set(currentState.displayed);
       console.log(
         '[Orgs Page] Displayed organizations:',
-        this.displayedOrganizations.length,
+        this.displayedOrganizations().length,
       );
     }
   }
@@ -399,24 +391,22 @@ export class OrgsPage implements OnInit {
       const state = this.scrollStates.get(this.currentFilterKey);
       if (state) {
         this.loadMoreOrganizationsForState(state, filtered);
-        this.displayedOrganizations = state.displayed;
+        this.displayedOrganizations.set(state.displayed);
       }
 
       event.target.complete();
 
-      // Disable infinite scroll when all items are loaded
-      if (this.displayedOrganizations.length >= filtered.length) {
+      if (this.displayedOrganizations().length >= filtered.length) {
         event.target.disabled = true;
       }
     }, 500);
   }
 
   get isFiltered(): boolean {
-    return this.filterMode === 'single';
+    return this.filterMode() === 'single';
   }
 
   get showLegacyOrganization(): boolean {
-    // Never show legacy organization - always use data from service
     return false;
   }
 
@@ -430,11 +420,10 @@ export class OrgsPage implements OnInit {
   }
 
   clearFilter() {
-    this.filterMode = 'all';
-    this.filteredEntityId = null;
-    this.filteredEntityName = null;
+    this.filterMode.set('all');
+    this.filteredEntityId.set(null);
+    this.filteredEntityName.set(null);
     this.searchTerm = '';
-    // Update URL to remove query parameters
     this.router.navigate(['/dash/orgs']);
   }
 
@@ -443,11 +432,9 @@ export class OrgsPage implements OnInit {
   }
 
   onOrganizationClick(organization: Organization) {
-    // Navigate to individual organization page
     this.router.navigate(['/dash/org', organization.id]);
   }
 
-  // Convert Organization to OrganizationInfo for component compatibility
   convertToOrganizationInfo(organization: Organization): OrganizationInfo {
     return {
       id: organization.id,

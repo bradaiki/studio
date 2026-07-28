@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -107,7 +107,7 @@ export interface ModerationFlag {
   ]
 })
 export class PostComponent {
-  @Input() post!: Post;
+  post = input.required<Post>();
 
   constructor(
     private router: Router,
@@ -137,18 +137,19 @@ export class PostComponent {
   }
 
   onLike() {
-    this.post.isLiked = !this.post.isLiked;
-    this.post.likes += this.post.isLiked ? 1 : -1;
+    const p = this.post();
+    p.isLiked = !p.isLiked;
+    p.likes += p.isLiked ? 1 : -1;
   }
 
   onComment() {
     // Handle comment action
-    console.log('Comment on post:', this.post.id);
+    console.log('Comment on post:', this.post().id);
   }
 
   onShare() {
     // Handle share action
-    console.log('Share post:', this.post.id);
+    console.log('Share post:', this.post().id);
   }
 
   async onMore() {
@@ -256,12 +257,13 @@ export class PostComponent {
   }
 
   async reportPost(type: ModerationFlag['type'], reason: string) {
+    const p = this.post();
     // Add moderation flag to post
-    if (!this.post.moderationFlags) {
-      this.post.moderationFlags = [];
+    if (!p.moderationFlags) {
+      p.moderationFlags = [];
     }
 
-    const flag: ModerationFlag = {
+    const flagItem: ModerationFlag = {
       id: `flag_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       type,
       reason,
@@ -269,8 +271,8 @@ export class PostComponent {
       reporterId: 'current_user_id' // In real app, get from auth service
     };
 
-    this.post.moderationFlags.push(flag);
-    this.post.isReported = true;
+    p.moderationFlags.push(flagItem);
+    p.isReported = true;
 
     // Show confirmation toast
     const toast = await this.toastController.create({
@@ -283,13 +285,13 @@ export class PostComponent {
 
     // In a real app, send this to your moderation service
     console.log('Post reported:', {
-      postId: this.post.id,
-      flag: flag
+      postId: p.id,
+      flag: flagItem
     });
   }
 
   async hidePost() {
-    this.post.isHidden = true;
+    this.post().isHidden = true;
     
     const toast = await this.toastController.create({
       message: 'Post hidden from your feed',
@@ -301,9 +303,10 @@ export class PostComponent {
   }
 
   async blockUser() {
+    const p = this.post();
     const alert = await this.alertController.create({
       header: 'Block User',
-      message: `Are you sure you want to block @${this.post.author.username}? You won't see their posts anymore.`,
+      message: `Are you sure you want to block @${p.author.username}? You won't see their posts anymore.`,
       buttons: [
         {
           text: 'Cancel',
@@ -322,11 +325,12 @@ export class PostComponent {
   }
 
   async confirmBlockUser() {
+    const p = this.post();
     // In a real app, add user to blocked list
-    console.log('User blocked:', this.post.author.username);
+    console.log('User blocked:', p.author.username);
     
     const toast = await this.toastController.create({
-      message: `@${this.post.author.username} has been blocked`,
+      message: `@${p.author.username} has been blocked`,
       duration: 2000,
       color: 'warning',
       position: 'top'
@@ -334,7 +338,7 @@ export class PostComponent {
     toast.present();
 
     // Hide the post since user is now blocked
-    this.post.isHidden = true;
+    p.isHidden = true;
   }
 
   getTimeAgo(timestamp: string): string {
@@ -349,7 +353,7 @@ export class PostComponent {
   }
 
   getEntityIcon(): string {
-    switch (this.post.author.type) {
+    switch (this.post().author.type) {
       case 'person': return 'person';
       case 'organization': return 'business';
       case 'studio': return 'home';
@@ -361,7 +365,7 @@ export class PostComponent {
   }
 
   getEntityColor(): string {
-    switch (this.post.author.type) {
+    switch (this.post().author.type) {
       case 'person': return 'medium';
       case 'organization': return 'primary';
       case 'studio': return 'secondary';
@@ -373,28 +377,29 @@ export class PostComponent {
   }
 
   getEntityLabel(): string {
-    switch (this.post.author.type) {
-      case 'person': return this.post.author.rank || 'Practitioner';
+    switch (this.post().author.type) {
+      case 'person': return this.post().author.rank || 'Practitioner';
       case 'organization': return 'Organization';
       case 'studio': return 'Studio';
       case 'event': return 'Event';
-      case 'art': return this.post.author.artType || 'Art';
+      case 'art': return this.post().author.artType || 'Art';
       case 'platform': return 'Platform';
       default: return '';
     }
   }
 
   isStudioMate(): boolean {
+    const p = this.post();
     const userStudioMemberships = this.studiosService.getUserStudioMemberships();
-    return this.post.author.type === 'person' && 
-           !!this.post.author.studioAffiliations && 
-           this.post.author.studioAffiliations.some(studioId => 
+    return p.author.type === 'person' && 
+           !!p.author.studioAffiliations && 
+           p.author.studioAffiliations.some(studioId => 
              userStudioMemberships.includes(studioId)
            );
   }
 
   getPostTypeColor(): string {
-    switch (this.post.postType) {
+    switch (this.post().postType) {
       case 'announcement': return 'primary';
       case 'achievement': return 'success';
       case 'event_promotion': return 'tertiary';
@@ -406,21 +411,22 @@ export class PostComponent {
 
   onProfileClick(event: Event) {
     event.stopPropagation();
-    if (this.post.author.type === 'person') {
+    const p = this.post();
+    if (p.author.type === 'person') {
       // Navigate to dedicated person page
-      this.router.navigate(['/dash/person', this.post.author.id]);
-    } else if (this.post.author.type === 'organization') {
+      this.router.navigate(['/dash/person', p.author.id]);
+    } else if (p.author.type === 'organization') {
       // Navigate to dedicated organization page
-      this.router.navigate(['/dash/org', this.post.author.id]);
-    } else if (this.post.author.type === 'studio') {
+      this.router.navigate(['/dash/org', p.author.id]);
+    } else if (p.author.type === 'studio') {
       // Navigate to dedicated studio page
-      this.router.navigate(['/dash/studio', this.post.author.id]);
-    } else if (this.post.author.type === 'event') {
+      this.router.navigate(['/dash/studio', p.author.id]);
+    } else if (p.author.type === 'event') {
       // Navigate to dedicated event page
-      this.router.navigate(['/dash/event', this.post.author.id]);
-    } else if (this.post.author.type === 'art') {
+      this.router.navigate(['/dash/event', p.author.id]);
+    } else if (p.author.type === 'art') {
       // Navigate to individual art page
-      this.router.navigate(['/art', this.post.author.id]);
+      this.router.navigate(['/art', p.author.id]);
     }
   }
 
@@ -428,17 +434,19 @@ export class PostComponent {
     event.stopPropagation();
     
     // Navigate to the person's profile page
-    if (this.post.author.type === 'person') {
-      this.router.navigate(['/dash/person', this.post.author.id]);
+    const p = this.post();
+    if (p.author.type === 'person') {
+      this.router.navigate(['/dash/person', p.author.id]);
     }
   }
 
   private getSharedStudios(): Array<{id: string, name: string}> {
+    const p = this.post();
     const userStudioMemberships = this.studiosService.getUserStudioMemberships();
     const sharedStudios: Array<{id: string, name: string}> = [];
     
-    if (this.post.author.studioAffiliations) {
-      this.post.author.studioAffiliations.forEach(studioId => {
+    if (p.author.studioAffiliations) {
+      p.author.studioAffiliations.forEach(studioId => {
         if (userStudioMemberships.includes(studioId)) {
           const studio = this.studiosService.getStudioById(studioId);
           if (studio) {
@@ -453,7 +461,7 @@ export class PostComponent {
 
     // In a real app, this would query the database for all shared studios
     // For demo, we might add additional shared studios based on user relationships
-    if (this.post.author.id === 'person_4' || this.post.author.id === 'person_6') {
+    if (p.author.id === 'person_4' || p.author.id === 'person_6') {
       // Jessica and Amanda both train at Austin Aikido Center
       if (!sharedStudios.find(s => s.id === 'studio_2')) {
         const austinStudio = this.studiosService.getStudioById('studio_2');

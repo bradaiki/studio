@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { 
@@ -79,17 +79,17 @@ export interface EventInfo {
   ]
 })
 export class EventComponent {
-  @Input() event!: EventInfo;
-  @Input() showFullDescription: boolean = true;
-  @Input() showRequirements: boolean = true;
-  @Input() showWhatToBring: boolean = true;
-  @Input() showTags: boolean = true;
-  @Input() compact: boolean = false;
+  event = input.required<EventInfo>();
+  showFullDescription = input(true);
+  showRequirements = input(true);
+  showWhatToBring = input(true);
+  showTags = input(true);
+  compact = input(false);
 
-  @Output() registerClick = new EventEmitter<EventInfo>();
-  @Output() shareClick = new EventEmitter<EventInfo>();
-  @Output() contactClick = new EventEmitter<EventInfo>();
-  @Output() directionsClick = new EventEmitter<EventInfo>();
+  registerClick = output<EventInfo>();
+  shareClick = output<EventInfo>();
+  contactClick = output<EventInfo>();
+  directionsClick = output<EventInfo>();
 
   constructor() {
     addIcons({ 
@@ -110,26 +110,26 @@ export class EventComponent {
   }
 
   onRegisterClick() {
-    this.registerClick.emit(this.event);
+    this.registerClick.emit(this.event());
   }
 
   onShareClick(event: Event) {
     event.stopPropagation();
-    this.shareClick.emit(this.event);
+    this.shareClick.emit(this.event());
   }
 
   onContactClick(event: Event) {
     event.stopPropagation();
-    this.contactClick.emit(this.event);
+    this.contactClick.emit(this.event());
   }
 
   onDirectionsClick(event: Event) {
     event.stopPropagation();
-    this.directionsClick.emit(this.event);
+    this.directionsClick.emit(this.event());
   }
 
   getEventTypeColor(): string {
-    switch (this.event.type) {
+    switch (this.event().type) {
       case 'seminar': return 'primary';
       case 'tournament': return 'success';
       case 'testing': return 'warning';
@@ -142,7 +142,7 @@ export class EventComponent {
   }
 
   getDifficultyColor(): string {
-    switch (this.event.difficulty) {
+    switch (this.event().difficulty) {
       case 'beginner': return 'success';
       case 'intermediate': return 'warning';
       case 'advanced': return 'danger';
@@ -152,17 +152,17 @@ export class EventComponent {
   }
 
   formatEventDate(): string {
-    const date = new Date(this.event.date);
+    const date = new Date(this.event().date);
     return date.toLocaleDateString('en-US', { 
-      weekday: this.compact ? 'short' : 'long',
+      weekday: this.compact() ? 'short' : 'long',
       year: 'numeric', 
-      month: this.compact ? 'short' : 'long', 
+      month: this.compact() ? 'short' : 'long', 
       day: 'numeric'
     });
   }
 
   formatEventTime(): string {
-    const [hours, minutes] = this.event.time.split(':');
+    const [hours, minutes] = this.event().time.split(':');
     const date = new Date();
     date.setHours(parseInt(hours), parseInt(minutes));
     return date.toLocaleTimeString('en-US', { 
@@ -173,44 +173,50 @@ export class EventComponent {
   }
 
   isEventSoldOut(): boolean {
-    return this.event.maxParticipants ? this.event.currentParticipants >= this.event.maxParticipants : false;
+    const e = this.event();
+    return e.maxParticipants ? e.currentParticipants >= e.maxParticipants : false;
   }
 
   getAvailabilityText(): string {
-    if (!this.event.maxParticipants) return '';
-    const remaining = this.event.maxParticipants - this.event.currentParticipants;
+    const e = this.event();
+    if (!e.maxParticipants) return '';
+    const remaining = e.maxParticipants - e.currentParticipants;
     if (remaining === 0) return 'Sold Out';
     if (remaining <= 5) return `${remaining} spots left`;
-    return `${this.event.currentParticipants}/${this.event.maxParticipants} registered`;
+    return `${e.currentParticipants}/${e.maxParticipants} registered`;
   }
 
   getDisplayDescription(): string {
-    if (this.showFullDescription || this.event.description.length <= 150) {
-      return this.event.description;
+    const e = this.event();
+    if (this.showFullDescription() || e.description.length <= 150) {
+      return e.description;
     }
-    return this.event.description.substring(0, 150) + '...';
+    return e.description.substring(0, 150) + '...';
   }
 
   getDisplayTags(): string[] {
-    return this.compact ? this.event.tags.slice(0, 3) : this.event.tags;
+    return this.compact() ? this.event().tags.slice(0, 3) : this.event().tags;
   }
 
   getExtraTagsCount(): number {
-    const displayCount = this.compact ? 3 : this.event.tags.length;
-    return Math.max(0, this.event.tags.length - displayCount);
+    const displayCount = this.compact() ? 3 : this.event().tags.length;
+    return Math.max(0, this.event().tags.length - displayCount);
   }
 
   getDisplayRequirements(): string[] {
-    if (!this.event.requirements) return [];
-    return this.compact ? this.event.requirements.slice(0, 2) : this.event.requirements;
+    const e = this.event();
+    if (!e.requirements) return [];
+    return this.compact() ? e.requirements.slice(0, 2) : e.requirements;
   }
 
   getDisplayWhatToBring(): string[] {
-    if (!this.event.whatToBring) return [];
-    return this.compact ? this.event.whatToBring.slice(0, 3) : this.event.whatToBring;
+    const e = this.event();
+    if (!e.whatToBring) return [];
+    return this.compact() ? e.whatToBring.slice(0, 3) : e.whatToBring;
   }
 
   isMultiDay(): boolean {
-    return !!(this.event.endDate && this.event.endDate !== this.event.date);
+    const e = this.event();
+    return !!(e.endDate && e.endDate !== e.date);
   }
 }

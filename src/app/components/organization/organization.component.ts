@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { 
@@ -139,26 +139,26 @@ export interface SocialMedia {
   ]
 })
 export class OrganizationComponent {
-  @Input() organization!: OrganizationInfo;
-  @Input() showHero: boolean = true;
-  @Input() showMission: boolean = true;
-  @Input() showStatistics: boolean = true;
-  @Input() showPrograms: boolean = true;
-  @Input() showMemberDojos: boolean = true;
-  @Input() showEvents: boolean = true;
-  @Input() showLineage: boolean = true;
-  @Input() showPhilosophy: boolean = true;
-  @Input() showContact: boolean = true;
-  @Input() compact: boolean = false;
+  organization = input.required<OrganizationInfo>();
+  showHero = input(true);
+  showMission = input(true);
+  showStatistics = input(true);
+  showPrograms = input(true);
+  showMemberDojos = input(true);
+  showEvents = input(true);
+  showLineage = input(true);
+  showPhilosophy = input(true);
+  showContact = input(true);
+  compact = input(false);
 
-  @Output() dojoClick = new EventEmitter<Dojo>();
-  @Output() eventClick = new EventEmitter<Event>();
-  @Output() contactClick = new EventEmitter<string>();
-  @Output() websiteClick = new EventEmitter<string>();
-  @Output() emailClick = new EventEmitter<string>();
-  @Output() socialClick = new EventEmitter<SocialMedia>();
-  @Output() findDojoClick = new EventEmitter<void>();
-  @Output() editClick = new EventEmitter<string>();
+  dojoClick = output<Dojo>();
+  eventClick = output<Event>();
+  contactClick = output<string>();
+  websiteClick = output<string>();
+  emailClick = output<string>();
+  socialClick = output<SocialMedia>();
+  findDojoClick = output<void>();
+  editClick = output<string>();
 
   constructor() {
     addIcons({ 
@@ -192,15 +192,15 @@ export class OrganizationComponent {
   }
 
   onContactClick() {
-    this.contactClick.emit(this.organization.contact.phone);
+    this.contactClick.emit(this.organization().contact.phone);
   }
 
   onWebsiteClick() {
-    this.websiteClick.emit(this.organization.contact.website);
+    this.websiteClick.emit(this.organization().contact.website);
   }
 
   onEmailClick() {
-    this.emailClick.emit(this.organization.contact.email);
+    this.emailClick.emit(this.organization().contact.email);
   }
 
   onSocialClick(social: SocialMedia) {
@@ -212,23 +212,23 @@ export class OrganizationComponent {
   }
 
   getDisplayStatistics(): Statistic[] {
-    return this.compact ? this.organization.statistics.slice(0, 2) : this.organization.statistics;
+    return this.compact() ? this.organization().statistics.slice(0, 2) : this.organization().statistics;
   }
 
   getDisplayPrograms(): Program[] {
-    return this.compact ? this.organization.programs.slice(0, 2) : this.organization.programs;
+    return this.compact() ? this.organization().programs.slice(0, 2) : this.organization().programs;
   }
 
   getDisplayDojos(): Dojo[] {
-    return this.compact ? this.organization.memberDojos.slice(0, 2) : this.organization.memberDojos;
+    return this.compact() ? this.organization().memberDojos.slice(0, 2) : this.organization().memberDojos;
   }
 
   getDisplayEvents(): Event[] {
-    return this.compact ? this.organization.upcomingEvents.slice(0, 2) : this.organization.upcomingEvents;
+    return this.compact() ? this.organization().upcomingEvents.slice(0, 2) : this.organization().upcomingEvents;
   }
 
   getDisplayLineageFeatures(): LineageFeature[] {
-    return this.compact ? this.organization.lineageFeatures.slice(0, 2) : this.organization.lineageFeatures;
+    return this.compact() ? this.organization().lineageFeatures.slice(0, 2) : this.organization().lineageFeatures;
   }
 
   getEventTypeColor(type: Event['type']): string {
@@ -263,6 +263,6 @@ export class OrganizationComponent {
 
   onEditClick(event: MouseEvent) {
     event.stopPropagation();
-    this.editClick.emit(this.organization.id);
+    this.editClick.emit(this.organization().id);
   }
 }

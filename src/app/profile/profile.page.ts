@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
@@ -93,13 +93,13 @@ interface UserProfile {
 export class ProfilePage implements OnInit, OnDestroy {
   currentUser: any = null;
   selectedSegment: string = 'profile';
-  isEditing: boolean = false;
+  isEditing = signal(false);
 
   viewingUserId: string | null = null;
-  isOwnProfile: boolean = true;
-  isViewingOtherPerson: boolean = false;
-  loading: boolean = true;
-  notFound: boolean = false;
+  isOwnProfile = signal(true);
+  isViewingOtherPerson = signal(false);
+  loading = signal(true);
+  notFound = signal(false);
   private routeSubscription: any;
 
   userProfile: UserProfile = {
@@ -117,13 +117,13 @@ export class ProfilePage implements OnInit, OnDestroy {
   userStudios: Studio[] = [];
   instructorStudios: Studio[] = [];
   personProfile: Person | undefined;
-  hasPersonProfile: boolean = false;
+  hasPersonProfile = signal(false);
   communityProfileError: string = '';
-  isCommunityProfileExpanded: boolean = false;
-  isEditingCommunityProfile: boolean = false;
+  isCommunityProfileExpanded = signal(false);
+  isEditingCommunityProfile = signal(false);
 
-  isAuthenticated: boolean = false;
-  isAdmin: boolean = false;
+  isAuthenticated = signal(false);
+  isAdmin = signal(false);
 
   notificationPreferences: NotificationPreferences = {
     inApp: true, email: false, sms: false,
@@ -157,7 +157,7 @@ export class ProfilePage implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.authStateService.currentUser$.subscribe(user => {
-      this.isAuthenticated = !!user;
+      this.isAuthenticated.set(!!user);
     });
     this.routeSubscription = this.route.params.subscribe(async params => {
       const personId = params['id'];
@@ -176,9 +176,9 @@ export class ProfilePage implements OnInit, OnDestroy {
   }
 
   private async loadOwnProfile() {
-    this.isViewingOtherPerson = false;
-    this.isOwnProfile = true;
-    this.loading = true;
+    this.isViewingOtherPerson.set(false);
+    this.isOwnProfile.set(true);
+    this.loading.set(true);
     this.authStateService.currentUser$.subscribe(user => {
       this.currentUser = user;
       if (user?.signInDetails?.loginId) {
@@ -191,22 +191,22 @@ export class ProfilePage implements OnInit, OnDestroy {
     await this.loadUserProfile();
     this.loadUserStudios();
     await this.loadPersonProfile();
-    this.loading = false;
+    this.loading.set(false);
   }
 
   private async loadOtherPersonProfile(personId: string) {
-    this.isViewingOtherPerson = true;
-    this.loading = true;
-    this.notFound = false;
+    this.isViewingOtherPerson.set(true);
+    this.loading.set(true);
+    this.notFound.set(false);
     try {
       const currentUser = await getCurrentUser();
       if (currentUser && currentUser.userId === personId) {
-        this.isViewingOtherPerson = false;
-        this.isOwnProfile = true;
+        this.isViewingOtherPerson.set(false);
+        this.isOwnProfile.set(true);
         await this.loadOwnProfile();
         return;
       }
-      this.isOwnProfile = false;
+      this.isOwnProfile.set(false);
       const person = await this.peopleService.getPersonByIdAsync(personId);
       if (person) {
         this.personProfile = person;
@@ -225,15 +225,15 @@ export class ProfilePage implements OnInit, OnDestroy {
           }
         };
         this.loadPersonStudios(person);
-        this.notFound = false;
+        this.notFound.set(false);
       } else {
-        this.notFound = true;
+        this.notFound.set(true);
       }
     } catch (error) {
       console.error('Error loading person profile:', error);
-      this.notFound = true;
+      this.notFound.set(true);
     } finally {
-      this.loading = false;
+      this.loading.set(false);
     }
   }
 
@@ -260,8 +260,8 @@ export class ProfilePage implements OnInit, OnDestroy {
   async checkIfOwnProfile() {
     try {
       const user = await getCurrentUser();
-      this.isOwnProfile = !this.viewingUserId || (user.userId === this.viewingUserId);
-    } catch { this.isOwnProfile = false; }
+      this.isOwnProfile.set(!this.viewingUserId || (user.userId === this.viewingUserId));
+    } catch { this.isOwnProfile.set(false); }
   }
 
   async loadPersonProfile() {
@@ -271,10 +271,10 @@ export class ProfilePage implements OnInit, OnDestroy {
         user = await getCurrentUser();
       } catch (e) {
         console.log('[ProfilePage] getCurrentUser failed (guest tab):', e);
-        this.hasPersonProfile = false;
+        this.hasPersonProfile.set(false);
         return;
       }
-      if (!user) { this.hasPersonProfile = false; console.log('[ProfilePage] No current user'); return; }
+      if (!user) { this.hasPersonProfile.set(false); console.log('[ProfilePage] No current user'); return; }
       
       console.log('[ProfilePage] ✅ getCurrentUser succeeded. userId:', user.userId, 'username:', user.username);
       console.log('[ProfilePage] signInDetails:', JSON.stringify(user.signInDetails));
@@ -283,8 +283,8 @@ export class ProfilePage implements OnInit, OnDestroy {
       console.log('[ProfilePage] getPersonByIdAsync result:', dbPerson ? `FOUND: ${dbPerson.handle} (${dbPerson.name})` : 'NOT FOUND');
       if (dbPerson) {
         this.personProfile = dbPerson;
-        this.hasPersonProfile = true;
-        this.isAdmin = dbPerson.isAdmin === true;
+        this.hasPersonProfile.set(true);
+        this.isAdmin.set(dbPerson.isAdmin === true);
         this.userProfile.handle = dbPerson.handle;
         this.userProfile.name = dbPerson.name;
         this.userProfile.username = dbPerson.username;
@@ -303,8 +303,9 @@ export class ProfilePage implements OnInit, OnDestroy {
           postsCount: dbPerson.postsCount, studiosCount: dbPerson.studioAffiliations?.length || 0
         };
       } else {
-        this.hasPersonProfile = await this.personProfileManager.hasPersonProfile();
-        if (this.hasPersonProfile) {
+        const hasProfile = await this.personProfileManager.hasPersonProfile();
+        this.hasPersonProfile.set(hasProfile);
+        if (hasProfile) {
           this.personProfile = await this.personProfileManager.getCurrentPersonProfile();
           if (this.personProfile) {
             this.userProfile.handle = this.personProfile.handle;
@@ -320,13 +321,13 @@ export class ProfilePage implements OnInit, OnDestroy {
       }
 
       // Always check Cognito groups as the authoritative admin source
-      if (!this.isAdmin) {
+      if (!this.isAdmin()) {
         try {
           const session = await fetchAuthSession();
           const groups: string[] = (session.tokens?.idToken?.payload?.['cognito:groups'] as string[]) || [];
           if (groups.includes('admin')) {
             console.log('[ProfilePage] User is in Cognito admin group. Granting admin access.');
-            this.isAdmin = true;
+            this.isAdmin.set(true);
           }
         } catch (e) {
           console.warn('[ProfilePage] Could not check Cognito groups:', e);
@@ -334,7 +335,7 @@ export class ProfilePage implements OnInit, OnDestroy {
       }
     } catch (error) {
       console.error('Error loading person profile:', error);
-      this.hasPersonProfile = false;
+      this.hasPersonProfile.set(false);
     }
   }
 
@@ -346,11 +347,11 @@ export class ProfilePage implements OnInit, OnDestroy {
   }
 
   toggleCommunityProfileSection() {
-    this.isCommunityProfileExpanded = !this.isCommunityProfileExpanded;
+    this.isCommunityProfileExpanded.set(!this.isCommunityProfileExpanded());
   }
 
   toggleCommunityProfileEdit() {
-    if (this.isEditingCommunityProfile) {
+    if (this.isEditingCommunityProfile()) {
       if (this.personProfile) {
         this.userProfile.handle = this.personProfile.handle;
         this.userProfile.name = this.personProfile.name;
@@ -364,7 +365,7 @@ export class ProfilePage implements OnInit, OnDestroy {
     } else {
       if (!this.userProfile.handle) this.userProfile.handle = '@';
     }
-    this.isEditingCommunityProfile = !this.isEditingCommunityProfile;
+    this.isEditingCommunityProfile.set(!this.isEditingCommunityProfile());
   }
 
   async saveCommunityProfile() {
@@ -402,16 +403,16 @@ export class ProfilePage implements OnInit, OnDestroy {
         achievements: this.userProfile.achievements || [],
         socialMedia: this.userProfile.socialMedia || []
       };
-      if (this.hasPersonProfile) {
+      if (this.hasPersonProfile()) {
         await this.peopleService.updatePerson(user.userId, personData);
         this.showToast('Community profile updated');
       } else {
         await this.peopleService.addPerson(personData);
         this.showToast('Community profile created');
       }
-      this.hasPersonProfile = true;
+      this.hasPersonProfile.set(true);
       this.personProfile = personData;
-      this.isEditingCommunityProfile = false;
+      this.isEditingCommunityProfile.set(false);
       this.personProfileManager.notifyProfileUpdated();
     } catch (error) {
       console.error('Error saving community profile:', error);
@@ -423,7 +424,7 @@ export class ProfilePage implements OnInit, OnDestroy {
     const result = await this.personProfileManager.showProfileSetup(this.personProfile);
     if (result) {
       this.personProfile = result;
-      this.hasPersonProfile = true;
+      this.hasPersonProfile.set(true);
       this.userProfile.handle = result.handle;
       this.userProfile.name = result.name;
       this.userProfile.username = result.username;
@@ -511,7 +512,7 @@ export class ProfilePage implements OnInit, OnDestroy {
         }
         const dbPerson = await this.peopleService.getPersonByIdAsync(user.userId);
         if (dbPerson) {
-          this.isAdmin = dbPerson.isAdmin === true;
+          this.isAdmin.set(dbPerson.isAdmin === true);
           this.userProfile.name = dbPerson.name || this.userProfile.name;
           this.userProfile.handle = dbPerson.handle || this.userProfile.handle;
           this.userProfile.avatar = dbPerson.avatar || this.userProfile.avatar;
@@ -522,12 +523,12 @@ export class ProfilePage implements OnInit, OnDestroy {
         }
 
         // Always check Cognito groups as the authoritative admin source
-        if (!this.isAdmin) {
+        if (!this.isAdmin()) {
           try {
             const session = await fetchAuthSession();
             const groups: string[] = (session.tokens?.idToken?.payload?.['cognito:groups'] as string[]) || [];
             if (groups.includes('admin')) {
-              this.isAdmin = true;
+              this.isAdmin.set(true);
             }
           } catch (e) {
             console.warn('[ProfilePage] Could not check Cognito groups:', e);
@@ -590,10 +591,10 @@ export class ProfilePage implements OnInit, OnDestroy {
   }
 
   toggleEdit() {
-    if (this.isEditing) {
+    if (this.isEditing()) {
       this.saveUserProfile();
     }
-    this.isEditing = !this.isEditing;
+    this.isEditing.set(!this.isEditing());
   }
 
   async changeAvatar() {

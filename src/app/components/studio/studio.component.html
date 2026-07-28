@@ -1,12 +1,12 @@
-<div class="studio-container" [class.compact]="compact">
+<div class="studio-container" [class.compact]="compact()">
   <!-- Hero Section -->
-  @if (showHero) {
-    <ion-card class="hero-card" [class.compact]="compact">
-      <div class="hero-image" [class.compact]="compact">
-        <img [src]="studio.heroImage" [alt]="studio.name" />
+  @if (showHero()) {
+    <ion-card class="hero-card" [class.compact]="compact()">
+      <div class="hero-image" [class.compact]="compact()">
+        <img [src]="studio().heroImage" [alt]="studio().name" />
         <div class="hero-overlay">
           <div class="hero-header">
-            <h1 [class.compact]="compact">{{ studio.name }}</h1>
+            <h1 [class.compact]="compact()">{{ studio().name }}</h1>
             <div class="header-actions">
               <!-- Favorite Button -->
               <ion-button
@@ -16,12 +16,12 @@
                 (click)="toggleFavorite($event)"
               >
                 <ion-icon
-                  [name]="isFavorited ? 'star' : 'star-outline'"
+                  [name]="isFavorited() ? 'star' : 'star-outline'"
                   slot="icon-only"
                 ></ion-icon>
               </ion-button>
               <!-- Edit Button for instructors -->
-              @if (studio.isInstructor && !compact) {
+              @if (studio().isInstructor && !compact()) {
                 <ion-button
                   fill="clear"
                   color="light"
@@ -34,15 +34,15 @@
             </div>
           </div>
           <!-- Membership Status Indicators -->
-          @if (studio.isMember || studio.isInstructor) {
+          @if (studio().isMember || studio().isInstructor) {
             <div class="membership-status">
-              @if (studio.isInstructor) {
+              @if (studio().isInstructor) {
                 <ion-chip color="success" class="status-chip">
                   <ion-icon name="school"></ion-icon>
                   <ion-label>{{ "studios.instructor" | translate }}</ion-label>
                 </ion-chip>
               }
-              @if (studio.isMember && !studio.isInstructor) {
+              @if (studio().isMember && !studio().isInstructor) {
                 <ion-chip color="primary" class="status-chip">
                   <ion-icon name="checkmark"></ion-icon>
                   <ion-label>{{ "studios.member" | translate }}</ion-label>
@@ -50,8 +50,8 @@
               }
             </div>
           }
-          <p [class.compact]="compact">{{ studio.tagline }}</p>
-          @if (!compact) {
+          <p [class.compact]="compact()">{{ studio().tagline }}</p>
+          @if (!compact()) {
             <ion-button
               expand="block"
               color="primary"
@@ -67,32 +67,32 @@
   }
 
   <!-- About Section -->
-  @if (showAbout) {
+  @if (showAbout()) {
     <ion-card>
       <ion-card-header>
         <ion-card-title>
           <ion-icon name="school" color="primary"></ion-icon>
           {{
-            compact
+            compact()
               ? ("studio_component.about_studio" | translate)
               : ("studio_component.about_dojo" | translate)
           }}
         </ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        <p>{{ studio.description }}</p>
+        <p>{{ studio().description }}</p>
       </ion-card-content>
     </ion-card>
   }
 
   <!-- Benefits Section -->
-  @if (showBenefits && studio.benefits.length > 0) {
+  @if (showBenefits() && studio().benefits.length > 0) {
     <ion-card>
       <ion-card-header>
         <ion-card-title>
           <ion-icon name="trophy" color="primary"></ion-icon>
           {{
-            compact
+            compact()
               ? ("studio_component.benefits" | translate)
               : ("studio_component.why_choose" | translate)
           }}
@@ -102,8 +102,8 @@
         <ion-grid>
           <ion-row>
             @for (benefit of getDisplayBenefits(); track benefit) {
-              <ion-col size="12" [sizeMd]="compact ? '12' : '6'">
-                <div class="benefit-item" [class.compact]="compact">
+              <ion-col size="12" [sizeMd]="compact() ? '12' : '6'">
+                <div class="benefit-item" [class.compact]="compact()">
                   <ion-icon
                     [name]="benefit.icon"
                     color="primary"
@@ -111,7 +111,7 @@
                   ></ion-icon>
                   <div class="benefit-content">
                     <h3>{{ benefit.title }}</h3>
-                    @if (!compact) {
+                    @if (!compact()) {
                       <p>{{ benefit.description }}</p>
                     }
                   </div>
@@ -125,7 +125,7 @@
   }
 
   <!-- Instructors Section -->
-  @if (showInstructors && studio.instructors.length > 0) {
+  @if (showInstructors() && studio().instructors.length > 0) {
     <ion-card>
       <ion-card-header>
         <ion-card-title>
@@ -137,7 +137,7 @@
         @for (instructor of getDisplayInstructors(); track instructor) {
           <div
             class="instructor-card"
-            [class.compact]="compact"
+            [class.compact]="compact()"
             (click)="onInstructorClick(instructor)"
           >
             <ion-item lines="none" button="true">
@@ -158,7 +158,7 @@
                 color="medium"
               ></ion-icon>
             </ion-item>
-            @if (!compact) {
+            @if (!compact()) {
               <ion-text>
                 <p class="instructor-bio">{{ instructor.bio }}</p>
                 <p class="view-profile-hint">
@@ -170,13 +170,13 @@
           </div>
         }
         <!-- Show more instructors hint in compact mode -->
-        @if (compact && studio.instructors.length > 1) {
+        @if (compact() && studio().instructors.length > 1) {
           <div class="more-instructors">
             <ion-text color="medium">
               <p>
                 {{
                   "studio_component.more_instructors"
-                    | translate: { count: studio.instructors.length - 1 }
+                    | translate: { count: studio().instructors.length - 1 }
                 }}
               </p>
             </ion-text>
@@ -187,7 +187,7 @@
   }
 
   <!-- Schedule Section -->
-  @if (showSchedule && studio.schedule.length > 0) {
+  @if (showSchedule() && studio().schedule.length > 0) {
     <ion-card>
       <ion-card-header>
         <ion-card-title>
@@ -208,7 +208,7 @@
                 <h2>{{ class.title }}</h2>
                 <h3>{{ formatScheduleTime(class) }}</h3>
                 <p>{{ class.level }}</p>
-                @if (!compact) {
+                @if (!compact()) {
                   <p>
                     <strong
                       >{{ "studio_component.instructor" | translate }}:</strong
@@ -216,7 +216,7 @@
                     {{ class.instructor }}
                   </p>
                 }
-                @if (!compact && class.location) {
+                @if (!compact() && class.location) {
                   <p>
                     <strong
                       >{{ "studio_component.location" | translate }}:</strong
@@ -224,7 +224,7 @@
                     {{ class.location }}
                   </p>
                 }
-                @if (!compact && class.description) {
+                @if (!compact() && class.description) {
                   <p class="schedule-description">{{ class.description }}</p>
                 }
               </ion-label>
@@ -239,13 +239,13 @@
           }
         </ion-list>
         <!-- Show more classes hint in compact mode -->
-        @if (compact && studio.schedule.length > 3) {
+        @if (compact() && studio().schedule.length > 3) {
           <div class="more-classes">
             <ion-text color="medium">
               <p>
                 {{
                   "studio_component.more_classes"
-                    | translate: { count: studio.schedule.length - 3 }
+                    | translate: { count: studio().schedule.length - 3 }
                 }}
               </p>
             </ion-text>
@@ -256,7 +256,7 @@
   }
 
   <!-- Pricing Section -->
-  @if (showPricing && studio.pricing.length > 0) {
+  @if (showPricing() && studio().pricing.length > 0) {
     <ion-card>
       <ion-card-header>
         <ion-card-title>
@@ -268,16 +268,16 @@
         <ion-grid>
           <ion-row>
             @for (option of getDisplayPricing(); track option) {
-              <ion-col size="12" [sizeMd]="compact ? '6' : '4'">
+              <ion-col size="12" [sizeMd]="compact() ? '6' : '4'">
                 <div
                   class="pricing-card"
                   [class.featured]="option.featured"
-                  [class.compact]="compact"
+                  [class.compact]="compact()"
                 >
                   <h3>{{ option.name }}</h3>
                   <div class="price">{{ option.price }}</div>
                   <p>{{ option.description }}</p>
-                  @if (!compact) {
+                  @if (!compact()) {
                     <ul>
                       @for (feature of option.features; track feature) {
                         <li>{{ feature }}</li>
@@ -294,13 +294,13 @@
   }
 
   <!-- Contact Section -->
-  @if (showContact) {
+  @if (showContact()) {
     <ion-card>
       <ion-card-header>
         <ion-card-title>
           <ion-icon name="location" color="primary"></ion-icon>
           {{
-            compact
+            compact()
               ? ("studio_component.contact" | translate)
               : ("studio_component.visit_dojo" | translate)
           }}
@@ -312,32 +312,32 @@
             <ion-icon name="location" slot="start" color="primary"></ion-icon>
             <ion-label>
               <h3>{{ "studio_component.address" | translate }}</h3>
-              <p>{{ studio.address }}</p>
+              <p>{{ studio().address }}</p>
             </ion-label>
           </ion-item>
           <ion-item button (click)="onContactClick()">
             <ion-icon name="call" slot="start" color="primary"></ion-icon>
             <ion-label>
               <h3>{{ "studio_component.phone" | translate }}</h3>
-              <p>{{ studio.phone }}</p>
+              <p>{{ studio().phone }}</p>
             </ion-label>
           </ion-item>
           <ion-item button (click)="onEmailClick()">
             <ion-icon name="mail" slot="start" color="primary"></ion-icon>
             <ion-label>
               <h3>{{ "studio_component.email" | translate }}</h3>
-              <p>{{ studio.email }}</p>
+              <p>{{ studio().email }}</p>
             </ion-label>
           </ion-item>
           <ion-item button (click)="onWebsiteClick()">
             <ion-icon name="globe" slot="start" color="primary"></ion-icon>
             <ion-label>
               <h3>{{ "studio_component.website" | translate }}</h3>
-              <p>{{ studio.website }}</p>
+              <p>{{ studio().website }}</p>
             </ion-label>
           </ion-item>
         </ion-list>
-        @if (!compact) {
+        @if (!compact()) {
           <div class="cta-section">
             <h3>{{ "studio_component.ready_to_begin" | translate }}</h3>
             <p>{{ "studio_component.trial_description" | translate }}</p>

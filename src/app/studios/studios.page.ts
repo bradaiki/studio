@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -47,9 +47,6 @@ import {
   navigate,
   informationCircle,
 } from 'ionicons/icons';
-// Interfaces moved to StudioComponent
-
-// Interfaces now imported from StudioComponent
 
 @Component({
   selector: 'app-studios',
@@ -86,15 +83,17 @@ import {
 export class StudiosPage implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
+  // Keep as regular properties - used with [(ngModel)]
   selectedSegment: string = 'my-studios';
   searchTerm: string = '';
-  filterMode: 'all' | 'single' = 'all';
-  filteredEntityId: string | null = null;
-  filteredEntityName: string | null = null;
   viewMode: 'list' | 'map' = 'list';
 
-  studios: Studio[] = [];
-  displayedStudios: Studio[] = [];
+  // Convert to signals
+  filterMode = signal<'all' | 'single'>('all');
+  filteredEntityId = signal<string | null>(null);
+  filteredEntityName = signal<string | null>(null);
+  studios = signal<Studio[]>([]);
+  displayedStudios = signal<Studio[]>([]);
 
   // Infinite scroll properties - separate state for each filter combination
   private pageSize = 6;
@@ -322,32 +321,29 @@ export class StudiosPage implements OnInit, OnDestroy {
   ngOnInit() {
     console.log('[Studios Page] Initializing...');
 
-    // Get studios directly from service (they're already emitted in constructor)
-    this.studios = this.studiosService.getAllStudios();
-    console.log('[Studios Page] Loaded studios:', this.studios.length);
+    this.studios.set(this.studiosService.getAllStudios());
+    console.log('[Studios Page] Loaded studios:', this.studios().length);
 
-    // Subscribe to studios from service for updates
     this.studiosService.studios$
       .pipe(takeUntil(this.destroy$))
       .subscribe((studios) => {
         console.log('[Studios Page] Received studios update:', studios.length);
-        this.studios = studios;
+        this.studios.set(studios);
         this.updateDisplayedStudios();
       });
 
-    // Check if we're filtering to a specific studio
     this.route.queryParams
       .pipe(takeUntil(this.destroy$))
       .subscribe((params) => {
         if (params['filter'] === 'single' && params['entityId']) {
-          this.filterMode = 'single';
-          this.filteredEntityId = params['entityId'];
-          this.filteredEntityName = params['entityName'] || null;
+          this.filterMode.set('single');
+          this.filteredEntityId.set(params['entityId']);
+          this.filteredEntityName.set(params['entityName'] || null);
           this.searchTerm = params['entityName'] || '';
         } else {
-          this.filterMode = 'all';
-          this.filteredEntityId = null;
-          this.filteredEntityName = null;
+          this.filterMode.set('all');
+          this.filteredEntityId.set(null);
+          this.filteredEntityName.set(null);
           if (params['search']) {
             this.searchTerm = params['search'];
           }
@@ -355,23 +351,18 @@ export class StudiosPage implements OnInit, OnDestroy {
         this.updateDisplayedStudios();
       });
 
-    // Initial display update
     this.updateDisplayedStudios();
   }
 
   ionViewWillEnter() {
     console.log('[Studios Page] View will enter');
-    // Force refresh studios when view becomes active
-    // This ensures data is loaded even if service initialization was delayed
-    if (this.studios.length === 0) {
+    if (this.studios().length === 0) {
       console.log('[Studios Page] No studios loaded, forcing refresh');
       this.studiosService.forceEmitLocalStudios();
     }
   }
 
-  // Event handlers for studio component
   onInstructorClick(instructor: Instructor) {
-    // Navigate to people page and scroll to the instructor
     this.router.navigate(['/dash/people'], {
       queryParams: {
         instructor: instructor.username,
@@ -399,7 +390,6 @@ export class StudiosPage implements OnInit, OnDestroy {
 
   onTrialClick() {
     console.log('Schedule free trial clicked');
-    // In a real app, this would open a booking form or navigate to a scheduling page
   }
 
   onSegmentChange(event: any) {
@@ -409,50 +399,41 @@ export class StudiosPage implements OnInit, OnDestroy {
 
   onViewModeChange(event: any) {
     this.viewMode = event.detail.value;
-    // In map mode, show all filtered studios (no pagination)
     if (this.viewMode === 'map') {
-      // Force display all studios for map view
-      this.displayedStudios = this.filteredStudios;
+      this.displayedStudios.set(this.filteredStudios);
     } else {
-      // Return to paginated list view
       this.updateDisplayedStudios();
     }
   }
 
   onStudioClick(studio: Studio) {
-    // Only navigate if we're showing multiple studios (compact mode)
     if (this.filteredStudios.length > 1) {
       this.router.navigate(['/dash/studio', studio.id]);
     }
   }
 
-  // New methods for handling multiple studios
   get filteredStudios(): Studio[] {
-    // If in single entity mode, filter to show only that entity
-    if (this.filterMode === 'single' && this.filteredEntityId) {
-      return this.studios.filter(
-        (studio) => studio.id === this.filteredEntityId,
+    if (this.filterMode() === 'single' && this.filteredEntityId()) {
+      return this.studios().filter(
+        (studio) => studio.id === this.filteredEntityId(),
       );
     }
 
     let filtered: Studio[] = [];
 
-    // Filter by segment
     switch (this.selectedSegment) {
       case 'my-studios':
         filtered = this.studiosService.getUserStudios();
         break;
       case 'discover':
       default:
-        filtered = this.studios;
+        filtered = this.studios();
         break;
     }
 
-    // Filter by search term
     if (this.searchTerm.trim()) {
       const searchResults = this.studiosService.searchStudios(this.searchTerm);
 
-      // Apply segment filter to search results
       if (this.selectedSegment === 'my-studios') {
         const userStudioIds = this.studiosService
           .getUserStudios()
@@ -471,32 +452,27 @@ export class StudiosPage implements OnInit, OnDestroy {
   private updateDisplayedStudios() {
     const filtered = this.filteredStudios;
 
-    // In map mode, show all filtered studios
     if (this.viewMode === 'map') {
-      this.displayedStudios = filtered;
+      this.displayedStudios.set(filtered);
       return;
     }
 
-    // Create unique key for this filter combination
-    const filterKey = `${this.filterMode}:${this.filteredEntityId}:${this.selectedSegment}:${this.searchTerm}`;
+    const filterKey = `${this.filterMode()}:${this.filteredEntityId()}:${this.selectedSegment}:${this.searchTerm}`;
 
-    // Check if filter changed
     if (filterKey !== this.currentFilterKey) {
       this.currentFilterKey = filterKey;
 
-      // Get or create state for this filter
       if (!this.scrollStates.has(filterKey)) {
         this.scrollStates.set(filterKey, { page: 0, displayed: [] });
       }
 
       const state = this.scrollStates.get(filterKey)!;
 
-      // If state is empty, load initial items
       if (state.displayed.length === 0) {
         this.loadInitialStudios(state, filtered);
       }
 
-      this.displayedStudios = state.displayed;
+      this.displayedStudios.set(state.displayed);
     }
   }
 
@@ -526,25 +502,23 @@ export class StudiosPage implements OnInit, OnDestroy {
       const state = this.scrollStates.get(this.currentFilterKey);
       if (state) {
         this.loadMoreStudiosForState(state, filtered);
-        this.displayedStudios = state.displayed;
+        this.displayedStudios.set(state.displayed);
       }
 
       event.target.complete();
 
-      // Disable infinite scroll when all items are loaded
-      if (this.displayedStudios.length >= filtered.length) {
+      if (this.displayedStudios().length >= filtered.length) {
         event.target.disabled = true;
       }
     }, 500);
   }
 
   get isFiltered(): boolean {
-    return this.filterMode === 'single';
+    return this.filterMode() === 'single';
   }
 
   get showLegacyStudio(): boolean {
-    // Show legacy single studio view if no studios from service or in single mode with no match
-    return this.filteredStudios.length === 0 && this.filterMode === 'all';
+    return this.filteredStudios.length === 0 && this.filterMode() === 'all';
   }
 
   onSearchChange(event: any) {
@@ -557,11 +531,10 @@ export class StudiosPage implements OnInit, OnDestroy {
   }
 
   clearFilter() {
-    this.filterMode = 'all';
-    this.filteredEntityId = null;
-    this.filteredEntityName = null;
+    this.filterMode.set('all');
+    this.filteredEntityId.set(null);
+    this.filteredEntityName.set(null);
     this.searchTerm = '';
-    // Update URL to remove query parameters
     this.router.navigate(['/tabs/studios']);
   }
 
@@ -569,7 +542,6 @@ export class StudiosPage implements OnInit, OnDestroy {
     return studio.id;
   }
 
-  // Convert Studio to StudioInfo for component compatibility
   convertToStudioInfo(studio: Studio): StudioInfo {
     const enrichedStudio = this.studiosService.enrichStudio(studio);
 
@@ -649,18 +621,14 @@ export class StudiosPage implements OnInit, OnDestroy {
     this.router.navigate(['/dash/studio-form', studioId]);
   }
 
-  // Chat message handlers
   onChatMessageClick(message: ChatMessage) {
     console.log('Chat message clicked:', message);
-    // In a real app, this might open a detailed message view or mark as read
   }
 
   onSendChatMessage(message: string) {
     console.log('Sending chat message:', message);
-    // In a real app, this would send the message to a backend service
   }
 
-  // Generate Google Maps embed URL with multiple studio locations
   getMapEmbedUrl(): SafeResourceUrl {
     const studiosWithLocations = this.filteredStudios.filter(
       (studio) => studio.address,
@@ -669,17 +637,13 @@ export class StudiosPage implements OnInit, OnDestroy {
     let url: string;
 
     if (studiosWithLocations.length === 0) {
-      // Default to a general map if no studios have addresses
       url =
         'https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d3048.4!2d-97.7431!3d30.2672!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sus!4v1234567890123!5m2!1sen!2sus';
     } else if (studiosWithLocations.length === 1) {
-      // Single studio - center map on it
       const studio = studiosWithLocations[0];
       const encodedAddress = encodeURIComponent(studio.address);
-      // Use a simple embed without API key for basic functionality
       url = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3048.4!2d-97.7431!3d30.2672!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzDCsDE2JzAyLjAiTiA5N8KwNDQnMzUuMiJX!5e0!3m2!1sen!2sus!4v1234567890123!5m2!1sen!2sus&q=${encodedAddress}`;
     } else {
-      // Multiple studios - show a general area map
       const centerLocation = this.getCenterLocation(studiosWithLocations);
       const encodedLocation = encodeURIComponent(
         `aikido dojo ${centerLocation}`,
@@ -690,10 +654,7 @@ export class StudiosPage implements OnInit, OnDestroy {
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
-  // Get a center location for multiple studios
   private getCenterLocation(studios: Studio[]): string {
-    // Simple approach: use the first studio's location as center
-    // In a real app, you might calculate the geographic center
     if (studios.length > 0) {
       return studios[0].location;
     }

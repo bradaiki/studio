@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 
 import {
   FormBuilder,
@@ -78,12 +78,12 @@ import { add, remove, save, arrowBack } from 'ionicons/icons';
 })
 export class OrgFormPage implements OnInit {
   orgForm: FormGroup;
-  isEditMode = false;
-  orgId: string | null = null;
-  isSubmitting = false;
-  showDeleteAlert = false;
-  showToast = false;
-  toastMessage = '';
+  isEditMode = signal(false);
+  orgId = signal<string | null>(null);
+  isSubmitting = signal(false);
+  showDeleteAlert = signal(false);
+  showToast = signal(false);
+  toastMessage = signal('');
 
   deleteAlertButtons = [
     {
@@ -145,8 +145,8 @@ export class OrgFormPage implements OnInit {
   ngOnInit() {
     this.route.params.subscribe((params) => {
       if (params['id'] && params['id'] !== 'new') {
-        this.isEditMode = true;
-        this.orgId = params['id'];
+        this.isEditMode.set(true);
+        this.orgId.set(params['id']);
         this.loadOrganization(params['id']);
       } else {
         this.addDefaultFormArrayItems();
@@ -451,8 +451,8 @@ export class OrgFormPage implements OnInit {
   }
 
   async onSubmit() {
-    if (this.orgForm.valid && !this.isSubmitting) {
-      this.isSubmitting = true;
+    if (this.orgForm.valid && !this.isSubmitting()) {
+      this.isSubmitting.set(true);
 
       try {
         const formValue = this.orgForm.value;
@@ -464,9 +464,9 @@ export class OrgFormPage implements OnInit {
           website: formValue.website || '',
         };
 
-        if (this.isEditMode && this.orgId) {
+        if (this.isEditMode() && this.orgId()) {
           await this.organizationsService.updateOrganization(
-            this.orgId,
+            this.orgId()!,
             formValue,
           );
           this.showToastMessage('Organization updated successfully');
@@ -480,7 +480,7 @@ export class OrgFormPage implements OnInit {
         console.error('Error saving organization:', error);
         this.showToastMessage('Error saving organization. Please try again.');
       } finally {
-        this.isSubmitting = false;
+        this.isSubmitting.set(false);
       }
     } else {
       this.markFormGroupTouched(this.orgForm);
@@ -489,9 +489,9 @@ export class OrgFormPage implements OnInit {
   }
 
   async onDelete() {
-    if (this.isEditMode && this.orgId) {
+    if (this.isEditMode() && this.orgId()) {
       try {
-        await this.organizationsService.removeOrganization(this.orgId);
+        await this.organizationsService.removeOrganization(this.orgId()!);
         this.showToastMessage('Organization deleted successfully');
         this.router.navigate(['/dash/orgs']);
       } catch (error) {
@@ -529,19 +529,19 @@ export class OrgFormPage implements OnInit {
   }
 
   private showToastMessage(message: string) {
-    this.toastMessage = message;
-    this.showToast = true;
+    this.toastMessage.set(message);
+    this.showToast.set(true);
   }
 
   onToastDismiss() {
-    this.showToast = false;
+    this.showToast.set(false);
   }
 
   onDeleteAlertDismiss() {
-    this.showDeleteAlert = false;
+    this.showDeleteAlert.set(false);
   }
 
   confirmDelete() {
-    this.showDeleteAlert = true;
+    this.showDeleteAlert.set(true);
   }
 }

@@ -1,9 +1,9 @@
 <ion-header>
   <ion-toolbar>
     <ion-title
-      [attr.aria-label]="'Application title: ' + ('app.title' | translate) + ', User: ' + userHandle"
+      [attr.aria-label]="'Application title: ' + ('app.title' | translate) + ', User: ' + userHandle()"
     >
-      {{ 'app.title' | translate }} - {{ userHandle }} @if
+      {{ 'app.title' | translate }} - {{ userHandle() }} @if
       (dataSourceService.isUsingMockData()) {
       <ion-badge color="warning" class="mock-mode-badge">
         <ion-icon name="phone-portrait"></ion-icon>
@@ -24,7 +24,7 @@
 
 <ion-tabs>
   <ion-tab-bar slot="top" class="ad-tab-bar">
-    <app-ad-banner [adClient]="adClient" [adSlotId]="adSlot" format="banner">
+    <app-ad-banner [adClient]="adClient()" [adSlotId]="adSlot()" format="banner">
     </app-ad-banner>
   </ion-tab-bar>
   <ion-tab-bar slot="bottom">

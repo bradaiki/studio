@@ -1,34 +1,34 @@
-@if (isLoading) {
-  <div class="chat-loading-indicator" [class]="'size-' + size">
+@if (isLoading()) {
+  <div class="chat-loading-indicator" [class]="'size-' + size()">
     <div class="loading-content">
       <!-- Spinner -->
       <ion-spinner
         [name]="'crescent'"
-        [color]="color"
-        [style.width]="spinnerSize"
-        [style.height]="spinnerSize"
+        [color]="color()"
+        [style.width]="spinnerSize()"
+        [style.height]="spinnerSize()"
       >
       </ion-spinner>
       <!-- Message -->
-      @if (showMessage && message) {
+      @if (showMessage() && message()) {
         <div class="loading-message">
-          {{ message }}
+          {{ message() }}
         </div>
       }
       <!-- Progress bar -->
-      @if (showProgress && progress > 0) {
+      @if (showProgress() && progress() > 0) {
         <div class="progress-container">
           <ion-progress-bar
-            [value]="progress / 100"
-            [color]="color"
+            [value]="progress() / 100"
+            [color]="color()"
             class="loading-progress"
           >
           </ion-progress-bar>
-          <div class="progress-text">{{ progress }}%</div>
+          <div class="progress-text">{{ progress() }}%</div>
         </div>
       }
       <!-- Offline indicator -->
-      @if (!isOnline) {
+      @if (!isOnline()) {
         <div class="offline-indicator">
           <ion-icon name="cloud-offline-outline" color="warning"></ion-icon>
           <span>Offline Mode</span>

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -108,8 +108,8 @@ export class StudioPage implements OnInit, OnDestroy {
   // Schedule display properties
   scheduleView: 'list' | 'calendar' = 'calendar'; // Default to calendar view
   currentDate: Date = new Date();
-  studioActivities: Activity[] = [];
-  studioStudents: Person[] = [];
+  studioActivities = signal<Activity[]>([]);
+  studioStudents = signal<Person[]>([]);
   
   // Cached map URL to prevent infinite refresh
   cachedMapUrl: SafeResourceUrl | null = null;
@@ -119,12 +119,12 @@ export class StudioPage implements OnInit, OnDestroy {
   
   // Chat-related properties
   organizedChats: OrganizedStudioChats | null = null;
-  isLoadingChats = false;
-  chatLoadError = false;
+  isLoadingChats = signal(false);
+  chatLoadError = signal(false);
   currentUserId: string | null = null;
-  totalChatCount = 0;
-  pendingInvitationCount = 0;
-  hasChatsAccess = false;
+  totalChatCount = signal(0);
+  pendingInvitationCount = signal(0);
+  hasChatsAccess = signal(false);
   private chatsLoadedForStudio: string | null = null; // Track which studio we've loaded chats for
   private preventScrollDuringChatLoad = false; // Flag to prevent scroll during chat initialization
   
@@ -141,9 +141,9 @@ export class StudioPage implements OnInit, OnDestroy {
   ];
 
   // Instructor permissions and join request management
-  canReviewRequests = false;
-  pendingRequestCount = 0;
-  isLoadingPermissions = false;
+  canReviewRequests = signal(false);
+  pendingRequestCount = signal(0);
+  isLoadingPermissions = signal(false);
   
   private subscriptions: Subscription[] = [];
 
@@ -234,8 +234,8 @@ export class StudioPage implements OnInit, OnDestroy {
           await this.checkInstructorPermissions(studioId);
         } else {
           // Clear permissions when user is not authenticated
-          this.canReviewRequests = false;
-          this.pendingRequestCount = 0;
+          this.canReviewRequests.set(false);
+          this.pendingRequestCount.set(0);
         }
       });
       
@@ -243,8 +243,8 @@ export class StudioPage implements OnInit, OnDestroy {
 
     } catch (error) {
       console.error('Error initializing instructor permissions:', error);
-      this.canReviewRequests = false;
-      this.pendingRequestCount = 0;
+      this.canReviewRequests.set(false);
+      this.pendingRequestCount.set(0);
     }
   }
 
@@ -255,24 +255,24 @@ export class StudioPage implements OnInit, OnDestroy {
     const targetStudioId = studioId || this.studio?.id;
     
     if (!targetStudioId || !this.currentUserId) {
-      this.canReviewRequests = false;
-      this.pendingRequestCount = 0;
+      this.canReviewRequests.set(false);
+      this.pendingRequestCount.set(0);
       return;
     }
 
     try {
-      this.isLoadingPermissions = true;
+      this.isLoadingPermissions.set(true);
 
       // Check if user can manage requests
-      this.canReviewRequests = await this.instructorPermissionService.canManageRequests(
+      this.canReviewRequests.set(await this.instructorPermissionService.canManageRequests(
         targetStudioId, 
         this.currentUserId
-      );
+      ));
 
-      console.log(`User ${this.currentUserId} can review requests for studio ${targetStudioId}:`, this.canReviewRequests);
+      console.log(`User ${this.currentUserId} can review requests for studio ${targetStudioId}:`, this.canReviewRequests());
 
       // If user can review requests, get pending request count
-      if (this.canReviewRequests) {
+      if (this.canReviewRequests()) {
         await this.refreshPendingRequestCount(targetStudioId);
         
         // Subscribe to permission changes for real-time updates
@@ -280,10 +280,10 @@ export class StudioPage implements OnInit, OnDestroy {
           .subscribeToPermissionChanges(targetStudioId, this.currentUserId)
           .subscribe((canManage: boolean) => {
             console.log('Permission change detected:', canManage);
-            this.canReviewRequests = canManage;
+            this.canReviewRequests.set(canManage);
             
             if (!canManage) {
-              this.pendingRequestCount = 0;
+              this.pendingRequestCount.set(0);
             } else {
               // Refresh count when permissions are granted
               this.refreshPendingRequestCount(targetStudioId);
@@ -297,20 +297,20 @@ export class StudioPage implements OnInit, OnDestroy {
           .subscribeToRequestUpdates(targetStudioId)
           .subscribe(requests => {
             console.log('Real-time request update received:', requests.length, 'pending requests');
-            this.pendingRequestCount = requests.length;
+            this.pendingRequestCount.set(requests.length);
           });
         
         this.subscriptions.push(requestUpdatesSub);
       } else {
-        this.pendingRequestCount = 0;
+        this.pendingRequestCount.set(0);
       }
 
     } catch (error) {
       console.error('Error checking instructor permissions:', error);
-      this.canReviewRequests = false;
-      this.pendingRequestCount = 0;
+      this.canReviewRequests.set(false);
+      this.pendingRequestCount.set(0);
     } finally {
-      this.isLoadingPermissions = false;
+      this.isLoadingPermissions.set(false);
     }
   }
 
@@ -320,16 +320,16 @@ export class StudioPage implements OnInit, OnDestroy {
   async refreshPendingRequestCount(studioId?: string): Promise<void> {
     const targetStudioId = studioId || this.studio?.id;
     
-    if (!targetStudioId || !this.canReviewRequests) {
-      this.pendingRequestCount = 0;
+    if (!targetStudioId || !this.canReviewRequests()) {
+      this.pendingRequestCount.set(0);
       return;
     }
 
     try {
       const pendingRequests = await this.joinRequestService.getPendingRequestsForStudio(targetStudioId);
-      this.pendingRequestCount = pendingRequests.length;
+      this.pendingRequestCount.set(pendingRequests.length);
       
-      console.log(`Updated pending request count for studio ${targetStudioId}:`, this.pendingRequestCount);
+      console.log(`Updated pending request count for studio ${targetStudioId}:`, this.pendingRequestCount());
 
     } catch (error) {
       console.error('Error refreshing pending request count:', error);
@@ -341,7 +341,7 @@ export class StudioPage implements OnInit, OnDestroy {
    * Open the join request review modal
    */
   async openJoinRequestReviewModal(): Promise<void> {
-    if (!this.studio?.id || !this.canReviewRequests) {
+    if (!this.studio?.id || !this.canReviewRequests()) {
       console.warn('Cannot open join request modal: missing studio ID or insufficient permissions');
       return;
     }
@@ -423,10 +423,10 @@ export class StudioPage implements OnInit, OnDestroy {
           } else {
             // Clear chats when user is not authenticated
             this.organizedChats = null;
-            this.chatLoadError = false;
-            this.totalChatCount = 0;
-            this.pendingInvitationCount = 0;
-            this.hasChatsAccess = false;
+            this.chatLoadError.set(false);
+            this.totalChatCount.set(0);
+            this.pendingInvitationCount.set(0);
+            this.hasChatsAccess.set(false);
           }
         }
       });
@@ -448,7 +448,7 @@ export class StudioPage implements OnInit, OnDestroy {
 
     } catch (error) {
       console.error('Error initializing chat integration:', error);
-      this.chatLoadError = true;
+      this.chatLoadError.set(true);
     }
   }
 
@@ -462,7 +462,7 @@ export class StudioPage implements OnInit, OnDestroy {
     }
 
     // Prevent loading if already loading or already loaded for this studio
-    if (this.isLoadingChats) {
+    if (this.isLoadingChats()) {
       console.log('Already loading chats, skipping duplicate request');
       return;
     }
@@ -473,8 +473,8 @@ export class StudioPage implements OnInit, OnDestroy {
     }
 
     try {
-      this.isLoadingChats = true;
-      this.chatLoadError = false;
+      this.isLoadingChats.set(true);
+      this.chatLoadError.set(false);
 
       console.log('Loading studio chats for studio:', studioId, 'user:', this.currentUserId);
 
@@ -482,9 +482,9 @@ export class StudioPage implements OnInit, OnDestroy {
       this.organizedChats = await this.chatAccessController.getStudioChatsForUser(studioId, this.currentUserId);
 
       // Update computed properties to avoid change detection loops
-      this.totalChatCount = this.organizedChats.totalPublic + this.organizedChats.totalPrivate;
-      this.pendingInvitationCount = this.organizedChats.invitationsPending.length;
-      this.hasChatsAccess = this.totalChatCount > 0 || this.pendingInvitationCount > 0;
+      this.totalChatCount.set(this.organizedChats.totalPublic + this.organizedChats.totalPrivate);
+      this.pendingInvitationCount.set(this.organizedChats.invitationsPending.length);
+      this.hasChatsAccess.set(this.totalChatCount() > 0 || this.pendingInvitationCount() > 0);
 
       // Mark as loaded for this studio
       this.chatsLoadedForStudio = studioId;
@@ -497,10 +497,10 @@ export class StudioPage implements OnInit, OnDestroy {
 
     } catch (error) {
       console.error('Error loading studio chats:', error);
-      this.chatLoadError = true;
+      this.chatLoadError.set(true);
       this.organizedChats = null;
     } finally {
-      this.isLoadingChats = false;
+      this.isLoadingChats.set(false);
     }
   }
 
@@ -539,17 +539,17 @@ export class StudioPage implements OnInit, OnDestroy {
   }
 
   private loadStudioActivities(studioId: string) {
-    this.studioActivities = this.activitiesService.getActivitiesByStudio(studioId);
+    this.studioActivities.set(this.activitiesService.getActivitiesByStudio(studioId));
   }
 
   private async loadStudioStudents(studioId: string) {
     try {
       console.log('[StudioPage] Loading students for studio:', studioId);
-      this.studioStudents = await this.studioMembershipService.getStudioStudents(studioId);
-      console.log('[StudioPage] Loaded', this.studioStudents.length, 'students');
+      this.studioStudents.set(await this.studioMembershipService.getStudioStudents(studioId));
+      console.log('[StudioPage] Loaded', this.studioStudents().length, 'students');
     } catch (error) {
       console.error('[StudioPage] Failed to load studio students:', error);
-      this.studioStudents = [];
+      this.studioStudents.set([]);
     }
   }
 
@@ -585,7 +585,7 @@ export class StudioPage implements OnInit, OnDestroy {
 
   getActivitiesForDate(date: Date): Activity[] {
     // Use the already loaded studio activities instead of calling service again
-    return this.studioActivities.filter(activity => {
+    return this.studioActivities().filter(activity => {
       if (!activity.isActive) return false;
       
       if (activity.isRecurring) {
@@ -712,7 +712,7 @@ export class StudioPage implements OnInit, OnDestroy {
   getUpcomingActivities(): Activity[] {
     // For the studio detail page, show all active activities (both recurring and upcoming one-time)
     // This ensures users can see the regular class schedule
-    return this.studioActivities
+    return this.studioActivities()
       .filter(activity => activity.isActive)
       .sort((a, b) => {
         // Sort recurring activities first, then by title
@@ -763,7 +763,7 @@ export class StudioPage implements OnInit, OnDestroy {
 
   // Get limited students for display (max 20)
   getDisplayedStudents() {
-    return this.studioStudents.slice(0, 20);
+    return this.studioStudents().slice(0, 20);
   }
 
   // Check if there are more instructors than displayed
@@ -773,7 +773,7 @@ export class StudioPage implements OnInit, OnDestroy {
 
   // Check if there are more students than displayed
   hasMoreStudents(): boolean {
-    return this.studioStudents.length > 20;
+    return this.studioStudents().length > 20;
   }
 
   // Generate Google Maps embed URL for this studio (called once and cached)

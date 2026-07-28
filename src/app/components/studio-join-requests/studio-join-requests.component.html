@@ -1,26 +1,26 @@
-@if (joinRequests.length > 0 || loading) {
+@if (joinRequests().length > 0 || loading()) {
   <ion-card>
     <ion-card-header>
       <ion-card-title>
         <ion-icon name="person"></ion-icon>
         Join Requests
-        @if (joinRequests.length > 0) {
+        @if (joinRequests().length > 0) {
           <ion-chip color="primary">
-            {{ joinRequests.length }}
+            {{ joinRequests().length }}
           </ion-chip>
         }
       </ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      @if (loading) {
+      @if (loading()) {
         <div class="loading-container">
           <ion-spinner></ion-spinner>
           <p>Loading requests...</p>
         </div>
       }
-      @if (!loading && joinRequests.length > 0) {
+      @if (!loading() && joinRequests().length > 0) {
         <ion-list>
-          @for (request of joinRequests; track request) {
+          @for (request of joinRequests(); track request) {
             <ion-item class="request-item">
               <ion-avatar slot="start">
                 <div class="avatar-placeholder">
@@ -44,7 +44,7 @@
                   color="success"
                   size="small"
                   (click)="approveRequest(request)"
-                  [disabled]="processingRequestId === request.id"
+                  [disabled]="processingRequestId() === request.id"
                 >
                   <ion-icon name="checkmark-circle" slot="start"></ion-icon>
                   Approve
@@ -54,7 +54,7 @@
                   color="danger"
                   size="small"
                   (click)="rejectRequest(request)"
-                  [disabled]="processingRequestId === request.id"
+                  [disabled]="processingRequestId() === request.id"
                 >
                   <ion-icon name="close-circle" slot="start"></ion-icon>
                   Reject
@@ -64,7 +64,7 @@
           }
         </ion-list>
       }
-      @if (!loading && joinRequests.length === 0) {
+      @if (!loading() && joinRequests().length === 0) {
         <div class="empty-state">
           <ion-icon name="checkmark-circle" color="success"></ion-icon>
           <p>No pending join requests</p>

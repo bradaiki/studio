@@ -198,12 +198,12 @@
         <ion-card-header>
           <ion-card-title>
             <div class="section-header">
-              <span>Activities & Classes ({{ studioActivities.length }})</span>
+              <span>Activities & Classes ({{ studioActivities().length }})</span>
               <div class="header-actions">
                 @if (hasMoreActivities()) {
                 <ion-chip color="primary" outline="true" size="small">
                   <ion-label
-                    >Showing 20 of {{ studioActivities.length }}</ion-label
+                    >Showing 20 of {{ studioActivities().length }}</ion-label
                   >
                 </ion-chip>
                 }
@@ -215,7 +215,7 @@
           </ion-card-title>
         </ion-card-header>
         <ion-card-content>
-          @if (studioActivities.length > 0) {
+          @if (studioActivities().length > 0) {
           <div>
             <div class="activities-scroll-container">
               <div class="activities-grid">
@@ -504,11 +504,11 @@
         <ion-card-header>
           <ion-card-title>
             <div class="section-header">
-              <span>All Classes ({{ studioActivities.length }})</span>
+              <span>All Classes ({{ studioActivities().length }})</span>
               @if (hasMoreActivities()) {
               <ion-chip color="primary" outline="true" size="small">
                 <ion-label
-                  >Showing 20 of {{ studioActivities.length }}</ion-label
+                  >Showing 20 of {{ studioActivities().length }}</ion-label
                 >
               </ion-chip>
               }
@@ -516,7 +516,7 @@
           </ion-card-title>
         </ion-card-header>
         <ion-card-content>
-          @if (studioActivities && studioActivities.length > 0) {
+          @if (studioActivities().length > 0) {
           <div>
             <div class="schedule-scroll-container">
               <div class="schedule-grid">
@@ -628,7 +628,7 @@
                 <div class="stat-item">
                   <ion-icon name="calendar"></ion-icon>
                   <div>
-                    <h3>{{ studioActivities.length || 0 }}</h3>
+                    <h3>{{ studioActivities().length || 0 }}</h3>
                     <p>Activities</p>
                   </div>
                 </div>
@@ -688,33 +688,33 @@
 
   <!-- Alert for confirmations -->
   <ion-alert
-    [isOpen]="isAlertOpen"
+    [isOpen]="isAlertOpen()"
     header="Confirm Action"
     message="Are you sure you want to remove this instructor?"
     [buttons]="alertButtons"
-    (didDismiss)="isAlertOpen = false"
+    (didDismiss)="isAlertOpen.set(false)"
   >
   </ion-alert>
 
   <!-- Toast for notifications -->
   <ion-toast
-    [isOpen]="isToastOpen"
-    [message]="toastMessage"
+    [isOpen]="isToastOpen()"
+    [message]="toastMessage()"
     duration="3000"
-    (didDismiss)="isToastOpen = false"
+    (didDismiss)="isToastOpen.set(false)"
   >
   </ion-toast>
 
   <!-- Instructor Modal -->
   <ion-modal
-    [isOpen]="isInstructorModalOpen"
+    [isOpen]="isInstructorModalOpen()"
     (didDismiss)="closeInstructorModal()"
   >
     <ng-template>
       <ion-header>
         <ion-toolbar>
           <ion-title
-            >{{ isEditingInstructor ? 'Edit Instructor' : 'Add New Instructor'
+            >{{ isEditingInstructor() ? 'Edit Instructor' : 'Add New Instructor'
             }}</ion-title
           >
           <ion-buttons slot="end">
@@ -899,7 +899,7 @@
           <!-- Action Buttons -->
           <div class="modal-actions">
             <ion-button expand="block" type="submit" color="primary">
-              {{ isEditingInstructor ? 'Update Instructor' : 'Add Instructor' }}
+              {{ isEditingInstructor() ? 'Update Instructor' : 'Add Instructor' }}
             </ion-button>
             <ion-button
               expand="block"
@@ -915,12 +915,12 @@
   </ion-modal>
 
   <!-- Simple Class Creation Modal -->
-  <ion-modal [isOpen]="isClassModalOpen" (didDismiss)="closeClassModal()">
+  <ion-modal [isOpen]="isClassModalOpen()" (didDismiss)="closeClassModal()">
     <ng-template>
       <ion-header>
         <ion-toolbar>
           <ion-title
-            >{{ isEditingClass ? 'Edit Class' : 'Add New Class' }}</ion-title
+            >{{ isEditingClass() ? 'Edit Class' : 'Add New Class' }}</ion-title
           >
           <ion-buttons slot="end">
             <ion-button (click)="closeClassModal()">
@@ -1057,7 +1057,7 @@
           <!-- Action Buttons -->
           <div class="modal-actions">
             <ion-button expand="block" type="submit" color="primary">
-              {{ isEditingClass ? 'Update Class' : 'Add Class' }}
+              {{ isEditingClass() ? 'Update Class' : 'Add Class' }}
             </ion-button>
             <ion-button
               expand="block"

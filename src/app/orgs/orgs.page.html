@@ -4,7 +4,7 @@
       <ion-back-button defaultHref="/dash/feed"></ion-back-button>
     </ion-buttons>
     <ion-title
-      >{{ isFiltered ? filteredEntityName : 'Organizations' }}</ion-title
+      >{{ isFiltered ? filteredEntityName() : 'Organizations' }}</ion-title
     >
   </ion-toolbar>
 </ion-header>
@@ -13,7 +13,7 @@
   <ion-header collapse="condense">
     <ion-toolbar>
       <ion-title size="large"
-        >{{ isFiltered ? filteredEntityName : 'Organizations' }}</ion-title
+        >{{ isFiltered ? filteredEntityName() : 'Organizations' }}</ion-title
       >
     </ion-toolbar>
   </ion-header>
@@ -24,7 +24,7 @@
     <div class="filter-indicator">
       <ion-chip color="primary">
         <ion-icon name="home"></ion-icon>
-        <ion-label>{{ filteredEntityName }}</ion-label>
+        <ion-label>{{ filteredEntityName() }}</ion-label>
         <ion-icon name="close" (click)="clearFilter()"></ion-icon>
       </ion-chip>
     </div>
@@ -57,9 +57,9 @@
     }
 
     <!-- Organizations List -->
-    @if (displayedOrganizations.length > 0) {
+    @if (displayedOrganizations().length > 0) {
     <div class="organizations-list">
-      @for (org of displayedOrganizations; track trackByOrganizationId($index,
+      @for (org of displayedOrganizations(); track trackByOrganizationId($index,
       org)) {
       <div class="organization-item" (click)="onOrganizationClick(org)">
         <app-organization

@@ -7,7 +7,7 @@
       ></ion-back-button>
     </ion-buttons>
     <ion-title
-      >{{ organization?.name || ('org_detail.title' | translate) }}</ion-title
+      >{{ organization()?.name || ('org_detail.title' | translate) }}</ion-title
     >
   </ion-toolbar>
 </ion-header>
@@ -16,19 +16,19 @@
   <ion-header collapse="condense">
     <ion-toolbar>
       <ion-title size="large"
-        >{{ organization?.name || ('org_detail.title' | translate) }}</ion-title
+        >{{ organization()?.name || ('org_detail.title' | translate) }}</ion-title
       >
     </ion-toolbar>
   </ion-header>
 
-  @if (organizationInfo) {
+  @if (organizationInfo()) {
   <div class="organization-container">
     <!-- Content with Chat Layout -->
     <div class="content-with-chat">
       <!-- Main Content Column -->
       <div class="main-content">
         <app-organization
-          [organization]="organizationInfo"
+          [organization]="organizationInfo()!"
           [showHero]="true"
           [showMission]="true"
           [showStatistics]="true"
@@ -52,8 +52,8 @@
       <!-- Chat Column -->
       <div class="chat-sidebar">
         <app-chat-messages
-          [studioId]="organizationInfo.id"
-          [studioName]="organizationInfo.name + ' Community'"
+          [studioId]="organizationInfo()!.id"
+          [studioName]="organizationInfo()!.name + ' Community'"
           [maxHeight]="'calc(100vh - 200px)'"
           [showHeader]="true"
           [compact]="false"
@@ -69,7 +69,7 @@
       </div>
     </div>
   </div>
-  } @if (!organizationInfo) {
+  } @if (!organizationInfo()) {
   <div class="error-state">
     <ion-icon name="business" color="medium"></ion-icon>
     <h3>{{ 'org_detail.not_found' | translate }}</h3>

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, input } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -750,7 +750,7 @@ import {
   ],
 })
 export class ChatListComponent implements OnInit, OnDestroy {
-  @Input() studioId?: string; // Optional studio ID for filtering chats
+  studioId = input<string>(); // Optional studio ID for filtering chats
 
   // Legacy chat list (for backward compatibility)
   chatList: ChatListItem[] = [];
@@ -824,10 +824,10 @@ export class ChatListComponent implements OnInit, OnDestroy {
     try {
       this.isLoading = true;
 
-      if (this.studioId) {
+      if (this.studioId()) {
         // Load studio-specific chats with access control
         this.organizedChats =
-          await this.chatAccessController.getStudioChatsForUser(this.studioId);
+          await this.chatAccessController.getStudioChatsForUser(this.studioId()!);
       } else {
         // Load all user chats and organize them
         const chatListSub = this.chatService

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -48,8 +48,8 @@ import { arrowBack, business } from 'ionicons/icons';
   ],
 })
 export class OrgPage implements OnInit {
-  organization: Organization | null = null;
-  organizationInfo: OrganizationInfo | null = null;
+  organization = signal<Organization | null>(null);
+  organizationInfo = signal<OrganizationInfo | null>(null);
 
   constructor(
     private route: ActivatedRoute,
@@ -63,12 +63,10 @@ export class OrgPage implements OnInit {
   ngOnInit() {
     const orgId = this.route.snapshot.paramMap.get('id');
     if (orgId) {
-      this.organization =
-        this.organizationsService.getOrganizationById(orgId) || null;
-      if (this.organization) {
-        this.organizationInfo = this.convertToOrganizationInfo(
-          this.organization,
-        );
+      const org = this.organizationsService.getOrganizationById(orgId) || null;
+      this.organization.set(org);
+      if (org) {
+        this.organizationInfo.set(this.convertToOrganizationInfo(org));
       }
     }
   }
@@ -77,7 +75,6 @@ export class OrgPage implements OnInit {
     this.location.back();
   }
 
-  // Event handlers for organization component
   onDojoClick(dojo: Dojo) {
     console.log('Dojo clicked:', dojo.name);
     this.router.navigate(['/dash/studios']);
@@ -109,7 +106,6 @@ export class OrgPage implements OnInit {
     this.router.navigate(['/dash/studios']);
   }
 
-  // Convert Organization to OrganizationInfo for component compatibility
   private convertToOrganizationInfo(
     organization: Organization,
   ): OrganizationInfo {
@@ -130,29 +126,23 @@ export class OrgPage implements OnInit {
     };
   }
 
-  // Chat message handlers
   onChatMessageClick(message: ChatMessage) {
     console.log('Chat message clicked:', message);
-    // In a real app, this might open a detailed message view or mark as read
   }
 
   onSendChatMessage(message: string) {
     console.log('Sending chat message:', message);
-    // In a real app, this would send the message to a backend service
   }
 
   onLeaveChat(chatId: string) {
     console.log('Leaving chat:', chatId);
-    // In a real app, this would call a service to leave the chat
   }
 
   onMuteChat(event: { chatId: string; isMuted: boolean }) {
     console.log('Chat mute status changed:', event);
-    // In a real app, this would update the user's notification preferences
   }
 
   onChatInfo(chatId: string) {
     console.log('Show chat info for:', chatId);
-    // In a real app, this might open a modal with chat details, participants, etc.
   }
 }

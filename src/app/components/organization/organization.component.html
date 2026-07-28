@@ -1,14 +1,14 @@
-<div class="org-container" [class.compact]="compact">
+<div class="org-container" [class.compact]="compact()">
   <!-- Hero Section -->
-  @if (showHero) {
-    <ion-card class="hero-card" [class.compact]="compact">
-      <div class="hero-image" [class.compact]="compact">
-        <img [src]="organization.heroImage" [alt]="organization.name" />
+  @if (showHero()) {
+    <ion-card class="hero-card" [class.compact]="compact()">
+      <div class="hero-image" [class.compact]="compact()">
+        <img [src]="organization().heroImage" [alt]="organization().name" />
         <div class="hero-overlay">
           <div class="hero-header">
-            <h1 [class.compact]="compact">{{ organization.name }}</h1>
+            <h1 [class.compact]="compact()">{{ organization().name }}</h1>
             <!-- Edit Button for admins -->
-            @if (!compact) {
+            @if (!compact()) {
               <ion-button
                 fill="clear"
                 color="light"
@@ -19,8 +19,8 @@
               </ion-button>
             }
           </div>
-          <p [class.compact]="compact">{{ organization.tagline }}</p>
-          @if (!compact) {
+          <p [class.compact]="compact()">{{ organization().tagline }}</p>
+          @if (!compact()) {
             <ion-button
               expand="block"
               color="primary"
@@ -36,7 +36,7 @@
   }
 
   <!-- Mission Section -->
-  @if (showMission) {
+  @if (showMission()) {
     <ion-card>
       <ion-card-header>
         <ion-card-title>
@@ -45,19 +45,19 @@
         </ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        <p>{{ organization.mission }}</p>
+        <p>{{ organization().mission }}</p>
       </ion-card-content>
     </ion-card>
   }
 
   <!-- Statistics Section -->
-  @if (showStatistics && organization.statistics.length > 0) {
+  @if (showStatistics() && organization().statistics.length > 0) {
     <ion-card>
       <ion-card-header>
         <ion-card-title>
           <ion-icon name="trophy" color="primary"></ion-icon>
           {{
-            compact
+            compact()
               ? ("org_component.stats" | translate)
               : ("org_component.our_community" | translate)
           }}
@@ -67,8 +67,8 @@
         <ion-grid>
           <ion-row>
             @for (stat of getDisplayStatistics(); track stat) {
-              <ion-col size="6" [sizeMd]="compact ? '6' : '3'">
-                <div class="stat-item" [class.compact]="compact">
+              <ion-col size="6" [sizeMd]="compact() ? '6' : '3'">
+                <div class="stat-item" [class.compact]="compact()">
                   <div class="stat-number">{{ stat.number }}</div>
                   <div class="stat-label">{{ stat.label }}</div>
                 </div>
@@ -77,12 +77,12 @@
           </ion-row>
         </ion-grid>
         <!-- Show more stats hint in compact mode -->
-        @if (compact && organization.statistics.length > 2) {
+        @if (compact() && organization().statistics.length > 2) {
           <div class="more-stats">
             <ion-text color="medium">
               <p>
-                +{{ organization.statistics.length - 2 }} more statistic{{
-                  organization.statistics.length > 3 ? "s" : ""
+                +{{ organization().statistics.length - 2 }} more statistic{{
+                  organization().statistics.length > 3 ? "s" : ""
                 }}
               </p>
             </ion-text>
@@ -93,7 +93,7 @@
   }
 
   <!-- Programs Section -->
-  @if (showPrograms && organization.programs.length > 0) {
+  @if (showPrograms() && organization().programs.length > 0) {
     <ion-card>
       <ion-card-header>
         <ion-card-title>
@@ -103,17 +103,17 @@
       </ion-card-header>
       <ion-card-content>
         @for (program of getDisplayPrograms(); track program) {
-          <div class="program-card" [class.compact]="compact">
+          <div class="program-card" [class.compact]="compact()">
             <div class="program-header">
               <h3>{{ program.name }}</h3>
               <ion-chip color="primary" outline="true">
                 {{ program.level }}
               </ion-chip>
             </div>
-            @if (!compact) {
+            @if (!compact()) {
               <p class="program-description">{{ program.description }}</p>
             }
-            @if (!compact) {
+            @if (!compact()) {
               <div class="program-details">
                 <div class="detail-item">
                   <ion-icon name="calendar" color="medium"></ion-icon>
@@ -128,12 +128,12 @@
           </div>
         }
         <!-- Show more programs hint in compact mode -->
-        @if (compact && organization.programs.length > 2) {
+        @if (compact() && organization().programs.length > 2) {
           <div class="more-programs">
             <ion-text color="medium">
               <p>
-                +{{ organization.programs.length - 2 }} more program{{
-                  organization.programs.length > 3 ? "s" : ""
+                +{{ organization().programs.length - 2 }} more program{{
+                  organization().programs.length > 3 ? "s" : ""
                 }}
               </p>
             </ion-text>
@@ -144,7 +144,7 @@
   }
 
   <!-- Member Dojos Section -->
-  @if (showMemberDojos && organization.memberDojos.length > 0) {
+  @if (showMemberDojos() && organization().memberDojos.length > 0) {
     <ion-card>
       <ion-card-header>
         <ion-card-title>
@@ -156,13 +156,13 @@
         <ion-grid>
           <ion-row>
             @for (dojo of getDisplayDojos(); track dojo) {
-              <ion-col size="12" [sizeMd]="compact ? '12' : '6'">
+              <ion-col size="12" [sizeMd]="compact() ? '12' : '6'">
                 <div
                   class="dojo-card"
-                  [class.compact]="compact"
+                  [class.compact]="compact()"
                   (click)="onDojoClick(dojo)"
                 >
-                  <div class="dojo-image" [class.compact]="compact">
+                  <div class="dojo-image" [class.compact]="compact()">
                     <img [src]="dojo.image" [alt]="dojo.name" />
                     <div class="dojo-badge">
                       <ion-badge color="success"
@@ -173,7 +173,7 @@
                   </div>
                   <div class="dojo-content">
                     <h3>{{ dojo.name }}</h3>
-                    @if (!compact) {
+                    @if (!compact()) {
                       <div class="dojo-details">
                         <div class="detail-row">
                           <ion-icon name="location" color="primary"></ion-icon>
@@ -189,7 +189,7 @@
                         </div>
                       </div>
                     }
-                    @if (compact) {
+                    @if (compact()) {
                       <div class="dojo-summary">
                         <p>{{ dojo.location }} • {{ dojo.instructor }}</p>
                       </div>
@@ -205,13 +205,13 @@
           </ion-row>
         </ion-grid>
         <!-- Show more dojos hint in compact mode -->
-        @if (compact && organization.memberDojos.length > 2) {
+        @if (compact() && organization().memberDojos.length > 2) {
           <div class="more-dojos">
             <ion-text color="medium">
               <p>
                 {{
                   "org_component.more_dojos"
-                    | translate: { count: organization.memberDojos.length - 2 }
+                    | translate: { count: organization().memberDojos.length - 2 }
                 }}
               </p>
             </ion-text>
@@ -222,7 +222,7 @@
   }
 
   <!-- Events Section -->
-  @if (showEvents && organization.upcomingEvents.length > 0) {
+  @if (showEvents() && organization().upcomingEvents.length > 0) {
     <ion-card>
       <ion-card-header>
         <ion-card-title>
@@ -244,7 +244,7 @@
               </div>
               <ion-label>
                 <h2>{{ event.title }}</h2>
-                @if (!compact) {
+                @if (!compact()) {
                   <h3>{{ event.instructor }}</h3>
                 }
                 <p>
@@ -259,7 +259,7 @@
                 >
                   {{ event.type | titlecase }}
                 </ion-chip>
-                @if (!compact) {
+                @if (!compact()) {
                   <div class="event-cost">{{ event.cost }}</div>
                 }
               </div>
@@ -267,12 +267,12 @@
           }
         </ion-list>
         <!-- Show more events hint in compact mode -->
-        @if (compact && organization.upcomingEvents.length > 2) {
+        @if (compact() && organization().upcomingEvents.length > 2) {
           <div class="more-events">
             <ion-text color="medium">
               <p>
-                +{{ organization.upcomingEvents.length - 2 }} more event{{
-                  organization.upcomingEvents.length > 3 ? "s" : ""
+                +{{ organization().upcomingEvents.length - 2 }} more event{{
+                  organization().upcomingEvents.length > 3 ? "s" : ""
                 }}
               </p>
             </ion-text>
@@ -283,16 +283,16 @@
   }
 
   <!-- Lineage Section -->
-  @if (showLineage && organization.lineageFeatures.length > 0) {
+  @if (showLineage() && organization().lineageFeatures.length > 0) {
     <ion-card>
       <ion-card-header>
         <ion-card-title>
           <ion-icon name="shield-checkmark-outline" color="primary"></ion-icon>
-          {{ compact ? "Lineage" : "Authentic Lineage" }}
+          {{ compact() ? "Lineage" : "Authentic Lineage" }}
         </ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        @if (!compact) {
+        @if (!compact()) {
           <p>
             ASU maintains direct lineage to the founder through our chief
             instructor Yamada Sensei, who trained directly under Morihei Ueshiba
@@ -301,11 +301,11 @@
         }
         <div class="lineage-features">
           @for (feature of getDisplayLineageFeatures(); track feature) {
-            <div class="feature-item" [class.compact]="compact">
+            <div class="feature-item" [class.compact]="compact()">
               <ion-icon [name]="feature.icon" color="primary"></ion-icon>
               <div>
                 <h4>{{ feature.title }}</h4>
-                @if (!compact) {
+                @if (!compact()) {
                   <p>{{ feature.description }}</p>
                 }
               </div>
@@ -317,22 +317,22 @@
   }
 
   <!-- Philosophy Section -->
-  @if (showPhilosophy && organization.philosophy && !compact) {
+  @if (showPhilosophy() && organization().philosophy && !compact()) {
     <ion-card class="philosophy-card">
       <ion-card-content>
         <div class="philosophy-content">
           <div class="philosophy-text">
-            <h2>"{{ organization.philosophy.quote }}"</h2>
+            <h2>"{{ organization().philosophy!.quote }}"</h2>
             <p class="philosophy-attribution">
-              {{ organization.philosophy.attribution }}
+              {{ organization().philosophy!.attribution }}
             </p>
             <p class="philosophy-description">
-              {{ organization.philosophy.description }}
+              {{ organization().philosophy!.description }}
             </p>
           </div>
-          @if (organization.philosophy.image) {
+          @if (organization().philosophy!.image) {
             <div class="philosophy-image">
-              <img [src]="organization.philosophy.image" alt="Philosophy" />
+              <img [src]="organization().philosophy!.image" alt="Philosophy" />
             </div>
           }
         </div>
@@ -341,16 +341,16 @@
   }
 
   <!-- Contact Section -->
-  @if (showContact) {
+  @if (showContact()) {
     <ion-card>
       <ion-card-header>
         <ion-card-title>
           <ion-icon name="globe" color="primary"></ion-icon>
           {{
-            compact
+            compact()
               ? ("org_component.contact" | translate)
               : ("org_component.connect_with"
-                | translate: { name: organization.name })
+                | translate: { name: organization().name })
           }}
         </ion-card-title>
       </ion-card-header>
@@ -360,30 +360,30 @@
             <ion-icon name="mail" slot="start" color="primary"></ion-icon>
             <ion-label>
               <h3>{{ "studio_component.email" | translate }}</h3>
-              <p>{{ organization.contact.email }}</p>
+              <p>{{ organization().contact.email }}</p>
             </ion-label>
           </ion-item>
           <ion-item button (click)="onContactClick()">
             <ion-icon name="call" slot="start" color="primary"></ion-icon>
             <ion-label>
               <h3>{{ "studio_component.phone" | translate }}</h3>
-              <p>{{ organization.contact.phone }}</p>
+              <p>{{ organization().contact.phone }}</p>
             </ion-label>
           </ion-item>
           <ion-item button (click)="onWebsiteClick()">
             <ion-icon name="globe" slot="start" color="primary"></ion-icon>
             <ion-label>
               <h3>{{ "studio_component.website" | translate }}</h3>
-              <p>{{ organization.contact.website }}</p>
+              <p>{{ organization().contact.website }}</p>
             </ion-label>
           </ion-item>
         </ion-list>
         <!-- Social Media -->
-        @if (!compact && organization.socialMedia.length > 0) {
+        @if (!compact() && organization().socialMedia.length > 0) {
           <div class="social-section">
             <h4>{{ "org_component.follow_us" | translate }}</h4>
             <div class="social-buttons">
-              @for (social of organization.socialMedia; track social) {
+              @for (social of organization().socialMedia; track social) {
                 <ion-button
                   fill="outline"
                   color="primary"
@@ -399,13 +399,13 @@
           </div>
         }
         <!-- CTA Section -->
-        @if (!compact) {
+        @if (!compact()) {
           <div class="cta-section">
             <h3>{{ "org_component.begin_journey" | translate }}</h3>
             <p>
               {{
                 "org_component.find_certified"
-                  | translate: { name: organization.name }
+                  | translate: { name: organization().name }
               }}
             </p>
             <ion-button

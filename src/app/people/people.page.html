@@ -5,16 +5,16 @@
     </ion-buttons>
     <ion-title> {{ 'people.title' | translate }} </ion-title>
     <ion-buttons slot="end">
-      @if (currentUser) {
+      @if (currentUser()) {
       <ion-button (click)="navigateToMyProfile()">
         <ion-avatar class="profile-avatar">
           <img
-            [src]="currentUserProfile?.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'"
-            [alt]="currentUserProfile?.handle || 'Profile'"
+            [src]="currentUserProfile()?.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'"
+            [alt]="currentUserProfile()?.handle || 'Profile'"
           />
         </ion-avatar>
       </ion-button>
-      } @if (!currentUser) {
+      } @if (!currentUser()) {
       <ion-button (click)="navigateToMyProfile()">
         <ion-icon name="person-circle"></ion-icon>
       </ion-button>
@@ -40,7 +40,7 @@
     <ion-chip color="primary" outline="true">
       <ion-icon name="person"></ion-icon>
       <ion-label
-        >{{ 'common.showing' | translate }}: {{ filteredEntityName }}</ion-label
+        >{{ 'common.showing' | translate }}: {{ filteredEntityName() }}</ion-label
       >
       <ion-button fill="clear" size="small" (click)="clearFilter()">
         <ion-icon name="close" slot="icon-only"></ion-icon>
@@ -77,7 +77,7 @@
   </ion-segment>
 
   <!-- My Profile Section -->
-  @if (currentUser && selectedSegment === 'discover' && !isFiltered &&
+  @if (currentUser() && selectedSegment === 'discover' && !isFiltered &&
   !searchTerm.trim()) {
   <div class="my-profile-section">
     <div class="section-header">
@@ -86,21 +86,21 @@
     <div class="my-profile-card" (click)="navigateToMyProfile()">
       <ion-avatar class="profile-avatar-large">
         <img
-          [src]="currentUserProfile?.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'"
-          [alt]="currentUserProfile?.handle || 'My Profile'"
+          [src]="currentUserProfile()?.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'"
+          [alt]="currentUserProfile()?.handle || 'My Profile'"
         />
       </ion-avatar>
       <div class="profile-info">
         <h4>
-          {{ currentUserProfile?.name || currentUserProfile?.handle || 'My
+          {{ currentUserProfile()?.name || currentUserProfile()?.handle || 'My
           Profile' }}
         </h4>
-        @if (currentUserProfile?.handle) {
-        <p class="handle">@{{ currentUserProfile?.handle }}</p>
-        } @if (currentUserProfile?.rank) {
-        <p>{{ currentUserProfile?.rank }}</p>
-        } @if (currentUserProfile?.location) {
-        <p class="location">{{ currentUserProfile?.location }}</p>
+        @if (currentUserProfile()?.handle) {
+        <p class="handle">@{{ currentUserProfile()?.handle }}</p>
+        } @if (currentUserProfile()?.rank) {
+        <p>{{ currentUserProfile()?.rank }}</p>
+        } @if (currentUserProfile()?.location) {
+        <p class="location">{{ currentUserProfile()?.location }}</p>
         }
         <ion-chip color="primary" outline="true">
           <ion-icon name="person-circle"></ion-icon>
@@ -114,7 +114,7 @@
 
   <!-- People List -->
   <div class="people-container">
-    @for (person of displayedPeople; track trackByPersonId($index, person)) {
+    @for (person of displayedPeople(); track trackByPersonId($index, person)) {
     <app-person
       [person]="person"
       [showFullBio]="false"
@@ -163,7 +163,7 @@
   }
 
   <!-- Floating Profile Button -->
-  @if (currentUser && (isFiltered || searchTerm.trim() || selectedSegment ===
+  @if (currentUser() && (isFiltered || searchTerm.trim() || selectedSegment ===
   'following')) {
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
     <ion-fab-button

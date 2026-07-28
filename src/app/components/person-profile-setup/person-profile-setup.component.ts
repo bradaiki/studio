@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, input, signal } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import {
@@ -51,9 +51,10 @@ import { getCurrentUser } from 'aws-amplify/auth';
   standalone: true,
 })
 export class PersonProfileSetupComponent implements OnInit {
-  @Input() existingPerson?: Person; // For edit mode
-  @Input() canDismiss: boolean = false;
+  existingPerson = input<Person>(); // For edit mode
+  canDismiss = input<boolean>(false);
 
+  // Form fields bound with ngModel - keep as regular properties
   name: string = '';
   username: string = '';
   handle: string = '';
@@ -62,9 +63,11 @@ export class PersonProfileSetupComponent implements OnInit {
   email: string = '';
   rank: string = '';
   experience: string = '';
-  isSubmitting: boolean = false;
-  errorMessage: string = '';
-  isEditMode: boolean = false;
+
+  // Component state
+  isSubmitting = signal(false);
+  errorMessage = signal('');
+  isEditMode = signal(false);
 
   constructor(
     private modalController: ModalController,
@@ -82,8 +85,8 @@ export class PersonProfileSetupComponent implements OnInit {
   async ngOnInit() {
     try {
       // Check if we're in edit mode
-      if (this.existingPerson) {
-        this.isEditMode = true;
+      if (this.existingPerson()) {
+        this.isEditMode.set(true);
         this.loadExistingProfile();
       } else {
         // Pre-fill email from Cognito user for new profiles
@@ -99,15 +102,16 @@ export class PersonProfileSetupComponent implements OnInit {
   }
 
   loadExistingProfile() {
-    if (!this.existingPerson) return;
+    const person = this.existingPerson();
+    if (!person) return;
 
-    this.name = this.existingPerson.name;
-    this.username = this.existingPerson.username;
-    this.handle = this.existingPerson.handle;
-    this.bio = this.existingPerson.bio;
-    this.location = this.existingPerson.location;
-    this.rank = this.existingPerson.rank || '';
-    this.experience = this.existingPerson.experience || '';
+    this.name = person.name;
+    this.username = person.username;
+    this.handle = person.handle;
+    this.bio = person.bio;
+    this.location = person.location;
+    this.rank = person.rank || '';
+    this.experience = person.experience || '';
     this.email = ''; // Don't show email in edit mode
   }
 
@@ -128,38 +132,38 @@ export class PersonProfileSetupComponent implements OnInit {
   async onSubmit() {
     // Validate required fields
     if (!this.name.trim()) {
-      this.errorMessage = 'Name is required';
+      this.errorMessage.set('Name is required');
       return;
     }
 
     if (!this.username.trim()) {
-      this.errorMessage = 'Username is required';
+      this.errorMessage.set('Username is required');
       return;
     }
 
     if (!this.handle.trim() || this.handle === '@') {
-      this.errorMessage = 'Handle is required';
+      this.errorMessage.set('Handle is required');
       return;
     }
 
     if (!this.location.trim()) {
-      this.errorMessage = 'Location is required';
+      this.errorMessage.set('Location is required');
       return;
     }
 
     // Validate handle format
     if (!this.handle.startsWith('@')) {
-      this.errorMessage = 'Handle must start with @';
+      this.errorMessage.set('Handle must start with @');
       return;
     }
 
     if (this.handle.length < 3) {
-      this.errorMessage = 'Handle must be at least 2 characters (plus @)';
+      this.errorMessage.set('Handle must be at least 2 characters (plus @)');
       return;
     }
 
-    this.isSubmitting = true;
-    this.errorMessage = '';
+    this.isSubmitting.set(true);
+    this.errorMessage.set('');
 
     try {
       // Get current user ID
@@ -168,7 +172,8 @@ export class PersonProfileSetupComponent implements OnInit {
         throw new Error('User not authenticated');
       }
 
-      if (this.isEditMode && this.existingPerson) {
+      const existingPerson = this.existingPerson();
+      if (this.isEditMode() && existingPerson) {
         // Update existing person
         const updates: Partial<Person> = {
           name: this.name.trim(),
@@ -181,7 +186,7 @@ export class PersonProfileSetupComponent implements OnInit {
         };
 
         const success = this.peopleService.updatePerson(
-          this.existingPerson.id,
+          existingPerson.id,
           updates,
         );
 
@@ -191,7 +196,7 @@ export class PersonProfileSetupComponent implements OnInit {
 
         // Get updated person
         const updatedPerson = this.peopleService.getPersonById(
-          this.existingPerson.id,
+          existingPerson.id,
         );
 
         await this.modalController.dismiss({
@@ -233,15 +238,16 @@ export class PersonProfileSetupComponent implements OnInit {
       }
     } catch (error: any) {
       console.error('Error saving person profile:', error);
-      this.errorMessage =
-        error.message || 'Failed to save profile. Please try again.';
-      this.isSubmitting = false;
+      this.errorMessage.set(
+        error.message || 'Failed to save profile. Please try again.',
+      );
+      this.isSubmitting.set(false);
     }
   }
 
   async onSkip() {
     // Only allow skip if explicitly enabled
-    if (this.canDismiss) {
+    if (this.canDismiss()) {
       await this.modalController.dismiss({
         success: false,
         skipped: true,
@@ -251,7 +257,7 @@ export class PersonProfileSetupComponent implements OnInit {
 
   async onClose() {
     // Only allow close if explicitly enabled
-    if (this.canDismiss) {
+    if (this.canDismiss()) {
       await this.modalController.dismiss({
         success: false,
         cancelled: true,

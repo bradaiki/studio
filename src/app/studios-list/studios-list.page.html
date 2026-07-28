@@ -36,7 +36,7 @@
 
     <!-- Studios List -->
     <div class="studios-grid">
-      @for (studio of displayedStudios; track studio) {
+      @for (studio of displayedStudios(); track studio) {
       <ion-card (click)="viewStudio(studio.id)">
         <img [src]="studio.heroImage" [alt]="studio.name" />
         <ion-card-header>

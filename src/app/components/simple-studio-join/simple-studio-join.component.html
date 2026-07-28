@@ -10,9 +10,9 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  @if (studioName) {
+  @if (studioName()) {
     <div class="studio-info">
-      <h2>{{ studioName }}</h2>
+      <h2>{{ studioName() }}</h2>
       <p>Request to join this studio</p>
     </div>
   }

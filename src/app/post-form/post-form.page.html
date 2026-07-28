@@ -5,7 +5,7 @@
     </ion-buttons>
     <ion-title>Create Post</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="onSubmit()" [disabled]="isSubmitting || postForm.invalid">
+      <ion-button (click)="onSubmit()" [disabled]="isSubmitting() || postForm.invalid">
         <ion-icon slot="icon-only" name="save"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -45,10 +45,10 @@
     </ion-item>
 
     <div class="ion-padding">
-      <ion-button expand="block" type="submit" [disabled]="isSubmitting || postForm.invalid">
-        {{ isSubmitting ? 'Creating...' : 'Create Post' }}
+      <ion-button expand="block" type="submit" [disabled]="isSubmitting() || postForm.invalid">
+        {{ isSubmitting() ? 'Creating...' : 'Create Post' }}
       </ion-button>
-      <ion-button expand="block" fill="outline" (click)="onCancel()" [disabled]="isSubmitting">
+      <ion-button expand="block" fill="outline" (click)="onCancel()" [disabled]="isSubmitting()">
         Cancel
       </ion-button>
     </div>

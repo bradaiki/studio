@@ -1,16 +1,16 @@
-<ion-card class="person-card" [class.compact]="compact" (click)="onProfileClick()">
+<ion-card class="person-card" [class.compact]="compact()" (click)="onProfileClick()">
   <ion-card-content>
 
     <!-- Person Header -->
     <div class="person-header">
-      <ion-avatar class="person-avatar" [class.large]="!compact">
-        <img [src]="person.avatar" [alt]="person.name" />
+      <ion-avatar class="person-avatar" [class.large]="!compact()">
+        <img [src]="person().avatar" [alt]="person().name" />
       </ion-avatar>
 
       <div class="person-info">
         <div class="person-name-section">
-          <h3 class="person-name">{{ person.name }}</h3>
-          @if (person.isVerified) {
+          <h3 class="person-name">{{ person().name }}</h3>
+          @if (person().isVerified) {
             <ion-icon
               name="checkmark-circle"
               color="primary"
@@ -19,17 +19,17 @@
           }
         </div>
 
-        <p class="person-username">@{{ person.handle }}</p>
+        <p class="person-username">@{{ person().handle }}</p>
 
-        @if (person.location && !compact) {
+        @if (person().location && !compact()) {
           <div class="person-location">
             <ion-icon name="location" color="medium"></ion-icon>
-            <span>{{ person.location }}</span>
+            <span>{{ person().location }}</span>
           </div>
         }
       </div>
 
-      @if (showActions) {
+      @if (showActions()) {
         <div class="person-actions">
           <ion-button
             [fill]="getFollowButtonFill()"
@@ -51,38 +51,38 @@
     </div>
 
     <!-- Person Bio -->
-    @if (person.bio && !compact) {
+    @if (person().bio && !compact()) {
       <div class="person-bio">
         <p>{{ getDisplayBio() }}</p>
       </div>
     }
 
     <!-- Person Stats -->
-    @if (showStats && !compact) {
+    @if (showStats() && !compact()) {
       <div class="person-stats">
         <div class="stat-item">
-          <span class="stat-number">{{ formatNumber(person.postsCount) }}</span>
+          <span class="stat-number">{{ formatNumber(person().postsCount) }}</span>
           <span class="stat-label">{{ 'person_detail.posts' | translate }}</span>
         </div>
         <div class="stat-item">
-          <span class="stat-number">{{ formatNumber(person.followers) }}</span>
+          <span class="stat-number">{{ formatNumber(person().followers) }}</span>
           <span class="stat-label">{{ 'person_detail.followers' | translate }}</span>
         </div>
         <div class="stat-item">
-          <span class="stat-number">{{ formatNumber(person.following) }}</span>
+          <span class="stat-number">{{ formatNumber(person().following) }}</span>
           <span class="stat-label">{{ 'person_detail.following_count' | translate }}</span>
         </div>
         <div class="stat-item">
-          <span class="stat-number">{{ formatJoinDate(person.joinDate) }}</span>
+          <span class="stat-number">{{ formatJoinDate(person().joinDate) }}</span>
           <span class="stat-label">{{ 'person_component.joined' | translate }}</span>
         </div>
       </div>
     }
 
     <!-- Person Tags -->
-    @if (showTags && person.tags && person.tags.length > 0 && !compact) {
+    @if (showTags() && person().tags && person().tags.length > 0 && !compact()) {
       <div class="person-tags">
-        @for (tag of person.tags.slice(0, 4); track tag) {
+        @for (tag of person().tags.slice(0, 4); track tag) {
           <ion-chip
             color="light"
             outline="true"
@@ -90,21 +90,21 @@
             {{ tag }}
           </ion-chip>
         }
-        @if (person.tags.length > 4) {
+        @if (person().tags.length > 4) {
           <ion-chip
             color="medium"
             outline="true"
             class="more-tags">
-            +{{ person.tags.length - 4 }}
+            +{{ person().tags.length - 4 }}
           </ion-chip>
         }
       </div>
     }
 
     <!-- Compact Mode Tags (fewer tags) -->
-    @if (showTags && person.tags && person.tags.length > 0 && compact) {
+    @if (showTags() && person().tags && person().tags.length > 0 && compact()) {
       <div class="person-tags compact">
-        @for (tag of person.tags.slice(0, 2); track tag) {
+        @for (tag of person().tags.slice(0, 2); track tag) {
           <ion-chip
             color="light"
             outline="true"
@@ -112,19 +112,19 @@
             {{ tag }}
           </ion-chip>
         }
-        @if (person.tags.length > 2) {
+        @if (person().tags.length > 2) {
           <ion-chip
             color="medium"
             outline="true"
             class="more-tags small">
-            +{{ person.tags.length - 2 }}
+            +{{ person().tags.length - 2 }}
           </ion-chip>
         }
       </div>
     }
 
     <!-- Action Buttons (Bottom) -->
-    @if (showActions && !compact) {
+    @if (showActions() && !compact()) {
       <div class="person-bottom-actions">
         <ion-button
           fill="outline"

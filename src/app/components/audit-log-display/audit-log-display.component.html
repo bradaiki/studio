@@ -6,14 +6,14 @@
       fill="clear"
       size="small"
       (click)="refresh()"
-      [disabled]="isLoading"
+      [disabled]="isLoading()"
     >
       <ion-icon name="refresh" slot="icon-only"></ion-icon>
     </ion-button>
   </div>
 
   <!-- Loading State -->
-  @if (isLoading) {
+  @if (isLoading()) {
     <div class="loading-container">
       <ion-spinner name="crescent"></ion-spinner>
       <p>Loading audit trail...</p>
@@ -21,19 +21,19 @@
   }
 
   <!-- Error State -->
-  @if (error && !isLoading) {
+  @if (error() && !isLoading()) {
     <ion-card color="danger">
       <ion-card-content>
         <div class="error-content">
           <ion-icon name="alert-circle" color="light"></ion-icon>
-          <span>{{ error }}</span>
+          <span>{{ error() }}</span>
         </div>
       </ion-card-content>
     </ion-card>
   }
 
   <!-- Empty State -->
-  @if (!isLoading && !error && auditEntries.length === 0) {
+  @if (!isLoading() && !error() && auditEntries().length === 0) {
     <ion-card>
       <ion-card-content>
         <div class="empty-state">
@@ -46,9 +46,9 @@
   }
 
   <!-- Audit Entries List -->
-  @if (!isLoading && !error && auditEntries.length > 0) {
+  @if (!isLoading() && !error() && auditEntries().length > 0) {
     <div class="audit-entries">
-      @for (entry of auditEntries; track trackByEntryId($index, entry)) {
+      @for (entry of auditEntries(); track trackByEntryId($index, entry)) {
         <ion-card class="audit-entry-card">
           <ion-card-content>
             <div class="audit-entry">
@@ -70,7 +70,7 @@
               <!-- Entry Details -->
               <div class="entry-details">
                 <!-- Request ID (if showing multiple requests) -->
-                @if (showRequestColumn) {
+                @if (shouldShowRequestColumn()) {
                   <div class="detail-row">
                     <span class="detail-label">Request ID:</span>
                     <span class="detail-value">{{ entry.requestId }}</span>

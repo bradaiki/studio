@@ -36,12 +36,12 @@
   </ion-refresher>
 
   <div class="feed-container">
-    @for (post of displayedPosts; track trackByPostId($index, post)) {
+    @for (post of displayedPosts(); track trackByPostId($index, post)) {
     <app-post [post]="post"> </app-post>
     }
 
     <!-- Empty State -->
-    @if (displayedPosts.length === 0) {
+    @if (displayedPosts().length === 0) {
     <div class="empty-state">
       <ion-icon name="newspaper-outline" color="medium"></ion-icon>
       <h3>{{ 'feed.no_posts' | translate }}</h3>

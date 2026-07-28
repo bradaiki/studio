@@ -1,4 +1,4 @@
-import { Component, NgZone, ChangeDetectorRef } from '@angular/core';
+import { Component, NgZone, ChangeDetectorRef, signal } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { FormsModule } from '@angular/forms';
@@ -46,13 +46,16 @@ import { AuthStateService } from '../services/auth-state.service';
   ],
 })
 export class LoginPage {
+  // Keep as regular properties - used with [(ngModel)]
   email: string = '';
   password: string = '';
   confirmationCode: string = '';
-  isLoading: boolean = false;
-  isSignUp: boolean = false;
-  needsConfirmation: boolean = false;
-  pendingUsername: string = '';
+
+  // Convert to signals
+  isLoading = signal(false);
+  isSignUp = signal(false);
+  needsConfirmation = signal(false);
+  pendingUsername = signal('');
 
   constructor(
     private amplifyService: AmplifyService,
@@ -69,10 +72,10 @@ export class LoginPage {
       return;
     }
 
-    this.isLoading = true;
+    this.isLoading.set(true);
 
     try {
-      if (this.isSignUp) {
+      if (this.isSignUp()) {
         await this.signUp();
       } else {
         await this.signIn();
@@ -82,7 +85,7 @@ export class LoginPage {
       this.password = '';
     }
 
-    this.isLoading = false;
+    this.isLoading.set(false);
     this.cdr.detectChanges();
   }
 
@@ -95,10 +98,10 @@ export class LoginPage {
 
     if (result.isSignUpComplete) {
       this.showToast('Sign up successful! You can now sign in.', 'success');
-      this.isSignUp = false;
+      this.isSignUp.set(false);
     } else {
-      this.needsConfirmation = true;
-      this.pendingUsername = this.email;
+      this.needsConfirmation.set(true);
+      this.pendingUsername.set(this.email);
       this.showToast(
         'Please check your email for verification code',
         'success',
@@ -114,8 +117,8 @@ export class LoginPage {
       this.authStateService.setAuthState(true, user);
       window.location.href = '/dash';
     } else if (result.nextStep?.signInStep === 'CONFIRM_SIGN_UP') {
-      this.needsConfirmation = true;
-      this.pendingUsername = this.email;
+      this.needsConfirmation.set(true);
+      this.pendingUsername.set(this.email);
       this.showToast('Please confirm your email first', 'warning');
     } else {
       throw new Error('Sign in failed. Please check your credentials.');
@@ -128,28 +131,28 @@ export class LoginPage {
       return;
     }
 
-    this.isLoading = true;
+    this.isLoading.set(true);
 
     try {
       await this.amplifyService.confirmSignUp(
-        this.pendingUsername,
+        this.pendingUsername(),
         this.confirmationCode,
       );
       this.showToast('Email confirmed! You can now sign in.', 'success');
-      this.needsConfirmation = false;
-      this.isSignUp = false;
+      this.needsConfirmation.set(false);
+      this.isSignUp.set(false);
       this.confirmationCode = '';
     } catch (error: any) {
       this.showToast(error.message || 'Confirmation failed', 'danger');
     }
 
-    this.isLoading = false;
+    this.isLoading.set(false);
     this.cdr.detectChanges();
   }
 
   toggleMode() {
-    this.isSignUp = !this.isSignUp;
-    this.needsConfirmation = false;
+    this.isSignUp.update(v => !v);
+    this.needsConfirmation.set(false);
     this.email = '';
     this.password = '';
     this.confirmationCode = '';

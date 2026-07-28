@@ -6,11 +6,11 @@
         defaultHref="/dash/arts"
       ></ion-back-button>
     </ion-buttons>
-    <ion-title>Manage {{ art?.name || 'Art' }}</ion-title>
+    <ion-title>Manage {{ art()?.name || 'Art' }}</ion-title>
     <ion-buttons slot="end">
       <ion-button
         (click)="saveChanges()"
-        [disabled]="!hasUnsavedChanges"
+        [disabled]="!hasUnsavedChanges()"
         fill="solid"
         color="primary"
       >
@@ -22,10 +22,10 @@
 </ion-header>
 
 <ion-content>
-  @if (art) {
+  @if (art()) {
   <div class="management-container">
     <!-- Unsaved Changes Banner -->
-    @if (hasUnsavedChanges) {
+    @if (hasUnsavedChanges()) {
     <ion-card color="warning" class="unsaved-banner">
       <ion-card-content>
         <div class="banner-content">
@@ -367,21 +367,21 @@
             <ion-item>
               <ion-label>
                 <p>
-                  <strong>Created:</strong> {{ art.createdAt | date:'medium' }}
+                  <strong>Created:</strong> {{ art()!.createdAt | date:'medium' }}
                 </p>
               </ion-label>
             </ion-item>
             <ion-item>
               <ion-label>
                 <p>
-                  <strong>Last Updated:</strong> {{ art.updatedAt |
+                  <strong>Last Updated:</strong> {{ art()!.updatedAt |
                   date:'medium' }}
                 </p>
               </ion-label>
             </ion-item>
             <ion-item>
               <ion-label>
-                <p><strong>Owner ID:</strong> {{ art.ownerId }}</p>
+                <p><strong>Owner ID:</strong> {{ art()!.ownerId }}</p>
               </ion-label>
             </ion-item>
           </ion-list>
@@ -393,7 +393,7 @@
   }
 
   <!-- Floating Action Button for Save -->
-  @if (hasUnsavedChanges) {
+  @if (hasUnsavedChanges()) {
   <ion-button
     class="floating-save-button"
     (click)="saveChanges()"

@@ -27,10 +27,10 @@
         </p>
 
         <!-- Custom Message -->
-        @if (invitation.message) {
+        @if (invitation().message) {
           <div class="custom-message">
             <ion-icon name="chatbubble-outline"></ion-icon>
-            <p>{{ invitation.message }}</p>
+            <p>{{ invitation().message }}</p>
           </div>
         }
       </div>
@@ -42,7 +42,7 @@
           <span>Invited: {{ getFormattedInvitationDate() }}</span>
         </div>
 
-        @if (invitation.expiresAt) {
+        @if (invitation().expiresAt) {
           <div class="detail-item">
             <ion-icon name="time-outline"></ion-icon>
             <span>Expires: {{ getFormattedExpirationDate() }}</span>
@@ -51,7 +51,7 @@
       </div>
 
       <!-- Expired Notice -->
-      @if (isExpired) {
+      @if (isExpired()) {
         <div class="expired-notice">
           <ion-icon name="warning-outline"></ion-icon>
           <p>This invitation has expired and can no longer be accepted.</p>
@@ -59,16 +59,16 @@
       }
 
       <!-- Already Processed Notice -->
-      @if (invitation.status !== "pending" && !isExpired) {
+      @if (invitation().status !== "pending" && !isExpired()) {
         <div class="processed-notice">
           <ion-icon [name]="getStatusIcon()"></ion-icon>
-          @if (invitation.status === "accepted") {
+          @if (invitation().status === "accepted") {
             <p>You have already accepted this invitation.</p>
           }
-          @if (invitation.status === "declined") {
+          @if (invitation().status === "declined") {
             <p>You have declined this invitation.</p>
           }
-          @if (invitation.status === "revoked") {
+          @if (invitation().status === "revoked") {
             <p>This invitation has been revoked.</p>
           }
         </div>
@@ -81,7 +81,7 @@
             fill="clear"
             color="medium"
             (click)="declineInvitation()"
-            [disabled]="isProcessing"
+            [disabled]="isProcessing()"
           >
             <ion-icon name="close-outline" slot="start"></ion-icon>
             Decline
@@ -90,15 +90,15 @@
             fill="solid"
             color="primary"
             (click)="acceptInvitation()"
-            [disabled]="isProcessing"
+            [disabled]="isProcessing()"
           >
-            @if (isProcessing) {
+            @if (isProcessing()) {
               <ion-spinner name="crescent" slot="start"></ion-spinner>
             }
-            @if (!isProcessing) {
+            @if (!isProcessing()) {
               <ion-icon name="checkmark-outline" slot="start"></ion-icon>
             }
-            {{ isProcessing ? "Joining..." : "Accept" }}
+            {{ isProcessing() ? "Joining..." : "Accept" }}
           </ion-button>
         </div>
       }

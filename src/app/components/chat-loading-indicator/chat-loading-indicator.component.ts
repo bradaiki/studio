@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, input, signal, computed, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ChatLoadingStateService, LoadingState } from '../../services/chat-loading-state.service';
 
@@ -8,34 +8,60 @@ import { ChatLoadingStateService, LoadingState } from '../../services/chat-loadi
   styleUrls: ['./chat-loading-indicator.component.scss']
 })
 export class ChatLoadingIndicatorComponent implements OnInit, OnDestroy {
-  @Input() operationKey?: string;
-  @Input() showProgress: boolean = false;
-  @Input() showMessage: boolean = true;
-  @Input() size: 'small' | 'medium' | 'large' = 'medium';
-  @Input() color: 'primary' | 'secondary' | 'tertiary' = 'primary';
+  operationKey = input<string>();
+  showProgress = input(false);
+  showMessage = input(true);
+  size = input<'small' | 'medium' | 'large'>('medium');
+  color = input<'primary' | 'secondary' | 'tertiary'>('primary');
 
-  loadingState: LoadingState | null = null;
-  isOnline: boolean = true;
+  loadingState = signal<LoadingState | null>(null);
+  isOnline = signal(true);
   private loadingSubscription?: Subscription;
   private networkSubscription?: Subscription;
+
+  isLoading = computed(() => this.loadingState()?.isLoading || false);
+
+  message = computed(() => {
+    const state = this.loadingState();
+    if (!state) return '';
+
+    let message = state.message || state.operation;
+
+    if (!this.isOnline() && message) {
+      message += ' (offline mode)';
+    }
+
+    return message;
+  });
+
+  progress = computed(() => this.loadingState()?.progress || 0);
+
+  spinnerSize = computed(() => {
+    switch (this.size()) {
+      case 'small': return '16px';
+      case 'large': return '32px';
+      default: return '24px';
+    }
+  });
 
   constructor(private loadingStateService: ChatLoadingStateService) {}
 
   ngOnInit() {
     // Subscribe to loading states
     this.loadingSubscription = this.loadingStateService.getLoadingStates().subscribe(states => {
-      if (this.operationKey) {
-        this.loadingState = states[this.operationKey] || null;
+      const key = this.operationKey();
+      if (key) {
+        this.loadingState.set(states[key] || null);
       } else {
         // Show any active loading state if no specific operation key
         const activeStates = Object.values(states);
-        this.loadingState = activeStates.length > 0 ? activeStates[0] : null;
+        this.loadingState.set(activeStates.length > 0 ? activeStates[0] : null);
       }
     });
 
     // Subscribe to network status
     this.networkSubscription = this.loadingStateService.getNetworkStatus().subscribe(isOnline => {
-      this.isOnline = isOnline;
+      this.isOnline.set(isOnline);
     });
   }
 
@@ -45,35 +71,6 @@ export class ChatLoadingIndicatorComponent implements OnInit, OnDestroy {
     }
     if (this.networkSubscription) {
       this.networkSubscription.unsubscribe();
-    }
-  }
-
-  get isLoading(): boolean {
-    return this.loadingState?.isLoading || false;
-  }
-
-  get message(): string {
-    if (!this.loadingState) return '';
-    
-    let message = this.loadingState.message || this.loadingState.operation;
-    
-    // Add offline indicator if needed
-    if (!this.isOnline && message) {
-      message += ' (offline mode)';
-    }
-    
-    return message;
-  }
-
-  get progress(): number {
-    return this.loadingState?.progress || 0;
-  }
-
-  get spinnerSize(): string {
-    switch (this.size) {
-      case 'small': return '16px';
-      case 'large': return '32px';
-      default: return '24px';
     }
   }
 }

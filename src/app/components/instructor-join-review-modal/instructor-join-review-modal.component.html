@@ -245,7 +245,7 @@
   }
 
   <!-- Select all/none controls -->
-  @if (pendingRequests.length > 0 && config?.enableBulkActions) {
+  @if (pendingRequests.length > 0 && resolvedConfig?.enableBulkActions) {
     <div class="select-controls">
       <ion-item lines="none">
         <ion-checkbox
@@ -300,7 +300,7 @@
           (keydown)="onRequestKeydown($event, request)"
         >
           <!-- Selection checkbox (if bulk actions enabled) -->
-          @if (config?.enableBulkActions) {
+          @if (resolvedConfig?.enableBulkActions) {
             <ion-checkbox
               slot="start"
               [checked]="!!request.isSelected"

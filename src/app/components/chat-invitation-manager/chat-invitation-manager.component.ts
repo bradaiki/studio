@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, input, output, signal, OnInit } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import {
@@ -71,25 +71,25 @@ import type { Schema } from '../../../../amplify/data/resource';
   ],
 })
 export class ChatInvitationManagerComponent implements OnInit {
-  @Input() chatId!: string;
-  @Input() chatName!: string;
-  @Input() isOpen: boolean = false;
-  @Output() isOpenChange = new EventEmitter<boolean>();
-  @Output() invitationSent = new EventEmitter<void>();
+  chatId = input.required<string>();
+  chatName = input.required<string>();
+  isOpen = input<boolean>(false);
+  isOpenChange = output<boolean>();
+  invitationSent = output<void>();
 
-  // Invitation form
+  // Invitation form - KEEP as regular properties (used with ngModel)
   inviteeHandle: string = '';
   selectedUser: any = null;
   invitationMessage: string = '';
   expirationDays: number = 7;
 
-  // User search
+  // User search - KEEP as regular properties (used with ngModel)
   searchTerm: string = '';
   searchResults: any[] = [];
   isSearching: boolean = false;
 
   // Pending invitations for this chat
-  pendingInvitations: ChatInvitation[] = [];
+  pendingInvitations = signal<ChatInvitation[]>([]);
 
   private client = generateClient<Schema>();
 
@@ -111,16 +111,17 @@ export class ChatInvitationManagerComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this.chatId) {
+    if (this.chatId()) {
       this.loadPendingInvitations();
     }
   }
 
   async loadPendingInvitations() {
     try {
-      this.pendingInvitations = await this.invitationService.getChatInvitations(
-        this.chatId,
+      const invitations = await this.invitationService.getChatInvitations(
+        this.chatId(),
       );
+      this.pendingInvitations.set(invitations);
     } catch (error) {
       console.error('Failed to load pending invitations:', error);
     }
@@ -173,7 +174,7 @@ export class ChatInvitationManagerComponent implements OnInit {
       expiresAt.setDate(expiresAt.getDate() + this.expirationDays);
 
       await this.invitationService.sendInvitation({
-        chatId: this.chatId,
+        chatId: this.chatId(),
         invitedUserId: userId,
         message: this.invitationMessage.trim() || undefined,
         expiresAt,
@@ -259,7 +260,6 @@ export class ChatInvitationManagerComponent implements OnInit {
   }
 
   closeModal() {
-    this.isOpen = false;
     this.isOpenChange.emit(false);
   }
 

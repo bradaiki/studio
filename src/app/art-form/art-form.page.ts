@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, computed } from '@angular/core';
 
 import {
   FormsModule,
@@ -86,9 +86,9 @@ import {
 })
 export class ArtFormPage implements OnInit {
   artForm: FormGroup;
-  isEditMode = false;
-  artId: string | null = null;
-  loading = false;
+  isEditMode = signal(false);
+  artId = signal<string | null>(null);
+  loading = signal(false);
 
   artTypes = [
     { value: 'aikido', label: 'Aikido' },
@@ -151,8 +151,8 @@ export class ArtFormPage implements OnInit {
   ngOnInit() {
     this.route.params.subscribe((params) => {
       if (params['id'] && params['id'] !== 'new') {
-        this.artId = params['id'];
-        this.isEditMode = true;
+        this.artId.set(params['id']);
+        this.isEditMode.set(true);
         this.loadArt();
       }
     });
@@ -181,9 +181,9 @@ export class ArtFormPage implements OnInit {
   }
 
   loadArt() {
-    if (!this.artId) return;
+    if (!this.artId()) return;
 
-    const art = this.artsService.getArtById(this.artId);
+    const art = this.artsService.getArtById(this.artId()!);
     if (!art) {
       this.showToast('Art not found', 'danger');
       this.router.navigate(['/tabs/arts']);
@@ -193,7 +193,7 @@ export class ArtFormPage implements OnInit {
     // Check if user can edit this art
     if (!this.artsService.canUserEditArt(art)) {
       this.showToast('You do not have permission to edit this art', 'danger');
-      this.router.navigate(['/art', this.artId]);
+      this.router.navigate(['/art', this.artId()]);
       return;
     }
 
@@ -247,20 +247,20 @@ export class ArtFormPage implements OnInit {
       return;
     }
 
-    this.loading = true;
+    this.loading.set(true);
 
     try {
       const formValue = this.artForm.value;
 
-      if (this.isEditMode && this.artId) {
+      if (this.isEditMode() && this.artId()) {
         // Update existing art
         const updatedArt = await this.artsService.updateArt(
-          this.artId,
+          this.artId()!,
           formValue,
         );
         if (updatedArt) {
           this.showToast('Art updated successfully', 'success');
-          this.router.navigate(['/art', this.artId]);
+          this.router.navigate(['/art', this.artId()]);
         }
       } else {
         // Create new art
@@ -271,12 +271,12 @@ export class ArtFormPage implements OnInit {
     } catch (error: any) {
       this.showToast(error.message || 'An error occurred', 'danger');
     } finally {
-      this.loading = false;
+      this.loading.set(false);
     }
   }
 
   async onDelete() {
-    if (!this.isEditMode || !this.artId) return;
+    if (!this.isEditMode() || !this.artId()) return;
 
     const alert = await this.alertController.create({
       header: 'Delete Art',
@@ -301,10 +301,10 @@ export class ArtFormPage implements OnInit {
   }
 
   async deleteArt() {
-    if (!this.artId) return;
+    if (!this.artId()) return;
 
     try {
-      const success = await this.artsService.deleteArt(this.artId);
+      const success = await this.artsService.deleteArt(this.artId()!);
       if (success) {
         this.showToast('Art deleted successfully', 'success');
         this.router.navigate(['/tabs/arts']);
@@ -328,7 +328,5 @@ export class ArtFormPage implements OnInit {
     await toast.present();
   }
 
-  get pageTitle(): string {
-    return this.isEditMode ? 'Edit Art' : 'Create New Art';
-  }
+  pageTitle = computed(() => this.isEditMode() ? 'Edit Art' : 'Create New Art');
 }

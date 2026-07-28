@@ -2,18 +2,18 @@
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button
-        [defaultHref]="isViewingOtherPerson ? '/dash/people' : '/dash/feed'"
-        (click)="isViewingOtherPerson ? onBack() : null"
+        [defaultHref]="isViewingOtherPerson() ? '/dash/people' : '/dash/feed'"
+        (click)="isViewingOtherPerson() ? onBack() : null"
       ></ion-back-button>
     </ion-buttons>
     <ion-title
-      >{{ isViewingOtherPerson ? (userProfile.name || ('person_detail.title' |
+      >{{ isViewingOtherPerson() ? (userProfile.name || ('person_detail.title' |
       translate)) : ('profile.title' | translate) }}</ion-title
     >
-    @if (isOwnProfile) {
+    @if (isOwnProfile()) {
     <ion-buttons slot="end">
       <ion-button (click)="toggleEdit()">
-        <ion-icon [name]="isEditing ? 'save' : 'create'"></ion-icon>
+        <ion-icon [name]="isEditing() ? 'save' : 'create'"></ion-icon>
       </ion-button>
     </ion-buttons>
     }
@@ -22,7 +22,7 @@
 
 <ion-content [fullscreen]="true" class="ion-padding">
   <!-- Loading State -->
-  @if (loading) {
+  @if (loading()) {
   <div class="loading-state">
     <ion-text color="medium">
       <p>{{ 'person_detail.loading' | translate }}</p>
@@ -31,7 +31,7 @@
   }
 
   <!-- Not Found State -->
-  @if (notFound && !loading) {
+  @if (notFound() && !loading()) {
   <div class="not-found-state">
     <ion-text color="medium">
       <h2>{{ 'person_detail.not_found' | translate }}</h2>
@@ -45,7 +45,7 @@
   }
 
   <!-- Profile Segments (only for own profile) -->
-  @if (!loading && !notFound && isOwnProfile) {
+  @if (!loading() && !notFound() && isOwnProfile()) {
   <ion-segment
     [(ngModel)]="selectedSegment"
     (ionChange)="onSegmentChange($event)"
@@ -66,8 +66,8 @@
   }
 
   <!-- Profile Tab -->
-  @if (!loading && !notFound && (selectedSegment === 'profile' ||
-  isViewingOtherPerson)) {
+  @if (!loading() && !notFound() && (selectedSegment === 'profile' ||
+  isViewingOtherPerson())) {
   <div>
     <!-- User Profile Header -->
     <ion-card class="profile-header-card">
@@ -76,11 +76,11 @@
           <div class="avatar-section">
             <ion-avatar
               class="large-avatar"
-              [class.clickable]="isEditing"
-              (click)="isEditing ? changeAvatar() : null"
+              [class.clickable]="isEditing()"
+              (click)="isEditing() ? changeAvatar() : null"
             >
               <img [src]="userProfile.avatar" [alt]="userProfile.name" />
-              @if (isEditing) {
+              @if (isEditing()) {
               <div class="avatar-overlay">
                 <ion-icon name="camera"></ion-icon>
               </div>
@@ -93,7 +93,7 @@
             }
           </div>
           <div class="profile-info">
-            @if (!isEditing) {
+            @if (!isEditing()) {
             <div>
               <h1>{{ userProfile.name }}</h1>
               @if (userProfile.handle) {
@@ -120,7 +120,7 @@
               </p>
               }
             </div>
-            } @if (isEditing) {
+            } @if (isEditing()) {
             <div class="edit-fields">
               <ion-input
                 [(ngModel)]="userProfile.name"
@@ -145,7 +145,7 @@
           </div>
         </div>
         <!-- Action Buttons (for viewing other people) -->
-        @if (isViewingOtherPerson && personProfile) {
+        @if (isViewingOtherPerson() && personProfile) {
         <div class="action-buttons">
           <ion-button
             [color]="personProfile.isFollowing ? 'medium' : 'primary'"
@@ -171,21 +171,21 @@
           <div class="stat-item">
             <h3>{{ userProfile.stats.followers }}</h3>
             <p>
-              {{ isViewingOtherPerson ? ('person_detail.followers' | translate)
+              {{ isViewingOtherPerson() ? ('person_detail.followers' | translate)
               : 'Followers' }}
             </p>
           </div>
           <div class="stat-item">
             <h3>{{ userProfile.stats.following }}</h3>
             <p>
-              {{ isViewingOtherPerson ? ('person_detail.following_count' |
+              {{ isViewingOtherPerson() ? ('person_detail.following_count' |
               translate) : 'Following' }}
             </p>
           </div>
           <div class="stat-item">
             <h3>{{ userProfile.stats.postsCount }}</h3>
             <p>
-              {{ isViewingOtherPerson ? ('person_detail.posts' | translate) :
+              {{ isViewingOtherPerson() ? ('person_detail.posts' | translate) :
               'Posts' }}
             </p>
           </div>
@@ -197,7 +197,7 @@
       </ion-card-content>
     </ion-card>
     <!-- Community Profile Section (Viewing Other Person - Read Only) -->
-    @if (isViewingOtherPerson && personProfile) {
+    @if (isViewingOtherPerson() && personProfile) {
     <ion-card>
       <ion-card-header>
         <ion-card-title>{{ 'person_detail.about' | translate }}</ion-card-title>
@@ -232,7 +232,7 @@
     </ion-card>
     }
     <!-- Studio Affiliations (Viewing Other Person) -->
-    @if (isViewingOtherPerson && userStudios && userStudios.length > 0) {
+    @if (isViewingOtherPerson() && userStudios && userStudios.length > 0) {
     <ion-card>
       <ion-card-header>
         <ion-card-title>
@@ -268,7 +268,7 @@
     </ion-card>
     }
     <!-- Specialties (Viewing Other Person) -->
-    @if (isViewingOtherPerson && personProfile && personProfile.specialties &&
+    @if (isViewingOtherPerson() && personProfile && personProfile.specialties &&
     personProfile.specialties.length > 0) {
     <ion-card>
       <ion-card-header>
@@ -286,7 +286,7 @@
     </ion-card>
     }
     <!-- Achievements (Viewing Other Person) -->
-    @if (isViewingOtherPerson && personProfile && personProfile.achievements &&
+    @if (isViewingOtherPerson() && personProfile && personProfile.achievements &&
     personProfile.achievements.length > 0) {
     <ion-card>
       <ion-card-header>
@@ -318,7 +318,7 @@
     </ion-card>
     }
     <!-- Tags (Viewing Other Person) -->
-    @if (isViewingOtherPerson && personProfile && personProfile.tags &&
+    @if (isViewingOtherPerson() && personProfile && personProfile.tags &&
     personProfile.tags.length > 0) {
     <ion-card>
       <ion-card-header>
@@ -336,7 +336,7 @@
     </ion-card>
     }
     <!-- Social Media (Viewing Other Person) -->
-    @if (isViewingOtherPerson && personProfile && personProfile.socialMedia &&
+    @if (isViewingOtherPerson() && personProfile && personProfile.socialMedia &&
     personProfile.socialMedia.length > 0) {
     <ion-card>
       <ion-card-header>
@@ -365,7 +365,7 @@
     </ion-card>
     }
     <!-- Community Profile Section (Own Profile - Editable) -->
-    @if (isOwnProfile) {
+    @if (isOwnProfile()) {
     <ion-card>
       <ion-card-header
         (click)="toggleCommunityProfileSection()"
@@ -380,14 +380,14 @@
         >
           <ion-card-title>Community Profile</ion-card-title>
           <ion-icon
-            [name]="isCommunityProfileExpanded ? 'chevron-up' : 'chevron-down'"
+            [name]="isCommunityProfileExpanded() ? 'chevron-up' : 'chevron-down'"
             size="large"
           ></ion-icon>
         </div>
       </ion-card-header>
-      @if (isCommunityProfileExpanded) {
+      @if (isCommunityProfileExpanded()) {
       <ion-card-content>
-        @if (!isEditingCommunityProfile && !hasPersonProfile) {
+        @if (!isEditingCommunityProfile() && !hasPersonProfile()) {
         <div class="empty-profile-message">
           <ion-icon name="person-circle" size="large" color="medium"></ion-icon>
           <p>
@@ -399,7 +399,7 @@
             Create Community Profile
           </ion-button>
         </div>
-        } @if (!isEditingCommunityProfile && hasPersonProfile && personProfile)
+        } @if (!isEditingCommunityProfile() && hasPersonProfile() && personProfile)
         {
         <div>
           <!-- Display Mode -->
@@ -458,7 +458,7 @@
             Edit Community Profile
           </ion-button>
         </div>
-        } @if (isEditingCommunityProfile) {
+        } @if (isEditingCommunityProfile()) {
         <div>
           <!-- Edit Mode -->
           <ion-item>
@@ -561,13 +561,13 @@
     </ion-card>
     }
     <!-- Bio Section (Own Profile Only) -->
-    @if (isOwnProfile) {
+    @if (isOwnProfile()) {
     <ion-card>
       <ion-card-header>
         <ion-card-title>About</ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        @if (!isEditing) {
+        @if (!isEditing()) {
         <div>
           <p>{{ userProfile.bio }}</p>
           <div class="profile-details">
@@ -588,7 +588,7 @@
             </div>
           </div>
         </div>
-        } @if (isEditing) {
+        } @if (isEditing()) {
         <div class="edit-bio">
           <ion-textarea
             [(ngModel)]="userProfile.bio"
@@ -615,13 +615,13 @@
     </ion-card>
     }
     <!-- Specialties (Own Profile Only) -->
-    @if (isOwnProfile) {
+    @if (isOwnProfile()) {
     <ion-card>
       <ion-card-header>
         <ion-card-title>
           <div class="section-header">
             <span>Specialties</span>
-            @if (isEditing) {
+            @if (isEditing()) {
             <ion-button fill="clear" (click)="addSpecialty()">
               <ion-icon name="add"></ion-icon>
             </ion-button>
@@ -634,11 +634,11 @@
         <div class="chips-container">
           @for (specialty of userProfile.specialties; track specialty) {
           <ion-chip
-            [class.editable]="isEditing"
-            (click)="isEditing && removeSpecialty(specialty)"
+            [class.editable]="isEditing()"
+            (click)="isEditing() && removeSpecialty(specialty)"
           >
             <ion-label>{{ specialty }}</ion-label>
-            @if (isEditing) {
+            @if (isEditing()) {
             <ion-icon name="close"></ion-icon>
             }
           </ion-chip>
@@ -651,13 +651,13 @@
     </ion-card>
     }
     <!-- Achievements (Own Profile Only) -->
-    @if (isOwnProfile) {
+    @if (isOwnProfile()) {
     <ion-card>
       <ion-card-header>
         <ion-card-title>
           <div class="section-header">
             <span>Achievements</span>
-            @if (isEditing) {
+            @if (isEditing()) {
             <ion-button fill="clear" (click)="addAchievement()">
               <ion-icon name="add"></ion-icon>
             </ion-button>
@@ -683,7 +683,7 @@
                 >{{ formatDate(achievement.date) }}</span
               >
             </div>
-            @if (isEditing) {
+            @if (isEditing()) {
             <ion-button
               fill="clear"
               color="danger"
@@ -707,7 +707,7 @@
         <ion-card-title>
           <div class="section-header">
             <span>Social Media</span>
-            @if (isEditing) {
+            @if (isEditing()) {
             <ion-button fill="clear" (click)="addSocialMedia()">
               <ion-icon name="add"></ion-icon>
             </ion-button>
@@ -729,7 +729,7 @@
               <h3>{{ link.platform | titlecase }}</h3>
               <p>{{ link.url }}</p>
             </ion-label>
-            @if (isEditing) {
+            @if (isEditing()) {
             <ion-button
               fill="clear"
               color="danger"
@@ -861,7 +861,7 @@
       </ion-card-content>
     </ion-card>
     <!-- Subscription Card -->
-    @if (isAuthenticated) {
+    @if (isAuthenticated()) {
     <ion-card class="subscription-card">
       <ion-card-header>
         <ion-card-title>
@@ -916,7 +916,7 @@
     </ion-card>
     }
     <!-- Developer Settings Card -->
-    @if (isAuthenticated && isAdmin) {
+    @if (isAuthenticated() && isAdmin()) {
     <ion-card class="developer-card">
       <ion-card-header>
         <ion-card-title>

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, signal } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -75,16 +75,16 @@ interface ChatGroup {
 })
 export class ChatPage implements OnInit, OnDestroy {
   @ViewChild(IonContent) content!: IonContent;
-  chatGroups: ChatGroup[] = [];
-  loading = true;
-  activeChat: Chat | null = null;
-  messages: ChatMessage[] = [];
+  chatGroups = signal<ChatGroup[]>([]);
+  loading = signal(true);
+  activeChat = signal<Chat | null>(null);
+  messages = signal<ChatMessage[]>([]);
   newMessage = '';
-  targetUserId: string | null = null;
-  targetPerson: Person | null = null;
-  highlightChatId: string | null = null;
-  showNewChat = false;
+  targetPerson = signal<Person | null>(null);
+  highlightChatId = signal<string | null>(null);
+  showNewChat = signal(false);
   newChatName = '';
+  private targetUserId: string | null = null;
   private allChats: Chat[] = [];
   private messagesSub: Subscription | null = null;
   private chatsSub: Subscription | null = null;
@@ -110,12 +110,13 @@ export class ChatPage implements OnInit, OnDestroy {
   async ngOnInit() {
     this.chatsSub = this.chatService.chats$.subscribe((chats) => {
       this.allChats = chats;
-      if (!this.activeChat) this.buildGroups();
+      if (!this.activeChat()) this.buildGroups();
     });
 
     this.messagesSub = this.chatService.messages$.subscribe((allMsgs) => {
-      if (this.activeChat && allMsgs[this.activeChat.id]) {
-        this.messages = allMsgs[this.activeChat.id];
+      const chat = this.activeChat();
+      if (chat && allMsgs[chat.id]) {
+        this.messages.set(allMsgs[chat.id]);
         setTimeout(() => this.scrollToBottom(), 100);
       }
     });
@@ -127,15 +128,15 @@ export class ChatPage implements OnInit, OnDestroy {
       if (chatId) {
         await this.openChatById(chatId);
       } else if (this.targetUserId) {
-        this.targetPerson =
+        this.targetPerson.set(
           (await this.peopleService.getPersonByIdAsync(this.targetUserId)) ||
-          null;
+          null);
         this.scrollToRelevantChat();
       }
     } catch (e) {
       console.warn('[ChatPage] init error:', e);
     }
-    this.loading = false;
+    this.loading.set(false);
   }
 
   ngOnDestroy() {
@@ -167,7 +168,7 @@ export class ChatPage implements OnInit, OnDestroy {
         icon: 'home-outline',
         chats: studio,
       });
-    this.chatGroups = groups;
+    this.chatGroups.set(groups);
   }
 
   private sortByRecent(chats: Chat[]): Chat[] {
@@ -181,7 +182,8 @@ export class ChatPage implements OnInit, OnDestroy {
   private scrollToRelevantChat() {
     if (!this.targetUserId) return;
     const uid = this.targetUserId;
-    const handle = this.targetPerson?.handle?.replace(/^@/, '') || '';
+    const person = this.targetPerson();
+    const handle = person?.handle?.replace(/^@/, '') || '';
     const sorted = this.sortByRecent(this.allChats);
     const match = sorted.find((c) => {
       if (c.participantIds.includes(uid)) return true;
@@ -190,7 +192,7 @@ export class ChatPage implements OnInit, OnDestroy {
       return false;
     });
     if (match) {
-      this.highlightChatId = match.id;
+      this.highlightChatId.set(match.id);
       setTimeout(() => {
         document
           .getElementById('chat-item-' + match.id)
@@ -200,8 +202,8 @@ export class ChatPage implements OnInit, OnDestroy {
   }
 
   async openChat(chat: Chat) {
-    this.activeChat = chat;
-    this.messages = await this.chatService.loadMessages(chat.id);
+    this.activeChat.set(chat);
+    this.messages.set(await this.chatService.loadMessages(chat.id));
     this.router.navigate(['/dash/chat', chat.id], { replaceUrl: true });
     setTimeout(() => this.scrollToBottom(), 100);
   }
@@ -213,15 +215,15 @@ export class ChatPage implements OnInit, OnDestroy {
       chat = this.chatService.getChatById(chatId);
     }
     if (chat) {
-      this.activeChat = chat;
-      this.messages = await this.chatService.loadMessages(chatId);
+      this.activeChat.set(chat);
+      this.messages.set(await this.chatService.loadMessages(chatId));
       setTimeout(() => this.scrollToBottom(), 100);
     }
   }
 
   backToList() {
-    this.activeChat = null;
-    this.messages = [];
+    this.activeChat.set(null);
+    this.messages.set([]);
     this.buildGroups();
     this.router.navigate(['/dash/chat'], {
       replaceUrl: true,
@@ -231,11 +233,12 @@ export class ChatPage implements OnInit, OnDestroy {
 
   async sendMessage() {
     const text = this.newMessage.trim();
-    if (!text || !this.activeChat) return;
+    const chat = this.activeChat();
+    if (!text || !chat) return;
     this.newMessage = '';
     try {
       await this.chatService.sendMessage({
-        chatId: this.activeChat.id,
+        chatId: chat.id,
         message: text,
         messageType: 'text',
       });
@@ -254,14 +257,15 @@ export class ChatPage implements OnInit, OnDestroy {
   }
 
   openNewChat() {
-    this.showNewChat = true;
-    this.newChatName = this.targetPerson
-      ? `Chat with ${this.targetPerson.name || this.targetPerson.handle}`
+    this.showNewChat.set(true);
+    const person = this.targetPerson();
+    this.newChatName = person
+      ? `Chat with ${person.name || person.handle}`
       : '';
   }
 
   cancelNewChat() {
-    this.showNewChat = false;
+    this.showNewChat.set(false);
     this.newChatName = '';
   }
 
@@ -288,7 +292,7 @@ export class ChatPage implements OnInit, OnDestroy {
         isPublic: chatType !== 'private',
       },
     });
-    this.showNewChat = false;
+    this.showNewChat.set(false);
     this.newChatName = '';
     await this.openChat(chat);
   }

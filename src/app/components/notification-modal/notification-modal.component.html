@@ -1,4 +1,4 @@
-<ion-modal [isOpen]="isOpen" (didDismiss)="closeModal()" [backdropDismiss]="false">
+<ion-modal [isOpen]="isOpen()" (didDismiss)="closeModal()" [backdropDismiss]="false">
   <ng-template>
     <ion-header>
       <ion-toolbar color="primary">
@@ -19,14 +19,14 @@
 
     <ion-content class="ion-padding">
       <!-- Chat Invitations Section -->
-      @if (pendingInvitations.length > 0) {
+      @if (pendingInvitations().length > 0) {
         <div class="invitations-section">
           <h2 class="section-title">
             <ion-icon name="mail" color="primary"></ion-icon>
-            Chat Invitations ({{ pendingInvitations.length }})
+            Chat Invitations ({{ pendingInvitations().length }})
           </h2>
 
-          @for (invitation of pendingInvitations; track invitation.id) {
+          @for (invitation of pendingInvitations(); track invitation.id) {
             <ion-card class="invitation-card">
               <ion-card-header>
                 <ion-card-title>
@@ -108,15 +108,15 @@
       }
 
       <!-- System Notifications Section -->
-      @if (systemNotifications.length > 0) {
+      @if (systemNotifications().length > 0) {
         <div class="notifications-section">
           <h2 class="section-title">
             <ion-icon name="notifications" color="primary"></ion-icon>
-            System Notifications ({{ systemNotifications.length }})
+            System Notifications ({{ systemNotifications().length }})
           </h2>
 
           <ion-list>
-            @for (notification of systemNotifications; track notification.id) {
+            @for (notification of systemNotifications(); track notification.id) {
               <ion-item 
                 button
                 (click)="handleNotificationClick(notification)"

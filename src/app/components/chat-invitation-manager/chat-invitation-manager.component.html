@@ -1,8 +1,8 @@
-<ion-modal [isOpen]="isOpen" (didDismiss)="closeModal()">
+<ion-modal [isOpen]="isOpen()" (didDismiss)="closeModal()">
   <ng-template>
     <ion-header>
       <ion-toolbar>
-        <ion-title>Invite to {{ chatName }}</ion-title>
+        <ion-title>Invite to {{ chatName() }}</ion-title>
         <ion-buttons slot="end">
           <ion-button (click)="closeModal()">
             <ion-icon name="close" slot="icon-only"></ion-icon>
@@ -119,17 +119,17 @@
       </ion-card>
 
       <!-- Pending Invitations -->
-      @if (pendingInvitations.length > 0) {
+      @if (pendingInvitations().length > 0) {
         <ion-card>
           <ion-card-header>
             <ion-card-title>
               <ion-icon name="mail" color="primary"></ion-icon>
-              Pending Invitations ({{ pendingInvitations.length }})
+              Pending Invitations ({{ pendingInvitations().length }})
             </ion-card-title>
           </ion-card-header>
           <ion-card-content>
             <ion-list>
-              @for (invitation of pendingInvitations; track invitation) {
+              @for (invitation of pendingInvitations(); track invitation) {
                 <ion-item>
                   <ion-label>
                     <h3>{{ invitation.invitedUserHandle || invitation.invitedUserId }}</h3>
@@ -165,7 +165,7 @@
       }
 
       <!-- Empty State -->
-      @if (pendingInvitations.length === 0) {
+      @if (pendingInvitations().length === 0) {
         <div class="empty-state">
           <ion-icon name="mail" color="medium"></ion-icon>
           <p>No pending invitations</p>

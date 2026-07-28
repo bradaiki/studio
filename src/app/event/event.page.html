@@ -7,7 +7,7 @@
       ></ion-back-button>
     </ion-buttons>
     <ion-title
-      >{{ event?.title || ('event_detail.title' | translate) }}</ion-title
+      >{{ event()?.title || ('event_detail.title' | translate) }}</ion-title
     >
   </ion-toolbar>
 </ion-header>
@@ -16,19 +16,19 @@
   <ion-header collapse="condense">
     <ion-toolbar>
       <ion-title size="large"
-        >{{ event?.title || ('event_detail.title' | translate) }}</ion-title
+        >{{ event()?.title || ('event_detail.title' | translate) }}</ion-title
       >
     </ion-toolbar>
   </ion-header>
 
-  @if (event) {
+  @if (event()) {
   <div class="event-detail-layout">
     <!-- Main Content Column -->
     <div class="main-content">
       <div class="event-container">
-        <ion-card class="event-card" [class.featured]="event.featured">
+        <ion-card class="event-card" [class.featured]="event()!.featured">
           <!-- Featured Badge -->
-          @if (event.featured) {
+          @if (event()!.featured) {
           <div class="featured-badge">
             <ion-badge color="warning">
               <ion-icon name="star"></ion-icon>
@@ -38,26 +38,26 @@
           }
           <!-- Event Image -->
           <div class="event-image">
-            <img [src]="event.image" [alt]="event.title" />
+            <img [src]="event()!.image" [alt]="event()!.title" />
             <div class="event-type-overlay">
               <ion-chip
-                [color]="getEventTypeColor(event.type)"
+                [color]="getEventTypeColor(event()!.type)"
                 class="type-chip"
               >
-                {{ event.type | titlecase }}
+                {{ event()!.type | titlecase }}
               </ion-chip>
             </div>
           </div>
           <ion-card-content>
             <!-- Event Header -->
             <div class="event-header">
-              <h1 class="event-title">{{ event.title }}</h1>
+              <h1 class="event-title">{{ event()!.title }}</h1>
               <div class="event-meta">
                 <div class="meta-item">
                   <ion-icon name="calendar" color="primary"></ion-icon>
-                  <span>{{ formatEventDate(event.date) }}</span>
+                  <span>{{ formatEventDate(event()!.date) }}</span>
                 </div>
-                @if (event.endDate && event.endDate !== event.date) {
+                @if (event()!.endDate && event()!.endDate !== event()!.date) {
                 <div class="meta-item">
                   <ion-icon name="time" color="primary"></ion-icon>
                   <span>{{ 'events.multi_day' | translate }}</span>
@@ -65,14 +65,14 @@
                 }
                 <div class="meta-item">
                   <ion-icon name="time" color="primary"></ion-icon>
-                  <span>{{ formatEventTime(event.time) }}</span>
+                  <span>{{ formatEventTime(event()!.time) }}</span>
                 </div>
               </div>
             </div>
             <!-- Event Description -->
             <div class="event-description">
               <h3>{{ 'event_detail.about_event' | translate }}</h3>
-              <p>{{ event.description }}</p>
+              <p>{{ event()!.description }}</p>
             </div>
             <!-- Event Details Grid -->
             <ion-grid class="event-details">
@@ -83,8 +83,8 @@
                       <ion-icon name="location" color="primary"></ion-icon>
                       {{ 'events.location' | translate }}
                     </h4>
-                    <p class="location-name">{{ event.location }}</p>
-                    <p class="location-address">{{ event.address }}</p>
+                    <p class="location-name">{{ event()!.location }}</p>
+                    <p class="location-address">{{ event()!.address }}</p>
                   </div>
                 </ion-col>
                 <ion-col size="12" size-md="6">
@@ -96,8 +96,8 @@
                       ></ion-icon>
                       {{ 'events.instructor' | translate }}
                     </h4>
-                    <p class="instructor-name">{{ event.instructor }}</p>
-                    <p class="instructor-rank">{{ event.instructorRank }}</p>
+                    <p class="instructor-name">{{ event()!.instructor }}</p>
+                    <p class="instructor-rank">{{ event()!.instructorRank }}</p>
                   </div>
                 </ion-col>
               </ion-row>
@@ -108,8 +108,8 @@
                       <ion-icon name="cash-outline" color="primary"></ion-icon>
                       {{ 'events.cost' | translate }}
                     </h4>
-                    <p class="event-cost" [class.free]="event.cost === 'Free'">
-                      {{ event.cost }}
+                    <p class="event-cost" [class.free]="event()!.cost === 'Free'">
+                      {{ event()!.cost }}
                     </p>
                   </div>
                 </ion-col>
@@ -120,15 +120,15 @@
                       {{ 'events.level' | translate }}
                     </h4>
                     <ion-chip
-                      [color]="getDifficultyColor(event.difficulty)"
+                      [color]="getDifficultyColor(event()!.difficulty)"
                       outline="true"
                       class="difficulty-chip"
                     >
-                      {{ event.difficulty | titlecase }}
+                      {{ event()!.difficulty | titlecase }}
                     </ion-chip>
                   </div>
                 </ion-col>
-                @if (event.maxParticipants) {
+                @if (event()!.maxParticipants) {
                 <ion-col size="12" size-md="6">
                   <div class="detail-section">
                     <h4>
@@ -144,10 +144,10 @@
               </ion-row>
             </ion-grid>
             <!-- Tags -->
-            @if (event.tags.length > 0) {
+            @if (event()!.tags.length > 0) {
             <div class="event-tags">
               <h4>{{ 'event_detail.tags' | translate }}</h4>
-              @for (tag of event.tags; track tag) {
+              @for (tag of event()!.tags; track tag) {
               <ion-chip color="light" outline="true" class="tag-chip">
                 {{ tag }}
               </ion-chip>
@@ -155,7 +155,7 @@
             </div>
             }
             <!-- Requirements -->
-            @if (event.requirements && event.requirements.length > 0) {
+            @if (event()!.requirements && event()!.requirements!.length > 0) {
             <div class="requirements-section">
               <h4>
                 <ion-icon
@@ -165,21 +165,21 @@
                 {{ 'events.requirements' | translate }}
               </h4>
               <ul class="requirements-list">
-                @for (requirement of event.requirements; track requirement) {
+                @for (requirement of event()!.requirements; track requirement) {
                 <li>{{ requirement }}</li>
                 }
               </ul>
             </div>
             }
             <!-- What to Bring -->
-            @if (event.whatToBring && event.whatToBring.length > 0) {
+            @if (event()!.whatToBring && event()!.whatToBring!.length > 0) {
             <div class="bring-section">
               <h4>
                 <ion-icon name="book-outline" color="medium"></ion-icon>
                 {{ 'events.what_to_bring' | translate }}
               </h4>
               <ul class="bring-list">
-                @for (item of event.whatToBring; track item) {
+                @for (item of event()!.whatToBring; track item) {
                 <li>{{ item }}</li>
                 }
               </ul>
@@ -223,19 +223,19 @@
             <div class="organizer-info">
               <h4>{{ 'event_detail.organizer' | translate }}</h4>
               <p class="organizer-text">
-                <strong>{{ event.organizer }}</strong>
+                <strong>{{ event()!.organizer }}</strong>
               </p>
               <p class="contact-info">
                 <ion-icon name="call-outline" color="medium"></ion-icon>
-                <a href="mailto:{{ event.contactEmail }}"
-                  >{{ event.contactEmail }}</a
+                <a href="mailto:{{ event()!.contactEmail }}"
+                  >{{ event()!.contactEmail }}</a
                 >
               </p>
-              @if (event.contactPhone) {
+              @if (event()!.contactPhone) {
               <p class="contact-info">
                 <ion-icon name="call-outline" color="medium"></ion-icon>
-                <a href="tel:{{ event.contactPhone }}"
-                  >{{ event.contactPhone }}</a
+                <a href="tel:{{ event()!.contactPhone }}"
+                  >{{ event()!.contactPhone }}</a
                 >
               </p>
               }
@@ -247,8 +247,8 @@
     <!-- Chat Column -->
     <div class="chat-sidebar">
       <app-chat-messages
-        [studioId]="event.id"
-        [studioName]="event.title + ' Discussion'"
+        [studioId]="event()!.id"
+        [studioName]="event()!.title + ' Discussion'"
         [maxHeight]="'calc(100vh - 200px)'"
         [showHeader]="true"
         [compact]="false"
@@ -263,7 +263,7 @@
       </app-chat-messages>
     </div>
   </div>
-  } @if (!event) {
+  } @if (!event()) {
   <div class="error-state">
     <ion-icon name="calendar" color="medium"></ion-icon>
     <h3>{{ 'event_detail.not_found' | translate }}</h3>

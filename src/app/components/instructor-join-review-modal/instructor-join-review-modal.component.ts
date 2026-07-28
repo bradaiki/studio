@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, input, OnInit, OnDestroy } from '@angular/core';
 
 import {
   IonHeader,
@@ -77,9 +77,12 @@ import {
   ],
 })
 export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
-  @Input() studioId!: string;
-  @Input() studioName?: string;
-  @Input() config?: JoinRequestModalConfig;
+  studioId = input.required<string>();
+  studioName = input<string>();
+  config = input<JoinRequestModalConfig>();
+
+  // Resolved configuration (computed from input or defaults)
+  resolvedConfig!: JoinRequestModalConfig;
 
   // Component state
   pendingRequests: EnhancedStudioJoinRequest[] = [];
@@ -146,10 +149,10 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
   ngOnInit() {
     console.log(
       'InstructorJoinReviewModalComponent initializing for studio:',
-      this.studioId,
+      this.studioId(),
     );
 
-    if (!this.studioId) {
+    if (!this.studioId()) {
       console.error(
         'No studioId provided to InstructorJoinReviewModalComponent',
       );
@@ -158,16 +161,14 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
     }
 
     // Set default config if not provided
-    if (!this.config) {
-      this.config = {
-        studioId: this.studioId,
-        studioName: this.studioName || 'Studio',
-        enableBulkActions: true,
-        enableRealTimeUpdates: true,
-        maxRequestsPerPage: 50,
-        autoRefreshInterval: 30000,
-      };
-    }
+    this.resolvedConfig = this.config() || {
+      studioId: this.studioId(),
+      studioName: this.studioName() || 'Studio',
+      enableBulkActions: true,
+      enableRealTimeUpdates: true,
+      maxRequestsPerPage: 50,
+      autoRefreshInterval: 30000,
+    };
 
     this.initializeModal();
   }
@@ -198,7 +199,7 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
       await this.loadPendingRequests();
 
       // Set up real-time updates if enabled
-      if (this.config?.enableRealTimeUpdates) {
+      if (this.resolvedConfig?.enableRealTimeUpdates) {
         this.setupRealTimeUpdates();
       }
     } catch (error) {
@@ -222,7 +223,7 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
     this.loadingProgress = 0;
 
     try {
-      console.log('Loading pending requests for studio:', this.studioId);
+      console.log('Loading pending requests for studio:', this.studioId());
 
       // Reset pagination if requested
       if (resetPagination) {
@@ -238,7 +239,7 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
 
         const result =
           await this.joinRequestService.getPaginatedRequestsForStudio(
-            this.studioId,
+            this.studioId(),
             {
               page: this.currentPage,
               pageSize: this.pageSize,
@@ -300,14 +301,14 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
    * Set up real-time updates subscription
    */
   private setupRealTimeUpdates(): void {
-    if (!this.config?.enableRealTimeUpdates) {
+    if (!this.resolvedConfig?.enableRealTimeUpdates) {
       return;
     }
 
     try {
       // Subscribe to optimized real-time updates
       const subscription = this.joinRequestService
-        .subscribeToRequestUpdates(this.studioId)
+        .subscribeToRequestUpdates(this.studioId())
         .subscribe({
           next: (requests) => {
             console.log(
@@ -343,7 +344,7 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
 
       // Subscribe to connection state changes
       const connectionSubscription = this.joinRequestService
-        .subscribeToConnectionState(this.studioId)
+        .subscribeToConnectionState(this.studioId())
         .subscribe({
           next: (state) => {
             this.connectionState = state;
@@ -359,7 +360,7 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
       // Periodically update performance metrics for debugging
       const metricsInterval = setInterval(() => {
         this.realTimeMetrics = this.joinRequestService.getRealTimeMetrics(
-          this.studioId,
+          this.studioId(),
         );
       }, 10000); // Every 10 seconds
 
@@ -392,7 +393,7 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
     this.isSearching = true;
 
     // Use the service's debounced search
-    this.joinRequestService.setSearchTerm(this.studioId, searchTerm, 300);
+    this.joinRequestService.setSearchTerm(this.studioId(), searchTerm, 300);
   }
 
   /**
@@ -412,7 +413,7 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
    */
   async clearSearch(): Promise<void> {
     this.searchTerm = '';
-    this.joinRequestService.setSearchTerm(this.studioId, '', 0); // Immediate clear
+    this.joinRequestService.setSearchTerm(this.studioId(), '', 0); // Immediate clear
     await this.loadPendingRequests(true);
   }
 
@@ -812,7 +813,7 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
    * Check if bulk actions should be shown
    */
   get showBulkActions(): boolean {
-    return !!(this.config?.enableBulkActions && this.selectedRequests.size > 0);
+    return !!(this.resolvedConfig?.enableBulkActions && this.selectedRequests.size > 0);
   }
 
   /**
@@ -923,7 +924,7 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
   get isRealTimeActive(): boolean {
     return (
       this.connectionState === 'connected' &&
-      this.config?.enableRealTimeUpdates === true
+      this.resolvedConfig?.enableRealTimeUpdates === true
     );
   }
 
@@ -938,7 +939,7 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
       case 'Enter':
       case ' ':
         event.preventDefault();
-        if (this.config?.enableBulkActions) {
+        if (this.resolvedConfig?.enableBulkActions) {
           this.toggleRequestSelection(request.id);
         }
         break;
@@ -1411,7 +1412,7 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
    */
   private async scheduleAutoRefresh(delayMs: number = 5000): Promise<void> {
     if (
-      this.config?.enableRealTimeUpdates &&
+      this.resolvedConfig?.enableRealTimeUpdates &&
       this.retryCount < this.maxRetries
     ) {
       setTimeout(async () => {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { ActivitiesService, Activity } from '../services/activities.service';
@@ -71,46 +71,24 @@ import {
   ]
 })
 export class ActivityPage implements OnInit {
-  activity: Activity | null = null;
+  activity = signal<Activity | null>(null);
 
   constructor(
     private route: ActivatedRoute,
     private location: Location,
     private activitiesService: ActivitiesService
   ) {
-    addIcons({
-      repeat,
-      star,
-      time,
-      location: locationIcon,
-      personOutline,
-      school,
-      calendar,
-      people,
-      cashOutline,
-      checkmarkCircle,
-      mail,
-      callOutline,
-      shareOutline,
-      mapOutline,
-      informationCircleOutline,
-      arrowBack,
-      trophy,
-      ribbon,
-      bookOutline,
-      heartOutline
-    });
+    addIcons({repeat,star,time,personOutline,school,calendar,people,cashOutline,checkmarkCircle,mail,callOutline,shareOutline,mapOutline,informationCircleOutline,arrowBack,location:locationIcon,trophy,ribbon,bookOutline,heartOutline});
   }
 
   ngOnInit() {
     const activityId = this.route.snapshot.paramMap.get('id');
     if (activityId) {
-      this.activity = this.activitiesService.getActivityById(activityId) || null;
+      this.activity.set(this.activitiesService.getActivityById(activityId) || null);
     }
   }
 
   onBack() {
-    // Navigate back to the previous page (could be studio detail, events, etc.)
     this.location.back();
   }
 
@@ -174,16 +152,18 @@ export class ActivityPage implements OnInit {
   }
 
   isActivityFull(): boolean {
-    return this.activity ? 
-      (this.activity.maxParticipants !== undefined && 
-       this.activity.currentParticipants >= this.activity.maxParticipants) : false;
+    const a = this.activity();
+    return a ? 
+      (a.maxParticipants !== undefined && 
+       a.currentParticipants >= a.maxParticipants) : false;
   }
 
   getAvailabilityText(): string {
-    if (!this.activity) return '';
+    const a = this.activity();
+    if (!a) return '';
     
-    if (this.activity.maxParticipants) {
-      const available = this.activity.maxParticipants - this.activity.currentParticipants;
+    if (a.maxParticipants) {
+      const available = a.maxParticipants - a.currentParticipants;
       if (available <= 0) {
         return 'Full';
       } else if (available <= 3) {
@@ -196,31 +176,32 @@ export class ActivityPage implements OnInit {
   }
 
   registerForActivity() {
-    if (this.activity && this.activitiesService.registerForActivity(this.activity.id)) {
-      console.log('Successfully registered for activity:', this.activity.title);
-      // In real app, would show success message and handle payment
+    const a = this.activity();
+    if (a && this.activitiesService.registerForActivity(a.id)) {
+      console.log('Successfully registered for activity:', a.title);
     } else {
       console.log('Failed to register for activity');
-      // In real app, would show error message
     }
   }
 
   shareActivity() {
-    if (this.activity) {
-      console.log('Share activity:', this.activity.title);
-      // In real app, would open share dialog
+    const a = this.activity();
+    if (a) {
+      console.log('Share activity:', a.title);
     }
   }
 
   contactInstructor() {
-    if (this.activity && this.activity.contactEmail) {
-      window.open(`mailto:${this.activity.contactEmail}?subject=Inquiry about ${this.activity.title}`, '_self');
+    const a = this.activity();
+    if (a && a.contactEmail) {
+      window.open(`mailto:${a.contactEmail}?subject=Inquiry about ${a.title}`, '_self');
     }
   }
 
   getDirections() {
-    if (this.activity && this.activity.address) {
-      const encodedAddress = encodeURIComponent(this.activity.address);
+    const a = this.activity();
+    if (a && a.address) {
+      const encodedAddress = encodeURIComponent(a.address);
       window.open(`https://maps.google.com?q=${encodedAddress}`, '_blank');
     }
   }
@@ -228,26 +209,21 @@ export class ActivityPage implements OnInit {
   // Chat message handlers
   onChatMessageClick(message: ChatMessage) {
     console.log('Chat message clicked:', message);
-    // In a real app, this might open a detailed message view or mark as read
   }
 
   onSendChatMessage(message: string) {
     console.log('Sending chat message:', message);
-    // In a real app, this would send the message to a backend service
   }
 
   onLeaveChat(chatId: string) {
     console.log('Leaving chat:', chatId);
-    // In a real app, this would call a service to leave the chat
   }
 
   onMuteChat(event: { chatId: string; isMuted: boolean }) {
     console.log('Chat mute status changed:', event);
-    // In a real app, this would update the user's notification preferences
   }
 
   onChatInfo(chatId: string) {
     console.log('Show chat info for:', chatId);
-    // In a real app, this might open a modal with chat details, participants, etc.
   }
 }

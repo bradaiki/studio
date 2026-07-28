@@ -3,28 +3,28 @@
   <ion-card-header>
     <div class="profile-header">
       <ion-avatar class="profile-avatar">
-        <img [src]="profile.avatar" [alt]="profile.name" />
+        <img [src]="profile().avatar" [alt]="profile().name" />
       </ion-avatar>
 
       <div class="profile-info">
-        <h2>{{ profile.name }}</h2>
-        <p class="username">@{{ profile.handle }}</p>
+        <h2>{{ profile().name }}</h2>
+        <p class="username">@{{ profile().handle }}</p>
 
         <ion-text class="bio">
-          <p>{{ profile.bio }}</p>
+          <p>{{ profile().bio }}</p>
         </ion-text>
 
         <!-- Profile Details -->
         <div class="profile-details">
-          @if (profile.location) {
+          @if (profile().location) {
             <div class="detail-item">
               <ion-icon name="location" color="medium"></ion-icon>
-              <span>{{ profile.location }}</span>
+              <span>{{ profile().location }}</span>
             </div>
           }
           <div class="detail-item">
             <ion-icon name="calendar" color="medium"></ion-icon>
-            <span>Joined {{ formatJoinDate(profile.joinDate) }}</span>
+            <span>Joined {{ formatJoinDate(profile().joinDate) }}</span>
           </div>
         </div>
 
@@ -33,19 +33,19 @@
           <ion-row>
             <ion-col size="4" class="stat-col">
               <div class="stat">
-                <strong>{{ formatNumber(profile.postsCount) }}</strong>
+                <strong>{{ formatNumber(profile().postsCount) }}</strong>
                 <span>Posts</span>
               </div>
             </ion-col>
             <ion-col size="4" class="stat-col">
               <div class="stat">
-                <strong>{{ formatNumber(profile.followers) }}</strong>
+                <strong>{{ formatNumber(profile().followers) }}</strong>
                 <span>Followers</span>
               </div>
             </ion-col>
             <ion-col size="4" class="stat-col">
               <div class="stat">
-                <strong>{{ formatNumber(profile.following) }}</strong>
+                <strong>{{ formatNumber(profile().following) }}</strong>
                 <span>Following</span>
               </div>
             </ion-col>
@@ -53,9 +53,9 @@
         </ion-grid>
 
         <!-- Tags/Interests -->
-        @if (profile.tags && profile.tags.length > 0) {
+        @if (profile().tags && profile().tags!.length > 0) {
           <div class="profile-tags">
-            @for (tag of profile.tags; track tag) {
+            @for (tag of profile().tags; track tag) {
               <ion-chip color="primary" outline="true">
                 #{{ tag }}
               </ion-chip>
@@ -68,14 +68,14 @@
     <!-- Action Buttons -->
     <div class="action-buttons">
       <ion-button
-        [fill]="profile.isFollowing ? 'outline' : 'solid'"
-        [color]="profile.isFollowing ? 'medium' : 'primary'"
+        [fill]="profile().isFollowing ? 'outline' : 'solid'"
+        [color]="profile().isFollowing ? 'medium' : 'primary'"
         (click)="onFollow()">
         <ion-icon
-          [name]="profile.isFollowing ? 'person-remove' : 'person-add'"
+          [name]="profile().isFollowing ? 'person-remove' : 'person-add'"
           slot="start">
         </ion-icon>
-        {{ profile.isFollowing ? 'Unfollow' : 'Follow' }}
+        {{ profile().isFollowing ? 'Unfollow' : 'Follow' }}
       </ion-button>
 
       <ion-button fill="outline" color="medium" (click)="onMessage()">
@@ -91,10 +91,10 @@
 </ion-card>
 
 <!-- Posts Section -->
-@if (showPosts && profile.posts.length > 0) {
+@if (showPosts() && profile().posts.length > 0) {
   <div class="posts-section">
-    <h3 class="section-title">Posts by {{ profile.name }}</h3>
-    @for (post of profile.posts; track trackByPostId($index, post)) {
+    <h3 class="section-title">Posts by {{ profile().name }}</h3>
+    @for (post of profile().posts; track trackByPostId($index, post)) {
       <app-post
         [post]="post">
       </app-post>
@@ -103,10 +103,10 @@
 }
 
 <!-- No Posts Message -->
-@if (showPosts && profile.posts.length === 0) {
+@if (showPosts() && profile().posts.length === 0) {
   <div class="no-posts">
     <ion-text color="medium">
-      <p>{{ profile.name }} hasn't posted anything yet.</p>
+      <p>{{ profile().name }} hasn't posted anything yet.</p>
     </ion-text>
   </div>
 }

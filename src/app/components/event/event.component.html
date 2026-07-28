@@ -1,19 +1,19 @@
-<ion-card [class.compact]="compact" [class.featured]="event.featured">
+<ion-card [class.compact]="compact()" [class.featured]="event().featured">
   <ion-card-content>
     <!-- Event Header -->
     <ion-grid class="event-header">
       <ion-row>
         <ion-col size="12" size-md="8">
           <div class="event-title-section">
-            <h2 class="event-title">{{ event.title }}</h2>
+            <h2 class="event-title">{{ event().title }}</h2>
             <div class="event-meta">
               <ion-chip [color]="getEventTypeColor()" class="event-type">
-                <ion-label>{{ event.type | titlecase }}</ion-label>
+                <ion-label>{{ event().type | titlecase }}</ion-label>
               </ion-chip>
               <ion-chip [color]="getDifficultyColor()" class="difficulty">
-                <ion-label>{{ event.difficulty | titlecase }}</ion-label>
+                <ion-label>{{ event().difficulty | titlecase }}</ion-label>
               </ion-chip>
-              @if (event.featured) {
+              @if (event().featured) {
                 <ion-badge color="warning" class="featured-badge">
                   <ion-icon name="star"></ion-icon>
                   {{ "events.featured" | translate }}
@@ -65,7 +65,7 @@
               <ion-text class="detail-value">
                 {{ formatEventDate() }}
                 @if (isMultiDay()) {
-                  <span> - {{ event.endDate | date: "mediumDate" }}</span>
+                  <span> - {{ event().endDate | date: "mediumDate" }}</span>
                 }
               </ion-text>
             </div>
@@ -89,8 +89,8 @@
                 "events.location" | translate
               }}</ion-text>
               <ion-text class="detail-value">
-                {{ event.location }}<br />
-                <small>{{ event.address }}</small>
+                {{ event().location }}<br />
+                <small>{{ event().address }}</small>
               </ion-text>
             </div>
           </div>
@@ -105,9 +105,9 @@
                 "events.instructor" | translate
               }}</ion-text>
               <ion-text class="detail-value">
-                {{ event.instructor }}
+                {{ event().instructor }}
                 <ion-badge color="medium" class="rank-badge">{{
-                  event.instructorRank
+                  event().instructorRank
                 }}</ion-badge>
               </ion-text>
             </div>
@@ -120,12 +120,12 @@
               <ion-text class="detail-label">{{
                 "events.cost" | translate
               }}</ion-text>
-              <ion-text class="detail-value">{{ event.cost }}</ion-text>
+              <ion-text class="detail-value">{{ event().cost }}</ion-text>
             </div>
           </div>
 
           <!-- Participants -->
-          @if (event.maxParticipants) {
+          @if (event().maxParticipants) {
             <div class="detail-item">
               <ion-icon name="people" class="detail-icon"></ion-icon>
               <div class="detail-content">
@@ -146,7 +146,7 @@
     </ion-grid>
 
     <!-- Description -->
-    @if (showFullDescription || !compact) {
+    @if (showFullDescription() || !compact()) {
       <div class="event-description">
         <ion-text>
           <p>{{ getDisplayDescription() }}</p>
@@ -155,7 +155,7 @@
     }
 
     <!-- Tags -->
-    @if (showTags && event.tags.length > 0) {
+    @if (showTags() && event().tags.length > 0) {
       <div class="event-tags">
         @for (tag of getDisplayTags(); track tag) {
           <ion-chip color="light" class="tag-chip">
@@ -172,7 +172,7 @@
 
     <!-- Requirements -->
     @if (
-      showRequirements && event.requirements && event.requirements.length > 0
+      showRequirements() && event().requirements && event().requirements!.length > 0
     ) {
       <div class="event-requirements">
         <ion-text class="section-title">
@@ -183,11 +183,11 @@
           @for (requirement of getDisplayRequirements(); track requirement) {
             <li>{{ requirement }}</li>
           }
-          @if (compact && event.requirements && event.requirements.length > 2) {
+          @if (compact() && event().requirements && event().requirements!.length > 2) {
             <li class="more-items">
               {{
                 "event_component.more_requirements"
-                  | translate: { count: event.requirements.length - 2 }
+                  | translate: { count: event().requirements!.length - 2 }
               }}
             </li>
           }
@@ -196,7 +196,7 @@
     }
 
     <!-- What to Bring -->
-    @if (showWhatToBring && event.whatToBring && event.whatToBring.length > 0) {
+    @if (showWhatToBring() && event().whatToBring && event().whatToBring!.length > 0) {
       <div class="event-bring">
         <ion-text class="section-title">
           <ion-icon name="book-outline"></ion-icon>
@@ -206,11 +206,11 @@
           @for (item of getDisplayWhatToBring(); track item) {
             <li>{{ item }}</li>
           }
-          @if (compact && event.whatToBring && event.whatToBring.length > 3) {
+          @if (compact() && event().whatToBring && event().whatToBring!.length > 3) {
             <li class="more-items">
               {{
                 "event_component.more_items"
-                  | translate: { count: event.whatToBring.length - 3 }
+                  | translate: { count: event().whatToBring!.length - 3 }
               }}
             </li>
           }

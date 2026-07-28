@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      {{ needsConfirmation ? 'Confirm Email' : (isSignUp ? 'Sign Up' : 'Sign
+      {{ needsConfirmation() ? 'Confirm Email' : (isSignUp() ? 'Sign Up' : 'Sign
       In') }}
     </ion-title>
   </ion-toolbar>
@@ -12,14 +12,14 @@
     <ion-card>
       <ion-card-header>
         <ion-card-title class="ion-text-center">
-          {{ needsConfirmation ? 'Enter Confirmation Code' : (isSignUp ? 'Create
+          {{ needsConfirmation() ? 'Enter Confirmation Code' : (isSignUp() ? 'Create
           Account' : 'Welcome Back') }}
         </ion-card-title>
       </ion-card-header>
 
       <ion-card-content>
         <!-- Confirmation Code Form -->
-        @if (needsConfirmation) {
+        @if (needsConfirmation()) {
         <form (ngSubmit)="confirmSignUp()" #confirmForm="ngForm">
           <ion-item>
             <ion-label position="stacked">Confirmation Code</ion-label>
@@ -28,7 +28,7 @@
               [(ngModel)]="confirmationCode"
               name="confirmationCode"
               required
-              [disabled]="isLoading"
+              [disabled]="isLoading()"
               placeholder="Enter 6-digit code"
             >
             </ion-input>
@@ -37,11 +37,11 @@
             <ion-button
               expand="block"
               type="submit"
-              [disabled]="!confirmForm.form.valid || isLoading"
+              [disabled]="!confirmForm.form.valid || isLoading()"
             >
-              @if (isLoading) {
+              @if (isLoading()) {
               <ion-spinner name="crescent"></ion-spinner>
-              } @if (!isLoading) {
+              } @if (!isLoading()) {
               <span>Confirm Email</span>
               }
             </ion-button>
@@ -50,7 +50,7 @@
         }
 
         <!-- Login/Signup Form -->
-        @if (!needsConfirmation) {
+        @if (!needsConfirmation()) {
         <form (ngSubmit)="onSubmit()" #authForm="ngForm">
           <ion-item>
             <ion-label position="stacked">Email</ion-label>
@@ -59,7 +59,7 @@
               [(ngModel)]="email"
               name="email"
               required
-              [disabled]="isLoading"
+              [disabled]="isLoading()"
             >
             </ion-input>
           </ion-item>
@@ -70,7 +70,7 @@
               [(ngModel)]="password"
               name="password"
               required
-              [disabled]="isLoading"
+              [disabled]="isLoading()"
             >
             </ion-input>
           </ion-item>
@@ -78,37 +78,37 @@
             <ion-button
               expand="block"
               type="submit"
-              [disabled]="!authForm.form.valid || isLoading"
+              [disabled]="!authForm.form.valid || isLoading()"
             >
-              @if (isLoading) {
+              @if (isLoading()) {
               <ion-spinner name="crescent"></ion-spinner>
-              } @if (!isLoading) {
-              <span>{{ isSignUp ? 'Sign Up' : 'Sign In' }}</span>
+              } @if (!isLoading()) {
+              <span>{{ isSignUp() ? 'Sign Up' : 'Sign In' }}</span>
               }
             </ion-button>
           </div>
         </form>
-        } @if (!needsConfirmation) {
+        } @if (!needsConfirmation()) {
         <div class="ion-text-center ion-margin-top">
           <ion-text color="medium">
-            {{ isSignUp ? 'Already have an account?' : "Don't have an account?"
+            {{ isSignUp() ? 'Already have an account?' : "Don't have an account?"
             }}
           </ion-text>
           <ion-button
             fill="clear"
             (click)="toggleMode()"
-            [disabled]="isLoading"
+            [disabled]="isLoading()"
           >
-            {{ isSignUp ? 'Sign In' : 'Sign Up' }}
+            {{ isSignUp() ? 'Sign In' : 'Sign Up' }}
           </ion-button>
         </div>
-        } @if (!needsConfirmation) {
+        } @if (!needsConfirmation()) {
         <div class="ion-text-center ion-margin-top">
           <ion-button
             fill="outline"
             expand="block"
             (click)="continueAsGuest()"
-            [disabled]="isLoading"
+            [disabled]="isLoading()"
           >
             Continue as Guest
           </ion-button>

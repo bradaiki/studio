@@ -9,19 +9,19 @@
     <ion-title>{{ studio.name || 'Studio Details' }}</ion-title>
 
     <!-- Review Requests Button for Instructors -->
-    @if (canReviewRequests && !isLoadingPermissions) {
+    @if (canReviewRequests() && !isLoadingPermissions()) {
     <ion-buttons slot="end">
       <ion-button
         fill="clear"
         color="primary"
         (click)="openJoinRequestReviewModal()"
-        [disabled]="!canReviewRequests"
+        [disabled]="!canReviewRequests()"
       >
         <ion-icon name="checkmark-circle" slot="start"></ion-icon>
         <ion-label>Review Requests</ion-label>
-        @if (pendingRequestCount > 0) {
+        @if (pendingRequestCount() > 0) {
         <ion-badge color="warning" class="request-count-badge">
-          {{ pendingRequestCount }}
+          {{ pendingRequestCount() }}
         </ion-badge>
         }
       </ion-button>
@@ -114,7 +114,7 @@
           <!-- List View -->
           @if (scheduleView === 'list') {
           <div class="schedule-list-view">
-            @if (studioActivities && studioActivities.length > 0) {
+            @if (studioActivities() && studioActivities().length > 0) {
             <div>
               @for (activity of getUpcomingActivities(); track activity) {
               <div class="schedule-item" (click)="navigateToActivity(activity)">
@@ -186,7 +186,7 @@
             </div>
             }
             <!-- Empty State for List View -->
-            @if (!studioActivities || studioActivities.length === 0) {
+            @if (!studioActivities() || studioActivities().length === 0) {
             <div class="empty-schedule">
               <ion-icon name="calendar" size="large"></ion-icon>
               <h3>No Classes Scheduled</h3>
@@ -277,7 +277,7 @@
               </div>
             </div>
             <!-- Empty State for Calendar View -->
-            @if (!studioActivities || studioActivities.length === 0) {
+            @if (!studioActivities() || studioActivities().length === 0) {
             <div class="empty-schedule">
               <ion-icon name="calendar" size="large"></ion-icon>
               <h3>No Classes Scheduled</h3>
@@ -380,15 +380,15 @@
       }
 
       <!-- Students (only visible to logged in users) -->
-      @if (currentUserId && studioStudents && studioStudents.length > 0) {
+      @if (currentUserId && studioStudents() && studioStudents().length > 0) {
       <ion-card>
         <ion-card-header>
           <ion-card-title>
             <div class="section-header">
-              <span>Students ({{ studioStudents.length }})</span>
+              <span>Students ({{ studioStudents().length }})</span>
               @if (hasMoreStudents()) {
               <ion-chip color="primary" outline="true" size="small">
-                <ion-label>Showing 20 of {{ studioStudents.length }}</ion-label>
+                <ion-label>Showing 20 of {{ studioStudents().length }}</ion-label>
               </ion-chip>
               }
             </div>
@@ -448,7 +448,7 @@
       }
 
       <!-- Empty State for Students -->
-      @if (currentUserId && (!studioStudents || studioStudents.length === 0)) {
+      @if (currentUserId && (!studioStudents || studioStudents().length === 0)) {
       <ion-card>
         <ion-card-header>
           <ion-card-title>Students</ion-card-title>

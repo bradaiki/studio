@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, signal } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import {
@@ -53,8 +53,11 @@ import { add, newspaperOutline } from 'ionicons/icons';
 export class FeedPage implements OnInit {
   @ViewChild(IonInfiniteScroll) infiniteScroll?: IonInfiniteScroll;
 
+  // Keep as regular property - used with [(ngModel)]
   selectedFeed: string = 'clubs';
-  displayedPosts: Post[] = [];
+
+  // Convert to signals
+  displayedPosts = signal<Post[]>([]);
 
   // Infinite scroll properties - separate state for each feed
   private pageSize = 10;
@@ -62,10 +65,10 @@ export class FeedPage implements OnInit {
   private currentFilterKey = '';
 
   // All posts will be loaded from mock data or database
-  clubsPosts: Post[] = [];
-  studioMemberPosts: Post[] = [];
-  discoverPosts: Post[] = [];
-  lookPosts: Post[] = [];
+  private clubsPosts: Post[] = [];
+  private studioMemberPosts: Post[] = [];
+  private discoverPosts: Post[] = [];
+  private lookPosts: Post[] = [];
 
   constructor(
     private studiosService: StudiosService,
@@ -115,19 +118,13 @@ export class FeedPage implements OnInit {
 
   private addDemoFavorites() {
     // Simulate favoriting some entities for the Look feed
-    // In a real app, these would be stored in the database
-    // For demo, we'll just add them to the local favorites list
-    // Note: These IDs should match the author IDs in the posts below
-    // The favorites service will handle these when the user actually favorites items
   }
 
   get currentPosts(): Post[] {
     let posts: Post[];
     if (this.selectedFeed === 'clubs') {
-      // Filter posts from clubs/memberships
       posts = this.getClubsPosts();
     } else if (this.selectedFeed === 'look') {
-      // Filter posts from followed/favorited entities
       posts = this.getLookPosts();
     } else {
       posts = this.discoverPosts;
@@ -158,7 +155,7 @@ export class FeedPage implements OnInit {
         this.loadInitialPosts(state, posts);
       }
 
-      this.displayedPosts = state.displayed;
+      this.displayedPosts.set(state.displayed);
     }
   }
 
@@ -196,88 +193,53 @@ export class FeedPage implements OnInit {
       const endIndex = startIndex + this.pageSize;
       const newPosts = posts.slice(startIndex, endIndex);
 
-      console.log('Infinite scroll triggered:', {
-        currentFeed: this.currentFilterKey,
-        totalPosts: posts.length,
-        displayedCount: state.displayed.length,
-        page: state.page,
-        startIndex,
-        endIndex,
-        newPostsCount: newPosts.length,
-      });
-
       // Only add if there are new posts
       if (newPosts.length > 0) {
         state.displayed = [...state.displayed, ...newPosts];
         state.page++;
-        this.displayedPosts = state.displayed;
-
-        console.log('After loading:', {
-          displayedCount: state.displayed.length,
-          totalPosts: posts.length,
-          hasMore: state.displayed.length < posts.length,
-        });
+        this.displayedPosts.set(state.displayed);
       }
 
       event.target.complete();
 
       // Disable infinite scroll when all items are loaded
       if (state.displayed.length >= posts.length || newPosts.length === 0) {
-        console.log('Disabling infinite scroll - all posts loaded');
         event.target.disabled = true;
       }
     }, 500);
   }
 
   private getClubsPosts(): Post[] {
-    // Get user's studio memberships
     const userStudioMemberships =
       this.studiosService.getUserStudioMemberships();
+    const userOrganizationMemberships: string[] = ['org_1'];
+    const userAttendingEvents: string[] = [];
 
-    // TODO: Get user's organization memberships (when organizations service is available)
-    const userOrganizationMemberships: string[] = ['org_1']; // Placeholder
-
-    // TODO: Get events user is attending (when events service is available)
-    const userAttendingEvents: string[] = []; // Placeholder
-
-    // Combine all posts
     const allPosts = [
       ...this.clubsPosts,
       ...this.studioMemberPosts,
       ...this.discoverPosts,
     ];
 
-    // Filter posts based on:
-    // 1. Posts from studios user is a member of
-    // 2. Posts from organizations user is a member of
-    // 3. Posts from events user is attending
-    // 4. Posts from people who belong to the same studios
     const filteredPosts = allPosts.filter((post) => {
-      // Check if post is from a studio the user is a member of
       if (
         post.author.type === 'studio' &&
         userStudioMemberships.includes(post.author.id)
       ) {
         return true;
       }
-
-      // Check if post is from an organization the user is a member of
       if (
         post.author.type === 'organization' &&
         userOrganizationMemberships.includes(post.author.id)
       ) {
         return true;
       }
-
-      // Check if post is from an event the user is attending
       if (
         post.author.type === 'event' &&
         userAttendingEvents.includes(post.author.id)
       ) {
         return true;
       }
-
-      // Check if post is from a person who belongs to the same studios
       if (
         post.author.type === 'person' &&
         post.author.studioAffiliations &&
@@ -287,8 +249,6 @@ export class FeedPage implements OnInit {
       ) {
         return true;
       }
-
-      // Check if related entity is a studio the user is a member of
       if (
         post.relatedEntity &&
         post.relatedEntity.type === 'studio' &&
@@ -296,8 +256,6 @@ export class FeedPage implements OnInit {
       ) {
         return true;
       }
-
-      // Check if related entity is an organization the user is a member of
       if (
         post.relatedEntity &&
         post.relatedEntity.type === 'organization' &&
@@ -305,11 +263,9 @@ export class FeedPage implements OnInit {
       ) {
         return true;
       }
-
       return false;
     });
 
-    // Sort by timestamp (newest first)
     return filteredPosts.sort(
       (a, b) =>
         new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
@@ -317,25 +273,20 @@ export class FeedPage implements OnInit {
   }
 
   private getLookPosts(): Post[] {
-    // Get all favorites
     const favorites = this.favoritesService.getAllFavorites();
     const favoritedIds = new Set(favorites.map((f) => f.itemId));
 
-    // Add demo favorited IDs for the Look feed
-    // These simulate entities the user has favorited
     const demoFavoritedIds = new Set([
-      'studio_3', // Seattle Aikido Center
-      'person_8', // Takeshi Yamamoto
-      'org_3', // International Aikido Federation
-      'event_2', // Summer Aikido Intensive
-      'art_2', // Aikido Philosophy & History
-      'person_9', // Elena Rodriguez
+      'studio_3',
+      'person_8',
+      'org_3',
+      'event_2',
+      'art_2',
+      'person_9',
     ]);
 
-    // Combine favorited IDs
     const allFavoritedIds = new Set([...favoritedIds, ...demoFavoritedIds]);
 
-    // Combine all posts including Look posts
     const allPosts = [
       ...this.clubsPosts,
       ...this.studioMemberPosts,
@@ -343,58 +294,33 @@ export class FeedPage implements OnInit {
       ...this.lookPosts,
     ];
 
-    // Filter posts based on:
-    // 1. Author is favorited (person, organization, studio, event, art)
-    // 2. Related entity is favorited
     const filteredPosts = allPosts.filter((post) => {
-      // Check if author is favorited
       if (allFavoritedIds.has(post.author.id)) {
         return true;
       }
-
-      // Check if related entity is favorited
       if (post.relatedEntity && allFavoritedIds.has(post.relatedEntity.id)) {
         return true;
       }
-
       return false;
     });
 
-    // Sort by timestamp (newest first)
     return filteredPosts.sort(
       (a, b) =>
         new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
     );
   }
 
-  private getStudioMemberPosts(): Post[] {
-    // Filter posts from people who train at the same studios as the user
-    const userStudioMemberships =
-      this.studiosService.getUserStudioMemberships();
-    return this.studioMemberPosts.filter(
-      (post) =>
-        post.author.type === 'person' &&
-        post.author.studioAffiliations &&
-        post.author.studioAffiliations.some((studioId) =>
-          userStudioMemberships.includes(studioId),
-        ),
-    );
-  }
-
   onFeedChange(event: any) {
     this.selectedFeed = event.detail.value;
 
-    // Get the new filter key
     const newFilterKey = this.selectedFeed;
 
-    // If this is a new feed, create fresh state
     if (newFilterKey !== this.currentFilterKey) {
-      // Create new state for this feed
       const posts = this.currentPosts;
       const state = { page: 0, displayed: [] };
       this.scrollStates.set(newFilterKey, state);
       this.loadInitialPosts(state, posts);
-      this.displayedPosts = state.displayed;
+      this.displayedPosts.set(state.displayed);
       this.currentFilterKey = newFilterKey;
     }
 
@@ -406,7 +332,6 @@ export class FeedPage implements OnInit {
 
   handleRefresh(event: any) {
     setTimeout(async () => {
-      // Reload posts from the service
       await this.postsService.refreshPostsFromAPI();
       event.target.complete();
     }, 1000);
