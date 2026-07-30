@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { generateClient } from 'aws-amplify/data';
+import { fetchAuthSession } from 'aws-amplify/auth';
 import { DataSourceService } from './data-source.service';
 import { MockDataService } from './mock-data.service';
 
@@ -294,8 +295,20 @@ export class PostsService {
       // Load from database
       console.log('Loading posts from database');
       
+      let userId: string | null = null;
+      try {
+        const session = await fetchAuthSession();
+        if (session.tokens && session.identityId) {
+          userId = session.identityId;
+        }
+      } catch (e) {
+        // User not authenticated
+      }
+      
+      const authMode = userId ? 'userPool' : 'iam';
+      
       const result = await (this.client.models as any)['Post'].list({
-        authMode: 'userPool'
+        authMode
       });
       
       if (result.errors) {
