@@ -60,13 +60,18 @@ export class PushNotificationService {
         console.log('Push notification permission granted');
         
         // Register with APNs/FCM
-        await PushNotifications.register();
-        
-        // Set up listeners
-        this.setupListeners();
-        
-        this.isInitialized = true;
-        console.log('Push notifications initialized successfully');
+        try {
+          await PushNotifications.register();
+          
+          // Set up listeners
+          this.setupListeners();
+          
+          this.isInitialized = true;
+          console.log('Push notifications initialized successfully');
+        } catch (registerError) {
+          console.warn('Push notification registration failed (Firebase may not be configured):', registerError);
+          // Continue without push — app still works
+        }
       } else {
         console.warn('Push notification permission denied');
       }

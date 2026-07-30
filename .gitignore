@@ -23,6 +23,7 @@ amplify/node_modules
 /www
 /platforms
 /plugins
+android/app/google-services.json
 
 # Compiled output
 /dist
