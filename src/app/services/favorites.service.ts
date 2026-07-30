@@ -148,6 +148,10 @@ export class FavoritesService {
     return this.favoriteItemIds.has(itemId);
   }
 
+  isEnabled(): boolean {
+    return this.currentUserId !== null;
+  }
+
   getFavoritesByType(itemType: ItemType): Favorite[] {
     return this.favoritesSubject.value.filter(f => f.itemType === itemType);
   }

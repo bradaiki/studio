@@ -8,7 +8,8 @@
           <div class="hero-header">
             <h1 [class.compact]="compact()">{{ studio().name }}</h1>
             <div class="header-actions">
-              <!-- Favorite Button -->
+              <!-- Favorite Button (only for authenticated users) -->
+              @if (favoritesService.isEnabled()) {
               <ion-button
                 fill="clear"
                 color="light"
@@ -20,6 +21,7 @@
                   slot="icon-only"
                 ></ion-icon>
               </ion-button>
+              }
               <!-- Edit Button for instructors -->
               @if (studio().isInstructor && !compact()) {
                 <ion-button

@@ -13,6 +13,7 @@ import {
 import { ChatMessagesComponent } from '../components/chat-messages/chat-messages.component';
 import { ChatMessage } from '../models/chat.models';
 import { StudiosService, Studio } from '../services/studios.service';
+import { FavoritesService } from '../services/favorites.service';
 import {
   IonContent,
   IonHeader,
@@ -84,7 +85,7 @@ export class StudiosPage implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   // Keep as regular properties - used with [(ngModel)]
-  selectedSegment: string = 'my-studios';
+  selectedSegment: string = 'discover';
   searchTerm: string = '';
   viewMode: 'list' | 'map' = 'list';
 
@@ -304,6 +305,7 @@ export class StudiosPage implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private studiosService: StudiosService,
     private sanitizer: DomSanitizer,
+    public favoritesService: FavoritesService,
   ) {
     addIcons({
       home,
@@ -315,6 +317,9 @@ export class StudiosPage implements OnInit, OnDestroy {
       informationCircle,
       add,
     });
+    if (this.favoritesService.isEnabled()) {
+      this.selectedSegment = 'my-studios';
+    }
     console.log('[Studios Page] Constructor called');
   }
 

@@ -154,7 +154,7 @@ export class StudioComponent implements OnInit {
 
   isFavorited = signal<boolean>(false);
 
-  constructor(private favoritesService: FavoritesService) {
+  constructor(public favoritesService: FavoritesService) {
     addIcons({
       location,
       time,

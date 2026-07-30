@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { StudiosService, Studio } from '../services/studios.service';
+import { FavoritesService } from '../services/favorites.service';
 import {
   IonContent,
   IonHeader,
@@ -71,7 +72,7 @@ export class StudiosListPage implements OnInit {
 
   // Keep as regular properties - used with [(ngModel)]
   searchTerm: string = '';
-  selectedSegment: string = 'my-studios';
+  selectedSegment: string = 'nearby';
 
   private pageSize = 10;
   private currentPage = 0;
@@ -79,8 +80,12 @@ export class StudiosListPage implements OnInit {
   constructor(
     private router: Router,
     private studiosService: StudiosService,
+    public favoritesService: FavoritesService,
   ) {
     addIcons({ location, call, people, star, add });
+    if (this.favoritesService.isEnabled()) {
+      this.selectedSegment = 'my-studios';
+    }
   }
 
   ngOnInit() {

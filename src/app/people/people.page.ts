@@ -30,6 +30,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { PersonComponent } from '../components/person/person.component';
 import { PeopleService, Person } from '../services/people.service';
 import { AuthStateService } from '../services/auth-state.service';
+import { FavoritesService } from '../services/favorites.service';
 import { addIcons } from 'ionicons';
 import { person, close, personCircle, chevronForward } from 'ionicons/icons';
 
@@ -94,6 +95,7 @@ export class PeoplePage implements OnInit, OnDestroy {
     private router: Router,
     private peopleService: PeopleService,
     private authStateService: AuthStateService,
+    public favoritesService: FavoritesService,
   ) {
     addIcons({ person, close, personCircle, chevronForward });
   }

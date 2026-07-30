@@ -32,9 +32,11 @@
         class="category-segment"
         scrollable="true"
       >
+        @if (isAuthenticated()) {
         <ion-segment-button value="my-arts">
           <ion-label>{{ 'arts.my_arts' | translate }}</ion-label>
         </ion-segment-button>
+        }
         <ion-segment-button value="martial-arts">
           <ion-label>{{ 'arts.martial_arts' | translate }}</ion-label>
         </ion-segment-button>

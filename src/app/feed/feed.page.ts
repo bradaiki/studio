@@ -72,7 +72,7 @@ export class FeedPage implements OnInit {
 
   constructor(
     private studiosService: StudiosService,
-    private favoritesService: FavoritesService,
+    public favoritesService: FavoritesService,
     private postsService: PostsService,
     private router: Router,
   ) {

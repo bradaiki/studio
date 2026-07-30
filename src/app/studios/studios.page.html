@@ -45,9 +45,11 @@
     (ionChange)="onSegmentChange($event)"
     class="segment-control"
   >
+    @if (favoritesService.isEnabled()) {
     <ion-segment-button value="my-studios">
       <ion-label>{{ 'studios.my_studios' | translate }}</ion-label>
     </ion-segment-button>
+    }
     <ion-segment-button value="discover">
       <ion-label>{{ 'studios.discover' | translate }}</ion-label>
     </ion-segment-button>
