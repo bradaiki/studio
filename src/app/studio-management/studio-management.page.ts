@@ -5,6 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { StudiosService, Studio, Instructor, ClassSchedule } from '../services/studios.service';
 import { ActivitiesService, Activity, CreateActivityRequest } from '../services/activities.service';
+import { TranslationService } from '../services/translation.service';
 import { StudioJoinRequestsComponent } from '../components/studio-join-requests/studio-join-requests.component';
 import { 
   IonContent, 
@@ -202,9 +203,11 @@ export class StudioManagementPage implements OnInit {
     private router: Router,
     private studiosService: StudiosService,
     private activitiesService: ActivitiesService,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private translationService: TranslationService
   ) {
     addIcons({settings,people,checkmarkCircle,calendar,school,personAdd,star,mail,call,create,trash,add,time,location,repeat,card,chevronBack,chevronForward,close,person,closeCircle});
+    this.alertButtons = [this.translationService.getTranslation('app.ok')];
   }
 
   ngOnInit() {
@@ -222,11 +225,11 @@ export class StudioManagementPage implements OnInit {
         this.studio = foundStudio;
         this.loadStudioActivities(studioId);
       } else {
-        this.showToast('You are not authorized to manage this studio. Only instructors can access management features.');
+        this.showToast(this.translationService.getTranslation('studio_management.not_authorized'));
         this.router.navigate(['/dash/studio', studioId]);
       }
     } else {
-      this.showToast('Studio not found');
+      this.showToast(this.translationService.getTranslation('studio_management.not_found'));
       this.router.navigate(['/dash/studios']);
     }
   }
@@ -262,7 +265,7 @@ export class StudioManagementPage implements OnInit {
     this.isAlertOpen.set(true);
     this.alertButtons = [
       {
-        text: 'Cancel',
+        text: this.translationService.getTranslation('app.cancel'),
         role: 'cancel'
       },
       {
@@ -447,7 +450,7 @@ export class StudioManagementPage implements OnInit {
   }
 
   studioSettings() {
-    this.showToast('Studio settings functionality coming soon');
+    this.showToast(this.translationService.getTranslation('common.coming_soon'));
   }
 
   private showToast(message: string) {
@@ -569,29 +572,29 @@ export class StudioManagementPage implements OnInit {
       this.closeClassModal();
     } catch (error) {
       console.error('Error creating class:', error);
-      this.showToast('Error creating class. Please try again.');
+      this.showToast(this.translationService.getTranslation('studio_management.error_creating_class'));
     }
   }
 
   validateClassForm(): boolean {
     if (!this.newClass.title.trim()) {
-      this.showToast('Please enter class title');
+      this.showToast(this.translationService.getTranslation('studio_management.enter_class_title'));
       return false;
     }
     if (!this.newClass.instructor.trim()) {
-      this.showToast('Please select an instructor');
+      this.showToast(this.translationService.getTranslation('studio_management.select_instructor'));
       return false;
     }
     if (!this.newClass.startTime || !this.newClass.endTime) {
-      this.showToast('Please set start and end times');
+      this.showToast(this.translationService.getTranslation('studio_management.set_times'));
       return false;
     }
     if (!this.newClass.isRecurring && !this.newClass.date) {
-      this.showToast('Please set a date for one-time classes');
+      this.showToast(this.translationService.getTranslation('studio_management.set_date'));
       return false;
     }
     if (this.newClass.isRecurring && this.newClass.recurrenceDays.length === 0) {
-      this.showToast('Please select at least one day for recurring classes');
+      this.showToast(this.translationService.getTranslation('studio_management.select_day'));
       return false;
     }
     return true;
@@ -614,7 +617,7 @@ export class StudioManagementPage implements OnInit {
 
   // Simple edit and delete methods
   editActivity(activity: Activity) {
-    this.showToast('Edit functionality will be added soon');
+    this.showToast(this.translationService.getTranslation('common.coming_soon'));
   }
 
   async deleteActivity(activity: Activity) {
@@ -623,11 +626,11 @@ export class StudioManagementPage implements OnInit {
       message: `Are you sure you want to delete "${activity.title}"?`,
       buttons: [
         {
-          text: 'Cancel',
+          text: this.translationService.getTranslation('app.cancel'),
           role: 'cancel'
         },
         {
-          text: 'Delete',
+          text: this.translationService.getTranslation('app.delete'),
           role: 'destructive',
           handler: () => {
             this.confirmDeleteActivity(activity);
@@ -641,7 +644,7 @@ export class StudioManagementPage implements OnInit {
   confirmDeleteActivity(activity: Activity) {
     this.activitiesService.deleteActivity(activity.id);
     this.loadStudioActivities(this.studio!.id);
-    this.showToast('Activity deleted successfully');
+    this.showToast(this.translationService.getTranslation('studio_management.activity_deleted'));
   }
 
   // Helper method for displaying recurring days
@@ -756,7 +759,7 @@ export class StudioManagementPage implements OnInit {
       if (index !== -1) {
         this.studio.instructors[index] = { ...this.newInstructor, id: this.selectedInstructor.id };
       }
-      this.showToast('Instructor updated successfully');
+      this.showToast(this.translationService.getTranslation('studio_management.instructor_updated'));
     } else {
       // Add new instructor
       const newId = 'instructor_' + Date.now();
@@ -767,7 +770,7 @@ export class StudioManagementPage implements OnInit {
         username: this.generateUsername(this.newInstructor.name)
       };
       this.studio.instructors.push(instructorToAdd);
-      this.showToast('New instructor added successfully');
+      this.showToast(this.translationService.getTranslation('studio_management.instructor_added'));
     }
 
     this.closeInstructorModal();
@@ -775,15 +778,15 @@ export class StudioManagementPage implements OnInit {
 
   validateInstructorForm(): boolean {
     if (!this.newInstructor.name.trim()) {
-      this.showToast('Please enter instructor name');
+      this.showToast(this.translationService.getTranslation('studio_management.enter_instructor_name'));
       return false;
     }
     if (!this.newInstructor.title.trim()) {
-      this.showToast('Please select instructor title');
+      this.showToast(this.translationService.getTranslation('studio_management.select_instructor_title'));
       return false;
     }
     if (this.newInstructor.email && !this.isValidEmail(this.newInstructor.email)) {
-      this.showToast('Please enter a valid email address');
+      this.showToast(this.translationService.getTranslation('studio_management.invalid_email'));
       return false;
     }
     return true;

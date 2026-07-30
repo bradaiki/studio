@@ -37,7 +37,7 @@
             size="small"
             (click)="onFollow(); $event.stopPropagation()">
             <ion-icon [name]="getFollowIcon()" slot="start"></ion-icon>
-            {{ getFollowButtonText() }}
+            {{ person().isFollowing ? ('people.following' | translate) : ('people.follow' | translate) }}
           </ion-button>
           <ion-button
             fill="clear"

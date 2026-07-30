@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ToastController, AlertController } from '@ionic/angular';
 import { ChatAccessError, ChatAccessException } from './access-control.service';
+import { TranslationService } from './translation.service';
 
 export interface ErrorHandlingOptions {
   showToast?: boolean;
@@ -27,7 +28,8 @@ export class ChatErrorHandlerService {
 
   constructor(
     private toastController: ToastController,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private translationService: TranslationService
   ) {}
 
   /**
@@ -449,7 +451,7 @@ export class ChatErrorHandlerService {
     }
 
     buttons.push({
-      text: 'OK',
+      text: this.translationService.getTranslation('app.ok'),
       role: 'cancel'
     });
 

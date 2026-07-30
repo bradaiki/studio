@@ -69,7 +69,7 @@
                 <div class="overlay-top">
                   <ion-chip [color]="getArtColor(art)" class="category-chip">
                     <ion-icon [name]="getArtIcon(art)"></ion-icon>
-                    <ion-label>{{ art.category | titlecase }}</ion-label>
+                    <ion-label>{{ 'arts.category_' + art.category | translate }}</ion-label>
                   </ion-chip>
                 </div>
                 <div class="overlay-bottom">
@@ -98,7 +98,7 @@
                   outline="true"
                   class="meta-chip"
                 >
-                  <ion-label>{{ art.difficulty | titlecase }}</ion-label>
+                  <ion-label>{{ 'arts.difficulty_levels.' + art.difficulty | translate }}</ion-label>
                 </ion-chip>
                 <ion-chip
                   [color]="getPhysicalDemandsColor(art.physicalDemands)"
@@ -106,7 +106,7 @@
                   class="meta-chip"
                 >
                   <ion-label
-                    >{{ art.physicalDemands | titlecase }} Intensity</ion-label
+                    >{{ 'arts.intensity_levels.' + art.physicalDemands | translate }} {{ 'arts.intensity' | translate }}</ion-label
                   >
                 </ion-chip>
               </div>
@@ -154,9 +154,9 @@
         | translate }}
       </h3>
       @if (selectedCategory === 'my-arts') {
-      <p>Start exploring arts to add them to your practice!</p>
+      <p>{{ 'arts.explore_prompt' | translate }}</p>
       } @if (selectedCategory !== 'my-arts') {
-      <p>Try adjusting your search or category filters</p>
+      <p>{{ 'arts.try_adjusting' | translate }}</p>
       }
       <ion-button
         fill="outline"

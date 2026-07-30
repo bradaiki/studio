@@ -148,7 +148,7 @@
       <ion-card-content>
         <ion-item>
           <ion-label position="stacked">{{ 'studio_form.head_instructor' | translate }}</ion-label>
-          <ion-select
+          <ion-select [okText]="'app.ok' | translate" [cancelText]="'app.cancel' | translate"
             formControlName="headInstructorId"
             [placeholder]="'studio_form.head_instructor_placeholder' | translate"
           >
@@ -165,7 +165,7 @@
 
         <ion-item>
           <ion-label position="stacked">{{ 'studio_form.studio_chief' | translate }}</ion-label>
-          <ion-select
+          <ion-select [okText]="'app.ok' | translate" [cancelText]="'app.cancel' | translate"
             formControlName="studioChiefId"
             [placeholder]="'studio_form.studio_chief_placeholder' | translate"
           >
@@ -364,12 +364,13 @@
       <ion-card-content>
         <!-- Calendar View -->
         <div class="calendar-container">
-          <ion-datetime
+          <ion-datetime [locale]="translationService.getCurrentLanguage()"
             #calendar
             presentation="date"
             [multiple]="true"
             [highlightedDates]="getHighlightedDates()"
             (ionChange)="onCalendarDateChange($event)"
+            [locale]="translationService.getCurrentLanguage()"
           >
           </ion-datetime>
         </div>
@@ -403,7 +404,7 @@
                 </ion-item>
                 <ion-item>
                   <ion-label position="stacked">{{ 'studio_form.start_date' | translate }}</ion-label>
-                  <ion-datetime
+                  <ion-datetime [locale]="translationService.getCurrentLanguage()"
                     formControlName="startDate"
                     presentation="date"
                   >
@@ -411,7 +412,7 @@
                 </ion-item>
                 <ion-item>
                   <ion-label position="stacked">{{ 'studio_form.end_date' | translate }}</ion-label>
-                  <ion-datetime
+                  <ion-datetime [locale]="translationService.getCurrentLanguage()"
                     formControlName="endDate"
                     presentation="date"
                   >
@@ -419,7 +420,7 @@
                 </ion-item>
                 <ion-item>
                   <ion-label position="stacked">{{ 'studio_form.start_time' | translate }}</ion-label>
-                  <ion-datetime
+                  <ion-datetime [locale]="translationService.getCurrentLanguage()"
                     formControlName="startTime"
                     presentation="time"
                   >
@@ -427,7 +428,7 @@
                 </ion-item>
                 <ion-item>
                   <ion-label position="stacked">{{ 'studio_form.end_time' | translate }}</ion-label>
-                  <ion-datetime
+                  <ion-datetime [locale]="translationService.getCurrentLanguage()"
                     formControlName="endTime"
                     presentation="time"
                   >
@@ -435,7 +436,7 @@
                 </ion-item>
                 <ion-item>
                   <ion-label position="stacked">{{ 'studio_form.class_instructor' | translate }}</ion-label>
-                  <ion-select
+                  <ion-select [okText]="'app.ok' | translate" [cancelText]="'app.cancel' | translate"
                     formControlName="instructor"
                     [placeholder]="'studio_form.class_instructor_placeholder' | translate"
                   >
@@ -447,36 +448,36 @@
                     </ion-select-option>
                     }
                     <ion-select-option value="Various"
-                      >Various</ion-select-option
+                      >{{ 'studio_form.various' | translate }}</ion-select-option
                     >
                   </ion-select>
                 </ion-item>
                 <ion-item>
                   <ion-label position="stacked">{{ 'studio_form.class_level' | translate }}</ion-label>
-                  <ion-select
+                  <ion-select [okText]="'app.ok' | translate" [cancelText]="'app.cancel' | translate"
                     formControlName="level"
                     [placeholder]="'studio_form.class_level_placeholder' | translate"
                   >
                     <ion-select-option value="Beginner"
-                      >Beginner</ion-select-option
+                      >{{ 'arts.difficulty_levels.beginner' | translate }}</ion-select-option
                     >
                     <ion-select-option value="Intermediate"
-                      >Intermediate</ion-select-option
+                      >{{ 'arts.difficulty_levels.intermediate' | translate }}</ion-select-option
                     >
                     <ion-select-option value="Advanced"
-                      >Advanced</ion-select-option
+                      >{{ 'arts.difficulty_levels.advanced' | translate }}</ion-select-option
                     >
                     <ion-select-option value="All Levels"
-                      >All Levels</ion-select-option
+                      >{{ 'arts.difficulty_levels.all_levels' | translate }}</ion-select-option
                     >
                     <ion-select-option value="1st Kyu & Above"
-                      >1st Kyu & Above</ion-select-option
+                      >{{ 'studio_form.level_1st_kyu' | translate }}</ion-select-option
                     >
                     <ion-select-option value="2nd Kyu & Above"
-                      >2nd Kyu & Above</ion-select-option
+                      >{{ 'studio_form.level_2nd_kyu' | translate }}</ion-select-option
                     >
                     <ion-select-option value="3rd Kyu & Above"
-                      >3rd Kyu & Above</ion-select-option
+                      >{{ 'studio_form.level_3rd_kyu' | translate }}</ion-select-option
                     >
                   </ion-select>
                 </ion-item>
@@ -502,16 +503,16 @@
                 <div>
                   <ion-item>
                     <ion-label position="stacked">{{ 'studio_form.recurrence_pattern' | translate }}</ion-label>
-                    <ion-select
+                    <ion-select [okText]="'app.ok' | translate" [cancelText]="'app.cancel' | translate"
                       formControlName="recurrencePattern"
                       [placeholder]="'studio_form.recurrence_pattern_placeholder' | translate"
                     >
                       <ion-select-option value="weekly"
-                        >Weekly</ion-select-option
+                        >{{ 'studio_form.weekly' | translate }}</ion-select-option
                       >
-                      <ion-select-option value="daily">Daily</ion-select-option>
+                      <ion-select-option value="daily">{{ 'studio_form.daily' | translate }}</ion-select-option>
                       <ion-select-option value="monthly"
-                        >Monthly</ion-select-option
+                        >{{ 'studio_form.monthly' | translate }}</ion-select-option
                       >
                     </ion-select>
                   </ion-item>
@@ -519,7 +520,7 @@
                     <ion-label position="stacked"
                       >{{ 'studio_form.recurrence_end' | translate }}</ion-label
                     >
-                    <ion-datetime
+                    <ion-datetime [locale]="translationService.getCurrentLanguage()"
                       formControlName="recurrenceEnd"
                       presentation="date"
                     >
@@ -529,21 +530,21 @@
                 }
                 <ion-item>
                   <ion-label position="stacked">{{ 'studio_form.calendar_color' | translate }}</ion-label>
-                  <ion-select
+                  <ion-select [okText]="'app.ok' | translate" [cancelText]="'app.cancel' | translate"
                     formControlName="color"
                     [placeholder]="'studio_form.calendar_color_placeholder' | translate"
                   >
-                    <ion-select-option value="#3880ff">Blue</ion-select-option>
-                    <ion-select-option value="#10dc60">Green</ion-select-option>
-                    <ion-select-option value="#f04141">Red</ion-select-option>
+                    <ion-select-option value="#3880ff">{{ 'studio_form.color_blue' | translate }}</ion-select-option>
+                    <ion-select-option value="#10dc60">{{ 'studio_form.color_green' | translate }}</ion-select-option>
+                    <ion-select-option value="#f04141">{{ 'studio_form.color_red' | translate }}</ion-select-option>
                     <ion-select-option value="#ffce00"
-                      >Yellow</ion-select-option
+                      >{{ 'studio_form.color_yellow' | translate }}</ion-select-option
                     >
                     <ion-select-option value="#7044ff"
-                      >Purple</ion-select-option
+                      >{{ 'studio_form.color_purple' | translate }}</ion-select-option
                     >
                     <ion-select-option value="#f25454"
-                      >Orange</ion-select-option
+                      >{{ 'studio_form.color_orange' | translate }}</ion-select-option
                     >
                   </ion-select>
                 </ion-item>

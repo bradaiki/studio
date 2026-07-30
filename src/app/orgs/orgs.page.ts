@@ -33,7 +33,7 @@ import {
 } from '@ionic/angular/standalone';
 import { TranslateModule } from '@ngx-translate/core';
 import { addIcons } from 'ionicons';
-import { home, close } from 'ionicons/icons';
+import { home, close, add, business } from 'ionicons/icons';
 
 @Component({
   selector: 'app-orgs',
@@ -256,7 +256,7 @@ export class OrgsPage implements OnInit {
     private route: ActivatedRoute,
     private organizationsService: OrganizationsService,
   ) {
-    addIcons({ home, close });
+    addIcons({ home, close, add, business });
   }
 
   ngOnInit() {

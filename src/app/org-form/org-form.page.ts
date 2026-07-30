@@ -41,11 +41,15 @@ import {
   IonIcon,
   IonAlert,
   IonToast,
+  IonDatetime,
+  IonDatetimeButton,
+  IonModal,
   IonBackButton,
   IonButtons,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { add, remove, save, arrowBack } from 'ionicons/icons';
+import { TranslationService } from '../services/translation.service';
 
 @Component({
   selector: 'app-org-form',
@@ -74,6 +78,9 @@ import { add, remove, save, arrowBack } from 'ionicons/icons';
     IonIcon,
     IonAlert,
     IonToast,
+    IonDatetime,
+    IonDatetimeButton,
+    IonModal,
     IonBackButton,
     IonButtons,
   ],
@@ -87,30 +94,29 @@ export class OrgFormPage implements OnInit {
   showToast = signal(false);
   toastMessage = signal('');
 
-  deleteAlertButtons = [
-    {
-      text: 'Cancel',
-      role: 'cancel',
-      handler: () => {
-        this.onDeleteAlertDismiss();
-      },
-    },
-    {
-      text: 'Delete',
-      role: 'confirm',
-      handler: () => {
-        this.onDelete();
-      },
-    },
-  ];
+  deleteAlertButtons: any[] = [];
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
     private organizationsService: OrganizationsService,
+    public translationService: TranslationService,
   ) {
     addIcons({ add, remove, save, arrowBack });
+
+    this.deleteAlertButtons = [
+      {
+        text: this.translationService.getTranslation('app.cancel'),
+        role: 'cancel',
+        handler: () => { this.onDeleteAlertDismiss(); },
+      },
+      {
+        text: this.translationService.getTranslation('app.delete'),
+        role: 'confirm',
+        handler: () => { this.onDelete(); },
+      },
+    ];
 
     this.orgForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
@@ -161,7 +167,7 @@ export class OrgFormPage implements OnInit {
     if (org) {
       this.populateForm(org);
     } else {
-      this.showToastMessage('Organization not found');
+      this.showToastMessage(this.translationService.getTranslation('org_form.not_found'));
       this.router.navigate(['/dash/orgs']);
     }
   }
@@ -471,22 +477,22 @@ export class OrgFormPage implements OnInit {
             this.orgId()!,
             formValue,
           );
-          this.showToastMessage('Organization updated successfully');
+          this.showToastMessage(this.translationService.getTranslation('messages.updated'));
         } else {
           await this.organizationsService.createOrganization(formValue);
-          this.showToastMessage('Organization created successfully');
+          this.showToastMessage(this.translationService.getTranslation('messages.created'));
         }
 
         this.router.navigate(['/dash/orgs']);
       } catch (error) {
         console.error('Error saving organization:', error);
-        this.showToastMessage('Error saving organization. Please try again.');
+        this.showToastMessage(this.translationService.getTranslation('messages.error_saving'));
       } finally {
         this.isSubmitting.set(false);
       }
     } else {
       this.markFormGroupTouched(this.orgForm);
-      this.showToastMessage('Please fill in all required fields');
+      this.showToastMessage(this.translationService.getTranslation('errors.validation'));
     }
   }
 

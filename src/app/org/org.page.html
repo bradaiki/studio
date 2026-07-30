@@ -38,6 +38,7 @@
           [showLineage]="true"
           [showPhilosophy]="true"
           [showContact]="true"
+          [showEditButton]="true"
           [compact]="false"
           (dojoClick)="onDojoClick($event)"
           (eventClick)="onEventClick($event)"
@@ -46,6 +47,7 @@
           (emailClick)="onEmailClick($event)"
           (socialClick)="onSocialClick($event)"
           (findDojoClick)="onFindDojoClick()"
+          (editClick)="onEditOrganization($event)"
         >
         </app-organization>
       </div>
@@ -69,7 +71,7 @@
       </div>
     </div>
   </div>
-  } @if (!organizationInfo()) {
+  } @if (!organizationInfo() && !loading()) {
   <div class="error-state">
     <ion-icon name="business" color="medium"></ion-icon>
     <h3>{{ 'org_detail.not_found' | translate }}</h3>
@@ -78,6 +80,10 @@
       <ion-icon name="arrow-back" slot="start"></ion-icon>
       {{ 'org_detail.back_button' | translate }}
     </ion-button>
+  </div>
+  } @if (loading()) {
+  <div class="loading-state">
+    <ion-spinner name="crescent"></ion-spinner>
   </div>
   }
 </ion-content>

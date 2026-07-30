@@ -437,7 +437,11 @@
                 </ion-item>
                 <ion-item>
                   <ion-label position="stacked">{{ 'org_form.event_date' | translate }}</ion-label>
-                  <ion-input formControlName="date" type="date"></ion-input>
+                  <ion-datetime
+                    formControlName="date"
+                    presentation="date"
+                    [locale]="translationService.getCurrentLanguage()"
+                  ></ion-datetime>
                 </ion-item>
                 <ion-item>
                   <ion-label position="stacked">{{ 'org_form.event_location' | translate }}</ion-label>
@@ -448,20 +452,20 @@
                 </ion-item>
                 <ion-item>
                   <ion-label position="stacked">{{ 'org_form.event_type' | translate }}</ion-label>
-                  <ion-select formControlName="type">
+                  <ion-select [okText]="'app.ok' | translate" [cancelText]="'app.cancel' | translate" formControlName="type">
                     <ion-select-option value="seminar"
-                      >Seminar</ion-select-option
+                      >{{ 'events.event_types.seminar' | translate }}</ion-select-option
                     >
                     <ion-select-option value="tournament"
-                      >Tournament</ion-select-option
+                      >{{ 'events.event_types.tournament' | translate }}</ion-select-option
                     >
                     <ion-select-option value="testing"
-                      >Testing</ion-select-option
+                      >{{ 'events.event_types.testing' | translate }}</ion-select-option
                     >
                     <ion-select-option value="workshop"
-                      >Workshop</ion-select-option
+                      >{{ 'events.event_types.workshop' | translate }}</ion-select-option
                     >
-                    <ion-select-option value="meetup">Meetup</ion-select-option>
+                    <ion-select-option value="meetup">{{ 'events.event_types.meetup' | translate }}</ion-select-option>
                   </ion-select>
                 </ion-item>
                 <ion-item>
@@ -576,7 +580,7 @@
               <ion-card-content>
                 <ion-item>
                   <ion-label position="stacked">{{ 'org_form.platform' | translate }}</ion-label>
-                  <ion-select formControlName="platform">
+                  <ion-select [okText]="'app.ok' | translate" [cancelText]="'app.cancel' | translate" formControlName="platform">
                     <ion-select-option value="facebook"
                       >Facebook</ion-select-option
                     >
@@ -742,22 +746,26 @@
                 </ion-item>
                 <ion-item>
                   <ion-label position="stacked">{{ 'org_form.achievement_date' | translate }}</ion-label>
-                  <ion-input formControlName="date" type="date"></ion-input>
+                  <ion-datetime
+                    formControlName="date"
+                    presentation="date"
+                    [locale]="translationService.getCurrentLanguage()"
+                  ></ion-datetime>
                 </ion-item>
                 <ion-item>
                   <ion-label position="stacked">{{ 'org_form.achievement_type' | translate }}</ion-label>
-                  <ion-select formControlName="type">
+                  <ion-select [okText]="'app.ok' | translate" [cancelText]="'app.cancel' | translate" formControlName="type">
                     <ion-select-option value="recognition"
-                      >Recognition</ion-select-option
+                      >{{ 'org_form.achievement_types.recognition' | translate }}</ion-select-option
                     >
                     <ion-select-option value="milestone"
-                      >Milestone</ion-select-option
+                      >{{ 'org_form.achievement_types.milestone' | translate }}</ion-select-option
                     >
                     <ion-select-option value="expansion"
-                      >Expansion</ion-select-option
+                      >{{ 'org_form.achievement_types.expansion' | translate }}</ion-select-option
                     >
                     <ion-select-option value="certification"
-                      >Certification</ion-select-option
+                      >{{ 'org_form.achievement_types.certification' | translate }}</ion-select-option
                     >
                   </ion-select>
                 </ion-item>

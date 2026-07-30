@@ -194,7 +194,7 @@
       <ion-card-title class="chat-header">
         <div class="header-content">
           <div class="chat-title-section">
-            <span>{{ currentChatName || studioName() + ' Chat' }}</span>
+            <span>{{ currentChatName || studioName() + ' ' + ('chat_messages.chat_suffix' | translate) }}</span>
             @if (isMuted) {
               <ion-icon name="notifications-off" color="medium" class="muted-indicator"></ion-icon>
             }
@@ -654,7 +654,7 @@
   <ion-alert
     [isOpen]="showLeaveAlert"
     [header]="'chat_messages.leave_chat_header' | translate"
-    [message]="'Are you sure you want to leave ' + studioName + ' chat? You won\'t receive any more messages from this chat.'"
+    [message]="('chat_messages.leave_chat_message' | translate:{name: studioName()})"
     [buttons]="alertButtons">
   </ion-alert>
 
@@ -696,17 +696,17 @@
           <!-- Requirement 4.1: Allow selection between public and private types -->
           <ion-item>
             <ion-label position="stacked">{{ 'chat_messages.access_level' | translate }}</ion-label>
-            <ion-select [(ngModel)]="newChatAccessLevel" [placeholder]="'chat_messages.access_level_placeholder' | translate">
+            <ion-select [(ngModel)]="newChatAccessLevel" [placeholder]="'chat_messages.access_level_placeholder' | translate" [okText]="'app.ok' | translate" [cancelText]="'app.cancel' | translate">
               <ion-select-option value="public">
                 <div class="access-option">
-                  <strong>Public Chat</strong>
-                  <p>Visible to all studio visitors</p>
+                  <strong>{{ 'chat_messages.public_chat' | translate }}</strong>
+                  <p>{{ 'chat_messages.public_chat_desc' | translate }}</p>
                 </div>
               </ion-select-option>
               <ion-select-option value="private">
                 <div class="access-option">
-                  <strong>Private Chat</strong>
-                  <p>Only visible to invited members</p>
+                  <strong>{{ 'chat_messages.private_chat' | translate }}</strong>
+                  <p>{{ 'chat_messages.private_chat_desc' | translate }}</p>
                 </div>
               </ion-select-option>
             </ion-select>
@@ -714,7 +714,7 @@
 
           <ion-item>
             <ion-label position="stacked">{{ 'chat_messages.chat_type' | translate }}</ion-label>
-            <ion-select [(ngModel)]="newChatType" [placeholder]="'chat_messages.chat_type_placeholder' | translate">
+            <ion-select [(ngModel)]="newChatType" [placeholder]="'chat_messages.chat_type_placeholder' | translate" [okText]="'app.ok' | translate" [cancelText]="'app.cancel' | translate">
               <ion-select-option value="group">{{ 'chat_messages.group_chat' | translate }}</ion-select-option>
               <ion-select-option value="private">{{ 'chat_messages.private_chat' | translate }}</ion-select-option>
             </ion-select>
@@ -944,7 +944,7 @@
   <ion-alert
     [isOpen]="showDeleteChatAlert"
     [header]="isOwnerOfChatToDelete ? ('chat_messages.delete_chat_header' | translate) : ('chat_messages.remove_chat_header' | translate)"
-    [message]="isOwnerOfChatToDelete ? 'Are you sure you want to delete this chat? This action cannot be undone and all messages will be lost for everyone.' : 'Remove this chat from your view? You can always rejoin later.'"
+    [message]="isOwnerOfChatToDelete ? ('chat_messages.delete_chat_confirm' | translate) : ('chat_messages.remove_chat_confirm' | translate)"
     [buttons]="deleteAlertButtons">
   </ion-alert>
 

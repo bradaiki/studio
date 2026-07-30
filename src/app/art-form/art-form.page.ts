@@ -12,6 +12,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location as AngularLocation } from '@angular/common';
 import { ArtsService, Art } from '../services/arts.service';
+import { TranslationService } from '../services/translation.service';
 import {
   IonContent,
   IonHeader,
@@ -136,6 +137,7 @@ export class ArtFormPage implements OnInit {
     private artsService: ArtsService,
     private alertController: AlertController,
     private toastController: ToastController,
+    private translationService: TranslationService,
   ) {
     addIcons({
       arrowBack,
@@ -187,14 +189,14 @@ export class ArtFormPage implements OnInit {
 
     const art = this.artsService.getArtById(this.artId()!);
     if (!art) {
-      this.showToast('Art not found', 'danger');
+      this.showToast(this.translationService.getTranslation('art_form.not_found'), 'danger');
       this.router.navigate(['/tabs/arts']);
       return;
     }
 
     // Check if user can edit this art
     if (!this.artsService.canUserEditArt(art)) {
-      this.showToast('You do not have permission to edit this art', 'danger');
+      this.showToast(this.translationService.getTranslation('art_form.no_permission'), 'danger');
       this.router.navigate(['/art', this.artId()]);
       return;
     }
@@ -245,7 +247,7 @@ export class ArtFormPage implements OnInit {
 
   async onSave() {
     if (this.artForm.invalid) {
-      this.showToast('Please fill in all required fields correctly', 'warning');
+      this.showToast(this.translationService.getTranslation('errors.validation'), 'warning');
       return;
     }
 
@@ -261,17 +263,17 @@ export class ArtFormPage implements OnInit {
           formValue,
         );
         if (updatedArt) {
-          this.showToast('Art updated successfully', 'success');
+          this.showToast(this.translationService.getTranslation('messages.updated'), 'success');
           this.router.navigate(['/art', this.artId()]);
         }
       } else {
         // Create new art
         const newArt = await this.artsService.createArt(formValue);
-        this.showToast('Art created successfully', 'success');
+        this.showToast(this.translationService.getTranslation('messages.created'), 'success');
         this.router.navigate(['/art', newArt.id]);
       }
     } catch (error: any) {
-      this.showToast(error.message || 'An error occurred', 'danger');
+      this.showToast(error.message || this.translationService.getTranslation('errors.unknown'), 'danger');
     } finally {
       this.loading.set(false);
     }
@@ -286,11 +288,11 @@ export class ArtFormPage implements OnInit {
         'Are you sure you want to delete this art? This action cannot be undone.',
       buttons: [
         {
-          text: 'Cancel',
+          text: this.translationService.getTranslation('app.cancel'),
           role: 'cancel',
         },
         {
-          text: 'Delete',
+          text: this.translationService.getTranslation('app.delete'),
           role: 'destructive',
           handler: () => {
             this.deleteArt();
@@ -308,11 +310,11 @@ export class ArtFormPage implements OnInit {
     try {
       const success = await this.artsService.deleteArt(this.artId()!);
       if (success) {
-        this.showToast('Art deleted successfully', 'success');
+        this.showToast(this.translationService.getTranslation('messages.deleted'), 'success');
         this.router.navigate(['/tabs/arts']);
       }
     } catch (error: any) {
-      this.showToast(error.message || 'Failed to delete art', 'danger');
+      this.showToast(error.message || this.translationService.getTranslation('messages.error_deleting'), 'danger');
     }
   }
 

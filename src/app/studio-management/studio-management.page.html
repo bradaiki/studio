@@ -754,7 +754,7 @@
 
             <ion-item>
               <ion-label position="stacked">{{ 'studio_management.rank' | translate }}</ion-label>
-              <ion-select
+              <ion-select [okText]="'app.ok' | translate" [cancelText]="'app.cancel' | translate"
                 [(ngModel)]="newInstructor.rank"
                 name="rank"
                 [placeholder]="'studio_management.rank_placeholder' | translate"
@@ -823,7 +823,7 @@
 
             <ion-item>
               <ion-label position="stacked">{{ 'studio_management.add_specialty' | translate }}</ion-label>
-              <ion-select
+              <ion-select [okText]="'app.ok' | translate" [cancelText]="'app.cancel' | translate"
                 (ionChange)="onSpecialtyChange($event)"
                 [placeholder]="'studio_management.add_specialty_placeholder' | translate"
               >
@@ -857,7 +857,7 @@
 
             <ion-item>
               <ion-label position="stacked">{{ 'studio_management.add_certification' | translate }}</ion-label>
-              <ion-select
+              <ion-select [okText]="'app.ok' | translate" [cancelText]="'app.cancel' | translate"
                 (ionChange)="onCertificationChange($event)"
                 [placeholder]="'studio_management.add_certification_placeholder' | translate"
               >
@@ -945,7 +945,7 @@
 
           <ion-item>
             <ion-label position="stacked">{{ 'studio_management.instructor' | translate }}</ion-label>
-            <ion-select
+            <ion-select [okText]="'app.ok' | translate" [cancelText]="'app.cancel' | translate"
               [(ngModel)]="newClass.instructor"
               name="instructor"
               [placeholder]="'studio_management.instructor_placeholder' | translate"

@@ -68,11 +68,7 @@
     <!-- Results Count -->
     <div class="results-info">
       <ion-text color="medium">
-        @if (filteredEvents().length === 1) {
-        <p>1 event found</p>
-        } @if (filteredEvents().length !== 1) {
-        <p>{{ filteredEvents().length }} events found</p>
-        }
+        <p>{{ 'events.results_count' | translate: {count: filteredEvents().length} }}</p>
       </ion-text>
     </div>
 
@@ -98,7 +94,7 @@
           <img [src]="event.image" [alt]="event.title" />
           <div class="event-type-overlay">
             <ion-chip [color]="getEventTypeColor(event.type)" class="type-chip">
-              {{ event.type | titlecase }}
+              {{ 'events.event_types.' + event.type | translate }}
             </ion-chip>
           </div>
         </div>
@@ -172,7 +168,7 @@
                     outline="true"
                     class="difficulty-chip"
                   >
-                    {{ event.difficulty | titlecase }}
+                    {{ 'arts.difficulty_levels.' + (event.difficulty === 'all-levels' ? 'all_levels' : event.difficulty) | translate }}
                   </ion-chip>
                 </div>
               </ion-col>
@@ -313,7 +309,7 @@
 
   <!-- Floating Action Button -->
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button color="primary">
+    <ion-fab-button color="primary" (click)="onCreateEvent()">
       <ion-icon name="add-outline"></ion-icon>
     </ion-fab-button>
   </ion-fab>

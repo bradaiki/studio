@@ -22,6 +22,7 @@ import {
 } from '@ionic/angular/standalone';
 import { AmplifyService } from '../services/amplify.service';
 import { AuthStateService } from '../services/auth-state.service';
+import { TranslationService } from '../services/translation.service';
 
 @Component({
   selector: 'app-login',
@@ -64,13 +65,14 @@ export class LoginPage {
     private authStateService: AuthStateService,
     private router: Router,
     private toastController: ToastController,
+    private translationService: TranslationService,
     private ngZone: NgZone,
     private cdr: ChangeDetectorRef,
   ) {}
 
   async onSubmit() {
     if (!this.email || !this.password) {
-      this.showToast('Please fill in all fields', 'warning');
+      this.showToast(this.translationService.getTranslation('auth.fill_all_fields'), 'warning');
       return;
     }
 
@@ -83,7 +85,7 @@ export class LoginPage {
         await this.signIn();
       }
     } catch (error: any) {
-      this.showToast(error.message || 'Authentication failed', 'danger');
+      this.showToast(error.message || this.translationService.getTranslation('auth.auth_failed'), 'danger');
       this.password = '';
     }
 
@@ -99,7 +101,7 @@ export class LoginPage {
     );
 
     if (result.isSignUpComplete) {
-      this.showToast('Sign up successful! You can now sign in.', 'success');
+      this.showToast(this.translationService.getTranslation('auth.signup_success'), 'success');
       this.isSignUp.set(false);
     } else {
       this.needsConfirmation.set(true);
@@ -114,22 +116,22 @@ export class LoginPage {
   private async signIn() {
     const result = await this.amplifyService.signIn(this.email, this.password);
     if (result.isSignedIn) {
-      this.showToast('Sign in successful!', 'success');
+      this.showToast(this.translationService.getTranslation('auth.signin_success'), 'success');
       const user = await this.amplifyService.getCurrentUser();
       this.authStateService.setAuthState(true, user);
       window.location.href = '/dash';
     } else if (result.nextStep?.signInStep === 'CONFIRM_SIGN_UP') {
       this.needsConfirmation.set(true);
       this.pendingUsername.set(this.email);
-      this.showToast('Please confirm your email first', 'warning');
+      this.showToast(this.translationService.getTranslation('auth.confirm_email_first'), 'warning');
     } else {
-      throw new Error('Sign in failed. Please check your credentials.');
+      throw new Error(this.translationService.getTranslation('auth.signin_failed'));
     }
   }
 
   async confirmSignUp() {
     if (!this.confirmationCode) {
-      this.showToast('Please enter confirmation code', 'warning');
+      this.showToast(this.translationService.getTranslation('auth.enter_code'), 'warning');
       return;
     }
 
@@ -140,12 +142,12 @@ export class LoginPage {
         this.pendingUsername(),
         this.confirmationCode,
       );
-      this.showToast('Email confirmed! You can now sign in.', 'success');
+      this.showToast(this.translationService.getTranslation('auth.email_confirmed'), 'success');
       this.needsConfirmation.set(false);
       this.isSignUp.set(false);
       this.confirmationCode = '';
     } catch (error: any) {
-      this.showToast(error.message || 'Confirmation failed', 'danger');
+      this.showToast(error.message || this.translationService.getTranslation('auth.confirmation_failed'), 'danger');
     }
 
     this.isLoading.set(false);

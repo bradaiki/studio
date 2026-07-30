@@ -38,6 +38,7 @@ import { TranslationService } from '../services/translation.service';
 import { PersonProfileManagerService } from '../services/person-profile-manager.service';
 import { DataSourceService, DataSource } from '../services/data-source.service';
 import { AdBannerComponent } from '../components/ad-banner/ad-banner.component';
+import { LanguageSelectorComponent } from '../components/language-selector/language-selector.component';
 import { environment } from '../../environments/environment';
 
 @Component({
@@ -57,6 +58,7 @@ import { environment } from '../../environments/environment';
     IonBadge,
     TranslateModule,
     AdBannerComponent,
+    LanguageSelectorComponent,
   ],
 })
 export class TabsPage implements OnInit, OnDestroy {
@@ -134,8 +136,8 @@ export class TabsPage implements OnInit, OnDestroy {
     }
   }
 
-  openProfile() {
-    this.router.navigate(['/dash/profile']);
+  openSettings() {
+    this.router.navigate(['/dash/profile'], { queryParams: { segment: 'notifications' } });
   }
 
   async logout() {

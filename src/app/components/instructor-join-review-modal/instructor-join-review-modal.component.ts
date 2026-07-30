@@ -41,6 +41,7 @@ import { Subscription } from 'rxjs';
 
 import { JoinRequestService } from '../../services/join-request.service';
 import { InstructorPermissionService } from '../../services/instructor-permission.service';
+import { TranslationService } from '../../services/translation.service';
 import {
   EnhancedStudioJoinRequest,
   BulkOperationResult,
@@ -132,6 +133,7 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
     private loadingController: LoadingController,
     private modalController: ModalController,
     private alertController: AlertController,
+    private translationService: TranslationService,
   ) {
     addIcons({
       refresh,
@@ -638,7 +640,7 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
       message: `Are you sure you want to ${action} ${selectedIds.length} request(s)?`,
       buttons: [
         {
-          text: 'Cancel',
+          text: this.translationService.getTranslation('app.cancel'),
           role: 'cancel',
         },
         {
@@ -1161,7 +1163,7 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
           },
         },
         {
-          text: 'OK',
+          text: this.translationService.getTranslation('app.ok'),
           role: 'cancel',
         },
       ],
@@ -1224,7 +1226,7 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
       message: `Failed ${operation}. Would you like to try again?`,
       buttons: [
         {
-          text: 'Cancel',
+          text: this.translationService.getTranslation('app.cancel'),
           role: 'cancel',
         },
         {
@@ -1257,7 +1259,7 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
       message: `Failed to ${action} request from ${userName}. Would you like to try again?`,
       buttons: [
         {
-          text: 'Cancel',
+          text: this.translationService.getTranslation('app.cancel'),
           role: 'cancel',
         },
         {
@@ -1283,7 +1285,7 @@ export class InstructorJoinReviewModalComponent implements OnInit, OnDestroy {
       message: `Failed to ${action} ${requestIds.length} request(s). Would you like to retry the failed requests?`,
       buttons: [
         {
-          text: 'Cancel',
+          text: this.translationService.getTranslation('app.cancel'),
           role: 'cancel',
         },
         {

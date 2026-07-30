@@ -21,7 +21,8 @@ import {
   globe, logoFacebook, logoInstagram, logoTwitter, logoLinkedin, save,
   close, add, atOutline, personOutline, locationOutline, chevronDown,
   chevronUp, arrowBack, chatbubbleOutline, heartOutline, chevronForward,
-  home, codeSlashOutline, cloudUpload, shieldCheckmark, rocket, removeCircle, starOutline } from 'ionicons/icons';
+  home, codeSlashOutline, cloudUpload, shieldCheckmark, rocket, removeCircle,
+  starOutline, cloud, desktop, cloudDone, notificationsOff, closeCircle } from 'ionicons/icons';
 import { getCurrentUser, fetchAuthSession } from 'aws-amplify/auth';
 import { AuthStateService } from '../services/auth-state.service';
 import { TranslationService } from '../services/translation.service';
@@ -152,12 +153,18 @@ export class ProfilePage implements OnInit, OnDestroy {
     public subscriptionService: SubscriptionService,
     private studioMembershipService: StudioMembershipService
   ) {
-    addIcons({arrowBack,personCircle,school,notifications,camera,checkmarkCircle,chatbubbleOutline,calendar,home,chevronForward,create,atOutline,personOutline,locationOutline,save,close,add,people,settings,languageOutline,rocket,star,starOutline,removeCircle,codeSlashOutline,shieldCheckmark,informationCircle,chatbubble,mail,phonePortrait,refresh,logOut,cloudUpload,location:locationIcon,warning,trophy,ribbon,heart,heartOutline,bookmark,statsChart,globe,logoFacebook,logoInstagram,logoTwitter,logoLinkedin,chevronDown,chevronUp});
+    addIcons({arrowBack,personCircle,school,notifications,camera,checkmarkCircle,location:locationIcon,chatbubbleOutline,calendar,home,chevronForward,create,atOutline,personOutline,locationOutline,save,close,add,people,settings,rocket,star,codeSlashOutline,shieldCheckmark,informationCircle,chatbubble,mail,phonePortrait,refresh,logOut,languageOutline,starOutline,removeCircle,cloudUpload,warning,trophy,ribbon,heart,heartOutline,bookmark,statsChart,globe,logoFacebook,logoInstagram,logoTwitter,logoLinkedin,chevronDown,chevronUp,cloud,desktop,cloudDone,notificationsOff,closeCircle});
   }
 
   ngOnInit() {
     this.authStateService.currentUser$.subscribe(user => {
       this.isAuthenticated.set(!!user);
+    });
+    // Check for segment query param (e.g., from gear icon -> settings)
+    this.route.queryParams.subscribe(params => {
+      if (params['segment']) {
+        this.selectedSegment = params['segment'];
+      }
     });
     this.routeSubscription = this.route.params.subscribe(async params => {
       const personId = params['id'];
@@ -405,10 +412,10 @@ export class ProfilePage implements OnInit, OnDestroy {
       };
       if (this.hasPersonProfile()) {
         await this.peopleService.updatePerson(user.userId, personData);
-        this.showToast('Community profile updated');
+        this.showToast(this.translationService.getTranslation('profile.community_profile_updated'));
       } else {
         await this.peopleService.addPerson(personData);
-        this.showToast('Community profile created');
+        this.showToast(this.translationService.getTranslation('profile.community_profile_created'));
       }
       this.hasPersonProfile.set(true);
       this.personProfile = personData;
@@ -476,7 +483,7 @@ export class ProfilePage implements OnInit, OnDestroy {
   }
 
   async testNotification() {
-    this.showToast('Test notification sent! Check your enabled channels.');
+    this.showToast(this.translationService.getTranslation('profile.test_notification_sent'));
     if (isPushNotificationEnabled()) {
       try {
         await this.pushNotificationService.sendLocalNotification(
@@ -498,7 +505,7 @@ export class ProfilePage implements OnInit, OnDestroy {
       }
     };
     this.saveNotificationPreferences();
-    this.showToast('Notification preferences reset to defaults');
+    this.showToast(this.translationService.getTranslation('profile.preferences_reset'));
   }
 
   async loadUserProfile() {
@@ -557,11 +564,11 @@ export class ProfilePage implements OnInit, OnDestroy {
         achievements: this.userProfile.achievements,
         socialMedia: this.userProfile.socialMedia
       });
-      this.showToast('Profile saved');
+      this.showToast(this.translationService.getTranslation('profile.profile_saved'));
       this.personProfileManager.notifyProfileUpdated();
     } catch (error) {
       console.error('Error saving user profile:', error);
-      this.showToast('Failed to save profile');
+      this.showToast(this.translationService.getTranslation('profile.profile_save_failed'));
     }
   }
 
@@ -602,7 +609,7 @@ export class ProfilePage implements OnInit, OnDestroy {
       header: 'Change Avatar',
       inputs: [{ name: 'url', type: 'url', placeholder: 'Enter image URL' }],
       buttons: [
-        { text: 'Cancel', role: 'cancel' },
+        { text: this.translationService.getTranslation('app.cancel'), role: 'cancel' },
         { text: 'Save', handler: (data) => {
           if (data.url) { this.userProfile.avatar = data.url; }
         }}
@@ -616,7 +623,7 @@ export class ProfilePage implements OnInit, OnDestroy {
       header: 'Add Specialty',
       inputs: [{ name: 'specialty', type: 'text', placeholder: 'e.g., Aikido, Judo' }],
       buttons: [
-        { text: 'Cancel', role: 'cancel' },
+        { text: this.translationService.getTranslation('app.cancel'), role: 'cancel' },
         { text: 'Add', handler: (data) => {
           if (data.specialty && !this.userProfile.specialties.includes(data.specialty)) {
             this.userProfile.specialties.push(data.specialty);
@@ -639,7 +646,7 @@ export class ProfilePage implements OnInit, OnDestroy {
         { name: 'description', type: 'text', placeholder: 'Description' }
       ],
       buttons: [
-        { text: 'Cancel', role: 'cancel' },
+        { text: this.translationService.getTranslation('app.cancel'), role: 'cancel' },
         { text: 'Add', handler: (data) => {
           if (data.title) {
             this.userProfile.achievements.push({
@@ -666,7 +673,7 @@ export class ProfilePage implements OnInit, OnDestroy {
         { name: 'url', type: 'url', placeholder: 'Profile URL' }
       ],
       buttons: [
-        { text: 'Cancel', role: 'cancel' },
+        { text: this.translationService.getTranslation('app.cancel'), role: 'cancel' },
         { text: 'Add', handler: (data) => {
           if (data.platform && data.url) {
             this.userProfile.socialMedia.push({
@@ -707,7 +714,7 @@ export class ProfilePage implements OnInit, OnDestroy {
       window.location.href = '/login';
     } catch (error) {
       console.error('Error signing out:', error);
-      this.showToast('Failed to sign out');
+      this.showToast(this.translationService.getTranslation('profile.sign_out_failed'));
     }
   }
 
@@ -723,16 +730,16 @@ export class ProfilePage implements OnInit, OnDestroy {
     // In production, this would open a payment flow (Stripe, App Store, Google Play).
     // For now, we toggle premium status for demonstration.
     const alert = await this.alertController.create({
-      header: 'Go Premium',
-      message: 'Remove all ads for $4.99/month. This will open the payment flow.',
+      header: this.translationService.getTranslation('profile.go_premium'),
+      message: this.translationService.getTranslation('profile.premium_message'),
       buttons: [
-        { text: 'Cancel', role: 'cancel' },
+        { text: this.translationService.getTranslation('app.cancel'), role: 'cancel' },
         {
-          text: 'Subscribe',
+          text: this.translationService.getTranslation('profile.subscribe'),
           handler: () => {
             // TODO: Replace with real payment integration
             this.subscriptionService.upgradeToPremium();
-            this.showToast('Upgraded to Premium! Ads removed.');
+            this.showToast(this.translationService.getTranslation('profile.upgraded_message'));
           }
         }
       ]
@@ -850,13 +857,13 @@ export class ProfilePage implements OnInit, OnDestroy {
     try {
       const granted = await this.pushNotificationService.requestPermission();
       if (granted) {
-        this.showToast('Notification permission granted');
+        this.showToast(this.translationService.getTranslation('profile.permission_granted'));
       } else {
-        this.showToast('Notification permission denied');
+        this.showToast(this.translationService.getTranslation('profile.permission_denied'));
       }
     } catch (error) {
       console.error('Error requesting notification permission:', error);
-      this.showToast('Failed to request permission');
+      this.showToast(this.translationService.getTranslation('profile.permission_request_failed'));
     }
   }
 
@@ -867,7 +874,7 @@ export class ProfilePage implements OnInit, OnDestroy {
   async onFollow() {
     if (this.personProfile) {
       this.peopleService.toggleFollow(this.personProfile.id);
-      this.showToast(this.personProfile.isFollowing ? 'Unfollowed' : 'Followed');
+      this.showToast(this.personProfile.isFollowing ? this.translationService.getTranslation('profile.unfollowed') : this.translationService.getTranslation('profile.followed'));
     }
   }
 }

@@ -51,14 +51,14 @@
               <div class="hero-meta">
                 <ion-chip [color]="artColor()" class="category-chip">
                   <ion-icon [name]="artIcon()"></ion-icon>
-                  <ion-label>{{ art()!.category | titlecase }}</ion-label>
+                  <ion-label>{{ 'arts.category_' + art()!.category | translate }}</ion-label>
                 </ion-chip>
                 <ion-chip
                   [color]="difficultyColor()"
                   outline="true"
                   class="meta-chip"
                 >
-                  <ion-label>{{ art()!.difficulty | titlecase }}</ion-label>
+                  <ion-label>{{ 'arts.difficulty_levels.' + art()!.difficulty | translate }}</ion-label>
                 </ion-chip>
                 <ion-chip
                   [color]="physicalDemandsColor()"
@@ -66,7 +66,7 @@
                   class="meta-chip"
                 >
                   <ion-label
-                    >{{ art()!.physicalDemands | titlecase }} {{
+                    >{{ 'arts.intensity_levels.' + art()!.physicalDemands | translate }} {{
                     'art_detail.intensity' | translate }}</ion-label
                   >
                 </ion-chip>

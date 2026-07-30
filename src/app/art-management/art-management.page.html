@@ -97,7 +97,7 @@
             </ion-item>
             <ion-item>
               <ion-label position="stacked">{{ 'art_management.category' | translate }}</ion-label>
-              <ion-select
+              <ion-select [okText]="'app.ok' | translate" [cancelText]="'app.cancel' | translate"
                 [(ngModel)]="editedArt.category"
                 (ionChange)="onFieldChange()"
                 [placeholder]="'art_management.category_placeholder' | translate"
@@ -163,7 +163,7 @@
             </ion-item>
             <ion-item>
               <ion-label position="stacked">{{ 'art_management.difficulty_level' | translate }}</ion-label>
-              <ion-select
+              <ion-select [okText]="'app.ok' | translate" [cancelText]="'app.cancel' | translate"
                 [(ngModel)]="editedArt.difficulty"
                 (ionChange)="onFieldChange()"
                 [placeholder]="'art_management.difficulty_placeholder' | translate"
@@ -177,7 +177,7 @@
             </ion-item>
             <ion-item>
               <ion-label position="stacked">{{ 'art_management.physical_demands' | translate }}</ion-label>
-              <ion-select
+              <ion-select [okText]="'app.ok' | translate" [cancelText]="'app.cancel' | translate"
                 [(ngModel)]="editedArt.physicalDemands"
                 (ionChange)="onFieldChange()"
                 [placeholder]="'art_management.physical_demands_placeholder' | translate"

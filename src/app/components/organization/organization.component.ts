@@ -149,6 +149,7 @@ export class OrganizationComponent {
   showLineage = input(true);
   showPhilosophy = input(true);
   showContact = input(true);
+  showEditButton = input(false);
   compact = input(false);
 
   dojoClick = output<Dojo>();

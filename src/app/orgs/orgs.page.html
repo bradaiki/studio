@@ -4,7 +4,7 @@
       <ion-back-button defaultHref="/dash/feed"></ion-back-button>
     </ion-buttons>
     <ion-title
-      >{{ isFiltered ? filteredEntityName() : 'Organizations' }}</ion-title
+      >{{ isFiltered ? filteredEntityName() : ('organizations.title' | translate) }}</ion-title
     >
   </ion-toolbar>
 </ion-header>
@@ -13,7 +13,7 @@
   <ion-header collapse="condense">
     <ion-toolbar>
       <ion-title size="large"
-        >{{ isFiltered ? filteredEntityName() : 'Organizations' }}</ion-title
+        >{{ isFiltered ? filteredEntityName() : ('organizations.title' | translate) }}</ion-title
       >
     </ion-toolbar>
   </ion-header>
@@ -36,7 +36,7 @@
       <ion-searchbar
         [(ngModel)]="searchTerm"
         (ionInput)="onSearchChange($event)"
-        placeholder="Search organizations..."
+        [placeholder]="'organizations.search_placeholder' | translate"
         show-clear-button="focus"
         debounce="300"
       >
@@ -49,8 +49,7 @@
     <div class="results-info">
       <ion-text color="medium">
         <p>
-          {{ filteredOrganizations.length }} organization{{
-          filteredOrganizations.length !== 1 ? 's' : '' }} found
+          {{ 'organizations.results_count' | translate: {count: filteredOrganizations.length} }}
         </p>
       </ion-text>
     </div>
@@ -81,7 +80,6 @@
           (emailClick)="onEmailClick($event)"
           (socialClick)="onSocialClick($event)"
           (findDojoClick)="onFindDojoClick()"
-          (editClick)="onEditOrganization($event)"
         >
         </app-organization>
       </div>
@@ -111,7 +109,6 @@
         (emailClick)="onEmailClick($event)"
         (socialClick)="onSocialClick($event)"
         (findDojoClick)="onFindDojoClick()"
-        (editClick)="onEditOrganization($event)"
       >
       </app-organization>
     </div>
@@ -122,7 +119,7 @@
     <ion-infinite-scroll threshold="100px" (ionInfinite)="loadMore($event)">
       <ion-infinite-scroll-content
         loadingSpinner="bubbles"
-        loadingText="Loading more organizations..."
+        loadingText="{{ 'organizations.loading_more' | translate }}"
       >
       </ion-infinite-scroll-content>
     </ion-infinite-scroll>
@@ -132,14 +129,14 @@
     @if (filteredOrganizations.length === 0 && !showLegacyOrganization) {
     <div class="empty-state">
       <ion-icon name="business" color="medium"></ion-icon>
-      <h3>No organizations found</h3>
-      <p>Try adjusting your search criteria</p>
+      <h3>{{ 'organizations.no_organizations' | translate }}</h3>
+      <p>{{ 'organizations.try_adjusting' | translate }}</p>
       <ion-button
         fill="outline"
         color="primary"
         (click)="searchTerm = ''; onSearchClear()"
       >
-        Clear Search
+        {{ 'organizations.clear_search' | translate }}
       </ion-button>
     </div>
     }

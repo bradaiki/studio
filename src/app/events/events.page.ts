@@ -27,9 +27,11 @@ import {
   IonButtons,
   IonBackButton,
   IonInfiniteScroll,
-  IonInfiniteScrollContent
+  IonInfiniteScrollContent,
+  ToastController
 } from '@ionic/angular/standalone';
 import { TranslateModule } from '@ngx-translate/core';
+import { TranslationService } from '../services/translation.service';
 import { addIcons } from 'ionicons';
 import { 
   calendar, 
@@ -109,7 +111,9 @@ export class EventsPage implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private eventsService: EventsService
+    private eventsService: EventsService,
+    private toastController: ToastController,
+    private translationService: TranslationService
   ) {
     addIcons({ 
       calendar, 
@@ -327,6 +331,16 @@ export class EventsPage implements OnInit {
 
   onEventClick(event: Event) {
     this.router.navigate(['/dash/event', event.id]);
+  }
+
+  async onCreateEvent() {
+    const toast = await this.toastController.create({
+      message: this.translationService.getTranslation('common.coming_soon') || 'Coming soon',
+      duration: 2000,
+      position: 'top',
+      color: 'medium'
+    });
+    await toast.present();
   }
 
   shareEvent(event: Event) {

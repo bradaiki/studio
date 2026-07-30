@@ -508,7 +508,8 @@ export class ChatService {
           const errorHandler = new ChatErrorHandlerService(
             // We'll need to inject these properly in a real implementation
             null as any, // ToastController
-            null as any  // AlertController
+            null as any, // AlertController
+            null as any  // TranslationService
           );
           const loadingState = new ChatLoadingStateService(
             null as any // LoadingController

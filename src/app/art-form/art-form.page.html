@@ -41,7 +41,7 @@
 
         <ion-item>
           <ion-label position="stacked">{{ 'art_form.type' | translate }}</ion-label>
-          <ion-select formControlName="type" [placeholder]="'art_form.type_placeholder' | translate">
+          <ion-select [okText]="'app.ok' | translate" [cancelText]="'app.cancel' | translate" formControlName="type" [placeholder]="'art_form.type_placeholder' | translate">
             @for (type of artTypes; track type) {
             <ion-select-option [value]="type.value">
               {{ type.label }}
@@ -52,7 +52,7 @@
 
         <ion-item>
           <ion-label position="stacked">{{ 'art_form.category' | translate }}</ion-label>
-          <ion-select formControlName="category" [placeholder]="'art_form.category_placeholder' | translate">
+          <ion-select [okText]="'app.ok' | translate" [cancelText]="'app.cancel' | translate" formControlName="category" [placeholder]="'art_form.category_placeholder' | translate">
             @for (category of categories; track category) {
             <ion-select-option [value]="category.value">
               {{ category.label }}
@@ -122,7 +122,7 @@
 
         <ion-item>
           <ion-label position="stacked">{{ 'art_form.difficulty_level' | translate }}</ion-label>
-          <ion-select formControlName="difficulty">
+          <ion-select [okText]="'app.ok' | translate" [cancelText]="'app.cancel' | translate" formControlName="difficulty">
             @for (difficulty of difficulties; track difficulty) {
             <ion-select-option [value]="difficulty.value">
               {{ difficulty.label }}
@@ -133,7 +133,7 @@
 
         <ion-item>
           <ion-label position="stacked">{{ 'art_form.physical_demands' | translate }}</ion-label>
-          <ion-select formControlName="physicalDemands">
+          <ion-select [okText]="'app.ok' | translate" [cancelText]="'app.cancel' | translate" formControlName="physicalDemands">
             @for (demand of physicalDemands; track demand) {
             <ion-select-option [value]="demand.value">
               {{ demand.label }}

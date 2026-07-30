@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { TranslationService } from '../../services/translation.service';
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../../../../amplify/data/resource';
 import {
@@ -172,22 +173,24 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
   private updateTimers = new Map<string, any>();
   
   // Alert buttons
-  alertButtons = [
-    {
-      text: 'Cancel',
-      role: 'cancel',
-      handler: () => {
-        this.cancelLeaveChat();
+  get alertButtons() {
+    return [
+      {
+        text: this.translationService.getTranslation('app.cancel'),
+        role: 'cancel',
+        handler: () => {
+          this.cancelLeaveChat();
+        }
+      },
+      {
+        text: this.translationService.getTranslation('chat_messages.leave_chat'),
+        role: 'destructive',
+        handler: () => {
+          this.confirmLeaveChat();
+        }
       }
-    },
-    {
-      text: 'Leave',
-      role: 'destructive',
-      handler: () => {
-        this.confirmLeaveChat();
-      }
-    }
-  ];
+    ];
+  }
 
   constructor(
     private chatService: ChatService, 
@@ -195,7 +198,8 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
     private accessControlService: AccessControlService,
     private chatAccessController: ChatAccessController,
     private toastController: ToastController,
-    private invitationService: ChatInvitationService
+    private invitationService: ChatInvitationService,
+    private translationService: TranslationService
   ) {
     addIcons({pin,mail,people,add,heart,trash,notificationsOff,checkmarkDone,ellipsisVertical,checkmark,close,notifications,eye,lockClosed,refresh,send,informationCircle,exit,atOutline,addCircle,personAdd,personRemove,heartOutline,radioButtonOn,person,time,pinOutline});
     
@@ -361,7 +365,7 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
                 this.currentChatName = studioChats[0].name;
                 console.log('Using existing chat with access:', this.chatId, 'Name:', this.currentChatName);
               } else {
-                this.accessError = 'Access denied to studio chats';
+                this.accessError = this.translationService.getTranslation('chat_messages.access_denied_message');
                 this.currentChatName = 'Access Denied';
                 return;
               }
@@ -369,7 +373,7 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
               // No chats exist for this studio
               console.log('No chats exist for this studio');
               this.currentChatName = 'No Chats Available';
-              this.accessError = 'No chats are available for this studio. An administrator needs to create a chat first.';
+              this.accessError = this.translationService.getTranslation('chat_messages.no_chats_for_studio');
               return;
             }
           }
@@ -438,7 +442,7 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
           this.showInvitationUI = true;
           this.accessError = null;
         } else {
-          this.accessError = 'Access denied to this chat';
+          this.accessError = this.translationService.getTranslation('chat_messages.access_denied_chat');
         }
       } else {
         this.showInvitationUI = false;
@@ -604,7 +608,7 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
     // Check if user has write access
     if (!this.currentChatAccess?.canWrite) {
       console.log('User does not have write access to chat:', this.chatId);
-      this.accessError = 'You do not have permission to send messages in this chat';
+      this.accessError = this.translationService.getTranslation('chat_messages.no_write_permission');
       return;
     }
     
@@ -749,9 +753,9 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
     if (!this.currentChatAccess) return 'No access';
     
     switch (this.currentChatAccess.accessReason) {
-      case 'public': return 'Public chat';
-      case 'invited': return 'Invited member';
-      case 'studio_member': return 'Studio member';
+      case 'public': return this.translationService.getTranslation('chat_messages.public_chat_label');
+      case 'invited': return this.translationService.getTranslation('chat_messages.invited_member_label');
+      case 'studio_member': return this.translationService.getTranslation('chat_messages.studio_member_label');
       case 'admin': return 'Administrator';
       case 'creator': return 'Chat creator';
       default: return 'Unknown';
@@ -771,11 +775,11 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
 
   get currentChatTypeLabel(): string {
     if (this.isCurrentChatPublic) {
-      return 'Public Chat';
+      return this.translationService.getTranslation('chat_messages.public_chat');
     } else if (this.isCurrentChatPrivate) {
-      return 'Private Chat';
+      return this.translationService.getTranslation('chat_messages.private_chat');
     }
-    return 'Chat';
+    return this.translationService.getTranslation('chat_messages.chat_suffix');
   }
 
   get currentChatTypeIcon(): string {
@@ -818,11 +822,11 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
   // Method to get chat type for any chat (for chat lists)
   getChatTypeLabel(chat: any): string {
     if (chat.accessLevel === 'public' || chat.settings?.isPublic) {
-      return 'Public';
+      return this.translationService.getTranslation('chat_messages.public_chat_label');
     } else if (chat.accessLevel === 'private' || chat.invitationRequired) {
-      return 'Private';
+      return this.translationService.getTranslation('chat_messages.private_chat_label');
     }
-    return 'Chat';
+    return this.translationService.getTranslation('chat_messages.chat_suffix');
   }
 
   getChatTypeIconForChat(chat: any): string {
@@ -901,10 +905,10 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
     const hours = Math.floor(diff / (1000 * 60 * 60));
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
 
-    if (minutes < 1) return 'Just now';
-    if (minutes < 60) return `${minutes}m ago`;
-    if (hours < 24) return `${hours}h ago`;
-    if (days < 7) return `${days}d ago`;
+    if (minutes < 1) return this.translationService.getTranslation('chat_messages.just_now');
+    if (minutes < 60) return this.translationService.getTranslation('chat_messages.minutes_ago', { count: minutes });
+    if (hours < 24) return this.translationService.getTranslation('chat_messages.hours_ago', { count: hours });
+    if (days < 7) return this.translationService.getTranslation('chat_messages.days_ago', { count: days });
     
     return timestamp.toLocaleDateString();
   }
@@ -1161,11 +1165,11 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
   // Get the current view title
   get currentViewTitle(): string {
     if (this.showingStudioChats) {
-      return 'Studio Chats';
+      return this.translationService.getTranslation('chat_messages.studio_chats');
     } else if (this.showingFavorites) {
-      return 'Favorites';
+      return this.translationService.getTranslation('chat_messages.favorites');
     } else {
-      return 'Recent';
+      return this.translationService.getTranslation('chat_messages.recent');
     }
   }
 
@@ -1715,12 +1719,12 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
   get deleteAlertButtons() {
     return [
       {
-        text: 'Cancel',
+        text: this.translationService.getTranslation('app.cancel'),
         role: 'cancel',
         handler: () => this.cancelDeleteChat()
       },
       {
-        text: 'Delete',
+        text: this.translationService.getTranslation('app.delete'),
         role: 'destructive',
         handler: () => this.deleteChat()
       }

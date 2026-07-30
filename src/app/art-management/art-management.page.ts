@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ArtsService, Art } from '../services/arts.service';
+import { TranslationService } from '../services/translation.service';
 import { 
   IonContent, 
   IonHeader, 
@@ -118,7 +119,8 @@ export class ArtManagementPage implements OnInit {
     private router: Router,
     private artsService: ArtsService,
     private alertController: AlertController,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private translationService: TranslationService
   ) {
     addIcons({
       settings,
@@ -151,11 +153,11 @@ export class ArtManagementPage implements OnInit {
         this.art.set(foundArt);
         this.initializeEditedArt();
       } else {
-        this.showToast('You are not authorized to manage this art. Only the owner can edit.');
+        this.showToast(this.translationService.getTranslation('art_management.not_authorized'));
         this.router.navigate(['/dash/art', artId]);
       }
     } else {
-      this.showToast('Art not found');
+      this.showToast(this.translationService.getTranslation('art_management.not_found'));
       this.router.navigate(['/dash/arts']);
     }
   }
@@ -267,13 +269,13 @@ export class ArtManagementPage implements OnInit {
       if (updatedArt) {
         this.art.set(updatedArt);
         this.hasUnsavedChanges.set(false);
-        this.showToast('Changes saved successfully');
+        this.showToast(this.translationService.getTranslation('messages.saved'));
       } else {
         throw new Error('Update returned null');
       }
     } catch (error) {
       console.error('Error saving changes:', error);
-      this.showToast('Error saving changes. Please try again.');
+      this.showToast(this.translationService.getTranslation('messages.error_saving'));
     }
   }
 
@@ -288,7 +290,7 @@ export class ArtManagementPage implements OnInit {
       message: 'You have unsaved changes. Are you sure you want to discard them?',
       buttons: [
         {
-          text: 'Cancel',
+          text: this.translationService.getTranslation('app.cancel'),
           role: 'cancel'
         },
         {

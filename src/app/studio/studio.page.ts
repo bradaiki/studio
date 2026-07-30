@@ -18,6 +18,7 @@ import { JoinRequestService } from '../services/join-request.service';
 import { InstructorPermissionService } from '../services/instructor-permission.service';
 import { InstructorJoinReviewModalComponent } from '../components/instructor-join-review-modal/instructor-join-review-modal.component';
 import { setupInstructorTestEnvironment, checkInstructorStatus } from '../utils/setup-instructor-data';
+import { TranslationService } from '../services/translation.service';
 import { ChatMessage } from '../models/chat.models';
 import { 
   IonHeader, 
@@ -161,9 +162,10 @@ export class StudioPage implements OnInit, OnDestroy {
     private chatAccessController: ChatAccessController,
     private authStateService: AuthStateService,
     private instructorPermissionService: InstructorPermissionService,
-    private joinRequestService: JoinRequestService
+    private joinRequestService: JoinRequestService,
+    private translationService: TranslationService
   ) {
-    addIcons({checkmarkCircle,personAdd,grid,list,repeat,time,person,calendar,card,chevronBack,chevronForward,call,mail,globe,navigate,map,settings,star,people,personCircle,school,home,chatbubbles,arrowBack,lockClosed,warning,refresh,location:locationIcon});
+    addIcons({checkmarkCircle,personAdd,grid,list,repeat,time,person,location:locationIcon,calendar,card,chevronBack,chevronForward,people,call,mail,globe,navigate,map,settings,star,personCircle,school,home,chatbubbles,arrowBack,lockClosed,warning,refresh});
   }
 
   ngOnInit() {
@@ -884,7 +886,7 @@ export class StudioPage implements OnInit, OnDestroy {
       console.error('Error opening join studio modal:', error);
       // Show a toast or alert to inform the user
       const toast = await this.toastController.create({
-        message: 'Unable to open join form. Please try again.',
+        message: this.translationService.getTranslation('studio_page.join_form_error'),
         duration: 3000,
         color: 'danger'
       });

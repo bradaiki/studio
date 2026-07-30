@@ -44,6 +44,7 @@ import {
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { add, remove, save, arrowBack } from 'ionicons/icons';
+import { TranslationService } from '../services/translation.service';
 
 @Component({
   selector: 'app-studio-form',
@@ -88,14 +89,14 @@ export class StudioFormPage implements OnInit {
 
   deleteAlertButtons = [
     {
-      text: 'Cancel',
+      text: this.translationService.getTranslation('app.cancel'),
       role: 'cancel',
       handler: () => {
         this.onDeleteAlertDismiss();
       },
     },
     {
-      text: 'Delete',
+      text: this.translationService.getTranslation('app.delete'),
       role: 'confirm',
       handler: () => {
         this.onDelete();
@@ -108,6 +109,7 @@ export class StudioFormPage implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private studiosService: StudiosService,
+    public translationService: TranslationService,
   ) {
     addIcons({ add, remove, save, arrowBack });
 

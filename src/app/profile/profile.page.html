@@ -52,15 +52,15 @@
   >
     <ion-segment-button value="profile">
       <ion-icon name="person-circle"></ion-icon>
-      <ion-label>Profile</ion-label>
+      <ion-label>{{ 'profile.segment_profile' | translate }}</ion-label>
     </ion-segment-button>
     <ion-segment-button value="studios">
       <ion-icon name="school"></ion-icon>
-      <ion-label>Studios</ion-label>
+      <ion-label>{{ 'profile.segment_studios' | translate }}</ion-label>
     </ion-segment-button>
     <ion-segment-button value="notifications">
       <ion-icon name="notifications"></ion-icon>
-      <ion-label>Settings</ion-label>
+      <ion-label>{{ 'profile.segment_settings' | translate }}</ion-label>
     </ion-segment-button>
   </ion-segment>
   }
@@ -124,19 +124,19 @@
             <div class="edit-fields">
               <ion-input
                 [(ngModel)]="userProfile.name"
-                placeholder="Full Name"
+                [placeholder]="'profile.edit_name_placeholder' | translate"
                 class="edit-input"
               >
               </ion-input>
               <ion-input
                 [(ngModel)]="userProfile.handle"
-                placeholder="Handle (@yourhandle)"
+                [placeholder]="'profile.edit_handle_placeholder' | translate"
                 class="edit-input"
               >
               </ion-input>
               <ion-input
                 [(ngModel)]="userProfile.rank"
-                placeholder="Rank (e.g., 2nd Kyu)"
+                [placeholder]="'profile.edit_rank_placeholder' | translate"
                 class="edit-input"
               >
               </ion-input>
@@ -172,26 +172,26 @@
             <h3>{{ userProfile.stats.followers }}</h3>
             <p>
               {{ isViewingOtherPerson() ? ('person_detail.followers' | translate)
-              : 'Followers' }}
+              : ('profile.followers' | translate) }}
             </p>
           </div>
           <div class="stat-item">
             <h3>{{ userProfile.stats.following }}</h3>
             <p>
               {{ isViewingOtherPerson() ? ('person_detail.following_count' |
-              translate) : 'Following' }}
+              translate) : ('profile.following' | translate) }}
             </p>
           </div>
           <div class="stat-item">
             <h3>{{ userProfile.stats.postsCount }}</h3>
             <p>
               {{ isViewingOtherPerson() ? ('person_detail.posts' | translate) :
-              'Posts' }}
+              ('profile.posts' | translate) }}
             </p>
           </div>
           <div class="stat-item">
             <h3>{{ userProfile.stats.studiosCount }}</h3>
-            <p>Studios</p>
+            <p>{{ 'profile.studios_stat' | translate }}</p>
           </div>
         </div>
       </ion-card-content>
@@ -217,7 +217,7 @@
           } @if (personProfile.experience) {
           <div class="detail-item">
             <ion-icon name="calendar" color="medium"></ion-icon>
-            <span>{{ personProfile.experience }} experience</span>
+            <span>{{ personProfile.experience }} {{ 'profile.experience_suffix' | translate }}</span>
           </div>
           }
           <div class="detail-item">
@@ -378,7 +378,7 @@
             align-items: center;
           "
         >
-          <ion-card-title>Community Profile</ion-card-title>
+          <ion-card-title>{{ 'profile.community_profile' | translate }}</ion-card-title>
           <ion-icon
             [name]="isCommunityProfileExpanded() ? 'chevron-up' : 'chevron-down'"
             size="large"
@@ -391,12 +391,11 @@
         <div class="empty-profile-message">
           <ion-icon name="person-circle" size="large" color="medium"></ion-icon>
           <p>
-            Complete your community profile to connect with other martial
-            artists.
+            {{ 'profile.community_profile_desc' | translate }}
           </p>
           <ion-button expand="block" (click)="toggleCommunityProfileEdit()">
             <ion-icon name="create" slot="start"></ion-icon>
-            Create Community Profile
+            {{ 'profile.create_community_profile' | translate }}
           </ion-button>
         </div>
         } @if (!isEditingCommunityProfile() && hasPersonProfile() && personProfile)
@@ -405,46 +404,46 @@
           <!-- Display Mode -->
           <div class="profile-field">
             <ion-label>
-              <h3>Handle</h3>
+              <h3>{{ 'profile.handle_label' | translate }}</h3>
               <p>{{ personProfile.handle }}</p>
             </ion-label>
           </div>
           <div class="profile-field">
             <ion-label>
-              <h3>Full Name</h3>
+              <h3>{{ 'profile.full_name_label' | translate }}</h3>
               <p>{{ personProfile.name }}</p>
             </ion-label>
           </div>
           <div class="profile-field">
             <ion-label>
-              <h3>Handle</h3>
+              <h3>{{ 'profile.handle_label' | translate }}</h3>
               <p>@{{ personProfile.handle }}</p>
             </ion-label>
           </div>
           <div class="profile-field">
             <ion-label>
-              <h3>Location</h3>
+              <h3>{{ 'profile.location_label' | translate }}</h3>
               <p>{{ personProfile.location }}</p>
             </ion-label>
           </div>
           @if (personProfile.rank) {
           <div class="profile-field">
             <ion-label>
-              <h3>Rank</h3>
+              <h3>{{ 'profile.rank_label' | translate }}</h3>
               <p>{{ personProfile.rank }}</p>
             </ion-label>
           </div>
           } @if (personProfile.experience) {
           <div class="profile-field">
             <ion-label>
-              <h3>Experience</h3>
+              <h3>{{ 'profile.experience_label' | translate }}</h3>
               <p>{{ personProfile.experience }}</p>
             </ion-label>
           </div>
           } @if (personProfile.bio) {
           <div class="profile-field">
             <ion-label>
-              <h3>Bio</h3>
+              <h3>{{ 'profile.bio_label' | translate }}</h3>
               <p>{{ personProfile.bio }}</p>
             </ion-label>
           </div>
@@ -455,78 +454,78 @@
             style="margin-top: 16px"
           >
             <ion-icon name="create" slot="start"></ion-icon>
-            Edit Community Profile
+            {{ 'profile.edit_community_profile' | translate }}
           </ion-button>
         </div>
         } @if (isEditingCommunityProfile()) {
         <div>
           <!-- Edit Mode -->
           <ion-item>
-            <ion-label position="stacked">Handle *</ion-label>
+            <ion-label position="stacked">{{ 'profile.handle_required' | translate }}</ion-label>
             <ion-input
               [(ngModel)]="userProfile.handle"
-              placeholder="@yourhandle"
+              [placeholder]="'profile.handle_placeholder' | translate"
               (ionInput)="onHandleInput($event)"
               class="edit-input"
             >
               <ion-icon name="at-outline" slot="start"></ion-icon>
             </ion-input>
             <ion-text color="medium" slot="helper">
-              <small>Displayed in title bar (e.g., @john_aikido)</small>
+              <small>{{ 'profile.handle_helper' | translate }}</small>
             </ion-text>
           </ion-item>
           <ion-item>
-            <ion-label position="stacked">Full Name *</ion-label>
+            <ion-label position="stacked">{{ 'profile.full_name_required' | translate }}</ion-label>
             <ion-input
               [(ngModel)]="userProfile.name"
-              placeholder="Enter your full name"
+              [placeholder]="'profile.full_name_placeholder' | translate"
               class="edit-input"
             >
               <ion-icon name="person-outline" slot="start"></ion-icon>
             </ion-input>
           </ion-item>
           <ion-item>
-            <ion-label position="stacked">Handle *</ion-label>
+            <ion-label position="stacked">{{ 'profile.handle_required' | translate }}</ion-label>
             <ion-input
               [(ngModel)]="userProfile.handle"
-              placeholder="@yourhandle"
+              [placeholder]="'profile.handle_placeholder' | translate"
               class="edit-input"
             >
               <ion-icon name="at-outline" slot="start"></ion-icon>
             </ion-input>
           </ion-item>
           <ion-item>
-            <ion-label position="stacked">Location *</ion-label>
+            <ion-label position="stacked">{{ 'profile.location_required' | translate }}</ion-label>
             <ion-input
               [(ngModel)]="userProfile.location"
-              placeholder="City, State/Country"
+              [placeholder]="'profile.location_placeholder' | translate"
               class="edit-input"
             >
               <ion-icon name="location-outline" slot="start"></ion-icon>
             </ion-input>
           </ion-item>
           <ion-item>
-            <ion-label position="stacked">Rank (Optional)</ion-label>
+            <ion-label position="stacked">{{ 'profile.rank_optional' | translate }}</ion-label>
             <ion-input
               [(ngModel)]="userProfile.rank"
-              placeholder="e.g., 2nd Kyu, Black Belt"
+              [placeholder]="'profile.rank_placeholder' | translate"
               class="edit-input"
             ></ion-input>
           </ion-item>
           <ion-item>
-            <ion-label position="stacked">Experience (Optional)</ion-label>
+            <ion-label position="stacked">{{ 'profile.experience_optional' | translate }}</ion-label>
             <ion-input
               [(ngModel)]="userProfile.experience"
-              placeholder="e.g., 3 years, Beginner"
+              [placeholder]="'profile.experience_placeholder' | translate"
               class="edit-input"
             ></ion-input>
           </ion-item>
           <ion-item>
-            <ion-label position="stacked">Bio (Optional)</ion-label>
+            <ion-label position="stacked">{{ 'profile.bio_optional' | translate }}</ion-label>
             <ion-textarea
               [(ngModel)]="userProfile.bio"
               rows="4"
-              placeholder="Tell us about yourself and your martial arts journey..."
+              [placeholder]="'profile.bio_placeholder' | translate"
               class="edit-textarea"
             ></ion-textarea>
           </ion-item>
@@ -542,7 +541,7 @@
               color="primary"
             >
               <ion-icon name="save" slot="start"></ion-icon>
-              Save
+              {{ 'app.save' | translate }}
             </ion-button>
             <ion-button
               expand="block"
@@ -551,7 +550,7 @@
               fill="outline"
             >
               <ion-icon name="close" slot="start"></ion-icon>
-              Cancel
+              {{ 'app.cancel' | translate }}
             </ion-button>
           </div>
         </div>
@@ -564,7 +563,7 @@
     @if (isOwnProfile()) {
     <ion-card>
       <ion-card-header>
-        <ion-card-title>About</ion-card-title>
+        <ion-card-title>{{ 'profile.about_title' | translate }}</ion-card-title>
       </ion-card-header>
       <ion-card-content>
         @if (!isEditing()) {
@@ -579,12 +578,12 @@
             } @if (userProfile.experience) {
             <div class="detail-item">
               <ion-icon name="calendar"></ion-icon>
-              <span>{{ userProfile.experience }} experience</span>
+              <span>{{ userProfile.experience }} {{ 'profile.experience_suffix' | translate }}</span>
             </div>
             }
             <div class="detail-item">
               <ion-icon name="calendar"></ion-icon>
-              <span>Joined {{ formatDate(userProfile.joinDate) }}</span>
+              <span>{{ 'profile.joined' | translate: {date: formatDate(userProfile.joinDate)} }}</span>
             </div>
           </div>
         </div>
@@ -592,20 +591,20 @@
         <div class="edit-bio">
           <ion-textarea
             [(ngModel)]="userProfile.bio"
-            placeholder="Tell us about yourself..."
+            [placeholder]="'profile.edit_bio_placeholder' | translate"
             rows="4"
             class="edit-textarea"
           >
           </ion-textarea>
           <ion-input
             [(ngModel)]="userProfile.location"
-            placeholder="Location"
+            [placeholder]="'profile.edit_location_placeholder' | translate"
             class="edit-input"
           >
           </ion-input>
           <ion-input
             [(ngModel)]="userProfile.experience"
-            placeholder="Years of experience"
+            [placeholder]="'profile.edit_experience_placeholder' | translate"
             class="edit-input"
           >
           </ion-input>
@@ -620,7 +619,7 @@
       <ion-card-header>
         <ion-card-title>
           <div class="section-header">
-            <span>Specialties</span>
+            <span>{{ 'profile.specialties' | translate }}</span>
             @if (isEditing()) {
             <ion-button fill="clear" (click)="addSpecialty()">
               <ion-icon name="add"></ion-icon>
@@ -645,7 +644,7 @@
           }
         </div>
         } @else {
-        <p class="empty-message">No specialties added yet.</p>
+        <p class="empty-message">{{ 'profile.no_specialties' | translate }}</p>
         }
       </ion-card-content>
     </ion-card>
@@ -656,7 +655,7 @@
       <ion-card-header>
         <ion-card-title>
           <div class="section-header">
-            <span>Achievements</span>
+            <span>{{ 'profile.achievements' | translate }}</span>
             @if (isEditing()) {
             <ion-button fill="clear" (click)="addAchievement()">
               <ion-icon name="add"></ion-icon>
@@ -696,7 +695,7 @@
           }
         </div>
         } @else {
-        <p class="empty-message">No achievements added yet.</p>
+        <p class="empty-message">{{ 'profile.no_achievements' | translate }}</p>
         }
       </ion-card-content>
     </ion-card>
@@ -706,7 +705,7 @@
       <ion-card-header>
         <ion-card-title>
           <div class="section-header">
-            <span>Social Media</span>
+            <span>{{ 'profile.social_media' | translate }}</span>
             @if (isEditing()) {
             <ion-button fill="clear" (click)="addSocialMedia()">
               <ion-icon name="add"></ion-icon>
@@ -742,7 +741,7 @@
           }
         </div>
         } @else {
-        <p class="empty-message">No social media links added yet.</p>
+        <p class="empty-message">{{ 'profile.no_social_media' | translate }}</p>
         }
       </ion-card-content>
     </ion-card>
@@ -758,7 +757,7 @@
       <ion-card-header>
         <ion-card-title>
           <ion-icon name="school" color="primary"></ion-icon>
-          Member Studios
+          {{ 'profile.member_studios' | translate }}
         </ion-card-title>
       </ion-card-header>
       <ion-card-content>
@@ -775,7 +774,7 @@
             <h2>{{ studio.name }}</h2>
             <p>{{ studio.location }}</p>
             <ion-chip color="primary" outline="true">
-              <ion-label>Member</ion-label>
+              <ion-label>{{ 'profile.member' | translate }}</ion-label>
             </ion-chip>
           </ion-label>
         </ion-item>
@@ -789,7 +788,7 @@
       <ion-card-header>
         <ion-card-title>
           <ion-icon name="people" color="secondary"></ion-icon>
-          Instructor At
+          {{ 'profile.instructor_at' | translate }}
         </ion-card-title>
       </ion-card-header>
       <ion-card-content>
@@ -806,7 +805,7 @@
             <h2>{{ studio.name }}</h2>
             <p>{{ studio.location }}</p>
             <ion-chip color="secondary" outline="true">
-              <ion-label>Instructor</ion-label>
+              <ion-label>{{ 'profile.instructor' | translate }}</ion-label>
             </ion-chip>
           </ion-label>
           <ion-button
@@ -827,10 +826,10 @@
       <ion-card-content>
         <div class="empty-state">
           <ion-icon name="school" size="large" color="medium"></ion-icon>
-          <h3>No Studio Memberships</h3>
-          <p>Join a studio to start your martial arts journey!</p>
+          <h3>{{ 'profile.no_studio_memberships' | translate }}</h3>
+          <p>{{ 'profile.no_studio_memberships_desc' | translate }}</p>
           <ion-button routerLink="/dash/studios" expand="block">
-            Browse Studios
+            {{ 'profile.browse_studios' | translate }}
           </ion-button>
         </div>
       </ion-card-content>
@@ -842,24 +841,6 @@
   <!-- Notifications/Settings Tab -->
   @if (selectedSegment === 'notifications') {
   <div>
-    <!-- Language Settings Card -->
-    <ion-card class="language-card">
-      <ion-card-header>
-        <ion-card-title>
-          <ion-icon name="language-outline" color="primary"></ion-icon>
-          {{ 'profile.language' | translate }}
-        </ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <ion-item lines="none">
-          <ion-label>
-            <h3>{{ 'profile.language' | translate }}</h3>
-            <p>Choose your preferred language</p>
-          </ion-label>
-          <app-language-selector></app-language-selector>
-        </ion-item>
-      </ion-card-content>
-    </ion-card>
     <!-- Subscription Card -->
     @if (isAuthenticated()) {
     <ion-card class="subscription-card">
@@ -869,7 +850,7 @@
             [name]="subscriptionService.isPremium() ? 'star' : 'star-outline'"
             [color]="subscriptionService.isPremium() ? 'warning' : 'medium'"
           ></ion-icon>
-          Subscription
+          {{ 'profile.subscription' | translate }}
         </ion-card-title>
       </ion-card-header>
       <ion-card-content>
@@ -880,10 +861,9 @@
             [color]="subscriptionService.isPremium() ? 'success' : 'medium'"
           ></ion-icon>
           <ion-label>
-            <h3>Current Plan</h3>
+            <h3>{{ 'profile.current_plan' | translate }}</h3>
             <p>
-              {{ subscriptionService.isPremium() ? 'Premium — No ads' : 'Free —
-              Ads enabled' }}
+              {{ subscriptionService.isPremium() ? ('profile.premium_plan' | translate) : ('profile.free_plan' | translate) }}
             </p>
           </ion-label>
         </ion-item>
@@ -891,12 +871,12 @@
         <ion-item lines="none">
           <ion-icon name="rocket" slot="start" color="primary"></ion-icon>
           <ion-label>
-            <h3>Go Premium</h3>
-            <p>Remove all ads and support the app</p>
+            <h3>{{ 'profile.go_premium' | translate }}</h3>
+            <p>{{ 'profile.go_premium_desc' | translate }}</p>
           </ion-label>
           <ion-button fill="solid" color="primary" (click)="onUpgradePremium()">
             <ion-icon name="star" slot="start"></ion-icon>
-            Upgrade
+            {{ 'profile.upgrade' | translate }}
           </ion-button>
         </ion-item>
         } @if (subscriptionService.isPremium()) {
@@ -907,8 +887,8 @@
             color="success"
           ></ion-icon>
           <ion-label>
-            <h3>Premium Active</h3>
-            <p>You're ad-free. Thank you for your support!</p>
+            <h3>{{ 'profile.premium_active' | translate }}</h3>
+            <p>{{ 'profile.premium_active_desc' | translate }}</p>
           </ion-label>
         </ion-item>
         }
@@ -921,7 +901,7 @@
       <ion-card-header>
         <ion-card-title>
           <ion-icon name="code-slash-outline" color="tertiary"></ion-icon>
-          Developer Settings
+          {{ 'profile.developer_settings' | translate }}
         </ion-card-title>
       </ion-card-header>
       <ion-card-content>
@@ -933,10 +913,10 @@
             [color]="dataSourceService.isUsingMockData() ? 'warning' : 'tertiary'"
           ></ion-icon>
           <ion-label>
-            <h3>Data Source</h3>
+            <h3>{{ 'profile.data_source' | translate }}</h3>
             <p>
-              {{ dataSourceService.isUsingMockData() ? 'Using local mock data' :
-              'Using database (cloud)' }}
+              {{ dataSourceService.isUsingMockData() ? ('profile.data_source_mock' | translate) :
+              ('profile.data_source_cloud' | translate) }}
             </p>
           </ion-label>
           <ion-button
@@ -948,8 +928,8 @@
               [name]="dataSourceService.isUsingMockData() ? 'cloud' : 'phone-portrait'"
               slot="start"
             ></ion-icon>
-            Switch to {{ dataSourceService.isUsingMockData() ? 'Database' :
-            'Mock' }}
+            {{ dataSourceService.isUsingMockData() ? ('profile.switch_to_database' | translate) :
+            ('profile.switch_to_mock' | translate) }}
           </ion-button>
         </ion-item>
         <!-- Push Notification Mode Toggle -->
@@ -960,10 +940,9 @@
             [color]="isLocalPushMode() ? 'warning' : 'success'"
           ></ion-icon>
           <ion-label>
-            <h3>Push Notification Mode</h3>
+            <h3>{{ 'profile.push_notification_mode' | translate }}</h3>
             <p>
-              {{ isLocalPushMode() ? 'Local test mode (browser only)' : 'Full
-              mode (Firebase + Lambda)' }}
+              {{ isLocalPushMode() ? ('profile.push_mode_local' | translate) : ('profile.push_mode_full' | translate) }}
             </p>
           </ion-label>
           <ion-button
@@ -975,7 +954,7 @@
               [name]="isLocalPushMode() ? 'cloud-done' : 'desktop'"
               slot="start"
             ></ion-icon>
-            Switch to {{ isLocalPushMode() ? 'Full' : 'Local' }}
+            {{ isLocalPushMode() ? ('profile.switch_to_full' | translate) : ('profile.switch_to_local' | translate) }}
           </ion-button>
         </ion-item>
         <!-- Push Notification Enable/Disable -->
@@ -986,8 +965,8 @@
             [color]="isPushEnabled() ? 'primary' : 'medium'"
           ></ion-icon>
           <ion-label>
-            <h3>Push Notifications</h3>
-            <p>{{ isPushEnabled() ? 'Enabled' : 'Disabled' }}</p>
+            <h3>{{ 'profile.push_notifications' | translate }}</h3>
+            <p>{{ isPushEnabled() ? ('profile.push_enabled' | translate) : ('profile.push_disabled' | translate) }}</p>
           </ion-label>
           <ion-toggle
             [checked]="isPushEnabled()"
@@ -1004,8 +983,8 @@
             color="warning"
           ></ion-icon>
           <ion-label>
-            <h3>Notification Permission</h3>
-            <p>Click to grant browser notification permission</p>
+            <h3>{{ 'profile.notification_permission' | translate }}</h3>
+            <p>{{ 'profile.notification_permission_desc' | translate }}</p>
           </ion-label>
           <ion-button
             fill="solid"
@@ -1013,7 +992,7 @@
             (click)="onRequestNotificationPermission()"
           >
             <ion-icon name="shield-checkmark" slot="start"></ion-icon>
-            Grant Permission
+            {{ 'profile.grant_permission' | translate }}
           </ion-button>
         </ion-item>
         }
@@ -1026,7 +1005,7 @@
             [color]="hasNotificationPermission() ? 'success' : 'danger'"
           ></ion-icon>
           <ion-label>
-            <h3>Permission Status</h3>
+            <h3>{{ 'profile.permission_status' | translate }}</h3>
             <p>{{ getNotificationPermissionStatus() }}</p>
           </ion-label>
         </ion-item>
@@ -1041,20 +1020,16 @@
           <ion-label class="ion-text-wrap">
             <ion-text color="medium">
               <p>
-                <strong>Mock Mode:</strong> Uses local data for testing without
-                database connection.
+                <strong>{{ 'profile.mock_mode_label' | translate }}</strong> {{ 'profile.dev_info_mock' | translate }}
               </p>
               <p>
-                <strong>Database Mode:</strong> Uses AWS DynamoDB for persistent
-                storage.
+                <strong>{{ 'profile.database_mode_label' | translate }}</strong> {{ 'profile.dev_info_database' | translate }}
               </p>
               <p>
-                <strong>Local Push Mode:</strong> Browser notifications for
-                testing (no Firebase needed).
+                <strong>{{ 'profile.local_push_label' | translate }}</strong> {{ 'profile.dev_info_local_push' | translate }}
               </p>
               <p>
-                <strong>Full Push Mode:</strong> Real push notifications via
-                Firebase Cloud Messaging.
+                <strong>{{ 'profile.full_push_label' | translate }}</strong> {{ 'profile.dev_info_full_push' | translate }}
               </p>
             </ion-text>
           </ion-label>
@@ -1075,15 +1050,15 @@
         <ion-list class="notification-methods">
           <ion-list-header>
             <ion-label>
-              <h2>{{ 'profile.notifications' | translate }}</h2>
-              <p>Choose how you'd like to receive notifications</p>
+              <h2>{{ 'profile.notification_methods' | translate }}</h2>
+              <p>{{ 'profile.notification_methods_desc' | translate }}</p>
             </ion-label>
           </ion-list-header>
           <ion-item>
             <ion-icon name="chatbubble" slot="start" color="primary"></ion-icon>
             <ion-label>
-              <h3>In-App Notifications</h3>
-              <p>Receive notifications within the app</p>
+              <h3>{{ 'profile.in_app_notifications' | translate }}</h3>
+              <p>{{ 'profile.in_app_desc' | translate }}</p>
             </ion-label>
             <ion-toggle
               [(ngModel)]="notificationPreferences.inApp"
@@ -1094,8 +1069,8 @@
           <ion-item>
             <ion-icon name="mail" slot="start" color="secondary"></ion-icon>
             <ion-label>
-              <h3>Email Notifications</h3>
-              <p>Receive notifications via email</p>
+              <h3>{{ 'profile.email_notifications' | translate }}</h3>
+              <p>{{ 'profile.email_desc' | translate }}</p>
             </ion-label>
             <ion-toggle
               [(ngModel)]="notificationPreferences.email"
@@ -1106,13 +1081,13 @@
           @if (notificationPreferences.email) {
           <ion-item>
             <ion-label position="stacked"
-              >{{ 'auth.email' | translate }}</ion-label
+              >{{ 'profile.email_address' | translate }}</ion-label
             >
             <ion-input
               [(ngModel)]="notificationPreferences.emailAddress"
               (ionBlur)="onContactInfoChange()"
               type="email"
-              placeholder="Enter your email address"
+              [placeholder]="'profile.email_placeholder' | translate"
               class="contact-input"
             >
             </ion-input>
@@ -1125,8 +1100,8 @@
               color="success"
             ></ion-icon>
             <ion-label>
-              <h3>SMS Text Messages</h3>
-              <p>Receive notifications via text message</p>
+              <h3>{{ 'profile.sms_notifications' | translate }}</h3>
+              <p>{{ 'profile.sms_desc' | translate }}</p>
             </ion-label>
             <ion-toggle
               [(ngModel)]="notificationPreferences.sms"
@@ -1136,17 +1111,17 @@
           </ion-item>
           @if (notificationPreferences.sms) {
           <ion-item>
-            <ion-label position="stacked">Phone Number</ion-label>
+            <ion-label position="stacked">{{ 'profile.phone_number' | translate }}</ion-label>
             <ion-input
               [(ngModel)]="notificationPreferences.phoneNumber"
               (ionBlur)="onContactInfoChange()"
               type="tel"
-              placeholder="Enter your phone number"
+              [placeholder]="'profile.phone_placeholder' | translate"
               class="contact-input"
             >
             </ion-input>
             <ion-note slot="helper"
-              >Include country code (e.g., +1 555-123-4567)</ion-note
+              >{{ 'profile.phone_helper' | translate }}</ion-note
             >
           </ion-item>
           }
@@ -1155,8 +1130,8 @@
         <ion-list class="notification-frequency">
           <ion-list-header>
             <ion-label>
-              <h2>Notification Frequency</h2>
-              <p>How often would you like to receive notifications?</p>
+              <h2>{{ 'profile.notification_frequency' | translate }}</h2>
+              <p>{{ 'profile.frequency_desc' | translate }}</p>
             </ion-label>
           </ion-list-header>
           <ion-radio-group
@@ -1166,22 +1141,22 @@
             <ion-item>
               <ion-radio slot="start" value="immediate"></ion-radio>
               <ion-label>
-                <h3>Immediate</h3>
-                <p>Get notified right away</p>
+                <h3>{{ 'profile.immediate' | translate }}</h3>
+                <p>{{ 'profile.immediate_desc' | translate }}</p>
               </ion-label>
             </ion-item>
             <ion-item>
               <ion-radio slot="start" value="daily"></ion-radio>
               <ion-label>
-                <h3>Daily Digest</h3>
-                <p>Receive a summary once per day</p>
+                <h3>{{ 'profile.daily_digest' | translate }}</h3>
+                <p>{{ 'profile.daily_desc' | translate }}</p>
               </ion-label>
             </ion-item>
             <ion-item>
               <ion-radio slot="start" value="weekly"></ion-radio>
               <ion-label>
-                <h3>Weekly Summary</h3>
-                <p>Receive a summary once per week</p>
+                <h3>{{ 'profile.weekly_summary' | translate }}</h3>
+                <p>{{ 'profile.weekly_desc' | translate }}</p>
               </ion-label>
             </ion-item>
           </ion-radio-group>
@@ -1190,8 +1165,8 @@
         <ion-list class="event-types">
           <ion-list-header>
             <ion-label>
-              <h2>Notification Types</h2>
-              <p>Choose what types of notifications you want to receive</p>
+              <h2>{{ 'profile.notification_types' | translate }}</h2>
+              <p>{{ 'profile.notification_types_desc' | translate }}</p>
             </ion-label>
           </ion-list-header>
           <ion-item>
@@ -1202,8 +1177,8 @@
             >
             </ion-checkbox>
             <ion-label>
-              <h3>New Events</h3>
-              <p>When new martial arts events are posted</p>
+              <h3>{{ 'profile.new_events' | translate }}</h3>
+              <p>{{ 'profile.new_events_desc' | translate }}</p>
             </ion-label>
           </ion-item>
           <ion-item>
@@ -1214,8 +1189,8 @@
             >
             </ion-checkbox>
             <ion-label>
-              <h3>Event Reminders</h3>
-              <p>Reminders for events you've registered for</p>
+              <h3>{{ 'profile.event_reminders' | translate }}</h3>
+              <p>{{ 'profile.event_reminders_desc' | translate }}</p>
             </ion-label>
           </ion-item>
           <ion-item>
@@ -1226,8 +1201,8 @@
             >
             </ion-checkbox>
             <ion-label>
-              <h3>Class Updates</h3>
-              <p>Schedule changes and class announcements</p>
+              <h3>{{ 'profile.class_updates' | translate }}</h3>
+              <p>{{ 'profile.class_updates_desc' | translate }}</p>
             </ion-label>
           </ion-item>
           <ion-item>
@@ -1238,8 +1213,8 @@
             >
             </ion-checkbox>
             <ion-label>
-              <h3>Promotions & Offers</h3>
-              <p>Special deals and promotional content</p>
+              <h3>{{ 'profile.promotions' | translate }}</h3>
+              <p>{{ 'profile.promotions_desc' | translate }}</p>
             </ion-label>
           </ion-item>
           <ion-item>
@@ -1250,8 +1225,8 @@
             >
             </ion-checkbox>
             <ion-label>
-              <h3>System Updates</h3>
-              <p>App updates and important announcements</p>
+              <h3>{{ 'profile.system_updates' | translate }}</h3>
+              <p>{{ 'profile.system_updates_desc' | translate }}</p>
             </ion-label>
           </ion-item>
         </ion-list>
@@ -1264,7 +1239,7 @@
             class="test-button"
           >
             <ion-icon name="checkmark-circle" slot="start"></ion-icon>
-            Test Notifications
+            {{ 'profile.test_notifications' | translate }}
           </ion-button>
           <div class="secondary-actions">
             <ion-button
@@ -1273,7 +1248,7 @@
               (click)="resetNotificationPreferences()"
             >
               <ion-icon name="refresh" slot="start"></ion-icon>
-              Reset to Defaults
+              {{ 'profile.reset_defaults' | translate }}
             </ion-button>
           </div>
         </div>
@@ -1288,9 +1263,7 @@
             <ion-label class="ion-text-wrap">
               <ion-text color="medium">
                 <p>
-                  Your notification preferences are saved locally and will be
-                  remembered across app sessions. You can change these settings
-                  at any time.
+                  {{ 'profile.preferences_info' | translate }}
                 </p>
               </ion-text>
             </ion-label>
@@ -1314,7 +1287,7 @@
   @if (!currentUser) {
   <ion-card>
     <ion-card-content>
-      <p class="ion-text-center">No user information available</p>
+      <p class="ion-text-center">{{ 'profile.no_user_info' | translate }}</p>
     </ion-card-content>
   </ion-card>
   }

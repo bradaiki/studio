@@ -4,6 +4,7 @@ import { generateClient } from 'aws-amplify/data';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import { DataSourceService } from './data-source.service';
 import { MockDataService } from './mock-data.service';
+import { TranslationService } from './translation.service';
 
 export interface Event {
   id: string;
@@ -43,7 +44,8 @@ export class EventsService {
 
   constructor(
     private dataSourceService: DataSourceService,
-    private mockDataService: MockDataService
+    private mockDataService: MockDataService,
+    private translationService: TranslationService
   ) {
     // Load events based on initial data source
     console.log('[EventsService] Initializing with data source:', this.dataSourceService.getCurrentSource());
@@ -307,9 +309,9 @@ export class EventsService {
     if (!event || !event.maxParticipants) return '';
     
     const remaining = event.maxParticipants - event.currentParticipants;
-    if (remaining === 0) return 'Sold Out';
-    if (remaining <= 5) return `${remaining} spots left`;
-    return `${event.currentParticipants}/${event.maxParticipants} registered`;
+    if (remaining === 0) return this.translationService.getTranslation('events.sold_out');
+    if (remaining <= 5) return this.translationService.getTranslation('events.spots_left', { count: remaining });
+    return this.translationService.getTranslation('events.registered_count', { current: event.currentParticipants, max: event.maxParticipants });
   }
 
   // Load events from GraphQL API or mock data

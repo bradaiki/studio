@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { StudiosService } from '../../services/studios.service';
+import { TranslationService } from '../../services/translation.service';
 import { 
   IonCard, 
   IonCardHeader, 
@@ -114,7 +115,8 @@ export class PostComponent {
     private studiosService: StudiosService,
     private actionSheetController: ActionSheetController,
     private alertController: AlertController,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private translationService: TranslationService
   ) {
     addIcons({ 
       heart, 
@@ -154,24 +156,24 @@ export class PostComponent {
 
   async onMore() {
     const actionSheet = await this.actionSheetController.create({
-      header: 'Post Options',
+      header: this.translationService.getTranslation('post_component.post_options'),
       buttons: [
         {
-          text: 'Report Post',
+          text: this.translationService.getTranslation('post_component.report_post'),
           icon: 'flag',
           handler: () => {
             this.showReportOptions();
           }
         },
         {
-          text: 'Hide Post',
+          text: this.translationService.getTranslation('post_component.hide_post'),
           icon: 'eye-off',
           handler: () => {
             this.hidePost();
           }
         },
         {
-          text: 'Block User',
+          text: this.translationService.getTranslation('post_component.block_user'),
           icon: 'person-remove',
           role: 'destructive',
           handler: () => {
@@ -179,7 +181,7 @@ export class PostComponent {
           }
         },
         {
-          text: 'Cancel',
+          text: this.translationService.getTranslation('app.cancel'),
           role: 'cancel'
         }
       ]
@@ -189,34 +191,34 @@ export class PostComponent {
 
   async showReportOptions() {
     const actionSheet = await this.actionSheetController.create({
-      header: 'Report this post for:',
+      header: this.translationService.getTranslation('post_component.report_header'),
       buttons: [
         {
-          text: 'Spam',
+          text: this.translationService.getTranslation('post_component.spam'),
           handler: () => this.reportPost('spam', 'This post appears to be spam')
         },
         {
-          text: 'Harassment or Bullying',
+          text: this.translationService.getTranslation('post_component.harassment'),
           handler: () => this.reportPost('harassment', 'This post contains harassment or bullying')
         },
         {
-          text: 'Inappropriate Content',
+          text: this.translationService.getTranslation('post_component.inappropriate'),
           handler: () => this.reportPost('inappropriate', 'This post contains inappropriate content')
         },
         {
-          text: 'Misinformation',
+          text: this.translationService.getTranslation('post_component.misinformation'),
           handler: () => this.reportPost('misinformation', 'This post contains false information')
         },
         {
-          text: 'Copyright Violation',
+          text: this.translationService.getTranslation('post_component.copyright'),
           handler: () => this.reportPost('copyright', 'This post violates copyright')
         },
         {
-          text: 'Other',
+          text: this.translationService.getTranslation('post_component.other'),
           handler: () => this.showCustomReportDialog()
         },
         {
-          text: 'Cancel',
+          text: this.translationService.getTranslation('app.cancel'),
           role: 'cancel'
         }
       ]
@@ -226,13 +228,13 @@ export class PostComponent {
 
   async showCustomReportDialog() {
     const alert = await this.alertController.create({
-      header: 'Report Post',
-      message: 'Please describe why you are reporting this post:',
+      header: this.translationService.getTranslation('post_component.report_dialog_header'),
+      message: this.translationService.getTranslation('post_component.report_dialog_message'),
       inputs: [
         {
           name: 'reason',
           type: 'textarea',
-          placeholder: 'Enter your reason here...',
+          placeholder: this.translationService.getTranslation('post_component.report_placeholder'),
           attributes: {
             maxlength: 500
           }
@@ -240,11 +242,11 @@ export class PostComponent {
       ],
       buttons: [
         {
-          text: 'Cancel',
+          text: this.translationService.getTranslation('app.cancel'),
           role: 'cancel'
         },
         {
-          text: 'Submit Report',
+          text: this.translationService.getTranslation('post_component.submit_report'),
           handler: (data) => {
             if (data.reason && data.reason.trim()) {
               this.reportPost('other', data.reason.trim());
@@ -309,7 +311,7 @@ export class PostComponent {
       message: `Are you sure you want to block @${p.author.username}? You won't see their posts anymore.`,
       buttons: [
         {
-          text: 'Cancel',
+          text: this.translationService.getTranslation('app.cancel'),
           role: 'cancel'
         },
         {
@@ -378,12 +380,12 @@ export class PostComponent {
 
   getEntityLabel(): string {
     switch (this.post().author.type) {
-      case 'person': return this.post().author.rank || 'Practitioner';
-      case 'organization': return 'Organization';
-      case 'studio': return 'Studio';
-      case 'event': return 'Event';
-      case 'art': return this.post().author.artType || 'Art';
-      case 'platform': return 'Platform';
+      case 'person': return this.post().author.rank || this.translationService.getTranslation('post_component.practitioner');
+      case 'organization': return this.translationService.getTranslation('post_component.organization');
+      case 'studio': return this.translationService.getTranslation('post_component.studio');
+      case 'event': return this.translationService.getTranslation('post_component.event');
+      case 'art': return this.post().author.artType || this.translationService.getTranslation('post_component.art');
+      case 'platform': return this.translationService.getTranslation('post_component.platform');
       default: return '';
     }
   }

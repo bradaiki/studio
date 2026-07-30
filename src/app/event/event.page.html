@@ -44,7 +44,7 @@
                 [color]="getEventTypeColor(event()!.type)"
                 class="type-chip"
               >
-                {{ event()!.type | titlecase }}
+                {{ 'events.event_types.' + event()!.type | translate }}
               </ion-chip>
             </div>
           </div>
@@ -124,7 +124,7 @@
                       outline="true"
                       class="difficulty-chip"
                     >
-                      {{ event()!.difficulty | titlecase }}
+                      {{ 'arts.difficulty_levels.' + (event()!.difficulty === 'all-levels' ? 'all_levels' : event()!.difficulty) | translate }}
                     </ion-chip>
                   </div>
                 </ion-col>

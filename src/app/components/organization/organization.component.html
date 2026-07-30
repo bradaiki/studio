@@ -7,8 +7,8 @@
         <div class="hero-overlay">
           <div class="hero-header">
             <h1 [class.compact]="compact()">{{ organization().name }}</h1>
-            <!-- Edit Button for admins -->
-            @if (!compact()) {
+            <!-- Edit Button (only shown when showEditButton is true) -->
+            @if (showEditButton() && !compact()) {
               <ion-button
                 fill="clear"
                 color="light"

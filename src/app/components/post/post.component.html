@@ -92,7 +92,7 @@
       @if (post().relatedEntity) {
         <div class="related-entity">
           <ion-text color="medium">
-            <small>Related to: {{ post().relatedEntity!.name }}</small>
+            <small>{{ 'post_component.related_to' | translate }}: {{ post().relatedEntity!.name }}</small>
           </ion-text>
         </div>
       }
