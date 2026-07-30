@@ -119,20 +119,23 @@ export class PeopleService {
       // Load from database
       console.log('Loading people from database');
       
-      // Try userPool first (authenticated), fall back to iam (guest/unauthenticated)
-      let result: any;
+      // Determine auth mode based on whether user is authenticated
+      let userId: string | null = null;
       try {
-        result = await this.client.models.Person.list({
-          limit: 1000,
-          authMode: 'userPool'
-        });
-      } catch (authErr) {
-        console.log('[PeopleService] userPool auth failed, falling back to iam:', authErr);
-        result = await this.client.models.Person.list({
-          limit: 1000,
-          authMode: 'iam'
-        });
+        const session = await fetchAuthSession();
+        if (session.tokens && session.identityId) {
+          userId = session.identityId;
+        }
+      } catch (e) {
+        // User not authenticated
       }
+      const authMode = userId ? 'userPool' : 'iam';
+      
+      let result: any;
+      result = await this.client.models.Person.list({
+        limit: 1000,
+        authMode
+      });
       
       if (result.errors) {
         throw new Error(`GraphQL errors: ${result.errors.map((e: any) => e.message).join(', ')}`);

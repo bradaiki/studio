@@ -748,12 +748,24 @@ export class StudiosService {
       // Load from database
       console.log('[Studios Service] Loading studios from database');
       
+      // Determine auth mode based on whether user is authenticated
+      let userId: string | null = null;
+      try {
+        const session = await fetchAuthSession();
+        if (session.tokens && session.identityId) {
+          userId = session.identityId;
+        }
+      } catch (e) {
+        // User not authenticated
+      }
+      const authMode = userId ? 'userPool' : 'iam';
+      
       const timeoutPromise = new Promise((_, reject) => 
         setTimeout(() => reject(new Error('API request timeout after 10 seconds')), 10000)
       );
       
       const apiPromise = (this.client.models as any)['Studio'].list({
-        authMode: 'userPool'
+        authMode
       });
       
       const result = await Promise.race([apiPromise, timeoutPromise]) as any;

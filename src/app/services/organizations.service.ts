@@ -455,8 +455,20 @@ export class OrganizationsService {
       // Load from database
       console.log('Loading organizations from database');
       
+      // Determine auth mode based on whether user is authenticated
+      let userId: string | null = null;
+      try {
+        const session = await fetchAuthSession();
+        if (session.tokens && session.identityId) {
+          userId = session.identityId;
+        }
+      } catch (e) {
+        // User not authenticated
+      }
+      const authMode = userId ? 'userPool' : 'iam';
+      
       const result = await (this.client.models as any)['Organization'].list({
-        authMode: 'userPool'
+        authMode
       });
       
       if (result.errors) {

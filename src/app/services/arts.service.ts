@@ -636,8 +636,11 @@ export class ArtsService {
         // User not authenticated
       }
       
+      // Determine auth mode - use IAM for unauthenticated users
+      const authMode = userId ? 'userPool' : 'iam';
+      
       const result = await (this.client.models as any)['Art'].list({
-        authMode: 'userPool'
+        authMode
       });
       
       if (result.errors) {
