@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, computed } from '@angular/core';
 
 import {
   IonButton,
@@ -26,6 +26,10 @@ import {
 export class LanguageSelectorComponent {
   availableLanguages = signal<Language[]>([]);
   currentLanguage = signal('');
+  currentFlag = computed(() => {
+    const lang = this.availableLanguages().find(l => l.code === this.currentLanguage());
+    return lang?.flag || '🌐';
+  });
 
   constructor(
     private translationService: TranslationService,
