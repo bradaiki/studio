@@ -107,6 +107,7 @@
   },
   "event_detail": {
     "title": "Event",
+    "loading": "Loading event...",
     "not_found": "Event not found",
     "not_found_message": "The event you're looking for doesn't exist or has been removed.",
     "back_button": "Back to Events",
@@ -138,6 +139,7 @@
   },
   "org_detail": {
     "title": "Organization",
+    "loading": "Loading organization...",
     "not_found": "Organization not found",
     "not_found_message": "The organization you're looking for doesn't exist or has been removed.",
     "back_button": "Back to Organizations"
@@ -575,6 +577,7 @@
   },
   "activity": {
     "title": "Activity Details",
+    "loading": "Loading activity...",
     "recurring": "Recurring",
     "featured": "Featured",
     "time": "Time",

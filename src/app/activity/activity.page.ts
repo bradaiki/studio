@@ -21,7 +21,7 @@ import {
   IonCol,
   IonChip,
   IonLabel,
-  IonSpinner
+  IonSpinner, IonText
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { 
@@ -70,7 +70,7 @@ import {
     IonCol,
     IonChip,
     IonLabel,
-    IonSpinner,
+    IonSpinner, IonText,
     ChatMessagesComponent
   ]
 })
@@ -84,7 +84,7 @@ export class ActivityPage implements OnInit {
     private location: Location,
     private activitiesService: ActivitiesService
   ) {
-    addIcons({repeat,star,time,personOutline,school,calendar,people,cashOutline,checkmarkCircle,mail,callOutline,shareOutline,mapOutline,informationCircleOutline,arrowBack,location:locationIcon,trophy,ribbon,bookOutline,heartOutline});
+    addIcons({repeat,star,time,location:locationIcon,personOutline,school,calendar,people,cashOutline,checkmarkCircle,mail,callOutline,shareOutline,mapOutline,informationCircleOutline,arrowBack,trophy,ribbon,bookOutline,heartOutline});
   }
 
   ngOnInit() {

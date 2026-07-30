@@ -21,7 +21,7 @@ import {
   IonCol,
   IonChip,
   IonBadge,
-  IonSpinner
+  IonSpinner, IonText
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { 
@@ -67,7 +67,7 @@ import {
     IonCol,
     IonChip,
     IonBadge,
-    IonSpinner,
+    IonSpinner, IonText,
     ChatMessagesComponent
   ]
 })
@@ -82,7 +82,7 @@ export class EventPage implements OnInit {
     private location: Location,
     private eventsService: EventsService
   ) {
-    addIcons({star,calendar,time,personOutline,cashOutline,ribbon,people,informationCircleOutline,bookOutline,mapOutline,callOutline,shareOutline,arrowBack,location:locationIcon,trophy,school,heartOutline});
+    addIcons({star,calendar,time,location:locationIcon,personOutline,cashOutline,ribbon,people,informationCircleOutline,bookOutline,mapOutline,callOutline,shareOutline,arrowBack,trophy,school,heartOutline});
   }
 
   ngOnInit() {

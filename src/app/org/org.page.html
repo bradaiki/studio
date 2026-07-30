@@ -84,6 +84,9 @@
   } @if (loading()) {
   <div class="loading-state">
     <ion-spinner name="crescent"></ion-spinner>
+    <ion-text color="medium">
+      <p>{{ 'org_detail.loading' | translate }}</p>
+    </ion-text>
   </div>
   }
 </ion-content>

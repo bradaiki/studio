@@ -24,7 +24,7 @@ import {
   IonIcon,
   IonButtons,
   IonBackButton,
-  IonSpinner,
+  IonSpinner, IonText,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { arrowBack, business } from 'ionicons/icons';
@@ -44,7 +44,7 @@ import { arrowBack, business } from 'ionicons/icons';
     IonIcon,
     IonButtons,
     IonBackButton,
-    IonSpinner,
+    IonSpinner, IonText,
     OrganizationComponent,
     ChatMessagesComponent,
   ],

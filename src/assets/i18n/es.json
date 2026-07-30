@@ -109,6 +109,7 @@
   },
   "event_detail": {
     "title": "Evento",
+    "loading": "Cargando evento...",
     "not_found": "Evento no encontrado",
     "not_found_message": "El evento que busca no existe o ha sido eliminado.",
     "back_button": "Volver a Eventos",
@@ -141,6 +142,7 @@
   },
   "org_detail": {
     "title": "Organización",
+    "loading": "Cargando organización...",
     "not_found": "Organización no encontrada",
     "not_found_message": "La organización que busca no existe o ha sido eliminada.",
     "back_button": "Volver a Organizaciones"
@@ -588,6 +590,7 @@
 
   "activity": {
     "title": "Detalles de la Actividad",
+    "loading": "Cargando actividad...",
     "recurring": "Recurrente",
     "featured": "Destacado",
     "time": "Hora",
