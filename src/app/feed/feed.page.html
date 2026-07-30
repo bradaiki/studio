@@ -10,7 +10,7 @@
       (ionChange)="onFeedChange($event)"
       class="feed-segment"
     >
-      @if (favoritesService.enabled()) {
+      @if (isAuthenticated()) {
       <ion-segment-button value="clubs">
         <ion-label>{{ 'feed.clubs' | translate }}</ion-label>
       </ion-segment-button>

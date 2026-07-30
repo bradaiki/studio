@@ -447,10 +447,18 @@ export class PeopleService {
           
           // First try: get by primary key (id) — works when Person.id === Cognito sub
           try {
-            const getResult: any = await this.client.models.Person.get(
-              { id },
-              { authMode: 'userPool' }
-            );
+            let getResult: any;
+            try {
+              getResult = await this.client.models.Person.get(
+                { id },
+                { authMode: 'userPool' }
+              );
+            } catch {
+              getResult = await this.client.models.Person.get(
+                { id },
+                { authMode: 'iam' }
+              );
+            }
             if (getResult.data) {
               const dbPerson = getResult.data;
               person = {

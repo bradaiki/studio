@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, signal, effect } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -13,7 +13,7 @@ import {
 import { ChatMessagesComponent } from '../components/chat-messages/chat-messages.component';
 import { ChatMessage } from '../models/chat.models';
 import { StudiosService, Studio } from '../services/studios.service';
-import { FavoritesService } from '../services/favorites.service';
+import { AuthStateService } from '../services/auth-state.service';
 import {
   IonContent,
   IonHeader,
@@ -83,6 +83,7 @@ import {
 })
 export class StudiosPage implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
+  isAuthenticated = signal(false);
 
   // Keep as regular properties - used with [(ngModel)]
   selectedSegment: string = 'discover';
@@ -305,7 +306,7 @@ export class StudiosPage implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private studiosService: StudiosService,
     private sanitizer: DomSanitizer,
-    public favoritesService: FavoritesService,
+    private authStateService: AuthStateService,
   ) {
     addIcons({
       home,
@@ -317,17 +318,15 @@ export class StudiosPage implements OnInit, OnDestroy {
       informationCircle,
       add,
     });
-    effect(() => {
-      if (this.favoritesService.enabled()) {
-        this.selectedSegment = 'my-studios';
-        this.updateDisplayedStudios();
-      }
-    });
     console.log('[Studios Page] Constructor called');
   }
 
   ngOnInit() {
     console.log('[Studios Page] Initializing...');
+
+    this.authStateService.isAuthenticated$.subscribe((auth) => {
+      this.isAuthenticated.set(auth);
+    });
 
     this.studios.set(this.studiosService.getAllStudios());
     console.log('[Studios Page] Loaded studios:', this.studios().length);

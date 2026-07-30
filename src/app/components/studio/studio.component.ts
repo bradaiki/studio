@@ -2,6 +2,7 @@ import { Component, input, output, signal, OnInit } from '@angular/core';
 
 import { TranslateModule } from '@ngx-translate/core';
 import { FavoritesService } from '../../services/favorites.service';
+import { AuthStateService } from '../../services/auth-state.service';
 import {
   IonCard,
   IonCardHeader,
@@ -153,8 +154,12 @@ export class StudioComponent implements OnInit {
   editClick = output<string>();
 
   isFavorited = signal<boolean>(false);
+  isAuthenticated = signal(false);
 
-  constructor(public favoritesService: FavoritesService) {
+  constructor(
+    public favoritesService: FavoritesService,
+    private authStateService: AuthStateService,
+  ) {
     addIcons({
       location,
       time,
@@ -178,6 +183,9 @@ export class StudioComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.authStateService.isAuthenticated$.subscribe((auth) => {
+      this.isAuthenticated.set(auth);
+    });
     this.isFavorited.set(this.favoritesService.isFavorite(this.studio().id));
     this.favoritesService.favorites$.subscribe(() => {
       this.isFavorited.set(this.favoritesService.isFavorite(this.studio().id));

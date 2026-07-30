@@ -206,8 +206,18 @@ export class ProfilePage implements OnInit, OnDestroy {
     this.loading.set(true);
     this.notFound.set(false);
     try {
-      const currentUser = await getCurrentUser();
-      if (currentUser && currentUser.userId === personId) {
+      // Check if the viewer is the same user (only if authenticated)
+      let isOwnProfile = false;
+      try {
+        const currentUser = await getCurrentUser();
+        if (currentUser && currentUser.userId === personId) {
+          isOwnProfile = true;
+        }
+      } catch {
+        // Not authenticated - continue as guest viewer
+      }
+
+      if (isOwnProfile) {
         this.isViewingOtherPerson.set(false);
         this.isOwnProfile.set(true);
         await this.loadOwnProfile();

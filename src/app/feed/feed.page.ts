@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, signal, effect } from '@angular/core';
+import { Component, OnInit, ViewChild, signal } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import {
@@ -20,6 +20,7 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import { PostComponent, Post } from '../components/post/post.component';
 import { StudiosService } from '../services/studios.service';
+import { AuthStateService } from '../services/auth-state.service';
 import { FavoritesService } from '../services/favorites.service';
 import { PostsService } from '../services/posts.service';
 import { Router } from '@angular/router';
@@ -55,6 +56,7 @@ export class FeedPage implements OnInit {
 
   // Keep as regular property - used with [(ngModel)]
   selectedFeed: string = 'discover';
+  isAuthenticated = signal(false);
 
   // Convert to signals
   displayedPosts = signal<Post[]>([]);
@@ -72,19 +74,19 @@ export class FeedPage implements OnInit {
 
   constructor(
     private studiosService: StudiosService,
-    public favoritesService: FavoritesService,
+    private authStateService: AuthStateService,
     private postsService: PostsService,
+    private favoritesService: FavoritesService,
     private router: Router,
   ) {
     addIcons({ add, newspaperOutline });
-    effect(() => {
-      if (this.favoritesService.enabled()) {
-        this.selectedFeed = 'clubs';
-      }
-    });
   }
 
   ngOnInit() {
+    this.authStateService.isAuthenticated$.subscribe((auth) => {
+      this.isAuthenticated.set(auth);
+    });
+
     // Add some fake favorites for demo purposes
     this.addDemoFavorites();
 

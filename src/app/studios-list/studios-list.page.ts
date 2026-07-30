@@ -1,10 +1,10 @@
-import { Component, OnInit, signal, effect } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { StudiosService, Studio } from '../services/studios.service';
-import { FavoritesService } from '../services/favorites.service';
+import { AuthStateService } from '../services/auth-state.service';
 import {
   IonContent,
   IonHeader,
@@ -69,6 +69,7 @@ export class StudiosListPage implements OnInit {
   studios = signal<Studio[]>([]);
   filteredStudios = signal<Studio[]>([]);
   displayedStudios = signal<Studio[]>([]);
+  isAuthenticated = signal(false);
 
   // Keep as regular properties - used with [(ngModel)]
   searchTerm: string = '';
@@ -80,18 +81,15 @@ export class StudiosListPage implements OnInit {
   constructor(
     private router: Router,
     private studiosService: StudiosService,
-    public favoritesService: FavoritesService,
+    private authStateService: AuthStateService,
   ) {
     addIcons({ location, call, people, star, add });
-    effect(() => {
-      if (this.favoritesService.enabled()) {
-        this.selectedSegment = 'my-studios';
-        this.filterBySegment();
-      }
-    });
   }
 
   ngOnInit() {
+    this.authStateService.isAuthenticated$.subscribe((auth) => {
+      this.isAuthenticated.set(auth);
+    });
     this.studiosService.studios$.subscribe((studios) => {
       console.log(
         '[Studios List] Received studios from service:',

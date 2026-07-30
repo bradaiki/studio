@@ -30,7 +30,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { PersonComponent } from '../components/person/person.component';
 import { PeopleService, Person } from '../services/people.service';
 import { AuthStateService } from '../services/auth-state.service';
-import { FavoritesService } from '../services/favorites.service';
 import { addIcons } from 'ionicons';
 import { person, close, personCircle, chevronForward } from 'ionicons/icons';
 
@@ -69,6 +68,7 @@ export class PeoplePage implements OnInit, OnDestroy {
   // Keep as regular properties - used with [(ngModel)]
   selectedSegment: string = 'discover';
   searchTerm: string = '';
+  isAuthenticated = signal(false);
 
   // Convert to signals
   currentUser = signal<any>(null);
@@ -95,12 +95,15 @@ export class PeoplePage implements OnInit, OnDestroy {
     private router: Router,
     private peopleService: PeopleService,
     private authStateService: AuthStateService,
-    public favoritesService: FavoritesService,
   ) {
     addIcons({ person, close, personCircle, chevronForward });
   }
 
   ngOnInit() {
+    this.authStateService.isAuthenticated$.subscribe((auth) => {
+      this.isAuthenticated.set(auth);
+    });
+
     this.loadPeople();
 
     this.peopleService.people$.subscribe((people) => {
