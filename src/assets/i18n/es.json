@@ -1312,6 +1312,7 @@
 
   "studio_page": {
     "studio_details": "Detalles del Estudio",
+    "loading": "Cargando estudio...",
     "join_form_error": "No se puede abrir el formulario de ingreso. Por favor intente de nuevo.",
     "review_requests": "Revisar Solicitudes",
     "join_studio": "Unirse al Estudio",

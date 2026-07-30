@@ -1291,6 +1291,7 @@
   },
   "studio_page": {
     "studio_details": "Studio Details",
+    "loading": "Loading studio...",
     "join_form_error": "Unable to open join form. Please try again.",
     "review_requests": "Review Requests",
     "join_studio": "Join Studio",

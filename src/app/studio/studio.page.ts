@@ -39,6 +39,8 @@ import {
   IonBadge,
   IonChip,
   IonAvatar,
+  IonSpinner,
+  IonText,
   ModalController,
   ToastController
 } from '@ionic/angular/standalone';
@@ -77,11 +79,16 @@ import {
     IonBadge,
     IonChip,
     IonAvatar,
+    IonSpinner,
+    IonText,
     ChatMessagesComponent
   ]
 })
 export class StudioPage implements OnInit, OnDestroy {
   @ViewChild(IonContent, { static: false }) content!: IonContent;
+  
+  loading = signal(true);
+  notFound = signal(false);
   
   studio: Studio = {
     id: '',
@@ -165,42 +172,72 @@ export class StudioPage implements OnInit, OnDestroy {
     private joinRequestService: JoinRequestService,
     private translationService: TranslationService
   ) {
-    addIcons({checkmarkCircle,personAdd,grid,list,repeat,time,person,location:locationIcon,calendar,card,chevronBack,chevronForward,people,call,mail,globe,navigate,map,settings,star,personCircle,school,home,chatbubbles,arrowBack,lockClosed,warning,refresh});
+    addIcons({checkmarkCircle,home,arrowBack,personAdd,grid,list,repeat,time,person,location:locationIcon,calendar,card,chevronBack,chevronForward,people,call,mail,globe,navigate,map,settings,star,personCircle,school,chatbubbles,lockClosed,warning,refresh});
   }
 
   ngOnInit() {
     const studioId = this.route.snapshot.paramMap.get('id');
     
     if (studioId) {
-      const foundStudio = this.studiosService.getStudioById(studioId);
+      // Try to load immediately (may work if data already cached)
+      this.tryLoadStudio(studioId);
+
+      // Also subscribe to studios$ in case data loads later (e.g., page refresh)
+      const studiosSub = this.studiosService.studios$.subscribe(studios => {
+        if (!this.studio.id && studios.length > 0) {
+          this.tryLoadStudio(studioId);
+        }
+      });
+      this.subscriptions.push(studiosSub);
+    } else {
+      this.loading.set(false);
+    }
+  }
+
+  private tryLoadStudio(studioId: string) {
+    const foundStudio = this.studiosService.getStudioById(studioId);
       
-      if (foundStudio) {
-        this.studio = foundStudio;
-        console.log('[StudioPage] Initial studio data:', this.studio.name, 'Instructors:', this.studio.instructors.length);
+    if (foundStudio) {
+      this.studio = foundStudio;
+      this.notFound.set(false);
+      this.loading.set(false);
+      console.log('[StudioPage] Initial studio data:', this.studio.name, 'Instructors:', this.studio.instructors.length);
         
-        // Load full studio data with members
-        this.studiosService.loadStudioWithMembers(studioId).then(enrichedStudio => {
-          if (enrichedStudio) {
-            this.studio = enrichedStudio;
-            console.log('[StudioPage] Enriched studio data loaded. Instructors:', this.studio.instructors.length);
-          } else {
-            console.error('[StudioPage] Failed to load enriched studio data');
-          }
-        }).catch(error => {
-          console.error('[StudioPage] Error loading studio members:', error);
-        });
+      // Load full studio data with members
+      this.studiosService.loadStudioWithMembers(studioId).then(enrichedStudio => {
+        if (enrichedStudio) {
+          this.studio = enrichedStudio;
+          console.log('[StudioPage] Enriched studio data loaded. Instructors:', this.studio.instructors.length);
+        } else {
+          console.error('[StudioPage] Failed to load enriched studio data');
+        }
+      }).catch(error => {
+        console.error('[StudioPage] Error loading studio members:', error);
+      });
         
-        this.loadStudioActivities(studioId);
-        this.loadStudioStudents(studioId);
+      this.loadStudioActivities(studioId);
+      this.loadStudioStudents(studioId);
         
-        // Cache the map URL to prevent infinite refresh
-        this.cachedMapUrl = this.generateStudioMapUrl();
+      // Cache the map URL to prevent infinite refresh
+      this.cachedMapUrl = this.generateStudioMapUrl();
         
-        // Initialize instructor permissions
-        this.initializeInstructorPermissions(studioId);
+      // Initialize instructor permissions
+      this.initializeInstructorPermissions(studioId);
         
-        // Initialize chat integration
-        this.initializeChatIntegration(studioId);
+      // Initialize chat integration
+      this.initializeChatIntegration(studioId);
+    } else {
+      // Only mark not found after service has loaded data
+      const sub = this.studiosService.studios$.subscribe(studios => {
+        if (studios.length > 0) {
+          this.notFound.set(true);
+          this.loading.set(false);
+        }
+      });
+      sub.unsubscribe();
+      // If subscribe+unsubscribe didn't set it (no data yet), keep loading
+      if (!this.notFound()) {
+        // loading stays true, waiting for studios$ to emit
       }
     }
   }

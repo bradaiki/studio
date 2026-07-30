@@ -20,7 +20,8 @@ import {
   IonRow,
   IonCol,
   IonChip,
-  IonLabel
+  IonLabel,
+  IonSpinner
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { 
@@ -69,11 +70,14 @@ import {
     IonCol,
     IonChip,
     IonLabel,
+    IonSpinner,
     ChatMessagesComponent
   ]
 })
 export class ActivityPage implements OnInit {
   activity = signal<Activity | null>(null);
+  loading = signal(true);
+  notFound = signal(false);
 
   constructor(
     private route: ActivatedRoute,
@@ -86,8 +90,34 @@ export class ActivityPage implements OnInit {
   ngOnInit() {
     const activityId = this.route.snapshot.paramMap.get('id');
     if (activityId) {
-      this.activity.set(this.activitiesService.getActivityById(activityId) || null);
+      // Try to load immediately (may work if data already cached)
+      this.tryLoadActivity(activityId);
+
+      // Also subscribe to activities$ in case data loads later (e.g., page refresh)
+      this.activitiesService.activities$.subscribe(activities => {
+        if (!this.activity() && activities.length > 0) {
+          this.tryLoadActivity(activityId);
+        }
+      });
+    } else {
+      this.loading.set(false);
     }
+  }
+
+  private tryLoadActivity(activityId: string) {
+    const found = this.activitiesService.getActivityById(activityId) || null;
+    this.activity.set(found);
+    if (!found) {
+      // Only mark not found if service has data loaded
+      this.activitiesService.activities$.subscribe(activities => {
+        if (activities.length > 0) {
+          this.notFound.set(true);
+        }
+      }).unsubscribe();
+    } else {
+      this.notFound.set(false);
+    }
+    this.loading.set(false);
   }
 
   onBack() {

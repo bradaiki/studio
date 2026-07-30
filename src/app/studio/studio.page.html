@@ -31,6 +31,24 @@
 </ion-header>
 
 <ion-content>
+  @if (loading()) {
+  <div class="loading-state">
+    <ion-spinner name="crescent"></ion-spinner>
+    <ion-text color="medium">
+      <p>{{ 'studio_page.loading' | translate }}</p>
+    </ion-text>
+  </div>
+  } @else if (notFound()) {
+  <div class="error-state">
+    <ion-icon name="home" color="medium"></ion-icon>
+    <h3>{{ 'studio_page.not_found' | translate }}</h3>
+    <p>{{ 'studio_page.not_found_message' | translate }}</p>
+    <ion-button fill="outline" color="primary" (click)="onBack()">
+      <ion-icon name="arrow-back" slot="start"></ion-icon>
+      {{ 'studio_page.back_button' | translate }}
+    </ion-button>
+  </div>
+  } @else {
   <div class="studio-detail-layout" [class.full-width]="!currentUserId">
     <!-- Main Content Column -->
     <div class="main-content">
@@ -566,4 +584,5 @@
     </div>
     }
   </div>
+  }
 </ion-content>

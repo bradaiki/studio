@@ -20,7 +20,8 @@ import {
   IonRow,
   IonCol,
   IonChip,
-  IonBadge
+  IonBadge,
+  IonSpinner
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { 
@@ -66,11 +67,14 @@ import {
     IonCol,
     IonChip,
     IonBadge,
+    IonSpinner,
     ChatMessagesComponent
   ]
 })
 export class EventPage implements OnInit {
   event = signal<Event | null>(null);
+  loading = signal(true);
+  notFound = signal(false);
 
   constructor(
     private route: ActivatedRoute,
@@ -78,14 +82,40 @@ export class EventPage implements OnInit {
     private location: Location,
     private eventsService: EventsService
   ) {
-    addIcons({star,calendar,time,location:locationIcon,personOutline,cashOutline,ribbon,people,informationCircleOutline,bookOutline,mapOutline,callOutline,shareOutline,arrowBack,trophy,school,heartOutline});
+    addIcons({star,calendar,time,personOutline,cashOutline,ribbon,people,informationCircleOutline,bookOutline,mapOutline,callOutline,shareOutline,arrowBack,location:locationIcon,trophy,school,heartOutline});
   }
 
   ngOnInit() {
     const eventId = this.route.snapshot.paramMap.get('id');
     if (eventId) {
-      this.event.set(this.eventsService.getEventById(eventId) || null);
+      // Try to load immediately (may work if data already cached)
+      this.tryLoadEvent(eventId);
+
+      // Also subscribe to events$ in case data loads later (e.g., page refresh)
+      this.eventsService.events$.subscribe(events => {
+        if (!this.event() && events.length > 0) {
+          this.tryLoadEvent(eventId);
+        }
+      });
+    } else {
+      this.loading.set(false);
     }
+  }
+
+  private tryLoadEvent(eventId: string) {
+    const found = this.eventsService.getEventById(eventId) || null;
+    this.event.set(found);
+    if (!found) {
+      // Only mark not found if service has data loaded
+      this.eventsService.events$.subscribe(events => {
+        if (events.length > 0) {
+          this.notFound.set(true);
+        }
+      }).unsubscribe();
+    } else {
+      this.notFound.set(false);
+    }
+    this.loading.set(false);
   }
 
   onBack() {

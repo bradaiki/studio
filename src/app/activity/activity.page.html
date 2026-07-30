@@ -333,7 +333,7 @@
     </div>
   </div>
 </ion-content>
-} @if (!activity()) {
+} @if (!activity() && !loading()) {
 <ion-content>
   <div class="empty-state">
     <ion-icon name="information-circle-outline" size="large"></ion-icon>
@@ -343,6 +343,12 @@
       <ion-icon name="arrow-back" slot="start"></ion-icon>
       {{ 'activity.go_back' | translate }}
     </ion-button>
+  </div>
+</ion-content>
+} @if (loading()) {
+<ion-content>
+  <div class="loading-state">
+    <ion-spinner name="crescent"></ion-spinner>
   </div>
 </ion-content>
 }

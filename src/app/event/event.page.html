@@ -263,7 +263,7 @@
       </app-chat-messages>
     </div>
   </div>
-  } @if (!event()) {
+  } @if (!event() && !loading()) {
   <div class="error-state">
     <ion-icon name="calendar" color="medium"></ion-icon>
     <h3>{{ 'event_detail.not_found' | translate }}</h3>
@@ -272,6 +272,10 @@
       <ion-icon name="arrow-back" slot="start"></ion-icon>
       {{ 'event_detail.back_button' | translate }}
     </ion-button>
+  </div>
+  } @if (loading()) {
+  <div class="loading-state">
+    <ion-spinner name="crescent"></ion-spinner>
   </div>
   }
 </ion-content>

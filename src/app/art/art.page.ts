@@ -187,7 +187,20 @@ export class ArtPage implements OnInit {
     this.route.params.subscribe(params => {
       const artId = params['id'];
       if (artId) {
+        // Try to load immediately
         this.loadArt(artId);
+
+        // Subscribe to arts$ in case data loads later (e.g., page refresh)
+        this.artsService.arts$.subscribe(arts => {
+          if (!this.art() && arts.length > 0) {
+            this.loadArt(artId);
+            // If still not found after data loaded, show not found
+            if (!this.art()) {
+              this.notFound.set(true);
+              this.loading.set(false);
+            }
+          }
+        });
       } else {
         this.notFound.set(true);
         this.loading.set(false);
@@ -215,11 +228,9 @@ export class ArtPage implements OnInit {
       );
       
       this.notFound.set(false);
-    } else {
-      this.notFound.set(true);
+      this.loading.set(false);
     }
-    
-    this.loading.set(false);
+    // Don't set notFound/loading false here — wait for data to arrive via subscription
   }
 
   onBack() {

@@ -1312,6 +1312,7 @@
 
   "studio_page": {
     "studio_details": "道場の詳細",
+    "loading": "道場を読み込み中...",
     "join_form_error": "入門フォームを開けません。もう一度お試しください。",
     "review_requests": "申請の審査",
     "join_studio": "道場に入門",
