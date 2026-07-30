@@ -88,6 +88,21 @@ export const routes: Routes = [
           import('../event/event.page').then((m) => m.EventPage),
       },
       {
+        path: 'art/:id',
+        loadComponent: () =>
+          import('../art/art.page').then((m) => m.ArtPage),
+      },
+      {
+        path: 'art/:id/manage',
+        loadComponent: () =>
+          import('../art-management/art-management.page').then((m) => m.ArtManagementPage),
+      },
+      {
+        path: 'art-form/:id',
+        loadComponent: () =>
+          import('../art-form/art-form.page').then((m) => m.ArtFormPage),
+      },
+      {
         path: 'activity/:id',
         loadComponent: () =>
           import('../activity/activity.page').then((m) => m.ActivityPage),

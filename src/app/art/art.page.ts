@@ -273,7 +273,7 @@ export class ArtPage implements OnInit {
   onEdit() {
     const currentArt = this.art();
     if (currentArt) {
-      this.router.navigate(['/art', currentArt.id, 'manage']);
+      this.router.navigate(['/dash/art', currentArt.id, 'manage']);
     }
   }
 

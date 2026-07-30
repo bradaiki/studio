@@ -198,7 +198,7 @@ export class ArtsPage implements OnInit {
 
   onArtClick(art: Art) {
     console.log('Art clicked:', art.name);
-    this.router.navigate(['/art', art.id]);
+    this.router.navigate(['/dash/art', art.id]);
   }
 
   getArtIcon(art: Art): string {

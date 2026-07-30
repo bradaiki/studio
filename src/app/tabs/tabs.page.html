@@ -1,5 +1,14 @@
 <ion-header>
   <ion-toolbar>
+    <ion-buttons slot="start" class="back-button-slot">
+      @if (showBackButton()) {
+        <ion-button fill="clear" (click)="goBack()" class="back-button">
+          <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
+        </ion-button>
+      } @else {
+        <div class="back-button-placeholder"></div>
+      }
+    </ion-buttons>
     <ion-title
       [attr.aria-label]="'Application title: ' + ('app.title' | translate) + ', User: ' + userHandle()"
     >

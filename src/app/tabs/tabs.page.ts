@@ -7,7 +7,8 @@ import {
   signal,
 } from '@angular/core';
 
-import { Router } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
+import { Location } from '@angular/common';
 import {
   IonTabs,
   IonTabBar,
@@ -18,6 +19,7 @@ import {
   IonToolbar,
   IonTitle,
   IonButton,
+  IonButtons,
   IonBadge,
   ToastController,
 } from '@ionic/angular/standalone';
@@ -31,6 +33,7 @@ import {
   person,
   settingsOutline,
   phonePortrait,
+  arrowBack,
 } from 'ionicons/icons';
 import { Subscription } from 'rxjs';
 import { AuthStateService } from '../services/auth-state.service';
@@ -55,6 +58,7 @@ import { environment } from '../../environments/environment';
     IonToolbar,
     IonTitle,
     IonButton,
+    IonButtons,
     IonBadge,
     TranslateModule,
     AdBannerComponent,
@@ -66,12 +70,18 @@ export class TabsPage implements OnInit, OnDestroy {
   userHandle = signal('@guest');
   adClient = signal(environment.adSense?.publisherId || '');
   adSlot = signal(environment.adSense?.bannerSlotId || '');
+  showBackButton = signal(false);
   private userSubscription?: Subscription;
   private profileUpdateSubscription?: Subscription;
+  private routerSubscription?: Subscription;
+
+  // Direct tab paths where back button should NOT show
+  private directTabPaths = ['/dash/feed', '/dash/arts', '/dash/studios', '/dash/people', '/dash/events', '/dash/orgs', '/dash'];
 
   constructor(
     private authStateService: AuthStateService,
     private router: Router,
+    private location: Location,
     private toastController: ToastController,
     private translationService: TranslationService,
     private personProfileManager: PersonProfileManagerService,
@@ -85,6 +95,7 @@ export class TabsPage implements OnInit, OnDestroy {
       person,
       settingsOutline,
       phonePortrait,
+      arrowBack,
     });
     console.log('[Tabs Page] Initialized');
   }
@@ -93,11 +104,24 @@ export class TabsPage implements OnInit, OnDestroy {
     this.subscribeToAuthState();
     this.subscribeToProfileUpdates();
     this.loadPersonHandle();
+
+    // Track route changes to show/hide back button
+    this.routerSubscription = this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        const url = event.urlAfterRedirects || event.url;
+        this.showBackButton.set(!this.directTabPaths.includes(url.split('?')[0]));
+      }
+    });
   }
 
   ngOnDestroy() {
     this.userSubscription?.unsubscribe();
     this.profileUpdateSubscription?.unsubscribe();
+    this.routerSubscription?.unsubscribe();
+  }
+
+  goBack() {
+    this.location.back();
   }
 
   private subscribeToAuthState() {

@@ -5,6 +5,19 @@ ion-header {
     --color: white;
   }
 
+  .back-button-slot {
+    min-width: 40px;
+  }
+
+  .back-button {
+    --color: white;
+  }
+
+  .back-button-placeholder {
+    width: 40px;
+    height: 40px;
+  }
+
   ion-title {
     font-weight: 600;
     font-size: 1.2rem;

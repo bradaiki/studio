@@ -428,7 +428,7 @@ export class PostComponent {
       this.router.navigate(['/dash/event', p.author.id]);
     } else if (p.author.type === 'art') {
       // Navigate to individual art page
-      this.router.navigate(['/art', p.author.id]);
+      this.router.navigate(['/dash/art', p.author.id]);
     }
   }
 

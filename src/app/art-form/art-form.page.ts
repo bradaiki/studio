@@ -197,7 +197,7 @@ export class ArtFormPage implements OnInit {
     // Check if user can edit this art
     if (!this.artsService.canUserEditArt(art)) {
       this.showToast(this.translationService.getTranslation('art_form.no_permission'), 'danger');
-      this.router.navigate(['/art', this.artId()]);
+      this.router.navigate(['/dash/art', this.artId()]);
       return;
     }
 
@@ -264,13 +264,13 @@ export class ArtFormPage implements OnInit {
         );
         if (updatedArt) {
           this.showToast(this.translationService.getTranslation('messages.updated'), 'success');
-          this.router.navigate(['/art', this.artId()]);
+          this.router.navigate(['/dash/art', this.artId()]);
         }
       } else {
         // Create new art
         const newArt = await this.artsService.createArt(formValue);
         this.showToast(this.translationService.getTranslation('messages.created'), 'success');
-        this.router.navigate(['/art', newArt.id]);
+        this.router.navigate(['/dash/art', newArt.id]);
       }
     } catch (error: any) {
       this.showToast(error.message || this.translationService.getTranslation('errors.unknown'), 'danger');
