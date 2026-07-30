@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, effect } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -83,9 +83,12 @@ export class StudiosListPage implements OnInit {
     public favoritesService: FavoritesService,
   ) {
     addIcons({ location, call, people, star, add });
-    if (this.favoritesService.isEnabled()) {
-      this.selectedSegment = 'my-studios';
-    }
+    effect(() => {
+      if (this.favoritesService.enabled()) {
+        this.selectedSegment = 'my-studios';
+        this.filterBySegment();
+      }
+    });
   }
 
   ngOnInit() {

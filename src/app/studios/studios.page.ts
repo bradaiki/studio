@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, effect } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -317,9 +317,12 @@ export class StudiosPage implements OnInit, OnDestroy {
       informationCircle,
       add,
     });
-    if (this.favoritesService.isEnabled()) {
-      this.selectedSegment = 'my-studios';
-    }
+    effect(() => {
+      if (this.favoritesService.enabled()) {
+        this.selectedSegment = 'my-studios';
+        this.updateDisplayedStudios();
+      }
+    });
     console.log('[Studios Page] Constructor called');
   }
 

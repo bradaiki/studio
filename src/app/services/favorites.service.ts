@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { generateClient } from 'aws-amplify/data';
 import { getCurrentUser, fetchAuthSession } from 'aws-amplify/auth';
@@ -23,6 +23,8 @@ export class FavoritesService {
   
   private favoriteItemIds = new Set<string>();
   private currentUserId: string | null = null;
+  private _enabled = signal(false);
+  public readonly enabled = this._enabled.asReadonly();
 
   constructor() {
     this.initializeUser();
@@ -39,6 +41,7 @@ export class FavoritesService {
 
       const user = await getCurrentUser();
       this.currentUserId = user.userId;
+      this._enabled.set(true);
       await this.loadFavorites();
     } catch (error) {
       console.log('[Favorites] User not authenticated, favorites disabled');
@@ -149,7 +152,7 @@ export class FavoritesService {
   }
 
   isEnabled(): boolean {
-    return this.currentUserId !== null;
+    return this._enabled();
   }
 
   getFavoritesByType(itemType: ItemType): Favorite[] {

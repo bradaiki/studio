@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -75,7 +75,7 @@ import { search, leafOutline, shieldOutline, constructOutline, checkmarkCircle, 
 export class ArtsPage implements OnInit {
   // Keep as regular properties - used with [(ngModel)]
   searchTerm: string = '';
-  selectedCategory: string = 'my-arts';
+  selectedCategory: string = 'martial-arts';
   
   // Convert to signals
   arts = signal<Art[]>([]);
@@ -96,6 +96,11 @@ export class ArtsPage implements OnInit {
     private toastController: ToastController
   ) {
     addIcons({ search, leafOutline, shieldOutline, constructOutline, checkmarkCircle, add, create, alertCircle, cloud, phonePortrait });
+    effect(() => {
+      if (this.isAuthenticated()) {
+        this.selectedCategory = 'my-arts';
+      }
+    });
   }
 
   ngOnInit() {

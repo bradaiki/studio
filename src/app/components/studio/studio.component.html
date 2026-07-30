@@ -9,7 +9,7 @@
             <h1 [class.compact]="compact()">{{ studio().name }}</h1>
             <div class="header-actions">
               <!-- Favorite Button (only for authenticated users) -->
-              @if (favoritesService.isEnabled()) {
+              @if (favoritesService.enabled()) {
               <ion-button
                 fill="clear"
                 color="light"

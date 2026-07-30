@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, signal } from '@angular/core';
+import { Component, OnInit, ViewChild, signal, effect } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import {
@@ -54,7 +54,7 @@ export class FeedPage implements OnInit {
   @ViewChild(IonInfiniteScroll) infiniteScroll?: IonInfiniteScroll;
 
   // Keep as regular property - used with [(ngModel)]
-  selectedFeed: string = 'clubs';
+  selectedFeed: string = 'discover';
 
   // Convert to signals
   displayedPosts = signal<Post[]>([]);
@@ -77,6 +77,11 @@ export class FeedPage implements OnInit {
     private router: Router,
   ) {
     addIcons({ add, newspaperOutline });
+    effect(() => {
+      if (this.favoritesService.enabled()) {
+        this.selectedFeed = 'clubs';
+      }
+    });
   }
 
   ngOnInit() {
